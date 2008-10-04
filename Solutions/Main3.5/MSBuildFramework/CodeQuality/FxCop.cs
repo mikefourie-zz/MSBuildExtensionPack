@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="FxCop.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="FxCop.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.CodeQuality
 {
@@ -27,7 +27,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///         <DependencyDirectories Include="c:\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3"/>
     ///         <!-- Define a bespoke set of rules to run. Prefix the Rules path with ! to treat warnings as errors -->
     ///         <Rules Include="c:\Program Files (x86)\Microsoft FxCop 1.36\Rules\DesignRules.dll"/>
-    ///         <Files ShowExceptionStack="true" Include="C:\Projects\CodePlex\FreeToDevTasks\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.CodeQuality.StyleCop.dll"/>
+    ///         <Files ShowExceptionStack="true" Include="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.CodeQuality.StyleCop.dll"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Call the task using a collection of files and all default rules -->
@@ -36,7 +36,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///         </MSBuild.ExtensionPack.CodeQuality.FxCop>
     ///         <Message Text="CA1 Failed: $(Result)"/>
     ///         <!-- Call the task using a project file -->        
-    ///         <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Project="c:\Projects\CodePlex\FreeToDevTasks\Solutions\Main3.5\MSBuildFramework\XmlSamples\FXCop.FxCop" DependencyDirectories="@(DependencyDirectories)" OutputFile="c:\fxcoplog2.txt">
+    ///         <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Project="c:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\MSBuildFramework\XmlSamples\FXCop.FxCop" DependencyDirectories="@(DependencyDirectories)" OutputFile="c:\fxcoplog2.txt">
     ///             <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>            
     ///         </MSBuild.ExtensionPack.CodeQuality.FxCop>
     ///         <Message Text="CA2 Failed: $(Result)"/>

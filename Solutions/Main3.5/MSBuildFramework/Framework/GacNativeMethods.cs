@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="GacNativeMethods.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="GacNativeMethods.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// GacNativeMethods
     /// </summary>
     [SuppressUnmanagedCodeSecurity]
-    internal static partial class NativeMethods
+    internal static class NativeMethods
     {
         [ComImport]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

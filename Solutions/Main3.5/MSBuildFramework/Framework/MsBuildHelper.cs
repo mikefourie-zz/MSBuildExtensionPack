@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="MsBuildHelper.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="MsBuildHelper.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
@@ -58,12 +58,12 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output TaskParameter="OutputItems" ItemName="LastItem"/>
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
     ///         <Message Text="Last Item: %(LastItem.Identity)"/>
-    ///         <!-- Get common items. Note that this can be accomplished without using a custom task. -->
+    ///         <!-- Get common items. Observe that this can be accomplished without using a custom task. -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetCommonItems" InputItems1="@(Col1)" InputItems2="@(Col3)">
     ///             <Output TaskParameter="OutputItems" ItemName="comm"/>
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
     ///         <Message Text="Common Items: %(comm.Identity)"/>
-    ///         <!-- Get distinct items. Note that this can be accomplished without using a custom task. -->
+    ///         <!-- Get distinct items. Observe that this can be accomplished without using a custom task. -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetDistinctItems" InputItems1="@(Col1)" InputItems2="@(Col3)">
     ///             <Output TaskParameter="OutputItems" ItemName="distinct"/>
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>

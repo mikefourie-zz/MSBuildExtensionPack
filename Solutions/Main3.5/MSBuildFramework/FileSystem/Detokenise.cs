@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Detokenise.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Detokenise.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 // This task is a derivative of the task posted here: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!244.entry
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         </ItemGroup>
     ///         <ItemGroup>
     ///             <TokenValues Include="Title">
-    ///                 <Replacement>FreeToDev</Replacement>
+    ///                 <Replacement>ANewTextString</Replacement>
     ///             </TokenValues >
     ///             <TokenValues Include="ProjectHome">
     ///                 <Replacement>www.codeplex.com/MSBuildExtensionPack</Replacement>

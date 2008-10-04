@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="EnumerationWrapper.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="EnumerationWrapper.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Compression
 {
@@ -54,7 +54,7 @@ namespace MSBuild.ExtensionPack.Compression
                     this.Reset();
                 }
 
-                if (this.wrappedEnumeration.hasMoreElements())
+                if (this.wrappedEnumeration != null && this.wrappedEnumeration.hasMoreElements())
                 {
                     this.Current = this.wrappedEnumeration.nextElement();
                     return true;

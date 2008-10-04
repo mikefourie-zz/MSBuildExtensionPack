@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Iis7Binding.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Iis7Binding.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Web
 {
@@ -26,18 +26,18 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Add a binding -->
-    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Add" Name="NewSite" BindingInformation="123.123.11.33:234:www.freetodev.com" BindingProtocol="http"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Add" Name="NewSite" BindingInformation="123.123.11.33:234:www.freet2odev.com" BindingProtocol="http"/>
     ///         <!-- Check whether a binding exists-->
-    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="CheckExists" Name="NewSite" BindingInformation="123.123.11.33:234:www.freetodev.com" BindingProtocol="http">
+    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="CheckExists" Name="NewSite" BindingInformation="123.123.11.33:234:www.freet2odev.com" BindingProtocol="http">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
     ///         </MSBuild.ExtensionPack.Web.Iis7Binding>
     ///         <Message Text="Exists: $(DoesExist)"/>
     ///         <!-- Add another binding -->
-    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Add" Name="NewSite" BindingInformation="123.123.33.33:455:www.freetodev.com" BindingProtocol="http"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Add" Name="NewSite" BindingInformation="123.123.33.33:455:www.freet2odev.com" BindingProtocol="http"/>
     ///         <!-- Modify the binding -->
-    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Modify" Name="NewSite" PreviousBindingProtocol="http" PreviousBindingInformation="123.123.11.33:234:www.freetodev.com" BindingInformation="5.5.55.5:111:www.newmod.com" BindingProtocol="http"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Modify" Name="NewSite" PreviousBindingProtocol="http" PreviousBindingInformation="123.123.11.33:234:www.freet2odev.com" BindingInformation="5.5.55.5:111:www.newmod.com" BindingProtocol="http"/>
     ///         <!-- Remove the binding -->
-    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Remove" Name="NewSite" BindingInformation="123.123.33.33:455:www.freetodev.com" BindingProtocol="http"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Remove" Name="NewSite" BindingInformation="123.123.33.33:455:www.freet2odev.com" BindingProtocol="http"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    

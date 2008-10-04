@@ -3,7 +3,7 @@
     <PropertyGroup>
         <BuildPath Condition="'$(BuildPath)' == ''">$(MSBuildProjectDirectory)</BuildPath>
         <TasksPath Condition="Exists('$(BuildPath)\..\..\BuildBinaries\MSBuild.ExtensionPack.dll')">$(BuildPath)\..\..\BuildBinaries\</TasksPath>
-        <TasksPath Condition="'$(TasksPath)' == ''">$(MSBuildExtensionsPath)\MSBuild\FreeToDev\ExtensionPack\</TasksPath>
+        <TasksPath Condition="'$(TasksPath)' == ''">$(MSBuildExtensionsPath)\MSBuild\ExtensionPack\</TasksPath>
     </PropertyGroup>
     
     <!-- ============== MSBuildFramework ============== -->

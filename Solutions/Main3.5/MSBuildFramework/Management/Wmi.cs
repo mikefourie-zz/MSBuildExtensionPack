@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Wmi.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Wmi.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Management
 {
@@ -168,7 +168,10 @@ namespace MSBuild.ExtensionPack.Management
             // Execute the method and obtain the return values.
             ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
 
-            this.ReturnValue = outParams["ReturnValue"].ToString();
+            if (outParams != null)
+            {
+                this.ReturnValue = outParams["ReturnValue"].ToString();
+            }
         }
 
         /// <summary>

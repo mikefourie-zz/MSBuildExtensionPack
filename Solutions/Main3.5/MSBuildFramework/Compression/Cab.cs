@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Cab.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Cab.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Compression
 {
@@ -36,7 +36,7 @@ namespace MSBuild.ExtensionPack.Compression
     ///         </ItemGroup>
     ///         <!-- Create the CAB using the File collection and preserve the paths whilst stripping a prefix -->
     ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" FilesToCab="@(Files)" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbyitem.cab" PreservePaths="true" StripPrefixes="aaa\"/>
-    ///         <!-- Create the same CAB but this time based on the Path. Note that Recursive is required -->
+    ///         <!-- Create the same CAB but this time based on the Path. Observe that Recursive is required -->
     ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" PathToCab="C:\aaa\*" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbypath.cab" PreservePaths="true" StripPrefixes="aaa\" Recursive="true"/>
     ///         <!-- Add a file to the CAB -->
     ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="AddFile" NewFile="c:\New Text Document.txt" CabExePath="D:\BuildTools\CabArc.Exe" ExtractExePath="D:\BuildTools\Extrac32.EXE" CabFile="C:\newcabbyitem.cab" NewFileDestination="\Any Path"/>
@@ -233,9 +233,17 @@ namespace MSBuild.ExtensionPack.Compression
                 ManagementBaseObject outParams = mdir.InvokeMethod("Delete", null, null);
 
                 // ReturnValue should be 0, else failure
-                if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value) != 0)
+                if (outParams != null)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
+                    if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value) != 0)
+                    {
+                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
+                        return;
+                    }
+                }
+                else
+                {
+                    this.Log.LogError("The ManagementObject call to invoke Delete returned null.");
                     return;
                 }
             }

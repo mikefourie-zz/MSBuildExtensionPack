@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Folder.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Folder.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
 {
@@ -177,9 +177,17 @@ namespace MSBuild.ExtensionPack.FileSystem
                                 ManagementBaseObject outParams = mdir.InvokeMethod("Delete", null, null);
 
                                 // ReturnValue should be 0, else failure
-                                if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value) != 0)
+                                if (outParams != null)
                                 {
-                                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
+                                    if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value) != 0)
+                                    {
+                                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    this.Log.LogError("The ManagementObject call to invoke Delete returned null.");
                                     return;
                                 }
                             }

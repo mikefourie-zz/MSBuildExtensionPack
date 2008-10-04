@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="RegistryNativeMethods.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="RegistryNativeMethods.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Computer
 {
@@ -10,7 +10,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// RegistryNativeMethods
     /// </summary>
     [SuppressUnmanagedCodeSecurity]
-    internal static partial class NativeMethods
+    internal static class NativeMethods
     {
         internal const int HWND_BROADCAST = 0xffff;
         internal const int WM_SETTINGCHANGE = 0x001A;

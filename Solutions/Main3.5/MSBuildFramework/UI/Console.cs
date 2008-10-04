@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Console.cs">(c) FreeToDev. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Console.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.UI
 {
@@ -146,14 +146,18 @@ namespace MSBuild.ExtensionPack.UI
 
             this.Log.LogMessage(MessageImportance.Low, this.UserPrompt);
             this.UserResponse = System.Console.ReadLine();
-            if (this.ToLower)
-            {
-                this.UserResponse = this.UserResponse.ToLower();
-            }
 
-            if (this.ToUpper)
+            if (this.UserResponse != null)
             {
-                this.UserResponse = this.UserResponse.ToUpper();
+                if (this.ToLower)
+                {
+                    this.UserResponse = this.UserResponse.ToLower();
+                }
+
+                if (this.ToUpper)
+                {
+                    this.UserResponse = this.UserResponse.ToUpper();
+                }
             }
         }
 
