@@ -1,0 +1,45 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <!-- define a set of arguments to use against an assembly -->
+            <Args Include="1">
+                <Type>int</Type>
+            </Args>
+            <Args Include="2">
+                <Type>int</Type>
+            </Args>
+            <ArgsM Include="2.9845">
+                <Type>decimal</Type>
+            </ArgsM>
+            <ArgsM Include="1.9845">
+                <Type>decimal</Type>
+            </ArgsM>
+            <ArgsF Include="C:\anewfolder">
+                <Type>string</Type>
+            </ArgsF>
+        </ItemGroup>
+        <!-- This will cause a default constructor call only -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="MathStuff" NetAssembly="C:\Math2\bin\Debug\Math.dll"/>
+        <!-- Invoke the assembly with the args collection of arguments -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="MathStuff" NetMethod="Sum" NetAssembly="C:\Math2\bin\Debug\Math.dll">
+            <Output TaskParameter="Result" PropertyName="R"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="Result: $(R)"/>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsM)" NetClass="MathStuff" NetMethod="Multiply" NetAssembly="C:\Math2\bin\Debug\Math.dll">
+            <Output TaskParameter="Result" PropertyName="R"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="Result: $(R)"/>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsF)" NetClass="NotMathButAnyway" NetMethod="CreateFolder" NetAssembly="C:\Math2\bin\Debug\Math.dll"/>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="NotMathButAnyway" NetMethod="CreateDefaultFolder" NetAssembly="C:\Math2\bin\Debug\Math.dll"/>
+        <!-- Extract some information on the assembly interface -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetMethodInfo" NetAssembly="C:\Math2\bin\Debug\Math.dll">
+            <Output TaskParameter="OutputItems" ItemName="TypeInfo"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="%(TypeInfo.Identity) %(TypeInfo.Parameters)" />
+    </Target>
+</Project>
