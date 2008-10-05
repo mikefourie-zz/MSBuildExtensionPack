@@ -105,7 +105,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.CheckDriveSpace();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -115,7 +115,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void CheckDriveSpace()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking Drive Space: {0} (min {1}{2}) on: {3}", this.Drive, this.MinSpace, this.Unit, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking Drive Space: {0} (min {1}{2}) on: {3}", this.Drive, this.MinSpace, this.Unit, this.MachineName));
 
             if (string.IsNullOrEmpty(this.Unit))
             {
@@ -150,11 +150,11 @@ namespace MSBuild.ExtensionPack.Computer
 
                         if ((freespace / unitSize) < this.MinSpace)
                         {
-                            this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Insufficient free space. Drive {0} has {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Insufficient free space. Drive {0} has {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
                         }
                         else
                         {
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
                         }
                     }
                 }
@@ -178,20 +178,20 @@ namespace MSBuild.ExtensionPack.Computer
                     {
                         if (mo["DriveLetter"] == null)
                         {
-                            this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "WMI Failed to query the DriveLetter from: {0}", this.MachineName));
+                            this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "WMI Failed to query the DriveLetter from: {0}", this.MachineName));
                             break;
                         }
 
                         string drive = mo["DriveLetter"].ToString();
-                        double freeSpace = Convert.ToDouble(mo["FreeSpace"]) / unitSize;
+                        double freeSpace = Convert.ToDouble(mo["FreeSpace"], CultureInfo.CurrentCulture) / unitSize;
 
                         if (freeSpace < this.MinSpace)
                         {
-                            this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Insufficient free space. Drive {0} has {1}{2}", drive, freeSpace, this.Unit));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Insufficient free space. Drive {0} has {1}{2}", drive, freeSpace, this.Unit));
                         }
                         else
                         {
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Free drive space on {0} is {1}{2}", drive, freeSpace, this.Unit));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", drive, freeSpace, this.Unit));
                         }
                     }
                 }
@@ -203,7 +203,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void GetDrives()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Getting Drives from: {0}", this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Drives from: {0}", this.MachineName));
 
             this.drives = new List<ITaskItem>();
             if (this.MachineName == Environment.MachineName)
@@ -232,10 +232,10 @@ namespace MSBuild.ExtensionPack.Computer
                         {
                             item.SetMetadata("Name", driveInfo.Name);
                             item.SetMetadata("VolumeLabel", driveInfo.VolumeLabel);
-                            item.SetMetadata("AvailableFreeSpace", driveInfo.AvailableFreeSpace.ToString());
+                            item.SetMetadata("AvailableFreeSpace", driveInfo.AvailableFreeSpace.ToString(CultureInfo.CurrentCulture));
                             item.SetMetadata("DriveFormat", driveInfo.DriveFormat);
-                            item.SetMetadata("TotalSize", driveInfo.TotalSize.ToString());
-                            item.SetMetadata("TotalFreeSpace", driveInfo.TotalFreeSpace.ToString());
+                            item.SetMetadata("TotalSize", driveInfo.TotalSize.ToString(CultureInfo.CurrentCulture));
+                            item.SetMetadata("TotalFreeSpace", driveInfo.TotalFreeSpace.ToString(CultureInfo.CurrentCulture));
                             item.SetMetadata("IsReady", driveInfo.IsReady.ToString());
                             item.SetMetadata("RootDirectory", driveInfo.RootDirectory.ToString());
                         }

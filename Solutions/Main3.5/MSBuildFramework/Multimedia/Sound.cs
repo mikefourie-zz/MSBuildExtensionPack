@@ -87,7 +87,7 @@ namespace MSBuild.ExtensionPack.Multimedia
                     this.Play();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -96,25 +96,25 @@ namespace MSBuild.ExtensionPack.Multimedia
         {
             if (!string.IsNullOrEmpty(this.SoundFile) && !File.Exists(this.SoundFile))
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid File passed: {0}", this.SoundFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid File passed: {0}", this.SoundFile));
                 return;
             }
 
             if (this.Repeat < 1 || this.Repeat > 20)
             {
-                this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "Invalid Repeat: {0}. Value must be between 1 and 20. Using default of 1.", this.Repeat));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Invalid Repeat: {0}. Value must be between 1 and 20. Using default of 1.", this.Repeat));
                 this.Repeat = 1;
             }
 
             if (this.Interval < 10 || this.Interval > 5000)
             {
-                this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "Invalid Interval: {0}. Value must be between 10 and 5000. Using default of 10.", this.Interval));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Invalid Interval: {0}. Value must be between 10 and 5000. Using default of 10.", this.Interval));
                 this.Interval = 10;
             }
 
             if (!string.IsNullOrEmpty(this.SoundFile))
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Playing Sound: {0}", this.SoundFile));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SoundFile));
                 SoundPlayer player = new SoundPlayer { LoadTimeout = 5000, SoundLocation = this.SoundFile };
                 for (int i = 1; i <= this.Repeat; i++)
                 {
@@ -125,7 +125,7 @@ namespace MSBuild.ExtensionPack.Multimedia
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Playing Sound: {0}", this.SystemSound));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SystemSound));
             switch (this.SystemSound)
             {
                 case "Asterisk":

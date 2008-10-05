@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack.Security
                     this.Remove();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -119,7 +119,7 @@ namespace MSBuild.ExtensionPack.Security
             {
                 if (xcert509.Thumbprint == this.Thumbprint)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing Certificate: {0}", xcert509.Thumbprint));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Certificate: {0}", xcert509.Thumbprint));
                     store.Remove(xcert509);
                     break;
                 }
@@ -135,7 +135,7 @@ namespace MSBuild.ExtensionPack.Security
         {
             if (System.IO.File.Exists(this.FileName) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "FileName not found: {0}", this.FileName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "FileName not found: {0}", this.FileName));
                 return;
             }
 
@@ -149,7 +149,7 @@ namespace MSBuild.ExtensionPack.Security
             keyflags |= X509KeyStorageFlags.PersistKeySet;
             cert.Import(this.FileName, this.CertPassword, keyflags);
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding Certificate: {0} to Store: {1}", this.FileName, this.StoreName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Certificate: {0} to Store: {1}", this.FileName, this.StoreName));
             X509Store store = new X509Store(this.StoreName, locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
             store.Add(cert);

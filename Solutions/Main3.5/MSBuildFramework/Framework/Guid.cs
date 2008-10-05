@@ -50,7 +50,7 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public string[] FormattedGuidString
         {
-            get { return new[] { this.internalguid.ToString("D", CultureInfo.InvariantCulture) }; }
+            get { return new[] { this.internalguid.ToString("D", CultureInfo.CurrentCulture) }; }
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public string[] GuidString
         {
-            get { return new[] { this.internalguid.ToString("N", CultureInfo.InvariantCulture) }; }
+            get { return new[] { this.internalguid.ToString("N", CultureInfo.CurrentCulture) }; }
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.GetCrypto();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }

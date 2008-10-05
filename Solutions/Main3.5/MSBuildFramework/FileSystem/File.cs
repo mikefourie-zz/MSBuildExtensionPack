@@ -196,7 +196,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     this.SetAttributes();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -261,16 +261,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (!System.IO.File.Exists(this.Path))
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid File passed: {0}", this.Path));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid File passed: {0}", this.Path));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Getting Checksum for file: {0}", this.Path));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Checksum for file: {0}", this.Path));
             using (FileStream fs = System.IO.File.OpenRead(this.Path))
             {
                 MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider();
                 byte[] hash = csp.ComputeHash(fs);
-                this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
+                this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpperInvariant();
                 fs.Close();
             }
         }
@@ -339,7 +339,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
             
             TimeSpan t = DateTime.Now - start;
-            this.ElapsedTime = t.Seconds.ToString();
+            this.ElapsedTime = t.Seconds.ToString(CultureInfo.CurrentCulture);
             this.CodeLinecount = this.TotalLinecount - this.CommentLinecount - this.EmptyLinecount;
             this.TotalFilecount = this.IncludedFilecount + this.ExcludedFilecount;
         }
@@ -357,7 +357,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format("Error, {0} is not a supported encoding name.", this.TextEncoding));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }
@@ -395,11 +395,11 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Validation
             if (Directory.Exists(rootPath) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Path not found: {0}", rootPath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path not found: {0}", rootPath));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Processing Path: {0} with RegEx: {1}, ReplacementText: {2}", this.Path, this.RegexPattern, this.Replacement));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Processing Path: {0} with RegEx: {1}, ReplacementText: {2}", this.Path, this.RegexPattern, this.Replacement));
 
             // Check if we need to do a recursive search
             if (originalPath.Contains("*"))
@@ -410,7 +410,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                 if (!dir.Exists)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The directory does not exist: {0}", rootPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
                     return;
                 }
 
@@ -424,7 +424,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                 if (!dir.Exists)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The directory does not exist: {0}", originalPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", originalPath));
                     return;
                 }
 
@@ -489,10 +489,10 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <param name="checkExists">if set to <c>true</c> [check exists].</param>
         private void ParseAndReplaceFile(string parseFile, bool checkExists)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Processing File: {0}", parseFile));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Processing File: {0}", parseFile));
             if (checkExists && System.IO.File.Exists(parseFile) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The file does not exist: {0}", parseFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The file does not exist: {0}", parseFile));
                 return;
             }
 
@@ -518,7 +518,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // If readonly attribute is set, reset it.
             if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
             {
-                this.Log.LogMessage(string.Format("Making File Writeable: {0}", parseFile));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
                 System.IO.File.SetAttributes(parseFile, fileAttributes ^ FileAttributes.ReadOnly);
             }
 
@@ -531,7 +531,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format("Error, {0} is not a supported encoding name.", this.TextEncoding));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }

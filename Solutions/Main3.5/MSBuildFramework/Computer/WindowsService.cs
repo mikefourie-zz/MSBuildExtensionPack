@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.ServiceDoesExist() == false && this.TaskAction != "Install")
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Service does not exist: {0}", this.ServiceName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceName));
                 return;
             }
 
@@ -128,7 +128,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.UpdateIdentity();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -138,7 +138,7 @@ namespace MSBuild.ExtensionPack.Computer
             RegistryKey runtimeKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework");
             if (runtimeKey != null)
             {
-                string pathToFramework = Convert.ToString(runtimeKey.GetValue("InstallRoot"), CultureInfo.InvariantCulture);
+                string pathToFramework = Convert.ToString(runtimeKey.GetValue("InstallRoot"), CultureInfo.CurrentCulture);
                 runtimeKey.Close();
                 return System.IO.Path.Combine(System.IO.Path.Combine(pathToFramework, "v2.0.50727"), "installutil.exe");
             }
@@ -151,27 +151,27 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.ServiceDoesExist())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Updating Identity: {0}", this.ServiceName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Updating Identity: {0}", this.ServiceName));
 
                 this.Scope.Connect();
-                ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.InvariantCulture, "SELECT * FROM Win32_Service WHERE Name = '{0}'", this.ServiceName));
+                ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM Win32_Service WHERE Name = '{0}'", this.ServiceName));
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
                 ManagementObjectCollection moc = searcher.Get();
 
                 foreach (ManagementObject service in moc)
                 {
                     object[] changeArgs = new object[] { null, null, null, null, null, null, this.User, this.Password };
-                    int result = Convert.ToInt32(service.InvokeMethod("Change", changeArgs), CultureInfo.InvariantCulture);
+                    int result = Convert.ToInt32(service.InvokeMethod("Change", changeArgs), CultureInfo.CurrentCulture);
                     if (result != 0)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Error changing service identity of {0} to {1}", this.ServiceName, this.User));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error changing service identity of {0} to {1}", this.ServiceName, this.User));
                         return;
                     }
                 }
             }
             else
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Service: {0} does not exist on: {1}.", this.ServiceName, this.MachineName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service: {0} does not exist on: {1}.", this.ServiceName, this.MachineName));
             }
         }
 
@@ -180,18 +180,18 @@ namespace MSBuild.ExtensionPack.Computer
             if (this.ServiceDoesExist())
             {
                 this.Exists = true;
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Service: {0} exists on: {1}.", this.ServiceName, this.MachineName));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service: {0} exists on: {1}.", this.ServiceName, this.MachineName));
             }
             else
             {
                 this.Exists = false;
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Service: {0} does not exist on: {1}.", this.ServiceName, this.MachineName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Service: {0} does not exist on: {1}.", this.ServiceName, this.MachineName));
             }
         }
 
         private void SetStartupType(string startup)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Setting StartUp Type to {0} for {1}.", startup, this.ServiceName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting StartUp Type to {0} for {1}.", startup, this.ServiceName));
             ManagementPath p = new ManagementPath("Win32_Service.Name='" + this.ServiceName + "'");
             ManagementObject managementObject = new ManagementObject(p);
             object[] parameters = new object[1];
@@ -214,23 +214,23 @@ namespace MSBuild.ExtensionPack.Computer
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StartPending:
                         case ServiceControllerStatus.StopPending:
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
                             ++i;
                             break;
                         case ServiceControllerStatus.Paused:
                         case ServiceControllerStatus.Stopped:
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Starting: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Starting: {0} - {1}...", this.ServiceName, serviceController.Status));
                             serviceController.Start();
                             ++i;
                             break;
                         case ServiceControllerStatus.Running:
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Started: {0}", this.ServiceName));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Started: {0}", this.ServiceName));
                             return;
                     }
 
                     if (i == 60)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Could not start: {0}", this.ServiceName));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not start: {0}", this.ServiceName));
                         return;
                     }
 
@@ -253,7 +253,7 @@ namespace MSBuild.ExtensionPack.Computer
             // check to see if the correct path has been provided
             if (System.IO.File.Exists(this.ServicePath) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "ServicePath does not exist: {0}", this.ServicePath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "ServicePath does not exist: {0}", this.ServicePath));
                 return;
             }
 
@@ -261,7 +261,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 Process proc = new Process { StartInfo = { FileName = this.GetInstallUtilPath(), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
                 proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"/u ""{0}"" /LogFile=""{1}""", this.ServicePath, this.ServiceName + " Uninstall.txt");
+                proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/u ""{0}"" /LogFile=""{1}""", this.ServicePath, this.ServiceName + " Uninstall.txt");
                 this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 string outputStream = proc.StandardOutput.ReadToEnd();
@@ -300,23 +300,23 @@ namespace MSBuild.ExtensionPack.Computer
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StartPending:
                         case ServiceControllerStatus.StopPending:
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
                             ++i;
                             break;
                         case ServiceControllerStatus.Paused:
                         case ServiceControllerStatus.Running:
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Stopping: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Stopping: {0} - {1}...", this.ServiceName, serviceController.Status));
                             serviceController.Stop();
                             ++i;
                             break;
                         case ServiceControllerStatus.Stopped:
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Stopped: {0}", this.ServiceName));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Stopped: {0}", this.ServiceName));
                             return true;
                     }
 
                     if (i == 60)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Could not stop: {0}", this.ServiceName));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not stop: {0}", this.ServiceName));
                         return false;
                     }
 
@@ -359,7 +359,7 @@ namespace MSBuild.ExtensionPack.Computer
             // check to see if the correct path has been provided
             if (System.IO.File.Exists(this.ServicePath) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "ServicePath does not exist: {0}", this.ServicePath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "ServicePath does not exist: {0}", this.ServicePath));
                 return;
             }
 
@@ -369,7 +369,7 @@ namespace MSBuild.ExtensionPack.Computer
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"""{0}""", this.ServicePath);
+                proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"""{0}""", this.ServicePath);
                 this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 proc.WaitForExit();
@@ -386,7 +386,7 @@ namespace MSBuild.ExtensionPack.Computer
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"config ""{0}"" obj= ""{1}"" password= ""{2}""", this.ServiceName, this.User, this.Password);
+                proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"config ""{0}"" obj= ""{1}"" password= ""{2}""", this.ServiceName, this.User, this.Password);
                 this.Log.LogMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments.Replace(this.Password, "***CENSORED***"));
                 proc.Start();
                 string outputStream = proc.StandardOutput.ReadToEnd();

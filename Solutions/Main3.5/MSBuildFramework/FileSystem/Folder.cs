@@ -75,7 +75,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             DirectoryInfo dir = new DirectoryInfo(this.Path);
             if (!dir.Exists)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The directory does not exist: {0}", this.Path));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", this.Path));
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     this.DeleteAll();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -122,7 +122,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void DeleteAll()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing all Folders from: {0} that match: {1}", this.Path, this.Match));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing all Folders from: {0} that match: {1}", this.Path, this.Match));
             if (string.IsNullOrEmpty(this.Match))
             {
                 Log.LogError("Match must be specified.");
@@ -144,7 +144,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 Match m = reg.Match(child.Name);
                 if (m.Success)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Removing: {0}", child.FullName));
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing: {0}", child.FullName));
                     DelTree(child);
                     Directory.Delete(child.FullName);
                 }
@@ -157,7 +157,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void RemoveContent(DirectoryInfo dir)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing Content from Folder: {0}", dir.FullName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Content from Folder: {0}", dir.FullName));
 
             FileSystemInfo[] infos = dir.GetFileSystemInfos("*");
             foreach (FileSystemInfo i in infos)
@@ -170,7 +170,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         // if its a folder path we can use WMI for a quick delete
                         if (i.FullName.Contains(@"\\") == false)
                         {
-                            string dirObject = string.Format("win32_Directory.Name='{0}'", i.FullName);
+                            string dirObject = string.Format(CultureInfo.CurrentCulture, "win32_Directory.Name='{0}'", i.FullName);
                             using (ManagementObject mdir = new ManagementObject(dirObject))
                             {
                                 mdir.Get();
@@ -179,9 +179,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                                 // ReturnValue should be 0, else failure
                                 if (outParams != null)
                                 {
-                                    if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value) != 0)
+                                    if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.CurrentCulture) != 0)
                                     {
-                                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
+                                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
                                         return;
                                     }
                                 }
@@ -231,7 +231,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
             Directory.Move(this.Path, this.TargetPath);
         }
     }

@@ -141,27 +141,27 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Compare();
                     break;
                 case "Replace":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Replacing String: {0}", this.OldString));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Replacing String: {0}", this.OldString));
                     this.NewString = this.OldString.Replace(this.OldValue, this.NewValue);
                     break;
                 case "Trim":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Trimming String: {0}", this.OldString));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Trimming String: {0}", this.OldString));
                     this.NewString = this.OldString.Trim();
                     break;
                 case "Remove":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing String: {0}", this.OldString));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing String: {0}", this.OldString));
                     this.NewString = this.Count > 0 ? this.OldString.Remove(this.StartIndex, this.Count) : this.OldString.Remove(this.StartIndex);
                     break;
                 case "GetLength":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Get Length of: {0}", this.OldString));
-                    this.NewString = this.OldString.Length.ToString();
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Get Length of: {0}", this.OldString));
+                    this.NewString = this.OldString.Length.ToString(CultureInfo.CurrentCulture);
                     break;
                 case "Insert":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Inserting: {0} into: {1}", this.String1, this.OldString));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Inserting: {0} into: {1}", this.String1, this.OldString));
                     this.NewString = this.OldString.Insert(this.StartIndex, this.String1);
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -189,7 +189,7 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Comparing String: {0} [{1}] {2}", this.String1, this.Comparison.ToUpperInvariant(), this.String2));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Comparing String: {0} [{1}] {2}", this.String1, this.Comparison.ToUpperInvariant(), this.String2));
 
             StringComparison strcom = StringComparison.Ordinal;
 
@@ -225,7 +225,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Result = this.String1.EndsWith(this.String2, strcom);
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid Comparison passed: {0}. Valid Comparisons are GREATERTHAN, LESSTHAN, GREATERTHANOREQUALS, LESSTHANOREQUALS, EQUALS, CONTAINS, STARTSWITH, ENDSWITH", this.Comparison.ToUpperInvariant()));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid Comparison passed: {0}. Valid Comparisons are GREATERTHAN, LESSTHAN, GREATERTHANOREQUALS, LESSTHANOREQUALS, EQUALS, CONTAINS, STARTSWITH, ENDSWITH", this.Comparison.ToUpperInvariant()));
                     return;
             }
         }

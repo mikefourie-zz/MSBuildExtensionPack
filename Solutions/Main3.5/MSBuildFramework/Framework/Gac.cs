@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.RemoveAssembly();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -106,7 +106,7 @@ namespace MSBuild.ExtensionPack.Framework
             // If the result is not zero throw an exception
             if (result != 0)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to get the IAssemblyCache interface. Result Code: {0}", result));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to get the IAssemblyCache interface. Result Code: {0}", result));
                 return null;
             }
 
@@ -128,7 +128,7 @@ namespace MSBuild.ExtensionPack.Framework
             // If the result is not zero throw an exception
             if (result != 0)
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
                 return;
             }
         }
@@ -153,7 +153,7 @@ namespace MSBuild.ExtensionPack.Framework
                         // Assembly was removed from GAC.
                         break;
                     case 2:
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "An application is using: {0} so it could not be uninstalled.", name));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An application is using: {0} so it could not be uninstalled.", name));
                         return;
                     case 3:
                         // Assembly is not in the assembly. Don't throw an error, just proceed to install it.
@@ -162,13 +162,13 @@ namespace MSBuild.ExtensionPack.Framework
                         // Not used.
                         break;
                     case 5:
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "{0} was not uninstalled from the GAC because another reference exists to it.", name));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} was not uninstalled from the GAC because another reference exists to it.", name));
                         return;
                     case 6:
                         // Problem where a reference doesn't exist to the pointer. We aren't using the pointer so this shouldn't be a problem.
                         break;
                     default:
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to uninstall: {0} from the GAC.", name));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to uninstall: {0} from the GAC.", name));
                         return;
                 }
             }
@@ -176,7 +176,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking if Assembly: {0} exists", this.AssemblyName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Assembly: {0} exists", this.AssemblyName));
             this.Exists = this.GetIAssemblyCache().QueryAssemblyInfo(0, this.AssemblyName, IntPtr.Zero) == 0;
         }
 
@@ -184,12 +184,12 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "UnGACing Assembly: {0}", this.AssemblyName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0}", this.AssemblyName));
                 this.Uninstall(this.AssemblyName);
             }
             else
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "UnGACing Assembly: {0} on Remote Server: {1}", this.AssemblyName, this.MachineName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0} on Remote Server: {1}", this.AssemblyName, this.MachineName));
                 this.Scope.Connect();
                 ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true));
                 ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
@@ -213,13 +213,13 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (System.IO.File.Exists(this.AssemblyPath) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The AssemblyPath was not found: {0}", this.AssemblyPath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The AssemblyPath was not found: {0}", this.AssemblyPath));
             }
             else
             {
                 if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "GACing Assembly: {0}", this.AssemblyPath));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0}", this.AssemblyPath));
                     this.Install(this.AssemblyPath, this.Force);
                 }
                 else
@@ -230,8 +230,8 @@ namespace MSBuild.ExtensionPack.Framework
                         return;
                     }
 
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "GACing Assembly: {0} on Remote Server: {1}", this.RemoteAssemblyPath, this.MachineName));
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Copying Assembly from: {0} to: {1}", this.AssemblyPath, this.RemoteAssemblyPath));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0} on Remote Server: {1}", this.RemoteAssemblyPath, this.MachineName));
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", this.AssemblyPath, this.RemoteAssemblyPath));
 
                     // the assembly needs to be copied to the remote server for gaccing.
                     System.IO.File.Copy(this.AssemblyPath, this.RemoteAssemblyPath);

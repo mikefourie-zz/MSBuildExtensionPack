@@ -177,7 +177,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.RemoveComponent();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -206,7 +206,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private bool CheckApplicationExists()
         {
-            this.Log.LogMessage(MessageImportance.Low, string.Format("Checking whether Application exists: {0}", this.ApplicationName));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", this.ApplicationName));
             COMAdminCatalogCollection appCollection = GetApplications();
             foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
             {
@@ -225,7 +225,7 @@ namespace MSBuild.ExtensionPack.Computer
             RegistryKey runtimeKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework");
             if (runtimeKey != null)
             {
-                this.pathToFramework = Convert.ToString(runtimeKey.GetValue("InstallRoot"), CultureInfo.InvariantCulture);
+                this.pathToFramework = Convert.ToString(runtimeKey.GetValue("InstallRoot"), CultureInfo.CurrentCulture);
                 runtimeKey.Close();
             }
         }
@@ -237,7 +237,7 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.Log.LogMessage(string.Format("SetTransactionSupport on Component: {0}", this.ComponentName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SetTransactionSupport on Component: {0}", this.ComponentName));
             COMAdminCatalogCollection appCollection = GetApplications();
             foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
             {
@@ -273,7 +273,7 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.Log.LogMessage(string.Format("SetConstructor on Component: {0}", this.ComponentName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SetConstructor on Component: {0}", this.ComponentName));
             COMAdminCatalogCollection appCollection = GetApplications();
             foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
             {
@@ -306,7 +306,7 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Updating: {0}", this.ApplicationName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Updating: {0}", this.ApplicationName));
             COMAdminCatalogCollection appCollection = GetApplications();
             foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
             {
@@ -329,7 +329,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.CheckApplicationExists())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Starting Application: {0}", this.ApplicationName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Starting Application: {0}", this.ApplicationName));
                 COMAdmin.COMAdminCatalog f = new COMAdminCatalog();
                 f.StartApplication(this.ApplicationName);
             }
@@ -339,7 +339,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.CheckApplicationExists())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Stopping Application: {0}", this.ApplicationName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Application: {0}", this.ApplicationName));
                 COMAdmin.COMAdminCatalog f = new COMAdminCatalog();
                 f.ShutdownApplication(this.ApplicationName);
             }
@@ -347,18 +347,18 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void RemoveComponent()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing Component: {0}", this.Path));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Component: {0}", this.Path));
             if (System.IO.File.Exists(this.Path) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Path not found: {0}", this.Path));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path not found: {0}", this.Path));
                 return;
             }
 
             if (this.IsValidAssemblyFile(this.Path))
             {
-                string args = string.Format(CultureInfo.InvariantCulture, @"/quiet /u ""{0}""", this.Path);
+                string args = string.Format(CultureInfo.CurrentCulture, @"/quiet /u ""{0}""", this.Path);
                 this.shellWrapper = new ShellWrapper(System.IO.Path.Combine(System.IO.Path.Combine(this.pathToFramework, this.framework), "regsvcs.exe"), args);
-                this.Log.LogMessage(string.Format("Executing {0} with {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
                 if (this.shellWrapper.Execute() != 0)
                 {
                     this.Log.LogError("Shell execute failed: " + this.shellWrapper.StandardOutput);
@@ -373,7 +373,7 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting Application: {0}", this.ApplicationName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application: {0}", this.ApplicationName));
 
             COMAdminCatalogCollection appCollection = GetApplications();
             int i = 0;
@@ -392,17 +392,17 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void AddComponent()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding Component: {0} to Application: {1}", this.Path, this.ApplicationName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Component: {0} to Application: {1}", this.Path, this.ApplicationName));
             if (System.IO.File.Exists(this.Path) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Path not found: {0}", this.Path));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path not found: {0}", this.Path));
                 return;
             }
 
             if (this.IsValidAssemblyFile(this.Path))
             {
-                this.shellWrapper = new ShellWrapper(System.IO.Path.Combine(System.IO.Path.Combine(this.pathToFramework, this.framework), "regsvcs.exe"), string.IsNullOrEmpty(this.ApplicationName) ? string.Format(CultureInfo.InvariantCulture, "/quiet {0}", this.Path) : string.Format(CultureInfo.InvariantCulture, @"/quiet {0} ""{1}""", this.Path, this.ApplicationName));
-                this.Log.LogMessage(string.Format("Executing {0} with {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
+                this.shellWrapper = new ShellWrapper(System.IO.Path.Combine(System.IO.Path.Combine(this.pathToFramework, this.framework), "regsvcs.exe"), string.IsNullOrEmpty(this.ApplicationName) ? string.Format(CultureInfo.CurrentCulture, "/quiet {0}", this.Path) : string.Format(CultureInfo.CurrentCulture, @"/quiet {0} ""{1}""", this.Path, this.ApplicationName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
                 if (this.shellWrapper.Execute() != 0)
                 {
                     this.Log.LogError("Shell execute failed: " + this.shellWrapper.StandardOutput);

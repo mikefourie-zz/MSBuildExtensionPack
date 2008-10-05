@@ -187,7 +187,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                     this.Analyse();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -306,7 +306,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 proc.WaitForExit();
                 if (proc.ExitCode != 0)
                 {
-                    Log.LogError(proc.ExitCode.ToString());
+                    Log.LogError(proc.ExitCode.ToString(CultureInfo.CurrentCulture));
                     this.AnalysisFailed = true;
                     return;
                 }

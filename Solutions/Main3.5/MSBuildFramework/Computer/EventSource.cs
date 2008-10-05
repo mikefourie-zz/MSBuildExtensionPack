@@ -109,14 +109,14 @@ namespace MSBuild.ExtensionPack.Computer
                     this.LogEvent();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
 
         private void Delete()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting EventSource: {0}", this.Source));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting EventSource: {0}", this.Source));
             if (System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
                 System.Diagnostics.EventLog.DeleteEventSource(this.Source, this.MachineName);
@@ -132,30 +132,30 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Logging to EventSource: {0}", this.Source));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Logging to EventSource: {0}", this.Source));
 
             if (!System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The EventSource does not exist: {0} on {1}", this.Source, this.MachineName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The EventSource does not exist: {0} on {1}", this.Source, this.MachineName));
             }
             else
             {
                 using (System.Diagnostics.EventLog log = new System.Diagnostics.EventLog("Application", this.MachineName, this.Source))
                 {
-                    log.WriteEntry(this.Description, this.logType, Int32.Parse(this.EventId));
+                    log.WriteEntry(this.Description, this.logType, Int32.Parse(this.EventId, CultureInfo.CurrentCulture));
                 }
             }
         }
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking EventSource exists: {0}", this.Source));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking EventSource exists: {0}", this.Source));
             this.Exists = System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName);
         }
 
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating EventSource: {0}", this.Source));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
             EventSourceCreationData data = new EventSourceCreationData(this.Source, this.LogName) { MachineName = this.MachineName };
             if (!System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
@@ -165,9 +165,9 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 if (this.Force)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "The event source already exists. Force is true, attempting to delete: {0}", this.Source));
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "The event source already exists. Force is true, attempting to delete: {0}", this.Source));
                     System.Diagnostics.EventLog.DeleteEventSource(this.Source, this.MachineName);
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Creating EventSource: {0}", this.Source));
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
                     System.Diagnostics.EventLog.CreateEventSource(data);
                 }
                 else

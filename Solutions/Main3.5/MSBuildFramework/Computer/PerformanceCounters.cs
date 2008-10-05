@@ -97,7 +97,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.GetValue();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -106,24 +106,24 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Getting CounterName: {0}", this.CounterName));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting CounterName: {0}", this.CounterName));
                 PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName);
-                this.Value = pc.NextValue().ToString();
+                this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
             }
             else
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Category not found: {0}", this.CategoryName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Category not found: {0}", this.CategoryName));
             }
         }
 
         private void Add()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding Performance Counter: {0}", this.CategoryName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter: {0}", this.CategoryName));
             CounterCreationDataCollection colCounterCreationData = new CounterCreationDataCollection();
             colCounterCreationData.Clear();
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Removing Category: {0}", this.CategoryName));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
             
@@ -133,7 +133,7 @@ namespace MSBuild.ExtensionPack.Computer
                 string counterName = counter.GetMetadata("CounterName");
                 string counterHelp = counter.GetMetadata("CounterHelp");
                 PerformanceCounterType counterType = (PerformanceCounterType)Enum.Parse(typeof(PerformanceCounterType), counter.GetMetadata("CounterType"));
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Adding PerformanceCounter: {0}", counterName));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding PerformanceCounter: {0}", counterName));
                 CounterCreationData objCreateCounter = new CounterCreationData(counterName, counterHelp, counterType);
                 colCounterCreationData.Add(objCreateCounter);
             }
@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.Computer
                     categoryType = PerformanceCounterCategoryType.MultiInstance;
                 }
 
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating Category: {0}", this.CategoryName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Create(this.CategoryName, this.CategoryHelp, categoryType, colCounterCreationData);
             }
         }
@@ -156,12 +156,12 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing Performance Counter: {0}", this.CategoryName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Performance Counter: {0}", this.CategoryName));
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
             else
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Category not found: {0}", this.CategoryName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Category not found: {0}", this.CategoryName));
             }
         }
     }

@@ -84,7 +84,7 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 else
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The value '{0}' is not in the EnvironmentVariableTarget Enum. Use Process, User or Machine.", value));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The value '{0}' is not in the EnvironmentVariableTarget Enum. Use Process, User or Machine.", value));
                     return;
                 }
             }
@@ -104,7 +104,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.Set();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -114,7 +114,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void Set()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
             Environment.SetEnvironmentVariable(this.Variable, this.Value[0], this.target);
         }
 
@@ -123,7 +123,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void Get()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Getting Environment Variable: {0} for target: {1} from: {2}", this.Variable, this.target, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Environment Variable: {0} for target: {1} from: {2}", this.Variable, this.target, this.MachineName));
 
             if (this.MachineName == Environment.MachineName)
             {
@@ -134,13 +134,13 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 else
                 {
-                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "The Environemnt Variable was not found: {0}", this.Variable));
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The Environemnt Variable was not found: {0}", this.Variable));
                 }
             }
             else
             {
                 this.GetManagementScope(@"\root\cimv2");
-                ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.InvariantCulture, "SELECT * FROM Win32_Environment WHERE Name = '{0}'", this.Variable));
+                ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM Win32_Environment WHERE Name = '{0}'", this.Variable));
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
                 ManagementObjectCollection moc = searcher.Get();
                 foreach (ManagementObject mo in moc)

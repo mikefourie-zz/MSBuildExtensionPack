@@ -97,14 +97,14 @@ namespace MSBuild.ExtensionPack.Computer
                     this.Modify();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
 
         private void Modify()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Modifying EventLog: {0} on {1}", this.LogName, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying EventLog: {0} on {1}", this.LogName, this.MachineName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName);
@@ -112,13 +112,13 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "EventLog does not exist: {0}", this.LogName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "EventLog does not exist: {0}", this.LogName));
             }
         }
 
         private void Delete()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting EventLog: {0} on: {1}", this.LogName, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting EventLog: {0} on: {1}", this.LogName, this.MachineName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 System.Diagnostics.EventLog.Delete(this.LogName, this.MachineName);
@@ -127,13 +127,13 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking EventLog exists: {0} on: {1}", this.LogName, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking EventLog exists: {0} on: {1}", this.LogName, this.MachineName));
             this.Exists = System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName);
         }
 
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating EventLog: {0} on: {1}", this.LogName, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventLog: {0} on: {1}", this.LogName, this.MachineName));
             if (!System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 EventSourceCreationData ecd = new EventSourceCreationData(this.LogName, this.LogName) { MachineName = this.MachineName };
@@ -145,7 +145,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "EventLog already exists: {0} on: {1}", this.LogName, this.MachineName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "EventLog already exists: {0} on: {1}", this.LogName, this.MachineName));
             }
         }
 
@@ -153,13 +153,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.MaxSize > 0)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Setting EventLog Size: {0}Mb", this.MaxSize));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting EventLog Size: {0}Mb", this.MaxSize));
                 el.MaximumKilobytes = this.MaxSize * 1024;
             }
 
             if (this.Retention > 0)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Setting Retention: {0} days", this.Retention));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Retention: {0} days", this.Retention));
                 el.ModifyOverflowPolicy(OverflowAction.OverwriteOlder, this.Retention);
             }
             else if (this.Retention == -1)
@@ -176,7 +176,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Clear()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Clearing EventLog: {0}", this.LogName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Clearing EventLog: {0}", this.LogName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 using (System.Diagnostics.EventLog targetLog = new System.Diagnostics.EventLog(this.LogName, this.MachineName))
@@ -186,7 +186,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid LogFileName Supplied: {0}", this.LogName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid LogFileName Supplied: {0}", this.LogName));
             }
         }
     }

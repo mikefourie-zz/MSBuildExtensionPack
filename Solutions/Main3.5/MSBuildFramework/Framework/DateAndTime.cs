@@ -89,43 +89,43 @@ namespace MSBuild.ExtensionPack.Framework
                     this.GetElapsed();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
 
         private void GetElapsed()
         {
-            if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00"))
+            if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
                 Log.LogError("Start must be specified");
                 return;
             }
 
-            if (this.End == Convert.ToDateTime("01/01/0001 00:00:00"))
+            if (this.End == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
                 this.End = DateTime.Now;
             }
             
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Getting Elapsed: {0}", this.Format));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Elapsed: {0}", this.Format));
             TimeSpan t = this.End - this.Start;
 
             switch (this.Format)
             {
                 case "MilliSeconds":
-                    this.Result = t.TotalMilliseconds.ToString();
+                    this.Result = t.TotalMilliseconds.ToString(CultureInfo.CurrentCulture);
                     break;
                 case "Seconds":
-                    this.Result = t.TotalSeconds.ToString();
+                    this.Result = t.TotalSeconds.ToString(CultureInfo.CurrentCulture);
                     break;
                 case "Minutes":
-                    this.Result = t.TotalMinutes.ToString();
+                    this.Result = t.TotalMinutes.ToString(CultureInfo.CurrentCulture);
                     break;
                 case "Hours":
-                    this.Result = t.TotalHours.ToString();
+                    this.Result = t.TotalHours.ToString(CultureInfo.CurrentCulture);
                     break;
                 case "Days":
-                    this.Result = t.TotalDays.ToString();
+                    this.Result = t.TotalDays.ToString(CultureInfo.CurrentCulture);
                     break;
             }
         }
@@ -133,7 +133,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void GetDate()
         {
             this.Log.LogMessage("Getting Date / Time");
-            this.Result = DateTime.Now.ToString(this.Format);
+            this.Result = DateTime.Now.ToString(this.Format, CultureInfo.CurrentCulture);
         }
     }
 }

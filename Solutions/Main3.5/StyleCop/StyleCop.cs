@@ -137,7 +137,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                     this.Scan();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -145,10 +145,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
         private void Scan()
         {
             this.Log.LogMessage("Performing StyleCop scan...");
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
             if (File.Exists(this.SettingsFile) == false)
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The Settings file was not found: {0}", this.SettingsFile));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Settings file was not found: {0}", this.SettingsFile));
                 return;
             }
 
@@ -240,7 +240,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
             item.SetMetadata("RuleDescription", e.Violation.Rule.Description);
             item.SetMetadata("RuleName", e.Violation.Rule.Name);
             item.SetMetadata("RuleGroup", e.Violation.Rule.RuleGroup);
-            item.SetMetadata("LineNumber", e.LineNumber.ToString(CultureInfo.InvariantCulture));
+            item.SetMetadata("LineNumber", e.LineNumber.ToString(CultureInfo.CurrentCulture));
             item.SetMetadata("Message", e.Message);
             this.failedFiles.Add(item);
         }

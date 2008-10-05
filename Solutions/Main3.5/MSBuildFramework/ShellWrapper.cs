@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack
     /// </summary>
     internal sealed class ShellWrapper
     {
-        public System.Collections.Specialized.NameValueCollection EnvironmentVariables = new NameValueCollection();
+        private System.Collections.Specialized.NameValueCollection envars = new NameValueCollection();
 
         public ShellWrapper(string executable, string arguments)
         {
@@ -55,6 +55,11 @@ namespace MSBuild.ExtensionPack
         /// Sets the arguments.
         /// </summary>
         public string Arguments { get; set; }
+
+        public NameValueCollection EnvironmentVariables
+        {
+            get { return this.envars; }
+        }
 
         /// <summary>
         /// Executes this instance.

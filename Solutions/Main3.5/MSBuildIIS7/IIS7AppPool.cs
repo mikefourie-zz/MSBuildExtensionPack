@@ -201,7 +201,7 @@ namespace MSBuild.ExtensionPack.Web
                         this.ControlAppPool();
                         break;
                     default:
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
                 }
             }
@@ -216,7 +216,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking whether Application Pool: {0} exists on: {1}", this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application Pool: {0} exists on: {1}", this.Name, this.MachineName));
             this.Exists = this.AppPoolExists();
         }
 
@@ -224,7 +224,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -232,13 +232,13 @@ namespace MSBuild.ExtensionPack.Web
             iappPool.SetMetadata("ManagedPipelineMode", this.pool.ManagedPipelineMode.ToString());
             iappPool.SetMetadata("IdentityType", this.pool.ProcessModel.IdentityType.ToString());
             iappPool.SetMetadata("ManagedRuntimeVersion", this.pool.ManagedRuntimeVersion);
-            iappPool.SetMetadata("QueueLength", this.pool.QueueLength.ToString(CultureInfo.InvariantCulture));
+            iappPool.SetMetadata("QueueLength", this.pool.QueueLength.ToString(CultureInfo.CurrentCulture));
             iappPool.SetMetadata("IdleTimeout", this.pool.ProcessModel.IdleTimeout.ToString());
-            iappPool.SetMetadata("PrivateMemory", this.pool.Recycling.PeriodicRestart.PrivateMemory.ToString(CultureInfo.InvariantCulture));
+            iappPool.SetMetadata("PrivateMemory", this.pool.Recycling.PeriodicRestart.PrivateMemory.ToString(CultureInfo.CurrentCulture));
             iappPool.SetMetadata("PeriodicRestartTime", this.pool.Recycling.PeriodicRestart.Time.ToString());
-            iappPool.SetMetadata("MaxProcesses", this.pool.ProcessModel.MaxProcesses.ToString(CultureInfo.InvariantCulture));
+            iappPool.SetMetadata("MaxProcesses", this.pool.ProcessModel.MaxProcesses.ToString(CultureInfo.CurrentCulture));
             iappPool.SetMetadata("RecycleTimes", this.pool.Recycling.PeriodicRestart.Schedule.ToString());
-            iappPool.SetMetadata("RecycleRequests", this.pool.Recycling.PeriodicRestart.Requests.ToString(CultureInfo.InvariantCulture));
+            iappPool.SetMetadata("RecycleRequests", this.pool.Recycling.PeriodicRestart.Requests.ToString(CultureInfo.CurrentCulture));
             iappPool.SetMetadata("RecycleInterval", this.pool.Recycling.PeriodicRestart.Time.ToString());
 
             this.AppPoolInfo = iappPool;
@@ -248,12 +248,12 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode));
             this.pool.ManagedPipelineMode = this.managedPM;
             this.iisServerManager.CommitChanges();
         }
@@ -262,7 +262,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -272,8 +272,8 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
             this.pool.ProcessModel.IdentityType = this.pmit;
 
             if (this.IdentityType == "SpecificUser")
@@ -289,11 +289,11 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
             this.iisServerManager.ApplicationPools.Remove(this.pool);
             this.iisServerManager.CommitChanges();
         }
@@ -302,7 +302,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -323,16 +323,16 @@ namespace MSBuild.ExtensionPack.Web
             {
                 if (!this.Force)
                 {
-                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} already exists on: {1}", this.Name, this.MachineName));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} already exists on: {1}", this.Name, this.MachineName));
                     return;
                 }
 
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
                 this.iisServerManager.ApplicationPools.Remove(this.pool);
                 this.iisServerManager.CommitChanges();
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
 
             if (this.IdentityType == "SpecificUser" && (string.IsNullOrEmpty(this.PoolIdentity) || string.IsNullOrEmpty(this.IdentityPassword)))
             {
@@ -341,9 +341,9 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             this.pool = this.iisServerManager.ApplicationPools.Add(this.Name);
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode));
             this.pool.ManagedPipelineMode = this.managedPM;
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
             this.pool.ProcessModel.IdentityType = this.pmit;
             if (this.IdentityType == "SpecificUser")
             {
@@ -359,80 +359,80 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
             this.SetCommonInfo();
             this.iisServerManager.CommitChanges();
         }
 
         private void SetCommonInfo()
         {
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting AutoStart to: {0}", this.AutoStart));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting AutoStart to: {0}", this.AutoStart));
             this.pool.AutoStart = this.AutoStart;
-            this.Log.LogMessage(MessageImportance.Low, String.Format(CultureInfo.InvariantCulture, "Setting Enable32BitAppOnWin64 to: {0}", this.Enable32BitAppOnWin64));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Enable32BitAppOnWin64 to: {0}", this.Enable32BitAppOnWin64));
             this.pool.Enable32BitAppOnWin64 = this.Enable32BitAppOnWin64;
 
             if (!string.IsNullOrEmpty(this.ManagedRuntimeVersion))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ManagedRuntimeVersion to: {0}", this.ManagedRuntimeVersion));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedRuntimeVersion to: {0}", this.ManagedRuntimeVersion));
                 this.pool.ManagedRuntimeVersion = this.ManagedRuntimeVersion;
             }
 
             if (this.QueueLength > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting QueueLength to: {0}", this.QueueLength));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting QueueLength to: {0}", this.QueueLength));
                 this.pool.QueueLength = this.QueueLength;
             }
             else if (this.QueueLength == -1)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Setting QueueLength to: {0}", this.iisServerManager.ApplicationPoolDefaults.QueueLength));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting QueueLength to: {0}", this.iisServerManager.ApplicationPoolDefaults.QueueLength));
                 this.pool.QueueLength = this.iisServerManager.ApplicationPoolDefaults.QueueLength;
             }
 
             if (this.IdleTimeout > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting IdleTimeout to: {0} minutes", this.IdleTimeout));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting IdleTimeout to: {0} minutes", this.IdleTimeout));
                 this.pool.ProcessModel.IdleTimeout = TimeSpan.FromMinutes(this.IdleTimeout);
             }
             else if (this.IdleTimeout == -1)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting IdleTimeout to: {0}", this.iisServerManager.ApplicationPoolDefaults.ProcessModel.IdleTimeout));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting IdleTimeout to: {0}", this.iisServerManager.ApplicationPoolDefaults.ProcessModel.IdleTimeout));
                 this.pool.ProcessModel.IdleTimeout = this.iisServerManager.ApplicationPoolDefaults.ProcessModel.IdleTimeout;
             }
 
             if (this.PeriodicRestartPrivateMemory > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.PrivateMemory to: {0}", this.PeriodicRestartPrivateMemory));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.PrivateMemory to: {0}", this.PeriodicRestartPrivateMemory));
                 this.pool.Recycling.PeriodicRestart.PrivateMemory = this.PeriodicRestartPrivateMemory;
             }
             else if (this.PeriodicRestartPrivateMemory == -1)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.PrivateMemory to: {0}", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.PrivateMemory));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.PrivateMemory to: {0}", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.PrivateMemory));
                 this.pool.Recycling.PeriodicRestart.PrivateMemory = this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.PrivateMemory;
             }
 
             if (this.PeriodicRestartTime > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestartTime to: {0} minutes", this.PeriodicRestartTime));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestartTime to: {0} minutes", this.PeriodicRestartTime));
                 this.pool.Recycling.PeriodicRestart.Time = TimeSpan.FromMinutes(this.PeriodicRestartTime);
             }
             else if (this.PeriodicRestartTime == -1)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestartTime to: {0} minutes", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Time));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestartTime to: {0} minutes", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Time));
                 this.pool.Recycling.PeriodicRestart.Time = this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Time;
             }
 
             if (this.MaxProcesses > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ProcessModel.MaxProcesses to: {0}", this.MaxProcesses));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModel.MaxProcesses to: {0}", this.MaxProcesses));
                 this.pool.ProcessModel.MaxProcesses = this.MaxProcesses;
             }
             else if (this.MaxProcesses == -1)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting ProcessModel.MaxProcesses to: {0}", this.MaxProcesses));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModel.MaxProcesses to: {0}", this.MaxProcesses));
                 this.pool.ProcessModel.MaxProcesses = this.iisServerManager.ApplicationPoolDefaults.ProcessModel.MaxProcesses;
             }
 
@@ -441,9 +441,9 @@ namespace MSBuild.ExtensionPack.Web
                 string[] times = this.RecycleTimes.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string time in times)
                 {
-                    double hours = Convert.ToDouble(time.Split(new[] { ':' })[0], CultureInfo.InvariantCulture);
-                    double minutes = Convert.ToDouble(time.Split(new[] { ':' })[1], CultureInfo.InvariantCulture);
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.Schedule to: {0}:{1}", hours, minutes));
+                    double hours = Convert.ToDouble(time.Split(new[] { ':' })[0], CultureInfo.CurrentCulture);
+                    double minutes = Convert.ToDouble(time.Split(new[] { ':' })[1], CultureInfo.CurrentCulture);
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.Schedule to: {0}:{1}", hours, minutes));
                     this.pool.Recycling.PeriodicRestart.Schedule.Add(TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes)));
                 }
             }
@@ -455,23 +455,23 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.RecycleRequests > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.RecycleRequests to: {0}", this.RecycleRequests));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.RecycleRequests to: {0}", this.RecycleRequests));
                 this.pool.Recycling.PeriodicRestart.Requests = this.RecycleRequests;
             }
             else if (this.RecycleRequests == -1)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.RecycleRequests to: {0}", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Requests));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.RecycleRequests to: {0}", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Requests));
                 this.pool.Recycling.PeriodicRestart.Requests = this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Requests;
             }
 
             if (this.RecycleInterval > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.Time to: {0}", this.RecycleInterval));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.Time to: {0}", this.RecycleInterval));
                 this.pool.Recycling.PeriodicRestart.Time = TimeSpan.FromMinutes(this.RecycleInterval);
             }
             else if (this.RecycleInterval == -1)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Setting Recycling.PeriodicRestart.Time to: {0}", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Time));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.Time to: {0}", this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Time));
                 this.pool.Recycling.PeriodicRestart.Time = this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Time;
             }
         }

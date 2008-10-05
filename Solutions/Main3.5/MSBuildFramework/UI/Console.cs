@@ -132,7 +132,7 @@ namespace MSBuild.ExtensionPack.UI
                     this.ReadLine();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -151,12 +151,12 @@ namespace MSBuild.ExtensionPack.UI
             {
                 if (this.ToLower)
                 {
-                    this.UserResponse = this.UserResponse.ToLower();
+                    this.UserResponse = this.UserResponse.ToLower(CultureInfo.CurrentCulture);
                 }
 
                 if (this.ToUpper)
                 {
-                    this.UserResponse = this.UserResponse.ToUpper();
+                    this.UserResponse = this.UserResponse.ToUpper(CultureInfo.CurrentCulture);
                 }
             }
         }
@@ -165,25 +165,25 @@ namespace MSBuild.ExtensionPack.UI
         {
             if (this.Frequency < 37 || this.Frequency > 32767)
             {
-                this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "Invalid Frequency: {0}. Value must be between 37 and 32767. Using default of 600.", this.Frequency));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Invalid Frequency: {0}. Value must be between 37 and 32767. Using default of 600.", this.Frequency));
                 this.Frequency = 600;
             }
 
             if (this.Duration < 1 || this.Duration > 10000)
             {
-                this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "Invalid Duration: {0}. Value must be between 1 and 10000. Using default of 333.", this.Duration));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Invalid Duration: {0}. Value must be between 1 and 10000. Using default of 333.", this.Duration));
                 this.Duration = 333;
             }
 
             if (this.Repeat < 1 || this.Repeat > 20)
             {
-                this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "Invalid Repeat: {0}. Value must be between 1 and 20. Using default of 1.", this.Repeat));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Invalid Repeat: {0}. Value must be between 1 and 20. Using default of 1.", this.Repeat));
                 this.Repeat = 1;
             }
 
             if (this.Interval < 10 || this.Interval > 5000)
             {
-                this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "Invalid Interval: {0}. Value must be between 10 and 5000. Using default of 10.", this.Interval));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Invalid Interval: {0}. Value must be between 10 and 5000. Using default of 10.", this.Interval));
                 this.Interval = 10;
             }
 

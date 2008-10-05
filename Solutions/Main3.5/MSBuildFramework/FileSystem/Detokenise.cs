@@ -154,7 +154,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case "Detokenise":
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
 
@@ -189,7 +189,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             try
             {
-                this.Log.LogMessage("Detokenise Task Execution Started [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.InvariantCulture) + "]");
+                this.Log.LogMessage("Detokenise Task Execution Started [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
 
                 // if the ReplacementValues collection is null, then we need to load
                 // the project file that called this task to get it's properties.
@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     // Read the project file to get the tokens
                     this.project = new Project();
                     string projectFile = this.BuildEngine.ProjectFileOfTaskNode;
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Loading Project: {0}", projectFile));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
                     this.project.Load(projectFile);
                 }
 
@@ -212,7 +212,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                     catch (ArgumentException)
                     {
-                        Log.LogError(string.Format("Error, {0} is not a supported encoding name.", this.TextEncoding));
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
                         return;
                     }
                 }
@@ -234,13 +234,13 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
             finally
             {
-                this.Log.LogMessage("Detokenise Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.InvariantCulture) + "]");
+                this.Log.LogMessage("Detokenise Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
             }
         }
 
         private void ProcessPath()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Detokenising Path: {0}", this.TargetPath));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Path: {0}", this.TargetPath));
             string originalPath = this.TargetPath;
             string rootPath = originalPath.Replace("*", string.Empty);
             
@@ -251,7 +251,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 DirectoryInfo dir = new DirectoryInfo(rootPath);
                 if (!dir.Exists)
                 {
-                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "The directory does not exist: {0}", rootPath));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
                     throw new ArgumentException("Review error log");
                 }
                 
@@ -264,7 +264,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 DirectoryInfo dir = new DirectoryInfo(originalPath);
                 if (!dir.Exists)
                 {
-                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "The directory does not exist: {0}", rootPath));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
                     throw new ArgumentException("Review error log");
                 }
 
@@ -311,7 +311,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 throw new ArgumentException("Review error log");
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Detokenising Collection: {0} files", this.TargetFiles.Length));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Collection: {0} files", this.TargetFiles.Length));
             foreach (ITaskItem file in this.TargetFiles)
             {
                 this.tokenMatched = false;
@@ -331,7 +331,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (this.DisplayFiles)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Detokenising File: {0}", file));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising File: {0}", file));
             }
 
             Encoding finalEncoding;
@@ -339,7 +339,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // See if the file exists
             if (checkExists && System.IO.File.Exists(file) == false)
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "File not found: {0}", file));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "File not found: {0}", file));
                 throw new ArgumentException("Review error log");
             }
 
@@ -375,7 +375,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     {
                         if (this.DisplayFiles)
                         {
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Re-writing file content: {0}", file));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Re-writing file content: {0}", file));
                         }
 
                         streamWriter.Write(newFile);
@@ -412,14 +412,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                 }
 
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "Property not found: {0}", extractedProperty));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                 throw new ArgumentException("Review error log");
             }
 
             // we need to look in the calling project's properties collection
             if (this.project.EvaluatedProperties[extractedProperty] == null)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Property not found: {0}", extractedProperty));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                 throw new ArgumentException("Review error log");
             }
 

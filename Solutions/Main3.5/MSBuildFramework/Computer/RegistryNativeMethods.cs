@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Computer
         internal const int WM_SETTINGCHANGE = 0x001A;
         internal const int SMTO_ABORTIFHUNG = 0x0002;
 
-        [DllImportAttribute("USER32")]
+        [DllImportAttribute("USER32", CharSet = CharSet.Unicode)]
         internal static extern int SendMessageTimeout(int hWnd, int Msg, int wParam, string lParam, int fuFlags, int uTimeout, int lpdwResult);
     }
 }

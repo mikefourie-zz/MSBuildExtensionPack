@@ -154,7 +154,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
             
             this.ResolveExePath();
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "TF Operation: {0}", this.TaskAction));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
             switch (this.TaskAction)
             {
                 case "Add":
@@ -182,7 +182,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.Undelete();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -267,7 +267,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void Checkin()
         {
-            this.ExecuteCommand("checkin", String.Format(CultureInfo.InvariantCulture, "/comment:\"{0}\" /notes:{1}", this.Comments, this.Notes), "/noprompt /recursive");
+            this.ExecuteCommand("checkin", String.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\" /notes:{1}", this.Comments, this.Notes), "/noprompt /recursive");
         }
 
         private void Delete()
@@ -293,7 +293,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            string arguments = String.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", action, this.itemspec, options);
+            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemspec, options);
             if (string.IsNullOrEmpty(this.OverrideText) == false)
             {
                 arguments += " /override:\"" + this.OverrideText + "\"";
@@ -312,7 +312,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
             }
 
-            this.Log.LogMessage(string.Format("Executing {0} {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
             int returnValue = this.shellWrapper.Execute();
             this.Log.LogMessage(MessageImportance.Low, this.shellWrapper.StandardOutput);
             this.SwitchReturnValue(returnValue, this.shellWrapper.StandardError.Trim());
@@ -375,7 +375,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (!string.IsNullOrEmpty(vstools))
             {
                 this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
             }
 
             if (!File.Exists(this.tfexe))

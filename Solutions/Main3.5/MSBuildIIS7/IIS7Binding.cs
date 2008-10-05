@@ -131,7 +131,7 @@ namespace MSBuild.ExtensionPack.Web
                         this.Remove();
                         break;
                     default:
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
                 }
             }
@@ -178,7 +178,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.SiteExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -188,7 +188,7 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
             foreach (Binding binding in this.website.Bindings)
             {
                 if (binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation))
@@ -203,11 +203,11 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.SiteExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting BindingInformation: [{0}] {1} from {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting BindingInformation: [{0}] {1} from {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
             foreach (Binding binding in this.website.Bindings)
             {
                 if (binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation)
@@ -224,7 +224,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.SiteExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -241,12 +241,12 @@ namespace MSBuild.ExtensionPack.Web
                     this.CertificateStoreName = "MY";
                 }
 
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating binding with certificate: thumb print '{0}' in store '{1}'", this.CertificateHash, this.CertificateStoreName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating binding with certificate: thumb print '{0}' in store '{1}'", this.CertificateHash, this.CertificateStoreName));
                 this.website.Bindings.Add(this.BindingInformation, HexToData(this.CertificateHash), this.CertificateStoreName);
             }
             else
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
                 foreach (Binding binding in this.website.Bindings)
                 {
                     if (binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation)
@@ -266,7 +266,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.SiteExists())
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "The website: {0} does not exists on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} does not exists on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -276,7 +276,7 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Modifying BindingInformation, setting: {0} for: {1} on: {2}", this.BindingInformation, this.Name, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying BindingInformation, setting: {0} for: {1} on: {2}", this.BindingInformation, this.Name, this.MachineName));
             foreach (Binding binding in this.website.Bindings)
             {
                 if (binding.Protocol.Equals(this.PreviousBindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.PreviousBindingInformation)

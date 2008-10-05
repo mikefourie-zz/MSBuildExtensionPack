@@ -117,7 +117,7 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Loading Assembly: {0}", this.NetAssembly));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Loading Assembly: {0}", this.NetAssembly));
             this.assembly = System.Reflection.Assembly.LoadFrom(this.NetAssembly);
 
             switch (this.TaskAction)
@@ -129,26 +129,26 @@ namespace MSBuild.ExtensionPack.Framework
                     this.GetMethodInfo();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
 
         private void GetMethodInfo()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Getting MethodInfo for: {0}", this.NetAssembly));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting MethodInfo for: {0}", this.NetAssembly));
             this.outputItems = new List<ITaskItem>();
             foreach (Type type in this.assembly.GetTypes())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Found Type: {0}", this.NetClass));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
                 ITaskItem t = new TaskItem(type.Name);
                 string paras = string.Empty;
                 foreach (MethodInfo mi in type.GetMethods())
                 {
                     foreach (ParameterInfo pi in mi.GetParameters())
                     {
-                        this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Found Parameter: {0}", pi.Name));
-                        paras += string.Format(CultureInfo.InvariantCulture, "[{0}] {1} | ", pi.ParameterType, pi.Name);
+                        this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Parameter: {0}", pi.Name));
+                        paras += string.Format(CultureInfo.CurrentCulture, "[{0}] {1} | ", pi.ParameterType, pi.Name);
                     }
 
                     // remove the last object paramater which appears on methods.
@@ -166,7 +166,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 if (type.IsClass && type.Name == this.NetClass)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Found Type: {0}", this.NetClass));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
                     typeFound = true;
                     object[] arguments = new object[0];
                     if (this.NetArguments != null)
@@ -181,7 +181,7 @@ namespace MSBuild.ExtensionPack.Framework
                         }
                     }
                     
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Invoking: {0}", this.NetMethod));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Invoking: {0}", this.NetMethod));
     
                     if (this.NetMethod == null)
                     {
@@ -189,7 +189,7 @@ namespace MSBuild.ExtensionPack.Framework
                         this.NetMethod = string.Empty;                    
                     }
 
-                    object result = type.InvokeMember(this.NetMethod, BindingFlags.Default | BindingFlags.InvokeMethod, null, Activator.CreateInstance(type), arguments);
+                    object result = type.InvokeMember(this.NetMethod, BindingFlags.Default | BindingFlags.InvokeMethod, null, Activator.CreateInstance(type), arguments, CultureInfo.CurrentCulture);
 
                     if (!(result == null))
                     {
@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (!typeFound)
             {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "Type not Found: {0}", this.NetClass));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Type not Found: {0}", this.NetClass));
                 return;
             }
         }
@@ -210,21 +210,21 @@ namespace MSBuild.ExtensionPack.Framework
             switch (it.GetMetadata("Type").ToUpperInvariant())
             {
                 case "INT":
-                    return Convert.ToInt32(it.ItemSpec);
+                    return Convert.ToInt32(it.ItemSpec, CultureInfo.CurrentCulture);
                 case "STRING":
                     return it.ItemSpec;
                 case "DOUBLE":
-                    return Convert.ToDouble(it.ItemSpec);
+                    return Convert.ToDouble(it.ItemSpec, CultureInfo.CurrentCulture);
                 case "BOOL":
-                    return Convert.ToBoolean(it.ItemSpec);
+                    return Convert.ToBoolean(it.ItemSpec, CultureInfo.CurrentCulture);
                 case "CHAR":
-                    return Convert.ToChar(it.ItemSpec);
+                    return Convert.ToChar(it.ItemSpec, CultureInfo.CurrentCulture);
                 case "LONG":
-                    return Convert.ToInt64(it.ItemSpec);
+                    return Convert.ToInt64(it.ItemSpec, CultureInfo.CurrentCulture);
                 case "DECIMAL":
-                    return Convert.ToDecimal(it.ItemSpec);
+                    return Convert.ToDecimal(it.ItemSpec, CultureInfo.CurrentCulture);
                 case "DATETIME":
-                    return Convert.ToDateTime(it.ItemSpec);
+                    return Convert.ToDateTime(it.ItemSpec, CultureInfo.CurrentCulture);
                 default:
                     Log.LogError("Invalid Type supplied");
                     break;

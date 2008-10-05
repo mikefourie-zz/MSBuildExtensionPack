@@ -135,8 +135,8 @@ namespace MSBuild.ExtensionPack.BizTalk
                 return;
             }
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
-            this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.InvariantCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database) };
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
+            this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database) };
 
             switch (this.TaskAction)
             {
@@ -176,7 +176,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     this.ConfigureReference();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -191,7 +191,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             if (!this.CheckExists(this.Application))
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Application not found: {0}", this.Application));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", this.Application));
                 return;
             }
 
@@ -204,18 +204,18 @@ namespace MSBuild.ExtensionPack.BizTalk
                     switch (this.TaskAction)
                     {
                         case "RemoveReference":
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Removing Referenced Application: {0} from: {1}", item.ItemSpec, this.Application));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Referenced Application: {0} from: {1}", item.ItemSpec, this.Application));
                             this.app.RemoveReference(refApp);
                             break;
                         case "AddReference":
-                            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding Referenced Application: {0} from: {1}", item.ItemSpec, this.Application));
+                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Referenced Application: {0} from: {1}", item.ItemSpec, this.Application));
                             this.app.AddReference(refApp);
                             break;
                     }
                 }
                 else
                 {
-                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "Referenced Application not found: {0}", item.ItemSpec));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Referenced Application not found: {0}", item.ItemSpec));
                     return;
                 }
             }
@@ -229,7 +229,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             {
                 if (!this.CheckExists(appl.ItemSpec))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Application not found: {0}", appl.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
                 }
             }
         }
@@ -238,7 +238,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             foreach (ITaskItem appl in this.Applications)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating Application: {0}", appl.ItemSpec));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application: {0}", appl.ItemSpec));
                 if (this.CheckExists(appl.ItemSpec))
                 {
                     if (this.Force)
@@ -248,7 +248,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     }
                     else
                     {
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Application already exists: {0}. Set Force to true to delete the Application.", appl.ItemSpec));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application already exists: {0}. Set Force to true to delete the Application.", appl.ItemSpec));
                         return;
                     }
                 }
@@ -289,7 +289,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 apps.UiLevel = 2;
 
                 Microsoft.BizTalk.ApplicationDeployment.Application deadapp = apps[application.ItemSpec];
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting Application: {0}", application.ItemSpec));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application: {0}", application.ItemSpec));
                 apps.Remove(deadapp);
             }
 
@@ -302,7 +302,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             {
                 if (!this.CheckExists(appl.ItemSpec))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Application not found: {0}", appl.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
                     return;
                 }
 
@@ -332,7 +332,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                         break;
                 }
 
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Stopping Application: {0}", appl.ItemSpec));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Application: {0}", appl.ItemSpec));
                 this.explorer.SaveChanges();
                 this.app.Stop(option);
                 this.explorer.SaveChanges();
@@ -343,11 +343,11 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             foreach (ITaskItem appl in this.Applications)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Manage Application: {0}. Action: {1}", appl.ItemSpec, this.TaskAction));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Manage Application: {0}. Action: {1}", appl.ItemSpec, this.TaskAction));
 
                 if (!this.CheckExists(appl.ItemSpec))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Application not found: {0}", appl.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
                     return;
                 }
 
@@ -379,16 +379,16 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private bool CheckExists(string applicationName)
         {
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Checking whether Application exists: {0}", applicationName));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", applicationName));
             this.app = this.explorer.Applications[applicationName];
             if (this.app != null)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Application exists: {0}", applicationName));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Application exists: {0}", applicationName));
                 this.Exists = true;
                 return true;
             }
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Application does not exist: {0}", applicationName));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Application does not exist: {0}", applicationName));
             return false;
         }
 

@@ -132,7 +132,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.SetVersion();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -160,18 +160,18 @@ namespace MSBuild.ExtensionPack.VisualStudio
             this.Log.LogMessage("Getting Version");
             string buildstring = this.TfsBuildNumber.Replace(this.BuildName + "_", string.Empty);
             string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.InvariantCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.InvariantCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
+            DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
             switch (this.VersionFormat.ToUpperInvariant())
             {
                 case "ELAPSED":
                     TimeSpan elapsed = DateTime.Today - Convert.ToDateTime(this.StartDate);
-                    this.Version = string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", this.Major, this.Minor, elapsed.Days.ToString(CultureInfo.InvariantCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1]);
+                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}.{1}.{2}.{3}", this.Major, this.Minor, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1]);
                     break;
                 case "DATETIME":
-                    this.Version = string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", this.Major, this.Minor, t.ToString(this.DateFormat, CultureInfo.InvariantCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1]);
+                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}.{1}.{2}.{3}", this.Major, this.Minor, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1]);
                     break;
                 default:
-                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
                     return;
             }
         }
@@ -205,7 +205,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             foreach (ITaskItem file in this.Files)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Versioning {0} at {1}", file.ItemSpec, this.Version));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Versioning {0} at {1}", file.ItemSpec, this.Version));
                 bool changedAttribute = false;
 
                 // First make sure the file is writable.
@@ -275,7 +275,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.fileEncoding = System.Text.Encoding.UTF32;
                     break;
                 default:
-                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "Encoding not supported: {0}", this.TextEncoding));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Encoding not supported: {0}", this.TextEncoding));
                     return false;
             }
 

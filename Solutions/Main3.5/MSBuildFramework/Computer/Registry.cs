@@ -4,6 +4,7 @@
 namespace MSBuild.ExtensionPack.Computer
 {
     using System;
+    using System.Globalization;
     using Microsoft.Build.Framework;
     using Microsoft.Win32;
 
@@ -102,7 +103,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (System.ArgumentException)
             {
-                Log.LogError(string.Format("The Registry Hive provided is not valid: {0}", this.RegistryHive));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Registry Hive provided is not valid: {0}", this.RegistryHive));
                 return;
             }
 
@@ -127,7 +128,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.CheckEmpty();
                     break;
                 default:
-                    Log.LogError(string.Format("Invalid TaskAction passed: {0}", this.TaskAction));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -137,7 +138,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void CheckEmpty()
         {
-            this.Log.LogMessage(string.Format("Checking if Registry Key: {0} is empty in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Key: {0} is empty in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
             {
@@ -152,13 +153,13 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                Log.LogError(string.Format("Registry Key: {0} not found in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Registry Key: {0} not found in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             }
         }
 
         private void Set()
         {
-            this.Log.LogMessage(string.Format("Setting Registry Value: {0} for Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Registry Value: {0} for Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             bool changed = false;
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
@@ -182,21 +183,21 @@ namespace MSBuild.ExtensionPack.Computer
                             case RegistryValueKind.Binary:
                                 string[] parts = this.Data.Split(separator);
                                 byte[] val = new byte[parts.Length];
-                                for (int i = 0; i < parts.Length; val[i++] = Byte.Parse(parts[i]))
+                                for (int i = 0; i < parts.Length; val[i++] = Byte.Parse(parts[i], CultureInfo.CurrentCulture))
                                 {
                                 }
 
                                 registryValue = val;
                                 break;
                             case RegistryValueKind.DWord:
-                                registryValue = uint.Parse(this.Data);
+                                registryValue = uint.Parse(this.Data, CultureInfo.CurrentCulture);
                                 break;
                             case RegistryValueKind.MultiString:
                                 parts = this.Data.Split(separator);
                                 registryValue = parts;
                                 break;
                             case RegistryValueKind.QWord:
-                                registryValue = ulong.Parse(this.Data);
+                                registryValue = ulong.Parse(this.Data, CultureInfo.CurrentCulture);
                                 break;
                             default:
                                 registryValue = this.Data;
@@ -213,7 +214,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                Log.LogError(string.Format("Registry Key: {0} not found in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Registry Key: {0} not found in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             }
 
             if (changed)
@@ -230,11 +231,11 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Get()
         {
-            this.Log.LogMessage(string.Format("Getting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
             if (subKey == null)
             {
-                Log.LogError(string.Format("The Reqistry Key provided is not valid: {0}", this.Key));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Reqistry Key provided is not valid: {0}", this.Key));
                 return;
             }
 
@@ -243,11 +244,11 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 if (string.IsNullOrEmpty(this.Value))
                 {
-                    Log.LogError(string.Format("A Default value was not found for the Registry Key: {0}", this.Key));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "A Default value was not found for the Registry Key: {0}", this.Key));
                 }
                 else
                 {
-                    Log.LogError(string.Format("The Reqistry value provided is not valid: {0}", this.Value));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Reqistry value provided is not valid: {0}", this.Value));
                 }
 
                 return;
@@ -260,19 +261,19 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void DeleteKeyTree()
         {
-            this.Log.LogMessage(string.Format("Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKeyTree(this.Key);
         }
 
         private void DeleteKey()
         {
-            this.Log.LogMessage(string.Format("Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKey(this.Key, false);
         }
 
         private void CreateKey()
         {
-            this.Log.LogMessage(string.Format("Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).CreateSubKey(this.Key);
             
             if (this.registryKey != null)

@@ -61,15 +61,15 @@ namespace MSBuild.ExtensionPack.Framework
                     thisThread.Abort();
                     break;
                 case "Sleep":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Sleeping all threads for: {0}ms", this.Timeout));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Sleeping all threads for: {0}ms", this.Timeout));
                     System.Threading.Thread.Sleep(this.Timeout);
                     break;
                 case "SpinWait":
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "SpinWait all threads for: {0} iterations", this.Iterations));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SpinWait all threads for: {0} iterations", this.Iterations));
                     System.Threading.Thread.SpinWait(this.Iterations);
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }

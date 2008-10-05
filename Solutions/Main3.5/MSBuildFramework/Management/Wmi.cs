@@ -134,7 +134,7 @@ namespace MSBuild.ExtensionPack.Management
                     this.Query();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -152,7 +152,7 @@ namespace MSBuild.ExtensionPack.Management
 
             // Obtain in-parameters for the method
             ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Method: {0}", this.Method));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
 
             if (this.MethodParameters != null)
             {
@@ -160,7 +160,7 @@ namespace MSBuild.ExtensionPack.Management
                 foreach (ITaskItem param in this.MethodParameters)
                 {
                     string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
                     inParams[data[0]] = data[1];
                 }
             }
@@ -180,7 +180,7 @@ namespace MSBuild.ExtensionPack.Management
         private void Query()
         {
             this.GetManagementScope(this.Namespace);
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Executing WMI query: SELECT * FROM {0}", this.Class));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing WMI query: SELECT * FROM {0}", this.Class));
             ObjectQuery query = new ObjectQuery("SELECT * FROM " + this.Class);
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
@@ -193,7 +193,7 @@ namespace MSBuild.ExtensionPack.Management
                 {
                     try
                     {
-                        this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Extracting Property: {0}", prop.ItemSpec));
+                        this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Property: {0}", prop.ItemSpec));
                         string value = string.Empty;
 
                         // sometimes the properties might be arrays.....
@@ -216,7 +216,7 @@ namespace MSBuild.ExtensionPack.Management
                     }
                     catch
                     {
-                        this.LogTaskWarning(string.Format("Property Not Found: {0}", prop.ItemSpec));
+                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Property Not Found: {0}", prop.ItemSpec));
                     }
                 }
             }

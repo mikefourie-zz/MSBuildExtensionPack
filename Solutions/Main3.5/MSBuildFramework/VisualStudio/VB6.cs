@@ -80,7 +80,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.Build();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -93,13 +93,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Building Projects Collection: {0} projects", this.Projects.Length));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Building Projects Collection: {0} projects", this.Projects.Length));
             foreach (ITaskItem project in this.Projects)
             {
                 this.BuildProject(project);
             }
-            
-            this.Log.LogMessage("BuildVB6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.InvariantCulture) + "]");
+
+            this.Log.LogMessage("BuildVB6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
             return;
         }
 

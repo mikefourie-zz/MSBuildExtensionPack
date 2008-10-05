@@ -186,7 +186,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.StringToItemCol();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -233,7 +233,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.Position > this.InputItems1.Length - 1)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Position: {0} is outside the size of the item collection: {1}", this.Position, this.InputItems1.Length));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Position: {0} is outside the size of the item collection: {1}", this.Position, this.InputItems1.Length));
             }
 
             this.outputItems = new List<ITaskItem> { this.inputItems1[this.Position] };

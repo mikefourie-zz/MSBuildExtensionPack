@@ -81,7 +81,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.RemoveAllSkipVerification();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -101,7 +101,7 @@ namespace MSBuild.ExtensionPack.Framework
                 this.Log.LogError("PublicKeyToken is required");
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding SkipVerification for: {0}", this.PublicKeyToken));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding SkipVerification for: {0}", this.PublicKeyToken));
             CommandLineBuilder commandLine = new CommandLineBuilder();
             commandLine.AppendSwitch("-q -Vr");
             commandLine.AppendSwitch("*," + this.PublicKeyToken);
@@ -112,7 +112,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (!System.IO.File.Exists(this.KeyFile))
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "KeyFile not found: {0}", this.KeyFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "KeyFile not found: {0}", this.KeyFile));
                 return;   
             }
 
@@ -121,7 +121,7 @@ namespace MSBuild.ExtensionPack.Framework
                 FileInfo fi = new FileInfo(assembly.ItemSpec);
                 if (fi.Exists)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Signing Assembly: {0}", assembly.ItemSpec));
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Signing Assembly: {0}", assembly.ItemSpec));
 
                     CommandLineBuilder commandLine = new CommandLineBuilder();
                     commandLine.AppendSwitch("-q -R");
@@ -135,7 +135,7 @@ namespace MSBuild.ExtensionPack.Framework
                 }
                 else
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Assembly not found: {0}", assembly.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Assembly not found: {0}", assembly.ItemSpec));
                 }
             }
         }

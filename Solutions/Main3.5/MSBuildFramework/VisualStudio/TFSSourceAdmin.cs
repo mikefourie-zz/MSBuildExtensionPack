@@ -76,7 +76,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.ResolveExePath();
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "TF Operation: {0}", this.TaskAction));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
             switch (this.TaskAction)
             {
                 case "Branch":
@@ -86,20 +86,20 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.Rename();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
 
         private void Rename()
         {
-            string args = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", this.OldItem, this.NewItem);
+            string args = string.Format(CultureInfo.CurrentCulture, "\"{0}\" \"{1}\"", this.OldItem, this.NewItem);
             this.ExecuteCommand("rename ", args);
         }
 
         private void Branch()
         {
-            string args = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\" /noprompt /noget", this.OldItem, this.NewItem);
+            string args = string.Format(CultureInfo.CurrentCulture, "\"{0}\" \"{1}\" /noprompt /noget", this.OldItem, this.NewItem);
             if (!string.IsNullOrEmpty(this.VersionSpec))
             {
                 args += " /version:" + "\"" + this.VersionSpec + "\"";
@@ -115,7 +115,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <param name="options">The options.</param>
         private void ExecuteCommand(string action, string options)
         {
-            string arguments = String.Format(CultureInfo.InvariantCulture, "{0} {1}", action, options);
+            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
 
             this.shellWrapper = new ShellWrapper(this.tfexe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
@@ -123,7 +123,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
             }
 
-            this.Log.LogMessage(string.Format("Executing {0} with {1}", this.shellWrapper.Executable, arguments));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, arguments));
             int returnValue = this.shellWrapper.Execute();
             this.Log.LogMessage(MessageImportance.Low, this.shellWrapper.StandardOutput);
             this.SwitchReturnValue(returnValue, this.shellWrapper.StandardError.Trim());
@@ -163,7 +163,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (!string.IsNullOrEmpty(vstools))
             {
                 this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
             }
 
             if (!File.Exists(this.tfexe))

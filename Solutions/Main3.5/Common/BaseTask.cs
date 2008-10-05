@@ -79,7 +79,7 @@ namespace MSBuild.ExtensionPack
         {
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "This task does not support remote execution. Please remove the MachineName: {0}", this.MachineName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "This task does not support remote execution. Please remove the MachineName: {0}", this.MachineName));
                 return false;
             }
 
@@ -93,7 +93,7 @@ namespace MSBuild.ExtensionPack
 
         internal void GetManagementScope(string wmiNamespace)
         {
-            this.Log.LogMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "ManagementScope: {0}", "\\\\" + this.MachineName + wmiNamespace));
+            this.Log.LogMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "ManagementScope: {0}", "\\\\" + this.MachineName + wmiNamespace));
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace);
@@ -124,7 +124,7 @@ namespace MSBuild.ExtensionPack
 
             if (!string.IsNullOrEmpty(s))
             {
-                this.LogExceptionStack = Convert.ToBoolean(s, CultureInfo.InvariantCulture);
+                this.LogExceptionStack = Convert.ToBoolean(s, CultureInfo.CurrentCulture);
             }
         }
     }

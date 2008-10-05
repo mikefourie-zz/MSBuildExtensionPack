@@ -138,7 +138,7 @@ namespace MSBuild.ExtensionPack.Compression
                     this.AddFile();
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -156,13 +156,13 @@ namespace MSBuild.ExtensionPack.Compression
 
             if (!System.IO.File.Exists(this.NewFile))
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "New File not found: {0}", this.NewFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "New File not found: {0}", this.NewFile));
                 return;
             }
 
             FileInfo f = new FileInfo(this.NewFile);
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Adding File: {0} to Cab: {1}", this.NewFile, this.CabFile));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0} to Cab: {1}", this.NewFile, this.CabFile));
             string tempFolderName = System.Guid.NewGuid() + "\\";
 
             DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(), tempFolderName));
@@ -170,34 +170,34 @@ namespace MSBuild.ExtensionPack.Compression
 
             if (dirInfo.Exists)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Created: {0}", dirInfo.FullName));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Created: {0}", dirInfo.FullName));
             }
             else
             {
-                Log.LogError(string.Format("Failed to create temp folder: {0}", dirInfo.FullName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to create temp folder: {0}", dirInfo.FullName));
                 return;
             }
 
             // configure the process we need to run
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Extracting Cab: {0}", this.CabFile));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile));
                 cabProcess.StartInfo.FileName = this.ExtractExePath;
                 cabProcess.StartInfo.UseShellExecute = true;
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", dirInfo.FullName, this.CabFile, "/E");
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Calling {0} with {1}", this.ExtractExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", dirInfo.FullName, this.CabFile, "/E");
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath, cabProcess.StartInfo.Arguments));
                 cabProcess.Start();
                 cabProcess.WaitForExit();
             }
 
             Directory.CreateDirectory(dirInfo.FullName + "\\" + this.NewFileDestination);
 
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Copying new File: {0} to {1}", this.NewFile, dirInfo.FullName + "\\" + this.NewFileDestination + "\\" + f.Name));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Copying new File: {0} to {1}", this.NewFile, dirInfo.FullName + "\\" + this.NewFileDestination + "\\" + f.Name));
             System.IO.File.Copy(this.NewFile, dirInfo.FullName + this.NewFileDestination + @"\" + f.Name, true);
 
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Creating Cab: {0}", this.CabFile));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile));
                 cabProcess.StartInfo.FileName = this.CabExePath;
                 cabProcess.StartInfo.UseShellExecute = false;
                 cabProcess.StartInfo.RedirectStandardOutput = true;
@@ -205,8 +205,8 @@ namespace MSBuild.ExtensionPack.Compression
                 StringBuilder options = new StringBuilder();
                 options.Append("-r -p");
                 options.AppendFormat(" -P \"{0}\"\\", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1).Replace(@"C:\", string.Empty));
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"{0} N ""{1}"" {2}", options, this.CabFile, "\"" + dirInfo.FullName + "*.*\"" + " ");
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Calling {0} with {1}", this.CabExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile, "\"" + dirInfo.FullName + "*.*\"" + " ");
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath, cabProcess.StartInfo.Arguments));
                 
                 // start the process
                 cabProcess.Start();
@@ -225,19 +225,19 @@ namespace MSBuild.ExtensionPack.Compression
                 }
             }
 
-            string dirObject = string.Format("win32_Directory.Name='{0}'", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1));
+            string dirObject = string.Format(CultureInfo.CurrentCulture, "win32_Directory.Name='{0}'", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1));
             using (ManagementObject mdir = new ManagementObject(dirObject))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Deleting Temp Folder: {0}", dirObject));
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Deleting Temp Folder: {0}", dirObject));
                 mdir.Get();
                 ManagementBaseObject outParams = mdir.InvokeMethod("Delete", null, null);
 
                 // ReturnValue should be 0, else failure
                 if (outParams != null)
                 {
-                    if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value) != 0)
+                    if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.CurrentCulture) != 0)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
                         return;
                     }
                 }
@@ -269,11 +269,11 @@ namespace MSBuild.ExtensionPack.Compression
             // configure the process we need to run
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Extracting Cab: {0}", this.CabFile));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile));
                 cabProcess.StartInfo.FileName = this.ExtractExePath;
                 cabProcess.StartInfo.UseShellExecute = true;
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", this.ExtractTo, this.CabFile, this.ExtractFile);
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Calling {0} with {1}", this.ExtractExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", this.ExtractTo, this.CabFile, this.ExtractFile);
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath, cabProcess.StartInfo.Arguments));
                 cabProcess.Start();
                 cabProcess.WaitForExit();
             }
@@ -288,7 +288,7 @@ namespace MSBuild.ExtensionPack.Compression
             // Validation
             if (System.IO.File.Exists(this.CabFile) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "CAB file not found: {0}", this.CabFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "CAB file not found: {0}", this.CabFile));
                 return false;
             }
 
@@ -300,7 +300,7 @@ namespace MSBuild.ExtensionPack.Compression
                 }
                 else
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Executable not found: {0}", this.ExtractExePath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.ExtractExePath));
                     return false;
                 }
             }
@@ -308,7 +308,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 if (System.IO.File.Exists(this.ExtractExePath) == false)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Executable not found: {0}", this.ExtractExePath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.ExtractExePath));
                     return false;
                 }
             }
@@ -324,13 +324,13 @@ namespace MSBuild.ExtensionPack.Compression
             // Validation
             if (System.IO.File.Exists(this.CabExePath) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Executable not found: {0}", this.CabExePath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.CabExePath));
                 return;
             }
 
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating Cab: {0}", this.CabFile));
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile));
                 cabProcess.StartInfo.FileName = this.CabExePath;
                 cabProcess.StartInfo.UseShellExecute = false;
                 cabProcess.StartInfo.RedirectStandardOutput = true;
@@ -375,8 +375,8 @@ namespace MSBuild.ExtensionPack.Compression
                     }
                 }
 
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, @"{0} N ""{1}"" {2}", options, this.CabFile, files);
-                this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Calling {0} with {1}", this.CabExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile, files);
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath, cabProcess.StartInfo.Arguments));
 
                 // start the process
                 cabProcess.Start();

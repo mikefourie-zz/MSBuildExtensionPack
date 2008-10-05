@@ -98,8 +98,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.Arguments = "-I-";
             }
 
-            string args = String.Format(CultureInfo.InvariantCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Executing: {0} {1}", this.fileName, args));
+            string args = String.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Executing: {0} {1}", this.fileName, args));
             this.ExecuteVSS(args);
         }
 
@@ -114,7 +114,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                              Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\6.0\Setup\Microsoft Visual SourceSafe");
                     if (vssKey != null)
                     {
-                        string pathToSourceSafe = Convert.ToString(vssKey.GetValue("ProductDir"), CultureInfo.InvariantCulture);
+                        string pathToSourceSafe = Convert.ToString(vssKey.GetValue("ProductDir"), CultureInfo.CurrentCulture);
                         this.fileName = Path.Combine(pathToSourceSafe, @"win32\ss.exe");
                         vssKey.Close();
                     }
@@ -124,7 +124,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     vssKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\8.0\Setup\VS\VSS");
                     if (vssKey != null)
                     {
-                        string pathToSourceSafe = Convert.ToString(vssKey.GetValue("ProductDir"), CultureInfo.InvariantCulture);
+                        string pathToSourceSafe = Convert.ToString(vssKey.GetValue("ProductDir"), CultureInfo.CurrentCulture);
                         this.fileName = Path.Combine(pathToSourceSafe, "ss.exe");
                         vssKey.Close();
                     }
@@ -148,7 +148,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.shellWrapper.EnvironmentVariables.Add("SSPWD", this.UserPassword);
             }
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Using UserName: {0} and Password: {1}", this.UserName, this.UserPassword));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Using UserName: {0} and Password: {1}", this.UserName, this.UserPassword));
             return true;
         }
 
