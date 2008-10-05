@@ -22,7 +22,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>RemoveDuplicateFiles</i> (<b>Required: </b> InputItems1 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>Sort</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
     /// <para><i>StringToItemCol</i> (<b>Required: </b> ItemString, Separator <b>Output: </b> OutputItems, ItemCount)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

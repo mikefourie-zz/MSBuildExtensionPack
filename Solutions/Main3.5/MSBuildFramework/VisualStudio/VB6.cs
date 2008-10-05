@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Build</i> (<b>Required: </b> Projects <b>Optional: </b>VB6Path)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

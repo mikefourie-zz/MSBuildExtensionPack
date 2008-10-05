@@ -10,7 +10,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>Abort</i> (Warning: use only in exceptional circumstances to force an abort)</para>
     /// <para><i>Sleep</i> (<b>Required: </b> Timeout)</para>
     /// <para><i>SpinWait</i> (<b>Required: </b> Iterations)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

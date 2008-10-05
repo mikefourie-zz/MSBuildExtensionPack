@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// <para/>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Analyse</i> (<b>Required: </b> Project or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, OverrideText, Project <b>Output: </b>AnalysisFailed, OutputText)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

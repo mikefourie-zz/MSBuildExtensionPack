@@ -20,7 +20,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>SetPipelineMode</i> (<b>Optional: </b>  PipelineMode)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
-    /// <para><b>Remote Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

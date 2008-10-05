@@ -17,7 +17,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// <para/>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Scan</i> (<b>Required: </b>SourceFiles <b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile, SettingsFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
-    /// <para><b>Remote Support:</b> No</para>
+    /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
     /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Recursive, VersionSpec, Version, Baseless, Force)</para>
     /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

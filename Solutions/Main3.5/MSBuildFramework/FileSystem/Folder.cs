@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>DeleteAll</i> (<b>Required: </b> Path, Match)</para>
     /// <para><i>Move</i> (<b>Required: </b> Path, TargetPath)</para>
     /// <para><i>RemoveContent</i> (<b>Required: </b> Path <b>Optional: </b>Force)</para>
-    /// <para><b>Remote Support:</b> No</para>
+    /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

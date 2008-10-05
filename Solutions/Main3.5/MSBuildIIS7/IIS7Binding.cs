@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>CheckExists</i> (<b>Required: </b> Name, BindingInformation <b>Optional: </b>BindingProtocol <b>Output:</b> Exists, BindingProtocol</para>
     /// <para><i>Modify</i> (<b>Required: </b> Name, BindingInformation, PreviousBindingProtocol, PreviousBindingInformation)</para>
     /// <para><i>Remove</i> (<b>Required: </b> Name <b>Optional: </b>BindingProtocol)</para>
-    /// <para><b>Remote Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetMethodInfo</i> (<b>Required: </b>NetAssembly, NetClass, <b>Output: </b>OutputItems)</para>
     /// <para><i>Invoke</i> (<b>Required: </b>NetAssembly <b>Optional: </b>NetMethod, NetArguments<b>Output: </b>ReturnValue)</para>
-    /// <para><b>Remote Support:</b> No</para>
+    /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

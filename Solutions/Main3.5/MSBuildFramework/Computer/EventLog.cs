@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>Delete</i> (<b>Required: </b>LogName <b>Optional: </b>MachineName)</para>
     /// <para><i>Clear</i> (<b>Required: </b> LogName <b>Optional: </b>MachineName)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>LogName <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
-    /// <para><b>Remote Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

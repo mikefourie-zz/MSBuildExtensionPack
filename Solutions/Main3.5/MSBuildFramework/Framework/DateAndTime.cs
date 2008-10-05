@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Get</i> (<b>Required: </b>Format <b>Output: </b> Result)</para>
     /// <para><i>GetElapsed</i> (<b>Required: </b>Format, Start <b>Optional: </b>End <b>Output: </b> Result)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

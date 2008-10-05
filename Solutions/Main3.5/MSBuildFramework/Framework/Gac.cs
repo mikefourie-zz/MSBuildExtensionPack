@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>AddAssembly</i> (<b>Required: </b> AssemblyPath <b>Optional: </b>MachineName, RemoteAssemblyPath, UserName, UserPassword)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> AssemblyName <b>Optional: </b>MachineName)</para>
     /// <para><i>RemoveAssembly</i> (<b>Required: </b> AssemblyName <b>Optional: </b>MachineName, UserName, UserPassword)</para>
-    /// <para><b>Remote Support:</b> Partial (not for CheckExists)</para>
+    /// <para><b>Remote Execution Support:</b> Partial (not for CheckExists)</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>Remove</i> (<b>Required: </b> OldString, StartIndex <b> Optional: </b>Count <b> Output: </b> NewString)</para>
     /// <para><i>GetLength</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>Insert</i> (<b>Required: </b> OldString, String1, StartIndex<b> Output: </b> NewString)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

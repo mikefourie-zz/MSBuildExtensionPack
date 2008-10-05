@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Create</i> (<b>Output: </b> GuidString, FormattedGuidString)</para>
     /// <para><i>CreateCrypto</i> (<b>Output: </b> GuidString, FormattedGuidString)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

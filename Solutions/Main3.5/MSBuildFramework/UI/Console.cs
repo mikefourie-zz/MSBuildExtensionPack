@@ -10,7 +10,7 @@ namespace MSBuild.ExtensionPack.UI
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Beep</i> (<b>Optional: </b>Title, Repeat, Duration, Frequency, Interval)</para>
     /// <para><i>ReadLine</i> (<b>Optional: </b>Title, UserPrompt, ToLower, ToUpper<b>Output: </b> UserResponse)</para>
-    /// <para><b>Remote Support:</b> No</para>
+    /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

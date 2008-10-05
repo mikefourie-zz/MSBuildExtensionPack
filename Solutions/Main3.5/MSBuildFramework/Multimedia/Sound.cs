@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Multimedia
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Play</i> (<b>Required: </b> SoundFile or SystemSound <b>Optional:</b> Repeat, Interval)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

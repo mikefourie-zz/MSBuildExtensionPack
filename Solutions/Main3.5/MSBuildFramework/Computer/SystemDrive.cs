@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckDriveSpace</i> (<b>Required: </b>Drive, MinSpace <b>Optional: </b>Unit)</para>
     /// <para><i>GetDrives</i> (<b>Optional: </b>SkipDrives <b>Output: </b>Drives)</para>
-    /// <para><b>Remote Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

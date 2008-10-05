@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>RemoveRoot)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para><b>This task requires:</b></para>
     ///     <para>Microsoft Visual J# 2.0 Redistributable Package – Second Edition (x86)</para>
     /// </summary>

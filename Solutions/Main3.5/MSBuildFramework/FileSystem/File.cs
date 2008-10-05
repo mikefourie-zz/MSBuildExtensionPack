@@ -19,7 +19,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b> Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b> Checksum)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
-    /// <para><b>Remote Support:</b> No</para>
+    /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

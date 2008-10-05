@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b> PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName <b>Output: </b>Version)</para>
     /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

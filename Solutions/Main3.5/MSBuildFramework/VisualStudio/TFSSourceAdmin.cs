@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Branch</i> (<b>Required: </b>OldItem, NewItem <b>Optional: </b>Version, WorkingDirectory, VersionSpec)</para>
     /// <para><i>Rename</i> (<b>Required: </b>OldItem, NewItem <b>Optional: </b>Version, WorkingDirectory, VersionSpec)</para>
-    /// <para><b>Remote Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
