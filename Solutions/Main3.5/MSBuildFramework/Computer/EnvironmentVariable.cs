@@ -38,11 +38,11 @@ namespace MSBuild.ExtensionPack.Computer
     ///         <!-- Set a new Environment Variable on a remote machine -->
     ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Set" Variable="ANewEnvSample" Value="bddd" MachineName="MediaHub"/>
     ///         <!-- Get an Environment Variable from a remote machine -->
-    ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Get" Variable="INOCULAN" Target="Machine" MachineName="machname" UserName="Administrator" UserPassword="passw">
+    ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Get" Variable="INOCULAN" Target="Machine" MachineName="machinename" UserName="Administrator" UserPassword="passw">
     ///             <Output PropertyName="EnvValue" TaskParameter="Value"/>
     ///         </MSBuild.ExtensionPack.Computer.EnvironmentVariable>
     ///         <Message Text="INOCULAN Get: $(EnvValue)"/>
-    ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Get" Variable="FT" Target="User" MachineName="machname" UserName="Administrator" UserPassword="passw">
+    ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Get" Variable="FT" Target="User" MachineName="machinename" UserName="Administrator" UserPassword="passw">
     ///             <Output PropertyName="EnvValue" TaskParameter="Value"/>
     ///         </MSBuild.ExtensionPack.Computer.EnvironmentVariable>
     ///         <Message Text="FT Get: $(EnvValue)"/>

@@ -39,25 +39,25 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <ArgsM Include="1.9845">
     ///                 <Type>decimal</Type>
     ///             </ArgsM>
-    ///             <ArgsF Include="C:\anewfolder">
+    ///             <ArgsF Include="C:\Demo1 - Please Delete">
     ///                 <Type>string</Type>
     ///             </ArgsF>
     ///         </ItemGroup>
     ///         <!-- This will cause a default constructor call only -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="MathStuff" NetAssembly="C:\Math2\bin\Debug\Math.dll"/>
-    ///         <!-- Invoke the assembly with the args collection of arguments -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="MathStuff" NetMethod="Sum" NetAssembly="C:\Math2\bin\Debug\Math.dll">
+    ///          <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+    ///         <!--Invoke the assembly with the args collection of arguments -->
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="AssemblyDemo" NetMethod="AddNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Result" PropertyName="R"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="Result: $(R)"/>
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsM)" NetClass="MathStuff" NetMethod="Multiply" NetAssembly="C:\Math2\bin\Debug\Math.dll">
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsM)" NetClass="AssemblyDemo" NetMethod="MultiplyNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Result" PropertyName="R"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="Result: $(R)"/>
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsF)" NetClass="NotMathButAnyway" NetMethod="CreateFolder" NetAssembly="C:\Math2\bin\Debug\Math.dll"/>
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="NotMathButAnyway" NetMethod="CreateDefaultFolder" NetAssembly="C:\Math2\bin\Debug\Math.dll"/>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsF)" NetClass="AssemblyDemo" NetMethod="CreateFolder" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetMethod="CreateDefaultFolder" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
     ///         <!-- Extract some information on the assembly interface -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetMethodInfo" NetAssembly="C:\Math2\bin\Debug\Math.dll">
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetMethodInfo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="OutputItems" ItemName="TypeInfo"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="%(TypeInfo.Identity) %(TypeInfo.Parameters)" />

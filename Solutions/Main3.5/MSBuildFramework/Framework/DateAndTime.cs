@@ -22,7 +22,7 @@ namespace MSBuild.ExtensionPack.Framework
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <PropertyGroup>
-    ///         <Start>17 Nov 1976</Start>
+    ///         <Start>1 Jan 2000</Start>
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <!-- Get the elapsed days since the start date -->

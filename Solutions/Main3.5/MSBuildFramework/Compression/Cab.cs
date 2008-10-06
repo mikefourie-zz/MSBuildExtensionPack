@@ -32,12 +32,12 @@ namespace MSBuild.ExtensionPack.Compression
     ///     <Target Name="Default">
     ///         <ItemGroup>
     ///             <!-- Create a collection of files to CAB -->
-    ///             <Files Include="C:\aaa\**\*"/>
+    ///             <Files Include="C:\ddd\**\*"/>
     ///         </ItemGroup>
     ///         <!-- Create the CAB using the File collection and preserve the paths whilst stripping a prefix -->
     ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" FilesToCab="@(Files)" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbyitem.cab" PreservePaths="true" StripPrefixes="aaa\"/>
-    ///         <!-- Create the same CAB but this time based on the Path. Observe that Recursive is required -->
-    ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" PathToCab="C:\aaa\*" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbypath.cab" PreservePaths="true" StripPrefixes="aaa\" Recursive="true"/>
+    ///         <!-- Create the same CAB but this time based on the Path. Note that Recursive is required -->
+    ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" PathToCab="C:\ddd\*" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbypath.cab" PreservePaths="true" StripPrefixes="aaa\" Recursive="true"/>
     ///         <!-- Add a file to the CAB -->
     ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="AddFile" NewFile="c:\New Text Document.txt" CabExePath="D:\BuildTools\CabArc.Exe" ExtractExePath="D:\BuildTools\Extrac32.EXE" CabFile="C:\newcabbyitem.cab" NewFileDestination="\Any Path"/>
     ///         <!-- Extract a CAB-->

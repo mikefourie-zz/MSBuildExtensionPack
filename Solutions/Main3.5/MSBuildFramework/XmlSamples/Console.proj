@@ -10,12 +10,12 @@
             <Output TaskParameter="UserResponse" PropertyName="Line"/>
         </MSBuild.ExtensionPack.UI.Console>
         <Message Text="User Typed: $(Line)"/>
-        <!-- Read input from the user and uppercase it all -->
+         <!-- Read input from the user and uppercase it all -->
         <MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Please enter your password and press the [Enter] key" ToUpper="true">
             <Output TaskParameter="UserResponse" PropertyName="Line"/>
         </MSBuild.ExtensionPack.UI.Console>
         <Message Text="User Typed: $(Line)"/>
-        <!-- Play some beeps-->
+        <!-- Play some beeps -->
         <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="3"/>
         <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="4" Duration="500" Frequency="1000"/>
         <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="3" Interval="2000"/>

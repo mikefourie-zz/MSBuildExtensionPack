@@ -23,7 +23,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///  <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -41,14 +41,14 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <!-- Set some attributes -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
     ///         <!-- Get the checksum of a file -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Program Files\iTunes\iTunesAdmin.dll">
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Checksum" PropertyName="chksm"/>
     ///         </MSBuild.ExtensionPack.FileSystem.File>
     ///         <Message Text="$(chksm)"/>
     ///         <!-- Replace file content using a regular expression -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="iiiii" Files="@(FilesToParse)"/>
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="idi" Path="c:\Demo*"/>
-    ///         <!-- Count the number of lines in a file adn exclude comments -->
+    ///         <!-- Count the number of lines in a file and exclude comments -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(FilesToCount)" CommentIdentifiers="//">
     ///             <Output TaskParameter="CodeLinecount" PropertyName="csharplines"/>
     ///         </MSBuild.ExtensionPack.FileSystem.File>

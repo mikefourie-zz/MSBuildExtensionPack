@@ -30,6 +30,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///     <PropertyGroup>
     ///         <PathToDetokenise>C:\Demo\*</PathToDetokenise>
     ///         <CPHome>www.codeplex.com/MSBuildExtensionPack</CPHome>
+    ///         <Title>A New Title</Title>
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <ItemGroup>

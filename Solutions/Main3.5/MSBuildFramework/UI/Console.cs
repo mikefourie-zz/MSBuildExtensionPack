@@ -26,12 +26,12 @@ namespace MSBuild.ExtensionPack.UI
     ///             <Output TaskParameter="UserResponse" PropertyName="Line"/>
     ///         </MSBuild.ExtensionPack.UI.Console>
     ///         <Message Text="User Typed: $(Line)"/>
-    ///         <!-- Read input from the user and uppercase it all -->
+    ///          <!-- Read input from the user and uppercase it all -->
     ///         <MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Please enter your password and press the [Enter] key" ToUpper="true">
     ///             <Output TaskParameter="UserResponse" PropertyName="Line"/>
     ///         </MSBuild.ExtensionPack.UI.Console>
     ///         <Message Text="User Typed: $(Line)"/>
-    ///         <!-- Play some beeps-->
+    ///         <!-- Play some beeps -->
     ///         <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="3"/>
     ///         <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="4" Duration="500" Frequency="1000"/>
     ///         <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="3" Interval="2000"/>
@@ -88,7 +88,7 @@ namespace MSBuild.ExtensionPack.UI
         public string Title { get; set; }
 
         /// <summary>
-        /// The message to prompt the user for input
+        /// The message to prompt the user for input. Default is "Please enter a response and press [Enter]:"
         /// </summary>
         public string UserPrompt { get; set; }
 
@@ -141,10 +141,10 @@ namespace MSBuild.ExtensionPack.UI
         {
             if (string.IsNullOrEmpty(this.UserPrompt))
             {
-                this.UserPrompt = "Please enter a response and press [Enter].";
+                this.UserPrompt = "Please enter a response and press [Enter]:";
             }
 
-            this.Log.LogMessage(MessageImportance.Low, this.UserPrompt);
+            this.Log.LogMessage(MessageImportance.High, this.UserPrompt);
             this.UserResponse = System.Console.ReadLine();
 
             if (this.UserResponse != null)

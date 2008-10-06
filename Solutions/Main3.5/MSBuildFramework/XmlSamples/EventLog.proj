@@ -6,13 +6,13 @@
     <Import Project="$(TPath)"/>
     <Target Name="Default">
         <!-- Delete an eventlog -->
-        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Delete" LogName="DemoEventLog"/>.
-        <!-- CHeck an eventlog exists -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Delete" LogName="DemoEventLog"/>
+        <!-- Check whether an eventlog exists -->
         <MSBuild.ExtensionPack.Computer.EventLog TaskAction="CheckExists" LogName="DemoEventLog">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.Computer.EventLog>
         <Message Text="DemoEventLog Exists: $(DoesExist)"/>
-        <!-- Create an eventlog -->
+        <!-- Create whether an eventlog -->
         <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Create" LogName="DemoEventLog"  MaxSize="20" Retention="14"/>
         <MSBuild.ExtensionPack.Computer.EventLog TaskAction="CheckExists" LogName="DemoEventLog">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>

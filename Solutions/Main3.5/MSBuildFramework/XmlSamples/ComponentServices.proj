@@ -6,21 +6,21 @@
     <Import Project="$(TPath)"/>
     <Target Name="Default">
         <!--- Add a component -->
-        <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
+        <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
         <!-- Check it exists -->
         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="CheckApplicationExists" ApplicationName="MyApplication">
             <Output TaskParameter="Exists" PropertyName="DoI"/>
         </MSBuild.ExtensionPack.Computer.ComponentServices>
         <Message Text="Exists: $(DoI)"/>
         <!--- Remove the component -->
-        <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="RemoveComponent" Path="C:\EntServices.dll" ApplicationName="MyApplication"/>
+        <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="RemoveComponent" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication"/>
         <!-- Check it exists again-->
         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="CheckApplicationExists" ApplicationName="MyApplication">
             <Output TaskParameter="Exists" PropertyName="DoI"/>
         </MSBuild.ExtensionPack.Computer.ComponentServices>
         <Message Text="Exists: $(DoI)"/>
         <!--- Add a component -->
-        <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
+        <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
         <!-- Check it exists -->
         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="CheckApplicationExists" ApplicationName="MyApplication">
             <Output TaskParameter="Exists" PropertyName="DoI"/>
