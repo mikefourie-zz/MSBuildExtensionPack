@@ -21,12 +21,12 @@
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Create" Name="NewSite" Path="c:\demo" Port="86" Force="true" Applications="@(Application)" VirtualDirectories="@(VirtualDirectory)">
             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
         </MSBuild.ExtensionPack.Web.Iis7Website>
-        <Message Text="The SiteId: $(NewSiteId)"/>
+        <Message Text="NewSite SiteId: $(NewSiteId)"/>
         <!-- Create a basic site -->
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Create" Name="NewSite2" Path="c:\demo2" Port="84" Force="true">
             <Output TaskParameter="SiteId" PropertyName="NewSiteId2"/>
         </MSBuild.ExtensionPack.Web.Iis7Website>
-        <Message Text="The SiteId: $(NewSiteId2)"/>
+        <Message Text="NewSite2 SiteId: $(NewSiteId2)"/>
         <!-- Stop a site -->
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Stop" Name="NewSite2"/>
         <!-- Start a site -->

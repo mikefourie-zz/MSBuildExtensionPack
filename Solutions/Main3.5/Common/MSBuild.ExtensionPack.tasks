@@ -51,9 +51,9 @@
 
 
     <!-- ============== MSBuildIis7 ============== -->
-    <UsingTask AssemblyFile="$(TasksPath)MSBuild.ExtensionPack.Web.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7AppPool"/>
-    <UsingTask AssemblyFile="$(TasksPath)MSBuild.ExtensionPack.Web.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Binding"/>
-    <UsingTask AssemblyFile="$(TasksPath)MSBuild.ExtensionPack.Web.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Website"/>
+    <UsingTask AssemblyFile="$(TasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7AppPool"/>
+    <UsingTask AssemblyFile="$(TasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Binding"/>
+    <UsingTask AssemblyFile="$(TasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Website"/>
 
 
     <!-- ============== MSBuildJSharp ============== -->
