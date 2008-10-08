@@ -33,11 +33,16 @@ namespace MSBuild.ExtensionPack.Computer
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
-    ///         <!-- check whether a service exists -->
-    ///         <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="MSSQLSERVER">
+    ///         <!-- check whether a service exists (this should return true in most cases) -->
+    ///         <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="Schedule">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
     ///         </MSBuild.ExtensionPack.Computer.WindowsService>
-    ///         <Message Text="Exists: $(DoesExist)"/>
+    ///         <Message Text="Schedule service exists: $(DoesExist)"/>
+    ///         <!-- check whether another service exists (this should return false)-->
+    ///         <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="ThisServiceShouldNotExist">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.WindowsService>
+    ///         <Message Text="ThisServiceShouldNotExist service exists: $(DoesExist)"/>
     ///         <!-- Start a service -->
     ///         <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Start" ServiceName="MSSQLSERVER"/>
     ///         <!-- Stop a service -->
@@ -92,7 +97,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         protected override void InternalExecute()
         {
-            if (this.ServiceDoesExist() == false && this.TaskAction != "Install")
+            if (this.ServiceDoesExist() == false && this.TaskAction != "Install" && this.TaskAction != "CheckExists")
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceName));
                 return;

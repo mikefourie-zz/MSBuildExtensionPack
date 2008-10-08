@@ -5,11 +5,16 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
-        <!-- check whether a service exists -->
-        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="MSSQLSERVER">
+        <!-- check whether a service exists (this should return true in most cases) -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="Schedule">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.Computer.WindowsService>
-        <Message Text="Exists: $(DoesExist)"/>
+        <Message Text="Schedule service exists: $(DoesExist)"/>
+        <!-- check whether another service exists (this should return false)-->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="ThisServiceShouldNotExist">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.WindowsService>
+        <Message Text="ThisServiceShouldNotExist service exists: $(DoesExist)"/>
         <!-- Start a service -->
         <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Start" ServiceName="MSSQLSERVER"/>
         <!-- Stop a service -->
