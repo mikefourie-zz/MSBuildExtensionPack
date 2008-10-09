@@ -61,5 +61,5 @@
 
 
     <!-- ============== MSBuildStyleCop ============== -->
-    <UsingTask AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\StyleCop\v4.3\MSBuild.ExtensionPack.CodeQuality.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
+    <UsingTask AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\StyleCop\v4.3\MSBuild.ExtensionPack.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
 </Project>
