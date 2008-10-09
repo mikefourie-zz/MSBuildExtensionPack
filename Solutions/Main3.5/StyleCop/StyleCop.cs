@@ -33,7 +33,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///             <Output TaskParameter="Include" ItemName="StyleCopFiles"/>
     ///         </CreateItem>
     ///         <!-- Run the StyleCop MSBuild task -->
-    ///         <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="C:\StyleCopLog.txt" SettingsFile="C:\Settings.StyleCop">
+    ///         <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="C:\StyleCopLog.txt" SettingsFile="C:\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3\Settings.StyleCop">
     ///             <Output TaskParameter="Succeeded" PropertyName="AllPassed"/>
     ///             <Output TaskParameter="ViolationCount" PropertyName="Violations"/>
     ///             <Output TaskParameter="FailedFiles" ItemName="Failures"/>
@@ -56,7 +56,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </example>
     public class StyleCop : BaseTask
     {
-        private List<ITaskItem> failedFiles;
+        private List<ITaskItem> failedFiles = new List<ITaskItem>();
         private bool fullAnalysis = true;
         private bool succeeded = true;
 
@@ -145,15 +145,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
         private void Scan()
         {
             this.Log.LogMessage("Performing StyleCop scan...");
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
             if (File.Exists(this.SettingsFile) == false)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Settings file was not found: {0}", this.SettingsFile));
                 return;
             }
 
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
             List<string> addinPaths = new List<string>();
-            this.failedFiles = new List<ITaskItem>();
             StyleCopConsole console = new StyleCopConsole(this.SettingsFile, this.CacheResults, null, addinPaths, true);
             Configuration configuration = new Configuration(new string[0]);
             CodeProject project = new CodeProject(DateTime.Now.ToLongTimeString().GetHashCode(), null, configuration);
