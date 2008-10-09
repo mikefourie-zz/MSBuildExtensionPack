@@ -10,6 +10,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using Microsoft.Win32;
 
     /// <summary>
+    /// Please be aware that this is a very light wrapper for ss.exe<para/>
     /// See the Command Line Reference on MSDN (http://msdn.microsoft.com/en-us/library/003ssz4z(VS.80).aspx) for full details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
@@ -33,16 +34,17 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Perfrom various source control operations -->
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Get" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd" WorkingDirectory="C:\Demo"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkout" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/*.*" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkin" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/*.*" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkout" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/dts.wav" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkin" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/dts.wav" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Cloak" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Decloak" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Create" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd22" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Delete" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd22" Arguments="-I-Y" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Destroy" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd22" Arguments="-I-Y" WorkingDirectory="C:\Demo"  ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Get" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd" Arguments="-GLC:\Demo2 -R"/>
+    ///         <!-- This will perform a recursive checkout to C:\Demo2 -->
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkout" Database="C:\SourceSafe" UserName="AUser" FilePath="$//DemoFtd/*.*" Arguments="-GLC:\Demo2 -R" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkin" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/*.*" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkout" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/dts.wav" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Checkin" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd/dts.wav" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Cloak" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Decloak" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Create" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd22" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Delete" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd22" Arguments="-I-Y" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.SourceSafe TaskAction="Destroy" Database="C:\SourceSafe\2005" UserName="AUser" FilePath="$//DemoFtd22" Arguments="-I-Y" ContinueOnError="true"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -77,11 +79,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Sets the database.
         /// </summary>
         public string Database { get; set; }
-
-        /// <summary>
-        /// Sets the working directory.
-        /// </summary>
-        public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
