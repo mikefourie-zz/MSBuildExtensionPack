@@ -15,8 +15,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
     /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
     /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive, Force, Overwrite, All)</para>
-    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
     /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Recursive, VersionSpec, Version, Baseless, Force)</para>
+    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist)</para>
+    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
     /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -31,17 +32,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///     <ItemGroup>
     ///         <FilesToAdd Include="C:\Projects\SpeedCMMI\Demo1\*"/>
     ///     </ItemGroup>
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
-    ///     <ItemGroup>
-    ///         <FilesToAdd Include="C:\Projects\SpeedCMMI\Demo1\*"/>
-    ///     </ItemGroup>
     ///     <Target Name="Default">
-    ///         <!-- Perfrom various source control operations -->
+    ///         <!-- Check for pending changes -->
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/APath" WorkingDirectory="C:\Projects\SpeedCMMI">
+    ///             <Output TaskParameter="PendingChanges" PropertyName="PendingChangesText" />
+    ///             <Output TaskParameter="PendingChangesExist" PropertyName="DoChangesExist" />
+    ///         </MSBuild.ExtensionPack.VisualStudio.TfsSource>
+    ///         <Message Text="Pending Changes Report: $(PendingChangesText)"/>
+    ///         <Message Text="Pending Changes Exist: $(DoChangesExist)"/>
+    ///         <!-- Perfrom various other source control operations -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemPath="C:\projects\SpeedCMMI\Demo1" Version="2008" WorkingDirectory="C:\projects\SpeedCMMI"/>
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Demo1" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="&quot;Code reviewer&quot;=&quot;buildrobot&quot;;" OverrideText="Justdoit" />
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Add" ItemPath="C:\projects\SpeedCMMI\Demo1" Version="2008" WorkingDirectory="C:\projects\SpeedCMMI"/>
@@ -67,6 +66,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private bool recursive = true;
         private ShellWrapper shellWrapper;
         private string itemspec = string.Empty;
+        private int returnValue;
+        private string returnOutput;
 
         /// <summary>
         /// Sets the version spec for Get
@@ -142,6 +143,18 @@ namespace MSBuild.ExtensionPack.VisualStudio
         }
 
         /// <summary>
+        /// Gets the pending changes in the format '/Format:detailed'
+        /// </summary>
+        [Output]
+        public string PendingChanges { get; set; }
+
+        /// <summary>
+        /// Gets whether pending changes exist for a given ItemPath
+        /// </summary>
+        [Output]
+        public bool PendingChangesExist { get; set; }
+
+        /// <summary>
         /// Lets you set text to override check-in policies
         /// </summary>
         public string OverrideText { get; set; }
@@ -169,6 +182,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 case "Get":
                     this.GetFiles();
                     break;
+                case "GetPendingChanges":
+                    this.GetPendingChanges();
+                    break;
                 case "Delete":
                     this.Delete();
                     break;
@@ -184,6 +200,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void GetPendingChanges()
+        {
+            this.ExecuteCommand("status", string.Empty, "/Format:detailed /user:* /recursive");
+            this.PendingChanges = this.returnOutput;
+            if (this.returnOutput.IndexOf("There are no pending changes", StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                this.PendingChangesExist = true;
             }
         }
 
@@ -313,9 +339,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
-            int returnValue = this.shellWrapper.Execute();
-            this.Log.LogMessage(MessageImportance.Low, this.shellWrapper.StandardOutput);
-            this.SwitchReturnValue(returnValue, this.shellWrapper.StandardError.Trim());
+            this.returnValue = this.shellWrapper.Execute();
+            this.returnOutput = this.shellWrapper.StandardOutput;
+            this.Log.LogMessage(MessageImportance.Low, this.returnOutput);
+            this.SwitchReturnValue(this.shellWrapper.StandardError.Trim());
         }
 
         private bool DetermineItemSpec()
@@ -341,9 +368,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
             return true;
         }
 
-        private void SwitchReturnValue(int returnValue, string error)
+        private void SwitchReturnValue(string error)
         {
-            switch (returnValue)
+            switch (this.returnValue)
             {
                 case 1:
                     this.LogTaskWarning("Exit Code 1. Partial success: " + error);
