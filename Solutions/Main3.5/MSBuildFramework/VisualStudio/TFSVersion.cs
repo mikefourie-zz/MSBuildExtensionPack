@@ -12,7 +12,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b> PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName <b>Output: </b>Version)</para>
+    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b> PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter <b>Output: </b>Version)</para>
+    /// <para><b>Please Note:</b> The output of GetVersion should not be used to change the $(BuildNumber). For guidance, see: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!404.entry</para>
     /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -40,6 +41,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///         <Message Text="Date Version is $(NewVersion)"/>
     ///         <!-- Set the version in a collection of files -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)"/>
+    ///         <!-- Get a version number based on the elapsed days since a given date and use a comma as the delimiter -->
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="GetVersion" Delimiter="," BuildName="YOURBUILD" TfsBuildNumber="YOURBUILD_20080703.1" VersionFormat="Elapsed" StartDate="17 Nov 1976" PaddingCount="4" PaddingDigit="1" Major="3" Minor="5">
+    ///             <Output TaskParameter="Version" PropertyName="NewcppVersion" />
+    ///         </MSBuild.ExtensionPack.VisualStudio.TfsVersion>
+    ///         <Message Text="C++ Version: $(NewcppVersion)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -49,6 +55,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
+        private string delimiter = ".";
 
         /// <summary>
         /// Set to True to set the AssemblyVersion when calling SetVersion. Default is false.
@@ -116,6 +123,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         public int Major { get; set; }
 
+        /// <summary>
+        /// Sets the Delimiter to use in the version number. Default is .
+        /// </summary>
+        public string Delimiter
+        {
+            get { return this.delimiter; }
+            set { this.delimiter = value; }
+        }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -165,10 +181,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
             {
                 case "ELAPSED":
                     TimeSpan elapsed = DateTime.Today - Convert.ToDateTime(this.StartDate);
-                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}.{1}.{2}.{3}", this.Major, this.Minor, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1]);
+                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1], this.delimiter);
                     break;
                 case "DATETIME":
-                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}.{1}.{2}.{3}", this.Major, this.Minor, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1]);
+                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1], this.delimiter);
                     break;
                 default:
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));

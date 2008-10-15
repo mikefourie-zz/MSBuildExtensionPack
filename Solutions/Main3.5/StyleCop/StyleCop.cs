@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     using Microsoft.StyleCop;
 
     /// <summary>
-    /// Wraps the StyleCopConsole class to provide a mechanism for scanning files for SA compliance.
+    /// Wraps the StyleCopConsole class to provide a mechanism for scanning files for StyleCop compliance.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Scan</i> (<b>Required: </b>SourceFiles <b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile, SettingsFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
@@ -82,17 +82,17 @@ namespace MSBuild.ExtensionPack.CodeQuality
         }
 
         /// <summary>
-        /// Sets a value indicating whether to CacheResults
+        /// Sets a value indicating whether StyleCop should write cache files to disk after performing an analysis. Default is false.
         /// </summary>
         public bool CacheResults { get; set; }
 
         /// <summary>
-        /// Sets a value indicating whether to ShowOutput
+        /// Sets a value indicating whether to ShowOutput. Defautl is false
         /// </summary>
         public bool ShowOutput { get; set; }
 
         /// <summary>
-        /// Sets a value indicating whether to ForceFullAnalysis
+        /// Sets a value indicating whether StyleCop should ignore cached results and perform a clean analysis. 
         /// </summary>        
         public bool ForceFullAnalysis
         {
@@ -101,13 +101,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
         }
 
         /// <summary>
-        /// Sets the source files.
+        /// Sets the source files collection
         /// </summary>
         [Required]
         public ITaskItem[] SourceFiles { get; set; }
 
         /// <summary>
-        /// Gets the failed files.
+        /// Gets the failed files collection
         /// </summary>
         [Output]
         public ITaskItem[] FailedFiles
@@ -117,7 +117,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         }
 
         /// <summary>
-        /// Sets the settings file.
+        /// Sets the path to the settings file to load.
         /// </summary>
         public string SettingsFile { get; set; }
 
@@ -160,10 +160,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 if (this.ShowOutput)
                 {
-                    this.Log.LogMessage("Adding file:" + item2.ItemSpec);
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding file: {0}", item2.ItemSpec));
                 }
 
-                console.Core.Environment.AddSourceCode(project, item2.ItemSpec, null);
+                if (!console.Core.Environment.AddSourceCode(project, item2.ItemSpec, null))
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to add file: {0}", item2.ItemSpec));
+                    return;
+                }
             }
 
             try
