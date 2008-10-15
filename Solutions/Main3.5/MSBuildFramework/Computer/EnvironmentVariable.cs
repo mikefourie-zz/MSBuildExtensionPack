@@ -23,6 +23,8 @@ namespace MSBuild.ExtensionPack.Computer
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
+    ///         <!-- Set an environment variable. Note how special characters need to be escaped (http://msdn.microsoft.com/en-us/library/ms228186(VS.80).aspx) -->
+    ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Set" Variable="PATH" Value="$(VCInstallDir)Common7\IDE%3B$(VCInstallDir)VC\BIN%3B$(VCInstallDir)Common7\Tools%3B$(VCInstallDir)Common7\Tools\bin%3B$(VCInstallDir)VC\PlatformSDK\bin%3B$(SDKInstallDir)bin%3B$(PATH)"/>
     ///         <!-- Set a new Environment Variable. The default target is Process -->
     ///         <MSBuild.ExtensionPack.Computer.EnvironmentVariable TaskAction="Set" Variable="ANewEnvSample" Value="bddd"/>
     ///         <!-- Get the Environment Variable -->
