@@ -118,11 +118,14 @@ namespace MSBuild.ExtensionPack.Communication
                 msg.To.Add(new MailAddress(recipient.ItemSpec));
             }
 
-            foreach (ITaskItem file in this.Attachments)
+            if (this.Attachments != null)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
-                Attachment attachment = new Attachment(file.ItemSpec);
-                msg.Attachments.Add(attachment);
+                foreach (ITaskItem file in this.Attachments)
+                {
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
+                    Attachment attachment = new Attachment(file.ItemSpec);
+                    msg.Attachments.Add(attachment);
+                }
             }
 
             msg.Subject = this.Subject ?? string.Empty;
