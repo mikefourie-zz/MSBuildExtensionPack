@@ -10,11 +10,11 @@ namespace MSBuild.ExtensionPack.Framework
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Compare</i> (<b>Required: </b> String1, String2, Comparison <b> Optional: </b> IgnoreCase <b>Output: </b>Result)</para>
-    /// <para><i>Replace</i> (<b>Required: </b> OldString, OldValue, NewValue <b> Output: </b> NewString)</para>
-    /// <para><i>Trim</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
-    /// <para><i>Remove</i> (<b>Required: </b> OldString, StartIndex <b> Optional: </b>Count <b> Output: </b> NewString)</para>
     /// <para><i>GetLength</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>Insert</i> (<b>Required: </b> OldString, String1, StartIndex<b> Output: </b> NewString)</para>
+    /// <para><i>Remove</i> (<b>Required: </b> OldString, StartIndex <b> Optional: </b>Count <b> Output: </b> NewString)</para>
+    /// <para><i>Replace</i> (<b>Required: </b> OldString, OldValue, NewValue <b> Output: </b> NewString)</para>
+    /// <para><i>Trim</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>

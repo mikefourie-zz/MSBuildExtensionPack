@@ -73,11 +73,13 @@ namespace MSBuild.ExtensionPack.Compression
         /// <summary>
         /// This is the main InternalExecute method that all tasks should implement
         /// </summary>
-        /// <remarks>
-        /// LogError should be thrown in the event of errors
-        /// </remarks>
         protected override void InternalExecute()
         {
+            if (!this.TargetingLocalMachine())
+            {
+                return;
+            }
+
             switch (this.TaskAction)
             {
                 case "Create":

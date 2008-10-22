@@ -10,12 +10,12 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>CheckEmpty</i> (<b>Required: </b> RegistryHive, Key <b>Output: </b>Empty)</para>
     /// <para><i>CreateKey</i> (<b>Required: </b> RegistryHive, Key)</para>
     /// <para><i>DeleteKey</i> (<b>Required: </b> RegistryHive, Key)</para>
     /// <para><i>DeleteKeyTree</i> (<b>Required: </b> RegistryHive, Key)</para>
     /// <para><i>Get</i> (<b>Required: </b> RegistryHive, Key, Value <b>Output: </b>Data)</para>
     /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value)</para>
-    /// <para><i>CheckEmpty</i> (<b>Required: </b> RegistryHive, Key <b>Output: </b>Empty)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>

@@ -14,11 +14,11 @@ namespace MSBuild.ExtensionPack.Framework
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetCommonItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
+    /// <para><i>GetCurrentDirectory</i> (<b>Output: </b> CurrentDirectory)</para>
     /// <para><i>GetDistinctItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>GetItem</i> (<b>Required: </b> InputItems1, Position<b>Output: </b> OutputItems)</para>
-    /// <para><i>GetLastItem</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
     /// <para><i>GetItemCount</i> (<b>Required: </b> InputItems1 <b>Output: </b> ItemCount)</para>
-    /// <para><i>GetCurrentDirectory</i> (<b>Output: </b> CurrentDirectory)</para>
+    /// <para><i>GetLastItem</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
     /// <para><i>RemoveDuplicateFiles</i> (<b>Required: </b> InputItems1 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>Sort</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
     /// <para><i>StringToItemCol</i> (<b>Required: </b> ItemString, Separator <b>Output: </b> OutputItems, ItemCount)</para>

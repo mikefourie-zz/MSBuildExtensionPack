@@ -13,14 +13,14 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath)</para>
-    /// <para><i>Uninstall</i> (<b>Required: </b> ServicePath)</para>
-    /// <para><i>Stop</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Disable</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
+    /// <para><i>Disable</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
+    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath)</para>
+    /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
+    /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
+    /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
+    /// <para><i>Stop</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
+    /// <para><i>Uninstall</i> (<b>Required: </b> ServicePath)</para>
     /// <para><i>UpdateIdentity</i> (<b>Required: </b> ServiceName, User, Password <b>Optional: </b>MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Partial</para>
     /// </summary>

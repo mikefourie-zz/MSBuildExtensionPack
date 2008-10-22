@@ -11,8 +11,8 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b> CategoryName, CounterList, CategoryHelp <b>Optional: </b> MultiInstance)</para>
-    /// <para><i>Remove</i> (<b>Required: </b> CategoryName)</para>
     /// <para><i>GetValue</i> (<b>Required: </b> CategoryName, CounterName <b>Output: </b> Value, MachineName)</para>
+    /// <para><i>Remove</i> (<b>Required: </b> CategoryName)</para>
     /// <para><b>Remote Execution Support:</b> Partial</para>
     /// </summary>
     /// <example>

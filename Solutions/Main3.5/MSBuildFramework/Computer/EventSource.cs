@@ -10,8 +10,8 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Create</i> (<b>Required: </b>Source, LogName <b>Optional: </b>Force, MachineName)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>Source <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
+    /// <para><i>Create</i> (<b>Required: </b>Source, LogName <b>Optional: </b>Force, MachineName)</para>
     /// <para><i>Delete</i> (<b>Required: </b>Source <b>Optional: </b>MachineName)</para>
     /// <para><i>Log</i> (<b>Required: </b> Source, Description, LogType, EventId <b>Optional: </b>MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>

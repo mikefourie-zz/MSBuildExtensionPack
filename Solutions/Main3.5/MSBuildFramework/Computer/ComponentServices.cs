@@ -29,10 +29,10 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>CheckApplicationExists</i> (<b>Required: </b> ApplicationName <b>Output: </b>Exists)</para>
     /// <para><i>DeleteApplication</i> (<b>Required: </b>ApplicationName)</para>
     /// <para><i>RemoveComponent</i> (<b>Required: </b>Path <b>Optional: </b>Framework)</para>
+    /// <para><i>SetConstructor</i> (<b>Required: </b>ApplicationName, ComponentName, ConstructorString)</para>
+    /// <para><i>SetTransactionSupport</i> (<b>Required: </b>ApplicationName, ComponentName, Transaction)</para>
     /// <para><i>ShutDownApplication</i> (<b>Required: </b>ApplicationName)</para>
     /// <para><i>UpdateApplication</i> (<b>Required: </b>ApplicationName <b>Optional: </b>Activation, Identity, Password)</para>
-    /// <para><i>SetTransactionSupport</i> (<b>Required: </b>ApplicationName, ComponentName, Transaction)</para>
-    /// <para><i>SetConstructor</i> (<b>Required: </b>ApplicationName, ComponentName, ConstructorString)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>

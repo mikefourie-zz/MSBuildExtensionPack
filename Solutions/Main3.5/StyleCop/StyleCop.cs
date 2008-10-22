@@ -87,7 +87,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public bool CacheResults { get; set; }
 
         /// <summary>
-        /// Sets a value indicating whether to ShowOutput. Defautl is false
+        /// Sets a value indicating whether to ShowOutput. Default is false
         /// </summary>
         public bool ShowOutput { get; set; }
 

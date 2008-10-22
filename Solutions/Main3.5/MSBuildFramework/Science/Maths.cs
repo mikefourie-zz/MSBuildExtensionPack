@@ -11,11 +11,11 @@ namespace MSBuild.ExtensionPack.Science
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
-    /// <para><i>Subtract</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
-    /// <para><i>Multiply</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>Compare</i> (<b>Required: </b> P1, P2, Comparison <b>Output: </b>LogicalResult)</para>
     /// <para><i>Divide</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
     /// <para><i>Evaluate</i> (<b>Required: </b> Expression <b>Output: </b>Result)</para>
-    /// <para><i>Compare</i> (<b>Required: </b> P1, P2, Comparison <b>Output: </b>LogicalResult)</para>
+    /// <para><i>Multiply</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>Subtract</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>

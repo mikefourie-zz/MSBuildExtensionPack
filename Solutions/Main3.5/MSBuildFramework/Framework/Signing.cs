@@ -11,9 +11,9 @@ namespace MSBuild.ExtensionPack.Framework
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Sign</i> (<b>Required: </b> Assemblies, KeyFile <b>Optional: </b> ToolPath)</para>
     /// <para><i>AddSkipVerification</i> (<b>Required: </b> PublicKeyToken <b>Optional: </b> ToolPath)</para>
     /// <para><i>RemoveAllSkipVerification</i> (<b>Optional: </b> ToolPath)</para>
+    /// <para><i>Sign</i> (<b>Required: </b> Assemblies, KeyFile <b>Optional: </b> ToolPath)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>

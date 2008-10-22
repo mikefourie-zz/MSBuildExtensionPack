@@ -16,8 +16,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b> CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
-    /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b> Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b> Checksum)</para>
+    /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b> Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
