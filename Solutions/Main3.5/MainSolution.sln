@@ -31,9 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployment", "Deployment\Deployment.csproj", "{0EEB8628-5540-409E-A701-1FBC218FE3ED}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
+		SccNumberOfProjects = 8
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs08.codeplex.com/
 		SccLocalPath0 = .
@@ -55,6 +57,9 @@ Global
 		SccProjectUniqueName6 = MSBuildTFS\\MSBuildTFS.csproj
 		SccProjectName6 = MSBuildTFS
 		SccLocalPath6 = MSBuildTFS
+		SccProjectUniqueName7 = Deployment\\Deployment.csproj
+		SccProjectName7 = Deployment
+		SccLocalPath7 = Deployment
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +90,10 @@ Global
 		{51FAA268-396F-4226-AED8-0F08657453F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51FAA268-396F-4226-AED8-0F08657453F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51FAA268-396F-4226-AED8-0F08657453F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
