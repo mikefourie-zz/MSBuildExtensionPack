@@ -9,17 +9,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildIIS7", "MSBuildIIS7\MSBuildIIS7.csproj", "{A2B689B5-516B-4E6F-87D6-0EE111E0F049}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS7", "MSBuildIIS7\IIS7.csproj", "{A2B689B5-516B-4E6F-87D6-0EE111E0F049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildFramework", "MSBuildFramework\MSBuildFramework.csproj", "{1C780E39-26D5-4E6F-9533-91D867C1136C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "MSBuildFramework\Framework.csproj", "{1C780E39-26D5-4E6F-9533-91D867C1136C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildJSharp", "MSBuildJSharp\MSBuildJSharp.csproj", "{8D8428EA-4270-493D-A968-D6F94F99CC00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSharp", "MSBuildJSharp\JSharp.csproj", "{8D8428EA-4270-493D-A968-D6F94F99CC00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildBizTalk", "BizTalk\MSBuildBizTalk.csproj", "{E6255821-7BC4-4617-AC16-A620A51C9962}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizTalk", "BizTalk\BizTalk.csproj", "{E6255821-7BC4-4617-AC16-A620A51C9962}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildStyleCop", "StyleCop\MSBuildStyleCop.csproj", "{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop", "StyleCop\StyleCop.csproj", "{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildTFS", "MSBuildTFS\MSBuildTFS.csproj", "{51FAA268-396F-4226-AED8-0F08657453F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS", "MSBuildTFS\TFS.csproj", "{51FAA268-396F-4226-AED8-0F08657453F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "DocumentationSchema", "{27FF4005-D504-48A9-A0C0-40C32F21F324}"
 	ProjectSection(SolutionItems) = preProject
@@ -28,38 +28,44 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 		DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd = DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd = DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildSync", "MSBuildSync\MSBuildSync.csproj", "{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployment", "Deployment\Deployment.csproj", "{0EEB8628-5540-409E-A701-1FBC218FE3ED}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 9
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs08.codeplex.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = BizTalk\\MSBuildBizTalk.csproj
-		SccProjectName1 = BizTalk
-		SccLocalPath1 = BizTalk
-		SccProjectUniqueName2 = MSBuildFramework\\MSBuildFramework.csproj
-		SccProjectName2 = MSBuildFramework
-		SccLocalPath2 = MSBuildFramework
-		SccProjectUniqueName3 = MSBuildIIS7\\MSBuildIIS7.csproj
-		SccProjectName3 = MSBuildIIS7
-		SccLocalPath3 = MSBuildIIS7
-		SccProjectUniqueName4 = MSBuildJSharp\\MSBuildJSharp.csproj
-		SccProjectName4 = MSBuildJSharp
-		SccLocalPath4 = MSBuildJSharp
-		SccProjectUniqueName5 = StyleCop\\MSBuildStyleCop.csproj
-		SccProjectName5 = StyleCop
-		SccLocalPath5 = StyleCop
-		SccProjectUniqueName6 = MSBuildTFS\\MSBuildTFS.csproj
-		SccProjectName6 = MSBuildTFS
-		SccLocalPath6 = MSBuildTFS
-		SccProjectUniqueName7 = Deployment\\Deployment.csproj
-		SccProjectName7 = Deployment
-		SccLocalPath7 = Deployment
+		SccProjectUniqueName0 = MSBuildSync\\MSBuildSync.csproj
+		SccProjectName0 = MSBuildSync
+		SccLocalPath0 = MSBuildSync
+		SccProjectUniqueName1 = Deployment\\Deployment.csproj
+		SccProjectName1 = Deployment
+		SccLocalPath1 = Deployment
+		SccLocalPath2 = .
+		SccProjectUniqueName3 = BizTalk\\BizTalk.csproj
+		SccProjectName3 = BizTalk
+		SccLocalPath3 = BizTalk
+		SccProjectUniqueName4 = MSBuildFramework\\Framework.csproj
+		SccProjectName4 = MSBuildFramework
+		SccLocalPath4 = MSBuildFramework
+		SccProjectUniqueName5 = MSBuildIIS7\\IIS7.csproj
+		SccProjectName5 = MSBuildIIS7
+		SccLocalPath5 = MSBuildIIS7
+		SccProjectUniqueName6 = MSBuildJSharp\\JSharp.csproj
+		SccProjectName6 = MSBuildJSharp
+		SccLocalPath6 = MSBuildJSharp
+		SccProjectUniqueName7 = StyleCop\\StyleCop.csproj
+		SccProjectName7 = StyleCop
+		SccLocalPath7 = StyleCop
+		SccProjectUniqueName8 = MSBuildTFS\\TFS.csproj
+		SccProjectName8 = MSBuildTFS
+		SccLocalPath8 = MSBuildTFS
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +96,10 @@ Global
 		{51FAA268-396F-4226-AED8-0F08657453F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51FAA268-396F-4226-AED8-0F08657453F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51FAA268-396F-4226-AED8-0F08657453F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU

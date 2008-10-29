@@ -93,7 +93,7 @@ namespace MSBuild.ExtensionPack
 
         internal void GetManagementScope(string wmiNamespace)
         {
-            this.Log.LogMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "ManagementScope: {0}", "\\\\" + this.MachineName + wmiNamespace));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "ManagementScope Set: {0}", "\\\\" + this.MachineName + wmiNamespace));
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace);

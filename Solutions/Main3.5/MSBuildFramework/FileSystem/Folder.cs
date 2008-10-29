@@ -7,14 +7,17 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Globalization;
     using System.IO;
     using System.Management;
+    using System.Security.AccessControl;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>AddSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType)</para>
     /// <para><i>DeleteAll</i> (<b>Required: </b> Path, Match)</para>
     /// <para><i>Move</i> (<b>Required: </b> Path, TargetPath)</para>
     /// <para><i>RemoveContent</i> (<b>Required: </b> Path <b>Optional: </b>Force)</para>
+    /// <para><i>RemoveSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -25,19 +28,37 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
-    ///   <Target Name="Default">
-    ///       <!-- Delete all folders matching a given name -->
-    ///       <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="DeleteAll" Path="c:\Demo2" Match="_svn"/>
-    ///       <!-- Remove all content from a folder whilst maintaining the target folder -->
-    ///       <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
-    ///       <!-- Move a folder -->
-    ///       <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
-    ///   </Target>
+    ///     <Target Name="Default">
+    ///         <ItemGroup>
+    ///             <Users Include="AReadUser">
+    ///                 <Permission>ExecuteFile, Read</Permission>
+    ///             </Users>
+    ///             <Users Include="AChangeUser">
+    ///                 <Permission>FullControl</Permission>
+    ///             </Users>
+    ///         </ItemGroup>
+    ///         <!-- Add security for users -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" Path="c:\Demo2" Users="@(Users)"/>
+    ///         <!-- Remove security for users -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" Path="c:\Demo2" Users="@(Users)"/>
+    ///         <!-- Add Deny security for users -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" AccessType="Deny" Path="c:\Demo2" Users="@(Users)"/>
+    ///         <!-- Remove Deny security for users -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" AccessType="Deny" Path="c:\Demo2" Users="@(Users)"/>
+    ///         <!-- Delete all folders matching a given name -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="DeleteAll" Path="c:\Demo2" Match="_svn"/>
+    ///         <!-- Remove all content from a folder whilst maintaining the target folder -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
+    ///         <!-- Move a folder -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
     public class Folder : BaseTask
     {
+        private AccessControlType accessType = AccessControlType.Allow;
+
         /// <summary>
         /// Sets the path to remove content from, or the base path for Delete
         /// </summary>
@@ -58,6 +79,23 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Sets a value indicating whether to delete readonly files when performing RemoveContent
         /// </summary>
         public bool Force { get; set; }
+
+        /// <summary>
+        /// Sets the users collection. Use the Permission metadata tag to specify permissions. Separate pemissions with a comma.
+        /// <para/> <UsersCol Include="AUser">
+        /// <para/>     <Permission>Read,etc</Permission>
+        /// <para/> </UsersCol>
+        /// </summary>
+        public ITaskItem[] Users { get; set; }
+
+        /// <summary>
+        /// Set the AccessType. Can be Allow or Deny. Default is Allow.
+        /// </summary>
+        public string AccessType
+        {
+            get { return this.accessType.ToString(); }
+            set { this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value); }
+        }
 
         /// <summary>
         /// Performs the action of this task.
@@ -81,6 +119,12 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             switch (this.TaskAction)
             {
+                case "AddSecurity":
+                    this.SetSecurity("Add");
+                    break;
+                case "RemoveSecurity":
+                    this.SetSecurity("Remove");
+                    break;
                 case "RemoveContent":
                     this.RemoveContent(dir);
                     break;
@@ -118,6 +162,46 @@ namespace MSBuild.ExtensionPack.FileSystem
                 DelTree(d);
                 Directory.Delete(d.FullName);
             }
+        }
+
+        private void SetSecurity(string action)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(this.Path);
+            DirectorySecurity currentSecurity = dirInfo.GetAccessControl();
+
+            if (this.Users != null)
+            {
+                foreach (ITaskItem user in this.Users)
+                {
+                    string userName = user.ItemSpec;
+                    if (!userName.Contains(@"\"))
+                    {
+                        // default to local user
+                        userName = Environment.MachineName + @"\" + userName;
+                    }
+
+                    FileSystemRights userRights = new FileSystemRights();
+                    string[] permissions = user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string s in permissions)
+                    {
+                        userRights |= (FileSystemRights)Enum.Parse(typeof(FileSystemRights), s);
+                    }
+
+                    if (action == "Add")
+                    {
+                        this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding security for user: {0} on {1}", userName, this.Path));
+                        currentSecurity.AddAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));    
+                    }
+                    else
+                    {
+                        this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing security for user: {0} on {1}", userName, this.Path));
+                        currentSecurity.RemoveAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                    }
+                }
+            }
+
+            // Set the new access settings.
+            dirInfo.SetAccessControl(currentSecurity);
         }
 
         private void DeleteAll()

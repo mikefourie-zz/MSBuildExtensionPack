@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>CheckExists</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>Application <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>Create</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     this.GetApplications();
                     break;
                 case "CheckExists":
-                    this.CheckApplicationsExist();
+                    this.CheckApplicationExists();
                     break;
                 case "StartAll":
                 case "EnableAllReceiveLocations":
@@ -223,15 +223,10 @@ namespace MSBuild.ExtensionPack.BizTalk
             this.explorer.SaveChanges();
         }
 
-        private void CheckApplicationsExist()
+        private void CheckApplicationExists()
         {
-            foreach (ITaskItem appl in this.Applications)
-            {
-                if (!this.CheckExists(appl.ItemSpec))
-                {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
-                }
-            }
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", this.Application));
+            this.Exists = this.CheckExists(this.Application);
         }
 
         private void Create()

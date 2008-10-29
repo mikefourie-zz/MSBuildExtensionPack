@@ -329,7 +329,7 @@ namespace MSBuild.ExtensionPack.Tfs
             }
             else
             {
-                throw new ArgumentException("ERROR: Either Solution or Project (or both) must be specified.");
+                throw new ArgumentException("Either Solution or Project (or both) must be specified.");
             }
 
             commands.AppendFormat(" /{0}", this.Target);

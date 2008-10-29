@@ -357,7 +357,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }
@@ -531,7 +531,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }
