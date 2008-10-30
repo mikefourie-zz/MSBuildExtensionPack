@@ -24,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "DocumentationSchema", "{27FF4005-D504-48A9-A0C0-40C32F21F324}"
 	ProjectSection(SolutionItems) = preProject
 		DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd = DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd = DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd = DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd = DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd
@@ -34,38 +35,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildSync", "MSBuildSync\MSBuildSync.csproj", "{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployment", "Deployment\Deployment.csproj", "{0EEB8628-5540-409E-A701-1FBC218FE3ED}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
+		SccNumberOfProjects = 8
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs08.codeplex.com/
-		SccProjectUniqueName0 = MSBuildSync\\MSBuildSync.csproj
-		SccProjectName0 = MSBuildSync
-		SccLocalPath0 = MSBuildSync
-		SccProjectUniqueName1 = Deployment\\Deployment.csproj
-		SccProjectName1 = Deployment
-		SccLocalPath1 = Deployment
-		SccLocalPath2 = .
-		SccProjectUniqueName3 = BizTalk\\BizTalk.csproj
-		SccProjectName3 = BizTalk
-		SccLocalPath3 = BizTalk
-		SccProjectUniqueName4 = MSBuildFramework\\Framework.csproj
-		SccProjectName4 = MSBuildFramework
-		SccLocalPath4 = MSBuildFramework
-		SccProjectUniqueName5 = MSBuildIIS7\\IIS7.csproj
-		SccProjectName5 = MSBuildIIS7
-		SccLocalPath5 = MSBuildIIS7
-		SccProjectUniqueName6 = MSBuildJSharp\\JSharp.csproj
-		SccProjectName6 = MSBuildJSharp
-		SccLocalPath6 = MSBuildJSharp
-		SccProjectUniqueName7 = StyleCop\\StyleCop.csproj
-		SccProjectName7 = StyleCop
-		SccLocalPath7 = StyleCop
-		SccProjectUniqueName8 = MSBuildTFS\\TFS.csproj
-		SccProjectName8 = MSBuildTFS
-		SccLocalPath8 = MSBuildTFS
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = MSBuildSync\\MSBuildSync.csproj
+		SccProjectName1 = MSBuildSync
+		SccLocalPath1 = MSBuildSync
+		SccProjectUniqueName2 = BizTalk\\BizTalk.csproj
+		SccProjectName2 = BizTalk
+		SccLocalPath2 = BizTalk
+		SccProjectUniqueName3 = MSBuildFramework\\Framework.csproj
+		SccProjectName3 = MSBuildFramework
+		SccLocalPath3 = MSBuildFramework
+		SccProjectUniqueName4 = MSBuildIIS7\\IIS7.csproj
+		SccProjectName4 = MSBuildIIS7
+		SccLocalPath4 = MSBuildIIS7
+		SccProjectUniqueName5 = MSBuildJSharp\\JSharp.csproj
+		SccProjectName5 = MSBuildJSharp
+		SccLocalPath5 = MSBuildJSharp
+		SccProjectUniqueName6 = StyleCop\\StyleCop.csproj
+		SccProjectName6 = StyleCop
+		SccLocalPath6 = StyleCop
+		SccProjectUniqueName7 = MSBuildTFS\\TFS.csproj
+		SccProjectName7 = MSBuildTFS
+		SccLocalPath7 = MSBuildTFS
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,10 +96,6 @@ Global
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0EEB8628-5540-409E-A701-1FBC218FE3ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
