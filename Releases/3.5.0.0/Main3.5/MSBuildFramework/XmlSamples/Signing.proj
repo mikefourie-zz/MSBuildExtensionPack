@@ -1,0 +1,18 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <AssemblyToSign Include="C:\AnAssembly.dll"/>
+        </ItemGroup>
+        <!-- Sign an assembly -->
+        <MSBuild.ExtensionPack.Framework.Signing TaskAction="Sign" ToolPath="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Bin" KeyFile="c:\aPrivateKey.snk" Assemblies="@(AssemblyToSign)"/>
+        <!-- Add SkipVerification for a public key -->
+        <MSBuild.ExtensionPack.Framework.Signing TaskAction="AddSkipVerification" ToolPath="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Bin" PublicKeyToken="119b85861667ee6a"/>
+        <!-- Remove all SkipVerification -->
+        <MSBuild.ExtensionPack.Framework.Signing TaskAction="RemoveAllSkipVerification" ToolPath="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Bin"/>
+    </Target>
+</Project>

@@ -1,0 +1,19 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <!-- Set the collection of files to Zip-->
+            <FilesToZip Include="C:\hotfixes\**\*"/>
+        </ItemGroup>
+        <!-- Create a zip file based on the FilesToZip collection -->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(FilesToZip)" RemoveRoot="C:\hotfixes" ZipFileName="C:\newZipByFile.zip"/>
+        <!-- Create a zip file based on a Path -->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressPath="C:\hotfixes" RemoveRoot="C:\hotfixes" ZipFileName="C:\newZipByPath.zip"/>
+        <!-- Extract a zip file-->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Extract" ExtractPath="C:\aaa11" ZipFileName="C:\newZipByPath.zip"/>
+    </Target>
+</Project>

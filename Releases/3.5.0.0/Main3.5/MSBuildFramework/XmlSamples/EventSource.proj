@@ -1,0 +1,24 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Delete an event source -->
+        <MSBuild.ExtensionPack.Computer.EventSource TaskAction="Delete" Source="MyEventSource" LogName="Application"/>
+        <!-- Check an event source exists -->
+        <MSBuild.ExtensionPack.Computer.EventSource TaskAction="CheckExists" Source="MyEventSource" LogName="Application">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.EventSource>
+        <Message Text="Exists: $(DoesExist)"/>
+        <!-- Create an event source -->
+        <MSBuild.ExtensionPack.Computer.EventSource TaskAction="Create" Source="MyEventSource" LogName="Application"/>
+        <MSBuild.ExtensionPack.Computer.EventSource TaskAction="CheckExists" Source="MyEventSource" LogName="Application">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.EventSource>
+        <Message Text="Exists: $(DoesExist)"/>
+        <!-- Log an event -->
+        <MSBuild.ExtensionPack.Computer.EventSource TaskAction="Log" Source="MyEventSource" Description="Hello" LogType="Information" EventId="222"/>
+    </Target>
+</Project>
