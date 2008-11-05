@@ -10,6 +10,7 @@ namespace MSBuild.ExtensionPack.Compression
     using System.Management;
     using System.Text;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -35,9 +36,9 @@ namespace MSBuild.ExtensionPack.Compression
     ///             <Files Include="C:\ddd\**\*"/>
     ///         </ItemGroup>
     ///         <!-- Create the CAB using the File collection and preserve the paths whilst stripping a prefix -->
-    ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" FilesToCab="@(Files)" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbyitem.cab" PreservePaths="true" StripPrefixes="aaa\"/>
+    ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" FilesToCab="@(Files)" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbyitem.cab" PreservePaths="true" StripPrefixes="ddd\"/>
     ///         <!-- Create the same CAB but this time based on the Path. Note that Recursive is required -->
-    ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" PathToCab="C:\ddd\*" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbypath.cab" PreservePaths="true" StripPrefixes="aaa\" Recursive="true"/>
+    ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="Create" PathToCab="C:\ddd" CabExePath="D:\BuildTools\CabArc.Exe" CabFile="C:\newcabbypath.cab" PreservePaths="true" StripPrefixes="ddd\" Recursive="true"/>
     ///         <!-- Add a file to the CAB -->
     ///         <MSBuild.ExtensionPack.Compression.Cab TaskAction="AddFile" NewFile="c:\New Text Document.txt" CabExePath="D:\BuildTools\CabArc.Exe" ExtractExePath="D:\BuildTools\Extrac32.EXE" CabFile="C:\newcabbyitem.cab" NewFileDestination="\Any Path"/>
     ///         <!-- Extract a CAB-->
@@ -53,18 +54,18 @@ namespace MSBuild.ExtensionPack.Compression
         /// <summary>
         /// Sets the path to extract to
         /// </summary>
-        public string ExtractTo { get; set; }
+        public ITaskItem ExtractTo { get; set; }
 
         /// <summary>
         /// Sets the CAB file. Required.
         /// </summary>
         [Required]
-        public string CabFile { get; set; }
+        public ITaskItem CabFile { get; set; }
 
         /// <summary>
         /// Sets the path to cab
         /// </summary>
-        public string PathToCab { get; set; }
+        public ITaskItem PathToCab { get; set; }
 
         /// <summary>
         /// Sets whether to add files and folders recursively if PathToCab is specified.
@@ -79,12 +80,12 @@ namespace MSBuild.ExtensionPack.Compression
         /// <summary>
         /// Sets the path to CabArc.Exe
         /// </summary>
-        public string CabExePath { get; set; }
+        public ITaskItem CabExePath { get; set; }
 
         /// <summary>
         /// Sets the path to extrac32.exe
         /// </summary>
-        public string ExtractExePath { get; set; }
+        public ITaskItem ExtractExePath { get; set; }
 
         /// <summary>
         /// Sets the files to extract. Default is /E, which is all.
@@ -108,7 +109,7 @@ namespace MSBuild.ExtensionPack.Compression
         /// <summary>
         /// Sets the new file to add to the Cab File
         /// </summary>
-        public string NewFile { get; set; }
+        public ITaskItem NewFile { get; set; }
 
         /// <summary>
         /// Sets the path to add the file to
@@ -154,15 +155,15 @@ namespace MSBuild.ExtensionPack.Compression
                 return;
             }
 
-            if (!System.IO.File.Exists(this.NewFile))
+            if (!System.IO.File.Exists(this.NewFile.GetMetadata("FullPath")))
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "New File not found: {0}", this.NewFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "New File not found: {0}", this.NewFile.GetMetadata("FullPath")));
                 return;
             }
 
-            FileInfo f = new FileInfo(this.NewFile);
+            FileInfo f = new FileInfo(this.NewFile.GetMetadata("FullPath"));
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0} to Cab: {1}", this.NewFile, this.CabFile));
+            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0} to Cab: {1}", this.NewFile.GetMetadata("FullPath"), this.CabFile.GetMetadata("FullPath")));
             string tempFolderName = System.Guid.NewGuid() + "\\";
 
             DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(), tempFolderName));
@@ -181,11 +182,11 @@ namespace MSBuild.ExtensionPack.Compression
             // configure the process we need to run
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile));
-                cabProcess.StartInfo.FileName = this.ExtractExePath;
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                cabProcess.StartInfo.FileName = this.ExtractExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = true;
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", dirInfo.FullName, this.CabFile, "/E");
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", dirInfo.FullName, this.CabFile.GetMetadata("FullPath"), "/E");
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 cabProcess.Start();
                 cabProcess.WaitForExit();
             }
@@ -193,20 +194,20 @@ namespace MSBuild.ExtensionPack.Compression
             Directory.CreateDirectory(dirInfo.FullName + "\\" + this.NewFileDestination);
 
             this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Copying new File: {0} to {1}", this.NewFile, dirInfo.FullName + "\\" + this.NewFileDestination + "\\" + f.Name));
-            System.IO.File.Copy(this.NewFile, dirInfo.FullName + this.NewFileDestination + @"\" + f.Name, true);
+            System.IO.File.Copy(this.NewFile.GetMetadata("FullPath"), dirInfo.FullName + this.NewFileDestination + @"\" + f.Name, true);
 
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile));
-                cabProcess.StartInfo.FileName = this.CabExePath;
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                cabProcess.StartInfo.FileName = this.CabExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = false;
                 cabProcess.StartInfo.RedirectStandardOutput = true;
 
                 StringBuilder options = new StringBuilder();
                 options.Append("-r -p");
                 options.AppendFormat(" -P \"{0}\"\\", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1).Replace(@"C:\", string.Empty));
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile, "\"" + dirInfo.FullName + "*.*\"" + " ");
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile.GetMetadata("FullPath"), "\"" + dirInfo.FullName + "*.*\"" + " ");
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 
                 // start the process
                 cabProcess.Start();
@@ -260,7 +261,7 @@ namespace MSBuild.ExtensionPack.Compression
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.ExtractTo))
+            if (this.ExtractTo == null)
             {
                 this.Log.LogError("ExtractTo required.");
                 return;
@@ -269,11 +270,11 @@ namespace MSBuild.ExtensionPack.Compression
             // configure the process we need to run
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile));
-                cabProcess.StartInfo.FileName = this.ExtractExePath;
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                cabProcess.StartInfo.FileName = this.ExtractExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = true;
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", this.ExtractTo, this.CabFile, this.ExtractFile);
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", this.ExtractTo.GetMetadata("FullPath"), this.CabFile.GetMetadata("FullPath"), this.ExtractFile);
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 cabProcess.Start();
                 cabProcess.WaitForExit();
             }
@@ -286,29 +287,30 @@ namespace MSBuild.ExtensionPack.Compression
         private bool ValidateExtract()
         {
             // Validation
-            if (System.IO.File.Exists(this.CabFile) == false)
+            if (System.IO.File.Exists(this.CabFile.GetMetadata("FullPath")) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "CAB file not found: {0}", this.CabFile));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "CAB file not found: {0}", this.CabFile.GetMetadata("FullPath")));
                 return false;
             }
 
-            if (string.IsNullOrEmpty(this.ExtractExePath))
+            if (this.ExtractExePath == null)
             {
                 if (System.IO.File.Exists(Environment.SystemDirectory + "extrac32.exe"))
                 {
-                    this.ExtractExePath = Environment.SystemDirectory + "extrac32.exe";
+                    this.ExtractExePath = new TaskItem();
+                    this.ExtractExePath.SetMetadata("FullPath", Environment.SystemDirectory + "extrac32.exe");
                 }
                 else
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.ExtractExePath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.ExtractExePath.GetMetadata("FullPath")));
                     return false;
                 }
             }
             else
             {
-                if (System.IO.File.Exists(this.ExtractExePath) == false)
+                if (System.IO.File.Exists(this.ExtractExePath.GetMetadata("FullPath")) == false)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.ExtractExePath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.ExtractExePath.GetMetadata("FullPath")));
                     return false;
                 }
             }
@@ -322,16 +324,16 @@ namespace MSBuild.ExtensionPack.Compression
         private void Create()
         {
             // Validation
-            if (System.IO.File.Exists(this.CabExePath) == false)
+            if (System.IO.File.Exists(this.CabExePath.GetMetadata("FullPath")) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.CabExePath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Executable not found: {0}", this.CabExePath.GetMetadata("FullPath")));
                 return;
             }
 
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile));
-                cabProcess.StartInfo.FileName = this.CabExePath;
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                cabProcess.StartInfo.FileName = this.CabExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = false;
                 cabProcess.StartInfo.RedirectStandardOutput = true;
 
@@ -341,7 +343,7 @@ namespace MSBuild.ExtensionPack.Compression
                     options.Append("-p");
                 }
 
-                if (!string.IsNullOrEmpty(this.PathToCab) && this.Recursive)
+                if (this.PathToCab != null && this.Recursive)
                 {
                     options.Append(" -r ");
                 }
@@ -357,15 +359,19 @@ namespace MSBuild.ExtensionPack.Compression
                 }
 
                 string files = string.Empty;
-                if ((this.FilesToCab == null || this.FilesToCab.Length == 0) && string.IsNullOrEmpty(this.PathToCab))
+                if ((this.FilesToCab == null || this.FilesToCab.Length == 0) && this.PathToCab == null)
                 {
                     Log.LogError("FilesToCab or PathToCab must be supplied");
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(this.PathToCab))
+                if (this.PathToCab != null)
                 {
-                    files = this.PathToCab;
+                    files = this.PathToCab.GetMetadata("FullPath");
+                    if (!files.EndsWith(@"\*", StringComparison.OrdinalIgnoreCase))
+                    {
+                        files += @"\*";
+                    }
                 }
                 else
                 {
@@ -375,8 +381,8 @@ namespace MSBuild.ExtensionPack.Compression
                     }
                 }
 
-                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile, files);
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath, cabProcess.StartInfo.Arguments));
+                cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile.GetMetadata("FullPath"), files);
+                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
 
                 // start the process
                 cabProcess.Start();

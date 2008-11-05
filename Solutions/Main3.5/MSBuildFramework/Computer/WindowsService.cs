@@ -78,14 +78,9 @@ namespace MSBuild.ExtensionPack.Computer
         public string ServiceName { get; set; }
 
         /// <summary>
-        /// Sets Service path.
-        /// </summary>
-        public string ServicePath { get; set; }
-
-        /// <summary>
         /// Sets the path of the service executable
         /// </summary>
-        public string Path { get; set; }
+        public ITaskItem ServicePath { get; set; }
 
         /// <summary>
         /// Sets user password
@@ -157,8 +152,7 @@ namespace MSBuild.ExtensionPack.Computer
             if (this.ServiceDoesExist())
             {
                 this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Updating Identity: {0}", this.ServiceName));
-
-                this.Scope.Connect();
+                this.GetManagementScope(@"\root\cimv2");
                 ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM Win32_Service WHERE Name = '{0}'", this.ServiceName));
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
                 ManagementObjectCollection moc = searcher.Get();
@@ -214,7 +208,7 @@ namespace MSBuild.ExtensionPack.Computer
                     serviceController.Refresh();
                     switch (serviceController.Status)
                     {
-                            // We can't do anything when Service is in these states, so we log, count, pause and loop.
+                        // We can't do anything when Service is in these states, so we log, count, pause and loop.
                         case ServiceControllerStatus.ContinuePending:
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StartPending:
@@ -249,16 +243,16 @@ namespace MSBuild.ExtensionPack.Computer
         private void Uninstall()
         {
             // check to see if the exe path has been provided
-            if (string.IsNullOrEmpty(this.ServicePath))
+            if (this.ServicePath == null)
             {
                 this.Log.LogError("ServicePath was not provided.");
                 return;
             }
 
             // check to see if the correct path has been provided
-            if (System.IO.File.Exists(this.ServicePath) == false)
+            if (System.IO.File.Exists(this.ServicePath.GetMetadata("FullPath")) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "ServicePath does not exist: {0}", this.ServicePath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "ServicePath does not exist: {0}", this.ServicePath.GetMetadata("FullPath")));
                 return;
             }
 
@@ -266,7 +260,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 Process proc = new Process { StartInfo = { FileName = this.GetInstallUtilPath(), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
                 proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/u ""{0}"" /LogFile=""{1}""", this.ServicePath, this.ServiceName + " Uninstall.txt");
+                proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/u ""{0}"" /LogFile=""{1}""", this.ServicePath.GetMetadata("FullPath"), this.ServiceName + " Uninstall.txt");
                 this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 string outputStream = proc.StandardOutput.ReadToEnd();
@@ -300,7 +294,7 @@ namespace MSBuild.ExtensionPack.Computer
                     serviceController.Refresh();
                     switch (serviceController.Status)
                     {
-                            // We can't do anything when Service is in these states, so we log, count, pause and loop.
+                        // We can't do anything when Service is in these states, so we log, count, pause and loop.
                         case ServiceControllerStatus.ContinuePending:
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StartPending:
@@ -349,7 +343,7 @@ namespace MSBuild.ExtensionPack.Computer
         private void Install()
         {
             // check to see if the exe path has been provided
-            if (string.IsNullOrEmpty(this.ServicePath))
+            if (this.ServicePath == null)
             {
                 this.Log.LogError("ServicePath was not provided.");
                 return;
@@ -362,7 +356,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
 
             // check to see if the correct path has been provided
-            if (System.IO.File.Exists(this.ServicePath) == false)
+            if (System.IO.File.Exists(this.ServicePath.GetMetadata("FullPath")) == false)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "ServicePath does not exist: {0}", this.ServicePath));
                 return;

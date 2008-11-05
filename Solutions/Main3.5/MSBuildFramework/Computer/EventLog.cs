@@ -186,7 +186,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid LogFileName Supplied: {0}", this.LogName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid LogName Supplied: {0}", this.LogName));
             }
         }
     }

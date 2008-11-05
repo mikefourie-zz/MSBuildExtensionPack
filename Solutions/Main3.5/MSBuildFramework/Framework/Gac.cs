@@ -44,14 +44,14 @@ namespace MSBuild.ExtensionPack.Framework
     public class Gac : BaseTask
     {
         /// <summary>
-        /// Sets the remote path of the assembly
+        /// Sets the remote path of the assembly. Note that gacutil.exe must exist on the remote server and be in it's Path
         /// </summary>
         public string RemoteAssemblyPath { get; set; }
 
         /// <summary>
         /// Sets the path to the assembly to be added the GAC
         /// </summary>
-        public string AssemblyPath { get; set; }
+        public ITaskItem AssemblyPath { get; set; }
 
         /// <summary>
         /// Sets the name of the assembly.
@@ -190,7 +190,7 @@ namespace MSBuild.ExtensionPack.Framework
             else
             {
                 this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0} on Remote Server: {1}", this.AssemblyName, this.MachineName));
-                this.Scope.Connect();
+                this.GetManagementScope(@"\root\cimv2");
                 ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true));
                 ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
                 methodParameters["CommandLine"] = @"gacutil.exe /u " + "\"" + this.AssemblyName + "\"";
@@ -211,16 +211,16 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void AddAssembly()
         {
-            if (System.IO.File.Exists(this.AssemblyPath) == false)
+            if (System.IO.File.Exists(this.AssemblyPath.GetMetadata("FullPath")) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The AssemblyPath was not found: {0}", this.AssemblyPath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The AssemblyPath was not found: {0}", this.AssemblyPath.GetMetadata("FullPath")));
             }
             else
             {
                 if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0}", this.AssemblyPath));
-                    this.Install(this.AssemblyPath, this.Force);
+                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0}", this.AssemblyPath.GetMetadata("FullPath")));
+                    this.Install(this.AssemblyPath.GetMetadata("FullPath"), this.Force);
                 }
                 else
                 {
@@ -231,12 +231,17 @@ namespace MSBuild.ExtensionPack.Framework
                     }
 
                     this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0} on Remote Server: {1}", this.RemoteAssemblyPath, this.MachineName));
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", this.AssemblyPath, this.RemoteAssemblyPath));
+                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", this.AssemblyPath.GetMetadata("FullPath"), this.RemoteAssemblyPath));
 
                     // the assembly needs to be copied to the remote server for gaccing.
-                    System.IO.File.Copy(this.AssemblyPath, this.RemoteAssemblyPath);
+                    if (System.IO.File.Exists(this.RemoteAssemblyPath))
+                    {
+                        this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Deleting Remote Assembly: {0}", this.RemoteAssemblyPath));
+                        System.IO.File.Delete(this.RemoteAssemblyPath);
+                    }
 
-                    this.Scope.Connect();
+                    System.IO.File.Copy(this.AssemblyPath.GetMetadata("FullPath"), this.RemoteAssemblyPath);
+                    this.GetManagementScope(@"\root\cimv2");
                     ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true));
                     ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
                     methodParameters["CommandLine"] = @"gacutil.exe /i " + this.RemoteAssemblyPath;
