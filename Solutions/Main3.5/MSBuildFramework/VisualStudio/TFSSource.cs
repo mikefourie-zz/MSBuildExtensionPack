@@ -10,15 +10,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Comments, Notes, Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive, Force, Overwrite, All)</para>
-    /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Recursive, VersionSpec, Version, Baseless, Force)</para>
-    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist)</para>
-    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Comments, Notes, Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All)</para>
+    /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Server, Recursive, VersionSpec, Version, Baseless, Force)</para>
+    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist)</para>
+    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -95,6 +95,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public bool Baseless { get; set; }
 
         /// <summary>
+        /// Sets the TFS Server
+        /// </summary>
+        public string Server { get; set; }
+
+        /// <summary>
         /// Sets the files or folders to use.
         /// </summary>
         public string ItemPath { get; set; }
@@ -105,7 +110,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public ITaskItem[] ItemCol { get; set; }
 
         /// <summary>
-        /// Sets the working directory.
+        /// Sets the working directory. If the directory is mapped in a workspace, then there is no need to specify the Server.
         /// </summary>
         public string WorkingDirectory { get; set; }
 
@@ -323,6 +328,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (string.IsNullOrEmpty(this.OverrideText) == false)
             {
                 arguments += " /override:\"" + this.OverrideText + "\"";
+            }
+
+            if (string.IsNullOrEmpty(this.Server) == false)
+            {
+                arguments += " /s:" + this.Server;
             }
 
             if (!this.Recursive)
