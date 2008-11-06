@@ -190,7 +190,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             try
             {
-                this.Log.LogMessage("Detokenise Task Execution Started [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
+                this.LogTaskMessage("Detokenise Task Execution Started [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
 
                 // if the ReplacementValues collection is null, then we need to load
                 // the project file that called this task to get it's properties.
@@ -201,7 +201,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     // Read the project file to get the tokens
                     this.project = new Project();
                     string projectFile = this.BuildEngine.ProjectFileOfTaskNode;
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
                     this.project.Load(projectFile);
                 }
 
@@ -235,13 +235,13 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
             finally
             {
-                this.Log.LogMessage("Detokenise Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
+                this.LogTaskMessage("Detokenise Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
             }
         }
 
         private void ProcessPath()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Path: {0}", this.TargetPath));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Path: {0}", this.TargetPath));
             string originalPath = this.TargetPath;
             string rootPath = originalPath.Replace("*", string.Empty);
             
@@ -312,7 +312,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 throw new ArgumentException("Review error log");
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Collection: {0} files", this.TargetFiles.Length));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Collection: {0} files", this.TargetFiles.Length));
             foreach (ITaskItem file in this.TargetFiles)
             {
                 this.tokenMatched = false;
@@ -332,7 +332,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (this.DisplayFiles)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising File: {0}", file));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising File: {0}", file));
             }
 
             Encoding finalEncoding;
@@ -376,7 +376,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     {
                         if (this.DisplayFiles)
                         {
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Re-writing file content: {0}", file));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Re-writing file content: {0}", file));
                         }
 
                         streamWriter.Write(newFile);

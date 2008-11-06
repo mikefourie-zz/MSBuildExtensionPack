@@ -114,7 +114,7 @@ namespace MSBuild.ExtensionPack.Multimedia
 
             if (!string.IsNullOrEmpty(this.SoundFile))
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SoundFile));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SoundFile));
                 SoundPlayer player = new SoundPlayer { LoadTimeout = 5000, SoundLocation = this.SoundFile };
                 for (int i = 1; i <= this.Repeat; i++)
                 {
@@ -125,7 +125,7 @@ namespace MSBuild.ExtensionPack.Multimedia
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SystemSound));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SystemSound));
             switch (this.SystemSound)
             {
                 case "Asterisk":

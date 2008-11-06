@@ -104,7 +104,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Modify()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying EventLog: {0} on {1}", this.LogName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying EventLog: {0} on {1}", this.LogName, this.MachineName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName);
@@ -118,7 +118,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Delete()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting EventLog: {0} on: {1}", this.LogName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting EventLog: {0} on: {1}", this.LogName, this.MachineName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 System.Diagnostics.EventLog.Delete(this.LogName, this.MachineName);
@@ -127,13 +127,13 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking EventLog exists: {0} on: {1}", this.LogName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking EventLog exists: {0} on: {1}", this.LogName, this.MachineName));
             this.Exists = System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName);
         }
 
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventLog: {0} on: {1}", this.LogName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventLog: {0} on: {1}", this.LogName, this.MachineName));
             if (!System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 EventSourceCreationData ecd = new EventSourceCreationData(this.LogName, this.LogName) { MachineName = this.MachineName };
@@ -153,30 +153,30 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.MaxSize > 0)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting EventLog Size: {0}Mb", this.MaxSize));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting EventLog Size: {0}Mb", this.MaxSize));
                 el.MaximumKilobytes = this.MaxSize * 1024;
             }
 
             if (this.Retention > 0)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Retention: {0} days", this.Retention));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Retention: {0} days", this.Retention));
                 el.ModifyOverflowPolicy(OverflowAction.OverwriteOlder, this.Retention);
             }
             else if (this.Retention == -1)
             {
-                this.Log.LogMessage("Setting Retention to 'Overwrite As Needed'");
+                this.LogTaskMessage("Setting Retention to 'Overwrite As Needed'");
                 el.ModifyOverflowPolicy(OverflowAction.OverwriteAsNeeded, 0);
             }
             else if (this.Retention == -2)
             {
-                this.Log.LogMessage("Setting Retention to 'Do Not Overwrite'");
+                this.LogTaskMessage("Setting Retention to 'Do Not Overwrite'");
                 el.ModifyOverflowPolicy(OverflowAction.DoNotOverwrite, 0);
             }
         }
 
         private void Clear()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Clearing EventLog: {0}", this.LogName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Clearing EventLog: {0}", this.LogName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
                 using (System.Diagnostics.EventLog targetLog = new System.Diagnostics.EventLog(this.LogName, this.MachineName))

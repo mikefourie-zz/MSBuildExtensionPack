@@ -50,6 +50,11 @@ namespace MSBuild.ExtensionPack
         /// </summary>
         public bool LogExceptionStack { get; set; }
 
+        /// <summary>
+        /// Set to true to suppress all Message logging by tasks. Errors and Warnings are not affected.
+        /// </summary>
+        public bool SuppressTaskMessages { get; set; }
+
         internal ManagementScope Scope { get; set; }
 
         /// <summary>
@@ -58,6 +63,7 @@ namespace MSBuild.ExtensionPack
         /// <returns>bool</returns>
         public override sealed bool Execute()
         {
+            this.DetermineLogging();
             try
             {
                 this.InternalExecute();
@@ -65,7 +71,7 @@ namespace MSBuild.ExtensionPack
             }
             catch (Exception ex)
             {
-                this.GetLoggingVerbosity();
+                this.GetExceptionLevel();
                 this.Log.LogErrorFromException(ex, this.LogExceptionStack, true, null);
                 return !this.Log.HasLoggedErrors;
             }
@@ -88,12 +94,42 @@ namespace MSBuild.ExtensionPack
 
         internal void LogTaskWarning(string message)
         {
-            this.Log.LogWarning(message);
+            this.LogTaskWarning(message);
+        }
+
+        internal void LogTaskMessage(MessageImportance messageImportance, string message)
+        {
+            this.LogTaskMessage(messageImportance, message, null);
+        }
+
+        internal void LogTaskMessage(string message, object[] arguments)
+        {
+            this.LogTaskMessage(MessageImportance.Normal, message, arguments);
+        }
+
+        internal void LogTaskMessage(string message)
+        {
+            this.LogTaskMessage(MessageImportance.Normal, message, null);
+        }
+
+        internal void LogTaskMessage(MessageImportance messageImportance, string message, object[] arguments)
+        {
+            if (!this.SuppressTaskMessages)
+            {
+                if (arguments == null)
+                {
+                    this.Log.LogMessage(messageImportance, message);
+                }
+                else
+                {
+                    this.Log.LogMessage(messageImportance, message, arguments);
+                }
+            }
         }
 
         internal void GetManagementScope(string wmiNamespace)
         {
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "ManagementScope Set: {0}", "\\\\" + this.MachineName + wmiNamespace));
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "ManagementScope Set: {0}", "\\\\" + this.MachineName + wmiNamespace));
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace);
@@ -118,13 +154,23 @@ namespace MSBuild.ExtensionPack
         /// </remarks>
         protected abstract void InternalExecute();
 
-        private void GetLoggingVerbosity()
+        private void GetExceptionLevel()
         {
             string s = Environment.GetEnvironmentVariable("LogExceptionStack", EnvironmentVariableTarget.Machine);
 
             if (!string.IsNullOrEmpty(s))
             {
                 this.LogExceptionStack = Convert.ToBoolean(s, CultureInfo.CurrentCulture);
+            }
+        }
+
+        private void DetermineLogging()
+        {
+            string s = Environment.GetEnvironmentVariable("SuppressTaskMessages", EnvironmentVariableTarget.Machine);
+
+            if (!string.IsNullOrEmpty(s))
+            {
+                this.SuppressTaskMessages = Convert.ToBoolean(s, CultureInfo.CurrentCulture);
             }
         }
     }

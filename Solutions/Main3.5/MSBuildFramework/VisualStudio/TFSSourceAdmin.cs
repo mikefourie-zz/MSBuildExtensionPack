@@ -76,7 +76,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.ResolveExePath();
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
             switch (this.TaskAction)
             {
                 case "Branch":
@@ -123,9 +123,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, arguments));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, arguments));
             int returnValue = this.shellWrapper.Execute();
-            this.Log.LogMessage(MessageImportance.Low, this.shellWrapper.StandardOutput);
+            this.LogTaskMessage(MessageImportance.Low, this.shellWrapper.StandardOutput);
             this.SwitchReturnValue(returnValue, this.shellWrapper.StandardError.Trim());
         }
 
@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void ResolveExePath()
         {
-            this.Log.LogMessage("Resolve TF.exe path");
+            this.LogTaskMessage("Resolve TF.exe path");
 
             string vstools = string.Empty;
             switch (this.Version)
@@ -163,13 +163,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (!string.IsNullOrEmpty(vstools))
             {
                 this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
             }
 
             if (!File.Exists(this.tfexe))
             {
                 this.tfexe = "tf.exe";
-                this.Log.LogMessage("Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
+                this.LogTaskMessage("Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
             }
         }
     }

@@ -180,7 +180,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether website: {0} exists on: {1}", this.Name, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether website: {0} exists on: {1}", this.Name, this.MachineName));
             this.Exists = this.SiteExists();
         }
 
@@ -202,7 +202,7 @@ namespace MSBuild.ExtensionPack.Web
                         Directory.CreateDirectory(physicalPath);
                     }
 
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
                     this.website.Applications.Add(app.ItemSpec, physicalPath);
                 }
 
@@ -228,7 +228,7 @@ namespace MSBuild.ExtensionPack.Web
                         Directory.CreateDirectory(physicalPath);
                     }
 
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                     this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
                 }
 
@@ -244,7 +244,7 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName));
             this.iisServerManager.Sites.Remove(this.website);
             this.iisServerManager.CommitChanges();
         }
@@ -278,12 +278,12 @@ namespace MSBuild.ExtensionPack.Web
                     return;
                 }
 
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName));
                 this.iisServerManager.Sites.Remove(this.website);
                 this.iisServerManager.CommitChanges();
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
             if (!Directory.Exists(this.Path))
             {
                 Directory.CreateDirectory(this.Path);
@@ -305,7 +305,7 @@ namespace MSBuild.ExtensionPack.Web
                         Directory.CreateDirectory(physicalPath);
                     }
 
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
                     this.website.Applications.Add(app.ItemSpec, physicalPath);
                 }
             }
@@ -320,7 +320,7 @@ namespace MSBuild.ExtensionPack.Web
                         Directory.CreateDirectory(physicalPath);
                     }
 
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                     this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
                 }
             }
@@ -337,7 +337,7 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Modifying website: {0} on: {1}", this.Name, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying website: {0} on: {1}", this.Name, this.MachineName));
             if (!Directory.Exists(this.Path))
             {
                 Directory.CreateDirectory(this.Path);
@@ -349,7 +349,7 @@ namespace MSBuild.ExtensionPack.Web
                 VirtualDirectory vdir = app.VirtualDirectories["/"];
                 if (vdir != null)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting physical path: {0} on: {1}", this.Path, vdir.Path));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting physical path: {0} on: {1}", this.Path, vdir.Path));
                     vdir.PhysicalPath = this.Path;
                 }
             }
@@ -366,7 +366,7 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting info for website: {0} on: {1}", this.Name, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting info for website: {0} on: {1}", this.Name, this.MachineName));
             ITaskItem isite = new TaskItem(this.Name);
 
             isite.SetMetadata("ApplicationPoolName", this.website.ApplicationDefaults.ApplicationPoolName);

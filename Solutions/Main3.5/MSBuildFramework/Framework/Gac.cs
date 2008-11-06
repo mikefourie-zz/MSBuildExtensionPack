@@ -176,7 +176,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Assembly: {0} exists", this.AssemblyName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Assembly: {0} exists", this.AssemblyName));
             this.Exists = this.GetIAssemblyCache().QueryAssemblyInfo(0, this.AssemblyName, IntPtr.Zero) == 0;
         }
 
@@ -184,12 +184,12 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0}", this.AssemblyName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0}", this.AssemblyName));
                 this.Uninstall(this.AssemblyName);
             }
             else
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0} on Remote Server: {1}", this.AssemblyName, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "UnGACing Assembly: {0} on Remote Server: {1}", this.AssemblyName, this.MachineName));
                 this.GetManagementScope(@"\root\cimv2");
                 ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true));
                 ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
@@ -198,8 +198,8 @@ namespace MSBuild.ExtensionPack.Framework
 
                 if (outParams != null)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, "Process returned: " + outParams["returnValue"]);
-                    this.Log.LogMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
+                    this.LogTaskMessage(MessageImportance.Low, "Process returned: " + outParams["returnValue"]);
+                    this.LogTaskMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
                 }
                 else
                 {
@@ -219,7 +219,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0}", this.AssemblyPath.GetMetadata("FullPath")));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0}", this.AssemblyPath.GetMetadata("FullPath")));
                     this.Install(this.AssemblyPath.GetMetadata("FullPath"), this.Force);
                 }
                 else
@@ -230,13 +230,13 @@ namespace MSBuild.ExtensionPack.Framework
                         return;
                     }
 
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0} on Remote Server: {1}", this.RemoteAssemblyPath, this.MachineName));
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", this.AssemblyPath.GetMetadata("FullPath"), this.RemoteAssemblyPath));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "GACing Assembly: {0} on Remote Server: {1}", this.RemoteAssemblyPath, this.MachineName));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", this.AssemblyPath.GetMetadata("FullPath"), this.RemoteAssemblyPath));
 
                     // the assembly needs to be copied to the remote server for gaccing.
                     if (System.IO.File.Exists(this.RemoteAssemblyPath))
                     {
-                        this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Deleting Remote Assembly: {0}", this.RemoteAssemblyPath));
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Deleting Remote Assembly: {0}", this.RemoteAssemblyPath));
                         System.IO.File.Delete(this.RemoteAssemblyPath);
                     }
 
@@ -249,8 +249,8 @@ namespace MSBuild.ExtensionPack.Framework
 
                     if (outParams != null)
                     {
-                        this.Log.LogMessage(MessageImportance.Low, "Process returned: " + outParams["returnValue"]);
-                        this.Log.LogMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
+                        this.LogTaskMessage(MessageImportance.Low, "Process returned: " + outParams["returnValue"]);
+                        this.LogTaskMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
                     }
                     else
                     {

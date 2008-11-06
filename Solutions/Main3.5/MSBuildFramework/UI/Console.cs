@@ -144,7 +144,7 @@ namespace MSBuild.ExtensionPack.UI
                 this.UserPrompt = "Please enter a response and press [Enter]:";
             }
 
-            this.Log.LogMessage(MessageImportance.High, this.UserPrompt);
+            this.LogTaskMessage(MessageImportance.High, this.UserPrompt);
             this.UserResponse = System.Console.ReadLine();
 
             if (this.UserResponse != null)

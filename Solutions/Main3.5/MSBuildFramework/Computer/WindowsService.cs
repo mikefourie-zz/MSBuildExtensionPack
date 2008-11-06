@@ -151,7 +151,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.ServiceDoesExist())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Updating Identity: {0}", this.ServiceName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating Identity: {0}", this.ServiceName));
                 this.GetManagementScope(@"\root\cimv2");
                 ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM Win32_Service WHERE Name = '{0}'", this.ServiceName));
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
@@ -179,18 +179,18 @@ namespace MSBuild.ExtensionPack.Computer
             if (this.ServiceDoesExist())
             {
                 this.Exists = true;
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service: {0} exists on: {1}.", this.ServiceName, this.MachineName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service: {0} exists on: {1}.", this.ServiceName, this.MachineName));
             }
             else
             {
                 this.Exists = false;
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Service: {0} does not exist on: {1}.", this.ServiceName, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Service: {0} does not exist on: {1}.", this.ServiceName, this.MachineName));
             }
         }
 
         private void SetStartupType(string startup)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting StartUp Type to {0} for {1}.", startup, this.ServiceName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting StartUp Type to {0} for {1}.", startup, this.ServiceName));
             ManagementPath p = new ManagementPath("Win32_Service.Name='" + this.ServiceName + "'");
             ManagementObject managementObject = new ManagementObject(p);
             object[] parameters = new object[1];
@@ -213,17 +213,17 @@ namespace MSBuild.ExtensionPack.Computer
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StartPending:
                         case ServiceControllerStatus.StopPending:
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
                             ++i;
                             break;
                         case ServiceControllerStatus.Paused:
                         case ServiceControllerStatus.Stopped:
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Starting: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting: {0} - {1}...", this.ServiceName, serviceController.Status));
                             serviceController.Start();
                             ++i;
                             break;
                         case ServiceControllerStatus.Running:
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Started: {0}", this.ServiceName));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Started: {0}", this.ServiceName));
                             return;
                     }
 
@@ -261,12 +261,12 @@ namespace MSBuild.ExtensionPack.Computer
                 Process proc = new Process { StartInfo = { FileName = this.GetInstallUtilPath(), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/u ""{0}"" /LogFile=""{1}""", this.ServicePath.GetMetadata("FullPath"), this.ServiceName + " Uninstall.txt");
-                this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+                this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 string outputStream = proc.StandardOutput.ReadToEnd();
                 if (outputStream.Length > 0)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, outputStream);
+                    this.LogTaskMessage(MessageImportance.Low, outputStream);
                 }
 
                 string errorStream = proc.StandardError.ReadToEnd();
@@ -299,17 +299,17 @@ namespace MSBuild.ExtensionPack.Computer
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StartPending:
                         case ServiceControllerStatus.StopPending:
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} - {1}...", this.ServiceName, serviceController.Status));
                             ++i;
                             break;
                         case ServiceControllerStatus.Paused:
                         case ServiceControllerStatus.Running:
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Stopping: {0} - {1}...", this.ServiceName, serviceController.Status));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping: {0} - {1}...", this.ServiceName, serviceController.Status));
                             serviceController.Stop();
                             ++i;
                             break;
                         case ServiceControllerStatus.Stopped:
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Stopped: {0}", this.ServiceName));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopped: {0}", this.ServiceName));
                             return true;
                     }
 
@@ -369,7 +369,7 @@ namespace MSBuild.ExtensionPack.Computer
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"""{0}""", this.ServicePath);
-                this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+                this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 proc.WaitForExit();
                 if (proc.ExitCode != 0)
@@ -386,12 +386,12 @@ namespace MSBuild.ExtensionPack.Computer
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"config ""{0}"" obj= ""{1}"" password= ""{2}""", this.ServiceName, this.User, this.Password);
-                this.Log.LogMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments.Replace(this.Password, "***CENSORED***"));
+                this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments.Replace(this.Password, "***CENSORED***"));
                 proc.Start();
                 string outputStream = proc.StandardOutput.ReadToEnd();
                 if (outputStream.Length > 0)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, outputStream);
+                    this.LogTaskMessage(MessageImportance.Low, outputStream);
                 }
 
                 string errorStream = proc.StandardError.ReadToEnd();

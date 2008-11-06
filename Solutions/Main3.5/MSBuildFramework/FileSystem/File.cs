@@ -250,7 +250,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage("Setting file attributes");
+            this.LogTaskMessage("Setting file attributes");
             foreach (ITaskItem f in this.Files)
             {
                 FileInfo afile = new FileInfo(f.ItemSpec) { Attributes = SetAttributes(f.GetMetadata("Attributes").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) };
@@ -265,7 +265,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Checksum for file: {0}", this.Path));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Checksum for file: {0}", this.Path));
             using (FileStream fs = System.IO.File.OpenRead(this.Path))
             {
                 MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider();
@@ -283,7 +283,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage("Counting Lines");
+            this.LogTaskMessage("Counting Lines");
             DateTime start = DateTime.Now;
             this.ExcludedFiles = new Collection<ITaskItem>();
             
@@ -399,7 +399,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Processing Path: {0} with RegEx: {1}, ReplacementText: {2}", this.Path, this.RegexPattern, this.Replacement));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Processing Path: {0} with RegEx: {1}, ReplacementText: {2}", this.Path, this.RegexPattern, this.Replacement));
 
             // Check if we need to do a recursive search
             if (originalPath.Contains("*"))
@@ -474,7 +474,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage("Processing File Collection");
+            this.LogTaskMessage("Processing File Collection");
 
             foreach (ITaskItem file in this.Files)
             {
@@ -489,7 +489,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <param name="checkExists">if set to <c>true</c> [check exists].</param>
         private void ParseAndReplaceFile(string parseFile, bool checkExists)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Processing File: {0}", parseFile));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Processing File: {0}", parseFile));
             if (checkExists && System.IO.File.Exists(parseFile) == false)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The file does not exist: {0}", parseFile));
@@ -518,7 +518,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // If readonly attribute is set, reset it.
             if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
                 System.IO.File.SetAttributes(parseFile, fileAttributes ^ FileAttributes.ReadOnly);
             }
 

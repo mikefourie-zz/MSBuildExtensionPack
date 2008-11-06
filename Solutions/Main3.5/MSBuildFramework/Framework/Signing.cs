@@ -88,7 +88,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void RemoveAllSkipVerification()
         {
-            this.Log.LogMessage("Removing all SkipVerification");
+            this.LogTaskMessage("Removing all SkipVerification");
             CommandLineBuilder commandLine = new CommandLineBuilder();
             commandLine.AppendSwitch("-q -Vx");
             this.Run(commandLine.ToString());
@@ -101,7 +101,7 @@ namespace MSBuild.ExtensionPack.Framework
                 this.Log.LogError("PublicKeyToken is required");
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding SkipVerification for: {0}", this.PublicKeyToken));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding SkipVerification for: {0}", this.PublicKeyToken));
             CommandLineBuilder commandLine = new CommandLineBuilder();
             commandLine.AppendSwitch("-q -Vr");
             commandLine.AppendSwitch("*," + this.PublicKeyToken);
@@ -127,7 +127,7 @@ namespace MSBuild.ExtensionPack.Framework
                 FileInfo fi = new FileInfo(assembly.ItemSpec);
                 if (fi.Exists)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Signing Assembly: {0}", assembly.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Signing Assembly: {0}", assembly.ItemSpec));
 
                     CommandLineBuilder commandLine = new CommandLineBuilder();
                     commandLine.AppendSwitch("-q -R");
@@ -150,12 +150,12 @@ namespace MSBuild.ExtensionPack.Framework
         {
             Process proc = new Process { StartInfo = { FileName = Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
             proc.StartInfo.Arguments = args;
-            this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+            this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
             proc.Start();
             string outputStream = proc.StandardOutput.ReadToEnd();
             if (outputStream.Length > 0)
             {
-                this.Log.LogMessage(MessageImportance.Low, outputStream);
+                this.LogTaskMessage(MessageImportance.Low, outputStream);
             }
 
             string errorStream = proc.StandardError.ReadToEnd();

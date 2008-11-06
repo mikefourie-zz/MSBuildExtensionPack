@@ -96,13 +96,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             string args = String.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Executing: {0} {1}", this.fileName, args));
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Executing: {0} {1}", this.fileName, args));
             this.ExecuteVSS(args);
         }
 
         private bool GetVersionInformation()
         {
-            this.Log.LogMessage(MessageImportance.Low, "Getting version information");
+            this.LogTaskMessage(MessageImportance.Low, "Getting version information");
             RegistryKey vssKey;
             switch (this.SSVersion)
             {
@@ -145,7 +145,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.shellWrapper.EnvironmentVariables.Add("SSPWD", this.UserPassword);
             }
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Using UserName: {0} and Password: {1}", this.UserName, this.UserPassword));
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Using UserName: {0} and Password: {1}", this.UserName, this.UserPassword));
             return true;
         }
 
@@ -156,12 +156,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
             int returncode = this.shellWrapper.Execute();
             if (string.IsNullOrEmpty(this.shellWrapper.StandardOutput.Trim()) == false)
             {
-                this.Log.LogMessage(this.shellWrapper.StandardOutput);
+                this.LogTaskMessage(this.shellWrapper.StandardOutput);
             }
 
             if (string.IsNullOrEmpty(this.shellWrapper.StandardError.Trim()) == false)
             {
-                this.Log.LogMessage(this.shellWrapper.StandardError);
+                this.LogTaskMessage(this.shellWrapper.StandardError);
             }
 
             if (returncode != 0)

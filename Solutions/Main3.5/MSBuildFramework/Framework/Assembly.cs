@@ -117,7 +117,7 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Loading Assembly: {0}", this.NetAssembly));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Assembly: {0}", this.NetAssembly));
             this.assembly = System.Reflection.Assembly.LoadFrom(this.NetAssembly);
 
             switch (this.TaskAction)
@@ -136,18 +136,18 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetMethodInfo()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting MethodInfo for: {0}", this.NetAssembly));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting MethodInfo for: {0}", this.NetAssembly));
             this.outputItems = new List<ITaskItem>();
             foreach (Type type in this.assembly.GetTypes())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
                 ITaskItem t = new TaskItem(type.Name);
                 string paras = string.Empty;
                 foreach (MethodInfo mi in type.GetMethods())
                 {
                     foreach (ParameterInfo pi in mi.GetParameters())
                     {
-                        this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Parameter: {0}", pi.Name));
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Parameter: {0}", pi.Name));
                         paras += string.Format(CultureInfo.CurrentCulture, "[{0}] {1} | ", pi.ParameterType, pi.Name);
                     }
 
@@ -166,7 +166,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 if (type.IsClass && type.Name == this.NetClass)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
                     typeFound = true;
                     object[] arguments = new object[0];
                     if (this.NetArguments != null)
@@ -181,7 +181,7 @@ namespace MSBuild.ExtensionPack.Framework
                         }
                     }
                     
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Invoking: {0}", this.NetMethod));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Invoking: {0}", this.NetMethod));
     
                     if (this.NetMethod == null)
                     {

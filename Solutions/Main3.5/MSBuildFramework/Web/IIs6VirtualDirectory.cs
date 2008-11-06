@@ -233,7 +233,7 @@ namespace MSBuild.ExtensionPack.Web
 
             try
             {
-                Log.LogMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Creating Virtual Directory: {0} under {1}", this.Name, this.Website));
+                this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Creating Virtual Directory: {0} under {1}", this.Name, this.Website));
 
                 // Locate the website.
                 this.websiteEntry = this.LoadWebsite(this.Website);
@@ -294,7 +294,7 @@ namespace MSBuild.ExtensionPack.Web
                         string propName = propPair[0];
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
 
-                        Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
 
                         UpdateMetabaseProperty(vdirEntry, propName, propValue);
                     }

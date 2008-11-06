@@ -115,7 +115,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void CheckDriveSpace()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking Drive Space: {0} (min {1}{2}) on: {3}", this.Drive, this.MinSpace, this.Unit, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking Drive Space: {0} (min {1}{2}) on: {3}", this.Drive, this.MinSpace, this.Unit, this.MachineName));
 
             if (string.IsNullOrEmpty(this.Unit))
             {
@@ -154,7 +154,7 @@ namespace MSBuild.ExtensionPack.Computer
                         }
                         else
                         {
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
                         }
                     }
                 }
@@ -191,7 +191,7 @@ namespace MSBuild.ExtensionPack.Computer
                         }
                         else
                         {
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", drive, freeSpace, this.Unit));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", drive, freeSpace, this.Unit));
                         }
                     }
                 }
@@ -203,7 +203,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void GetDrives()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Drives from: {0}", this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Drives from: {0}", this.MachineName));
 
             this.drives = new List<ITaskItem>();
             if (this.MachineName == Environment.MachineName)

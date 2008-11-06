@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         private void Get()
         {
-            this.Log.LogMessage("Getting random GUID");
+            this.LogTaskMessage("Getting random GUID");
             this.internalguid = System.Guid.NewGuid();
         }
 
@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         private void GetCrypto()
         {
-            this.Log.LogMessage("Getting Cryptographically Secure GUID");
+            this.LogTaskMessage("Getting Cryptographically Secure GUID");
             byte[] data = new byte[16];
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             rng.GetBytes(data);

@@ -144,14 +144,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         private void Scan()
         {
-            this.Log.LogMessage("Performing StyleCop scan...");
+            this.LogTaskMessage("Performing StyleCop scan...");
             if (File.Exists(this.SettingsFile) == false)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Settings file was not found: {0}", this.SettingsFile));
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
             List<string> addinPaths = new List<string>();
             StyleCopConsole console = new StyleCopConsole(this.SettingsFile, this.CacheResults, null, addinPaths, true);
             Configuration configuration = new Configuration(new string[0]);
@@ -160,7 +160,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 if (this.ShowOutput)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding file: {0}", item2.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding file: {0}", item2.ItemSpec));
                 }
 
                 if (!console.Core.Environment.AddSourceCode(project, item2.ItemSpec, null))
@@ -216,7 +216,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         {
             lock (this)
             {
-                Log.LogMessage(e.Output.Trim(), new object[0]);
+                this.LogTaskMessage(e.Output.Trim(), new object[0]);
             }
         }
 

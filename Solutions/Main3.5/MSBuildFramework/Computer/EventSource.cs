@@ -116,7 +116,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Delete()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting EventSource: {0}", this.Source));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting EventSource: {0}", this.Source));
             if (System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
                 System.Diagnostics.EventLog.DeleteEventSource(this.Source, this.MachineName);
@@ -132,7 +132,7 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Logging to EventSource: {0}", this.Source));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Logging to EventSource: {0}", this.Source));
 
             if (!System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
@@ -149,13 +149,13 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking EventSource exists: {0}", this.Source));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking EventSource exists: {0}", this.Source));
             this.Exists = System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName);
         }
 
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
             EventSourceCreationData data = new EventSourceCreationData(this.Source, this.LogName) { MachineName = this.MachineName };
             if (!System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
@@ -165,9 +165,9 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 if (this.Force)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "The event source already exists. Force is true, attempting to delete: {0}", this.Source));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "The event source already exists. Force is true, attempting to delete: {0}", this.Source));
                     System.Diagnostics.EventLog.DeleteEventSource(this.Source, this.MachineName);
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
                     System.Diagnostics.EventLog.CreateEventSource(data);
                 }
                 else

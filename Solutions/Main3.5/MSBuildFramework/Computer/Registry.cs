@@ -138,7 +138,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void CheckEmpty()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Key: {0} is empty in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Key: {0} is empty in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
             {
@@ -159,7 +159,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Set()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Registry Value: {0} for Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Registry Value: {0} for Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             bool changed = false;
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
@@ -231,7 +231,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Get()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
             if (subKey == null)
             {
@@ -261,19 +261,19 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void DeleteKeyTree()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKeyTree(this.Key);
         }
 
         private void DeleteKey()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKey(this.Key, false);
         }
 
         private void CreateKey()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).CreateSubKey(this.Key);
             
             if (this.registryKey != null)

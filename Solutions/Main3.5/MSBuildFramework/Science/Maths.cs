@@ -145,8 +145,8 @@ namespace MSBuild.ExtensionPack.Science
             {
                 return;
             }
-
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "{0} numbers", this.TaskAction));
+            
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} numbers", this.TaskAction));
             switch (this.TaskAction)
             {
                 case "Add":
@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Science
             int totalI = Convert.ToInt32(this.numbers[0]);
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Operation: {0} >> {1}", totalI, this.numbers[i]));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Operation: {0} >> {1}", totalI, this.numbers[i]));
                 totalI >>= Convert.ToInt32(this.numbers[i]);
             }
 
@@ -212,7 +212,7 @@ namespace MSBuild.ExtensionPack.Science
             int totalI = Convert.ToInt32(this.numbers[0]);
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} << {1}", totalI, this.numbers[i]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} << {1}", totalI, this.numbers[i]));
                 totalI <<= Convert.ToInt32(this.numbers[i]);
             }
 
@@ -224,7 +224,7 @@ namespace MSBuild.ExtensionPack.Science
             int totalI = Convert.ToInt32(this.numbers[0]);
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} | {1}", totalI, this.numbers[i]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} | {1}", totalI, this.numbers[i]));
                 totalI |= Convert.ToInt32(this.numbers[i]);
             }
 
@@ -236,7 +236,7 @@ namespace MSBuild.ExtensionPack.Science
             int totalI = Convert.ToInt32(this.numbers[0]);
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} & {1}", totalI, this.numbers[i]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} & {1}", totalI, this.numbers[i]));
                 totalI &= Convert.ToInt32(this.numbers[i]);
             }
 
@@ -245,7 +245,7 @@ namespace MSBuild.ExtensionPack.Science
 
         private void Compare()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Comparing: {0} [{1}] {2}", this.P1, this.Comparison.ToUpperInvariant(), this.P2));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Comparing: {0} [{1}] {2}", this.P1, this.Comparison.ToUpperInvariant(), this.P2));
 
             switch (this.Comparison.ToUpperInvariant())
             {
@@ -269,7 +269,7 @@ namespace MSBuild.ExtensionPack.Science
 
         private void Evaluate()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Evaluating Expression: {0}", this.Expression));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Evaluating Expression: {0}", this.Expression));
             DataTable dt = new DataTable { Locale = CultureInfo.CurrentCulture };
             this.total = DecimalToSgl_Dbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
         }
@@ -279,7 +279,7 @@ namespace MSBuild.ExtensionPack.Science
             this.total = this.numbers[0];
             for (int x = 1; x < this.numbers.Length; x++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} / {1}", this.total, this.numbers[x]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} / {1}", this.total, this.numbers[x]));
                 this.total /= this.numbers[x];
             }
         }
@@ -289,7 +289,7 @@ namespace MSBuild.ExtensionPack.Science
             this.total = this.numbers[0];
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} * {1}", this.total, this.numbers[i]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} * {1}", this.total, this.numbers[i]));
                 this.total *= this.numbers[i];
             }
         }
@@ -299,7 +299,7 @@ namespace MSBuild.ExtensionPack.Science
             this.total = this.numbers[0];
             for (int x = 1; x < this.numbers.Length; x++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} - {1}", this.total, this.numbers[x]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} - {1}", this.total, this.numbers[x]));
                 this.total -= this.numbers[x];
             }
         }
@@ -309,7 +309,7 @@ namespace MSBuild.ExtensionPack.Science
             this.total = this.numbers[0];
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} + {1}", this.total, this.numbers[i]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} + {1}", this.total, this.numbers[i]));
                 this.total += this.numbers[i];
             }
         }
@@ -319,7 +319,7 @@ namespace MSBuild.ExtensionPack.Science
             this.total = this.numbers[0];
             for (int i = 1; i < this.numbers.Length; i++)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} % {1}", this.total, this.numbers[i]));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Operation: {0} % {1}", this.total, this.numbers[i]));
                 this.total %= this.numbers[i];
             }
         }

@@ -93,13 +93,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Building Projects Collection: {0} projects", this.Projects.Length));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Building Projects Collection: {0} projects", this.Projects.Length));
             foreach (ITaskItem project in this.Projects)
             {
                 this.BuildProject(project);
             }
 
-            this.Log.LogMessage("BuildVB6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
+            this.LogTaskMessage("BuildVB6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
             return;
         }
 
@@ -121,12 +121,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 }
 
                 // start the process
-                this.Log.LogMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+                this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 string outputStream = proc.StandardOutput.ReadToEnd();
                 if (outputStream.Length > 0)
                 {
-                    this.Log.LogMessage(outputStream);
+                    this.LogTaskMessage(outputStream);
                 }
 
                 string errorStream = proc.StandardError.ReadToEnd();

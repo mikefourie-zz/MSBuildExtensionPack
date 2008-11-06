@@ -189,12 +189,12 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                     if (action == "Add")
                     {
-                        this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding security for user: {0} on {1}", userName, this.Path));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding security for user: {0} on {1}", userName, this.Path));
                         currentSecurity.AddAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));    
                     }
                     else
                     {
-                        this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing security for user: {0} on {1}", userName, this.Path));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing security for user: {0} on {1}", userName, this.Path));
                         currentSecurity.RemoveAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
                     }
                 }
@@ -206,7 +206,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void DeleteAll()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing all Folders from: {0} that match: {1}", this.Path, this.Match));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing all Folders from: {0} that match: {1}", this.Path, this.Match));
             if (string.IsNullOrEmpty(this.Match))
             {
                 Log.LogError("Match must be specified.");
@@ -228,7 +228,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 Match m = reg.Match(child.Name);
                 if (m.Success)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing: {0}", child.FullName));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing: {0}", child.FullName));
                     DelTree(child);
                     Directory.Delete(child.FullName);
                 }
@@ -241,7 +241,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void RemoveContent(DirectoryInfo dir)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Content from Folder: {0}", dir.FullName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Content from Folder: {0}", dir.FullName));
 
             FileSystemInfo[] infos = dir.GetFileSystemInfos("*");
             foreach (FileSystemInfo i in infos)
@@ -315,7 +315,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
             Directory.Move(this.Path, this.TargetPath);
         }
     }

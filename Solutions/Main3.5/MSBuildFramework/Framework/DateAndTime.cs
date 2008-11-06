@@ -107,7 +107,7 @@ namespace MSBuild.ExtensionPack.Framework
                 this.End = DateTime.Now;
             }
             
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Elapsed: {0}", this.Format));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Elapsed: {0}", this.Format));
             TimeSpan t = this.End - this.Start;
 
             switch (this.Format)
@@ -132,7 +132,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetDate()
         {
-            this.Log.LogMessage("Getting Date / Time");
+            this.LogTaskMessage("Getting Date / Time");
             this.Result = DateTime.Now.ToString(this.Format, CultureInfo.CurrentCulture);
         }
     }

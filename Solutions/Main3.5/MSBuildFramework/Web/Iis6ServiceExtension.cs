@@ -96,7 +96,7 @@ namespace MSBuild.ExtensionPack.Web
 
         public bool FileExists()
         {
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Checking whether File exists: {0}", this.Path));
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Checking whether File exists: {0}", this.Path));
 
             bool result = false;
             using (DirectoryEntry web = new DirectoryEntry("IIS://" + this.MachineName + "/W3SVC"))
@@ -121,7 +121,7 @@ namespace MSBuild.ExtensionPack.Web
 
         public void DeleteFile()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Delete File: {0}", this.Path));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Delete File: {0}", this.Path));
             if (this.FileExists())
             {
                 using (DirectoryEntry web = new DirectoryEntry("IIS://" + this.MachineName + "/W3SVC"))
@@ -161,8 +161,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void AddFile()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Adding File: {0}", this.Path));
-            Log.LogMessage(this.FileExists().ToString());
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Adding File: {0}", this.Path));
             if (this.FileExists())
             {
                 if (this.Force)

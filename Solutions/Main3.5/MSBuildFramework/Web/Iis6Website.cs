@@ -191,7 +191,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "Creating Website: {0}", this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Creating Website: {0}", this.Name));
             using (DirectoryEntry webserviceEntry = this.LoadWebService())
             {
                 // We'll try and find the website first.
@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Web
                 {
                     if (this.Force)
                     {
-                        this.Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "Website exists. Deleting Website: {0}", this.Name));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Website exists. Deleting Website: {0}", this.Name));
                         this.Delete();
                     }
                     else
@@ -251,7 +251,7 @@ namespace MSBuild.ExtensionPack.Web
                             string[] propPair = s.Split(new[] { '=' });
                             string propName = propPair[0];
                             string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-                            this.Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
                             UpdateMetabaseProperty(this.websiteEntry, propName, propValue);
                         }
                     }
@@ -283,7 +283,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (this.CheckSiteExists())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "{0} Website: {1}", this.TaskAction, this.Name));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "{0} Website: {1}", this.TaskAction, this.Name));
                 
                 // need to insert a sleep as the code occasionaly fails to work without a wait.
                 System.Threading.Thread.Sleep(this.Sleep);

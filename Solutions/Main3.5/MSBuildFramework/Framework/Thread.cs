@@ -56,16 +56,16 @@ namespace MSBuild.ExtensionPack.Framework
             switch (this.TaskAction)
             {
                 case "Abort":
-                    this.Log.LogMessage("Aborting Current Thread");
+                    this.LogTaskMessage("Aborting Current Thread");
                     System.Threading.Thread thisThread = System.Threading.Thread.CurrentThread;
                     thisThread.Abort();
                     break;
                 case "Sleep":
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Sleeping all threads for: {0}ms", this.Timeout));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Sleeping all threads for: {0}ms", this.Timeout));
                     System.Threading.Thread.Sleep(this.Timeout);
                     break;
                 case "SpinWait":
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SpinWait all threads for: {0} iterations", this.Iterations));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SpinWait all threads for: {0} iterations", this.Iterations));
                     System.Threading.Thread.SpinWait(this.Iterations);
                     break;
                 default:

@@ -119,7 +119,7 @@ namespace MSBuild.ExtensionPack.Security
             {
                 if (xcert509.Thumbprint == this.Thumbprint)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Removing Certificate: {0}", xcert509.Thumbprint));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Certificate: {0}", xcert509.Thumbprint));
                     store.Remove(xcert509);
                     break;
                 }
@@ -155,7 +155,7 @@ namespace MSBuild.ExtensionPack.Security
             keyflags |= X509KeyStorageFlags.PersistKeySet;
             cert.Import(this.FileName.GetMetadata("FullPath"), this.CertPassword, keyflags);
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Certificate: {0} to Store: {1}", this.FileName.GetMetadata("FullPath"), this.StoreName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Certificate: {0} to Store: {1}", this.FileName.GetMetadata("FullPath"), this.StoreName));
             X509Store store = new X509Store(this.StoreName, locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
             store.Add(cert);

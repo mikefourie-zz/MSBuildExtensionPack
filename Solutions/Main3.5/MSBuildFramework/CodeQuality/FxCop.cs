@@ -287,13 +287,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = arguments;
-                this.Log.LogMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+                this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
 
                 string outputStream = proc.StandardOutput.ReadToEnd();
                 if (outputStream.Length > 0)
                 {
-                    this.Log.LogMessage(outputStream);
+                    this.LogTaskMessage(outputStream);
                     this.OutputText = outputStream;
                 }
 

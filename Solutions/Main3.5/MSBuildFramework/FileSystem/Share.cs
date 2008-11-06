@@ -194,7 +194,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking whether share: {0} exists on: {1}", this.ShareName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Checking whether share: {0} exists on: {1}", this.ShareName, this.MachineName));
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath fullSharePath = new ManagementPath("Win32_Share.Name='" + this.ShareName + "'");
             ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null);
@@ -213,7 +213,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void Delete()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Deleting share: {0} on: {1}", this.ShareName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Deleting share: {0} on: {1}", this.ShareName, this.MachineName));
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath fullSharePath = new ManagementPath("Win32_Share.Name='" + this.ShareName + "'");
             ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null);
@@ -225,7 +225,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
             catch
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating share: {0} on: {1}", this.ShareName, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating share: {0} on: {1}", this.ShareName, this.MachineName));
 
             if (!Directory.Exists(this.SharePath))
             {
@@ -311,7 +311,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     this.Log.LogError("Net name not found");
                     break;
                 case ReturnCode.ShareAlreadyExists:
-                    this.Log.LogWarning(string.Format(CultureInfo.CurrentCulture, "The share already exists: {0}", this.ShareName));
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The share already exists: {0}", this.ShareName));
                     break;
             }
         }
@@ -336,7 +336,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             {
                 foreach (ITaskItem user in this.AllowUsers)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Allowing user: {0}", user.ItemSpec));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Allowing user: {0}", user.ItemSpec));
                     ManagementObject trustee = this.BuildTrustee(user.ItemSpec);
                     acl.Add(this.BuildAccessControlEntry(user, trustee, false));
                 }
@@ -346,7 +346,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             {
                 foreach (ITaskItem user in this.DenyUsers)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Denying user: {0}", user.ItemSpec));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Denying user: {0}", user.ItemSpec));
                     ManagementObject trustee = this.BuildTrustee(user.ItemSpec);
                     acl.Add(this.BuildAccessControlEntry(user, trustee, true));
                 }
@@ -415,7 +415,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             if (string.IsNullOrEmpty(permissions))
             {
                 // apply all permissions
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Full permission for: {0}", user.ItemSpec));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Full permission for: {0}", user.ItemSpec));
                 ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x10000U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;
             }
             else
@@ -423,14 +423,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                 if (permissions.IndexOf("Read", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     // readonly permission
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Read permission for: {0}", user.ItemSpec));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Read permission for: {0}", user.ItemSpec));
                     ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;  
                 }
 
                 if (permissions.IndexOf("Change", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     // change permission
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Change permission for: {0}", user.ItemSpec));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Change permission for: {0}", user.ItemSpec));
                     ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x10000U | 0x20000U | 0x40000U | 0x100000U;
                 }
             }

@@ -109,12 +109,12 @@ namespace MSBuild.ExtensionPack.Communication
 
         private void Send()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Sending email: {0}", this.Subject));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Sending email: {0}", this.Subject));
             MailMessage msg = new MailMessage { From = new MailAddress(this.MailFrom) };
 
             foreach (ITaskItem recipient in this.MailTo)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding recipient: {0}", recipient.ItemSpec));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding recipient: {0}", recipient.ItemSpec));
                 msg.To.Add(new MailAddress(recipient.ItemSpec));
             }
 
@@ -122,7 +122,7 @@ namespace MSBuild.ExtensionPack.Communication
             {
                 foreach (ITaskItem file in this.Attachments)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
                     Attachment attachment = new Attachment(file.ItemSpec);
                     msg.Attachments.Add(attachment);
                 }

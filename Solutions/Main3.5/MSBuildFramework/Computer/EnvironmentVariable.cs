@@ -116,7 +116,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void Set()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
             Environment.SetEnvironmentVariable(this.Variable, this.Value[0], this.target);
         }
 
@@ -125,7 +125,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void Get()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Getting Environment Variable: {0} for target: {1} from: {2}", this.Variable, this.target, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Environment Variable: {0} for target: {1} from: {2}", this.Variable, this.target, this.MachineName));
 
             if (this.MachineName == Environment.MachineName)
             {

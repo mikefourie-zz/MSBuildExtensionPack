@@ -173,7 +173,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            this.Log.LogMessage("Getting Version");
+            this.LogTaskMessage("Getting Version");
             string buildstring = this.TfsBuildNumber.Replace(this.BuildName + "_", string.Empty);
             string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
@@ -221,7 +221,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             foreach (ITaskItem file in this.Files)
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Versioning {0} at {1}", file.ItemSpec, this.Version));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Versioning {0} at {1}", file.ItemSpec, this.Version));
                 bool changedAttribute = false;
 
                 // First make sure the file is writable.
@@ -230,7 +230,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 // If readonly attribute is set, reset it.
                 if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, "Making file writable");
+                    this.LogTaskMessage(MessageImportance.Low, "Making file writable");
                     File.SetAttributes(file.ItemSpec, fileAttributes ^ FileAttributes.ReadOnly);
                     changedAttribute = true;
                 }
@@ -258,7 +258,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 if (changedAttribute)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, "Making file readonly");
+                    this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
                     File.SetAttributes(file.ItemSpec, FileAttributes.ReadOnly);
                 }
             }

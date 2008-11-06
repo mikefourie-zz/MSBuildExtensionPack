@@ -178,13 +178,13 @@ namespace MSBuild.ExtensionPack.Xml
             if (!string.IsNullOrEmpty(this.XmlFile))
             {
                 // Load the XmlFile
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading XmlFile: {0}", this.XmlFile));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading XmlFile: {0}", this.XmlFile));
                 this.xmlDoc = XDocument.Load(this.XmlFile);
             }
             else if (!string.IsNullOrEmpty(this.Xml))
             {
                 // Load the Xml
-                this.Log.LogMessage(MessageImportance.Low, "Loading Xml");
+                this.LogTaskMessage(MessageImportance.Low, "Loading Xml");
                 this.xmlDoc = XDocument.Load(new StringReader(this.Xml));
             }
             else
@@ -209,7 +209,7 @@ namespace MSBuild.ExtensionPack.Xml
 
         private void TransForm()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Transforming: {0}", this.XmlFile));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Transforming: {0}", this.XmlFile));
             XDocument xslDoc;
             if (!string.IsNullOrEmpty(this.XslTransformFile) && !File.Exists(this.XslTransformFile))
             {
@@ -220,13 +220,13 @@ namespace MSBuild.ExtensionPack.Xml
             if (!string.IsNullOrEmpty(this.XslTransformFile))
             {
                 // Load the XslTransformFile
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading XslTransformFile: {0}", this.XslTransformFile));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading XslTransformFile: {0}", this.XslTransformFile));
                 xslDoc = XDocument.Load(this.XslTransformFile);
             }
             else if (!string.IsNullOrEmpty(this.XslTransform))
             {
                 // Load the XslTransform
-                this.Log.LogMessage(MessageImportance.Low, "Loading XslTransform");
+                this.LogTaskMessage(MessageImportance.Low, "Loading XslTransform");
                 xslDoc = XDocument.Load(new StringReader(this.XslTransform));
             }
             else
@@ -270,17 +270,17 @@ namespace MSBuild.ExtensionPack.Xml
         {
             if (!string.IsNullOrEmpty(this.XmlFile))
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Validating: {0}", this.XmlFile));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Validating: {0}", this.XmlFile));
             }
             else
             {
-                this.Log.LogMessage("Validating Xml");
+                this.LogTaskMessage("Validating Xml");
             }
 
             XmlSchemaSet schemas = new XmlSchemaSet();
             foreach (ITaskItem i in this.SchemaFiles)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading SchemaFile: {0}", i.ItemSpec));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading SchemaFile: {0}", i.ItemSpec));
                 schemas.Add(string.Empty, i.ItemSpec);
             }
 
@@ -290,7 +290,7 @@ namespace MSBuild.ExtensionPack.Xml
                 (o, e) =>
                 {
                     this.Output += e.Message;
-                    Log.LogWarning("{0}", e.Message);
+                    this.Log.LogWarning("{0}", e.Message);
                     errorEncountered = true;
                 });
 

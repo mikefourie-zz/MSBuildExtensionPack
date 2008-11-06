@@ -163,7 +163,7 @@ namespace MSBuild.ExtensionPack.Compression
 
             FileInfo f = new FileInfo(this.NewFile.GetMetadata("FullPath"));
 
-            this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0} to Cab: {1}", this.NewFile.GetMetadata("FullPath"), this.CabFile.GetMetadata("FullPath")));
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0} to Cab: {1}", this.NewFile.GetMetadata("FullPath"), this.CabFile.GetMetadata("FullPath")));
             string tempFolderName = System.Guid.NewGuid() + "\\";
 
             DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(), tempFolderName));
@@ -171,7 +171,7 @@ namespace MSBuild.ExtensionPack.Compression
 
             if (dirInfo.Exists)
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Created: {0}", dirInfo.FullName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Created: {0}", dirInfo.FullName));
             }
             else
             {
@@ -182,23 +182,23 @@ namespace MSBuild.ExtensionPack.Compression
             // configure the process we need to run
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile.GetMetadata("FullPath")));
                 cabProcess.StartInfo.FileName = this.ExtractExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = true;
                 cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", dirInfo.FullName, this.CabFile.GetMetadata("FullPath"), "/E");
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 cabProcess.Start();
                 cabProcess.WaitForExit();
             }
 
             Directory.CreateDirectory(dirInfo.FullName + "\\" + this.NewFileDestination);
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Copying new File: {0} to {1}", this.NewFile, dirInfo.FullName + "\\" + this.NewFileDestination + "\\" + f.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Copying new File: {0} to {1}", this.NewFile, dirInfo.FullName + "\\" + this.NewFileDestination + "\\" + f.Name));
             System.IO.File.Copy(this.NewFile.GetMetadata("FullPath"), dirInfo.FullName + this.NewFileDestination + @"\" + f.Name, true);
 
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile.GetMetadata("FullPath")));
                 cabProcess.StartInfo.FileName = this.CabExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = false;
                 cabProcess.StartInfo.RedirectStandardOutput = true;
@@ -207,7 +207,7 @@ namespace MSBuild.ExtensionPack.Compression
                 options.Append("-r -p");
                 options.AppendFormat(" -P \"{0}\"\\", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1).Replace(@"C:\", string.Empty));
                 cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile.GetMetadata("FullPath"), "\"" + dirInfo.FullName + "*.*\"" + " ");
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 
                 // start the process
                 cabProcess.Start();
@@ -218,7 +218,7 @@ namespace MSBuild.ExtensionPack.Compression
 
                 if (output.Contains("Completed successfully"))
                 {
-                    this.Log.LogMessage(output);
+                    this.LogTaskMessage(output);
                 }
                 else
                 {
@@ -229,7 +229,7 @@ namespace MSBuild.ExtensionPack.Compression
             string dirObject = string.Format(CultureInfo.CurrentCulture, "win32_Directory.Name='{0}'", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1));
             using (ManagementObject mdir = new ManagementObject(dirObject))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Deleting Temp Folder: {0}", dirObject));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Deleting Temp Folder: {0}", dirObject));
                 mdir.Get();
                 ManagementBaseObject outParams = mdir.InvokeMethod("Delete", null, null);
 
@@ -270,11 +270,11 @@ namespace MSBuild.ExtensionPack.Compression
             // configure the process we need to run
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Cab: {0}", this.CabFile.GetMetadata("FullPath")));
                 cabProcess.StartInfo.FileName = this.ExtractExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = true;
                 cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"/Y /L ""{0}"" ""{1}"" ""{2}""", this.ExtractTo.GetMetadata("FullPath"), this.CabFile.GetMetadata("FullPath"), this.ExtractFile);
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.ExtractExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 cabProcess.Start();
                 cabProcess.WaitForExit();
             }
@@ -332,7 +332,7 @@ namespace MSBuild.ExtensionPack.Compression
 
             using (Process cabProcess = new Process())
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile.GetMetadata("FullPath")));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Cab: {0}", this.CabFile.GetMetadata("FullPath")));
                 cabProcess.StartInfo.FileName = this.CabExePath.GetMetadata("FullPath");
                 cabProcess.StartInfo.UseShellExecute = false;
                 cabProcess.StartInfo.RedirectStandardOutput = true;
@@ -382,7 +382,7 @@ namespace MSBuild.ExtensionPack.Compression
                 }
 
                 cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile.GetMetadata("FullPath"), files);
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
 
                 // start the process
                 cabProcess.Start();
@@ -393,7 +393,7 @@ namespace MSBuild.ExtensionPack.Compression
 
                 if (output.Contains("Completed successfully"))
                 {
-                    this.Log.LogMessage(MessageImportance.Low, output);
+                    this.LogTaskMessage(MessageImportance.Low, output);
                 }
                 else
                 {

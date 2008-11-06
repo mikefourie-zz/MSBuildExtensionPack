@@ -101,7 +101,7 @@ namespace MSBuild.ExtensionPack.Computer
                 PingOptions options = new PingOptions(TimeToLive, false);
                 for (int i = 0; i < this.PingCount; i++)
                 {
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Pinging {0}", this.HostName));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Pinging {0}", this.HostName));
                     PingReply response = pinger.Send(this.HostName, this.Timeout, buffer, options);
                     if (response != null && response.Status == IPStatus.Success)
                     {

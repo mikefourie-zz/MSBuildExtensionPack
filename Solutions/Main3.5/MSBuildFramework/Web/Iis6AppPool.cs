@@ -108,7 +108,7 @@ namespace MSBuild.ExtensionPack.Web
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private void UpdateMetabaseProperty(DirectoryEntry entry, string metabasePropertyName, string metabaseProperty)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Applying Property: {0}({1})", metabasePropertyName, metabaseProperty));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Applying Property: {0}({1})", metabasePropertyName, metabaseProperty));
 
             if (metabaseProperty.IndexOf('|') == -1)
             {
@@ -130,7 +130,7 @@ namespace MSBuild.ExtensionPack.Web
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private void Modify()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Modifying AppPool: {0}", this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Modifying AppPool: {0}", this.Name));
 
             // We'll try and find the app pool first.
             using (DirectoryEntry appPoolEntry = this.LoadAppPool(this.Name))
@@ -160,7 +160,7 @@ namespace MSBuild.ExtensionPack.Web
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private bool CheckExists()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Checking AppPool Exists: {0}", this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Checking AppPool Exists: {0}", this.Name));
             return DirectoryEntry.Exists(this.AppPoolsPath + @"/" + this.Name);
         }
 
@@ -202,7 +202,7 @@ namespace MSBuild.ExtensionPack.Web
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private void ControlAppPool(string appPoolAction)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "AppPool: {0} - Action: {1}", this.Name, appPoolAction));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "AppPool: {0} - Action: {1}", this.Name, appPoolAction));
 
             // First locate the app pool.
             using (DirectoryEntry appPoolEntry = this.LoadAppPool(this.Name))
@@ -232,7 +232,7 @@ namespace MSBuild.ExtensionPack.Web
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private void Create()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.InvariantCulture, "Creating AppPool: {0}", this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating AppPool: {0}", this.Name));
 
             // We'll try and find the app pool first.
             using (DirectoryEntry appPoolEntry = this.LoadAppPool(this.Name))

@@ -172,7 +172,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
             
             this.ResolveExePath();
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
             switch (this.TaskAction)
             {
                 case "Add":
@@ -348,10 +348,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
             }
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
             this.returnValue = this.shellWrapper.Execute();
             this.returnOutput = this.shellWrapper.StandardOutput;
-            this.Log.LogMessage(MessageImportance.Low, this.returnOutput);
+            this.LogTaskMessage(MessageImportance.Low, this.returnOutput);
             this.SwitchReturnValue(this.shellWrapper.StandardError.Trim());
         }
 
@@ -396,7 +396,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void ResolveExePath()
         {
-            this.Log.LogMessage(MessageImportance.Low, "Resolve TF.exe path");
+            this.LogTaskMessage(MessageImportance.Low, "Resolve TF.exe path");
 
             string vstools = string.Empty;
             switch (this.Version)
@@ -412,13 +412,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (!string.IsNullOrEmpty(vstools))
             {
                 this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
             }
 
             if (!File.Exists(this.tfexe))
             {
                 this.tfexe = "tf.exe";
-                this.Log.LogMessage(MessageImportance.Low, "Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
+                this.LogTaskMessage(MessageImportance.Low, "Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
             }
         }
     }

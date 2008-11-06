@@ -122,7 +122,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
 
                 this.syncOptions = fso;
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SyncOptions set: {0}", this.syncOptions));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SyncOptions set: {0}", this.syncOptions));
             }
 
             switch (this.TaskAction)
@@ -174,10 +174,10 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void SyncFolders()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Syncing Folders: {0} and {1}. Direction: {2}", this.Source.GetMetadata("FullPath"), this.Destination.GetMetadata("FullPath"), this.Direction));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Syncing Folders: {0} and {1}. Direction: {2}", this.Source.GetMetadata("FullPath"), this.Destination.GetMetadata("FullPath"), this.Direction));
             if (!Directory.Exists(this.Destination.GetMetadata("FullPath")))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Destination Folder: {0}", this.Destination.GetMetadata("FullPath")));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Destination Folder: {0}", this.Destination.GetMetadata("FullPath")));
                 Directory.CreateDirectory(this.Destination.GetMetadata("FullPath"));    
             }
 
@@ -194,7 +194,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 foreach (ITaskItem exfilter in this.ExclusionFilters)
                 {
                     FileInfo f = new FileInfo(exfilter.ItemSpec);
-                    this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding ExclusionFilter: {0}", f.Name));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding ExclusionFilter: {0}", f.Name));
                     filter.FileNameExcludes.Add(f.Name);
                 }
             }
@@ -231,23 +231,23 @@ namespace MSBuild.ExtensionPack.FileSystem
             switch (args.ChangeType)
             {
                 case ChangeType.Create:
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.NewFilePath));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.NewFilePath));
                     break;
                 case ChangeType.Delete:
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.OldFilePath));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.OldFilePath));
                     break;
                 case ChangeType.Update:
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.OldFilePath));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.OldFilePath));
                     break;
                 case ChangeType.Rename:
-                    this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.NewFilePath));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} : {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), args.NewFilePath));
                     break;
             }
         }
 
         private void OnSkippedChange(object sender, SkippedChangeEventArgs args)
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "SKIPPED {0} for {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), (!string.IsNullOrEmpty(args.CurrentFilePath) ? args.CurrentFilePath : args.NewFilePath)));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SKIPPED {0} for {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), (!string.IsNullOrEmpty(args.CurrentFilePath) ? args.CurrentFilePath : args.NewFilePath)));
             if (args.Exception != null)
             {
                 this.Log.LogErrorFromException(args.Exception, this.LogExceptionStack, true, null);

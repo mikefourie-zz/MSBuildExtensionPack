@@ -193,7 +193,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Sort()
         {
-            this.Log.LogMessage("Sorting Items");
+            this.LogTaskMessage("Sorting Items");
             if (this.inputItems1 == null)
             {
                 Log.LogError("InputItems1 is required");
@@ -224,7 +224,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetItem()
         {
-            this.Log.LogMessage("Getting Item");
+            this.LogTaskMessage("Getting Item");
             if (this.inputItems1 == null)
             {
                 Log.LogError("InputItems1 is required");
@@ -241,7 +241,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetLastItem()
         {
-            this.Log.LogMessage("Getting Last Item");
+            this.LogTaskMessage("Getting Last Item");
             if (this.inputItems1 == null)
             {
                 Log.LogError("InputItems1 is required");
@@ -253,7 +253,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetDistinctItems()
         {
-            this.Log.LogMessage("Getting Distinct Items");
+            this.LogTaskMessage("Getting Distinct Items");
             this.outputItems = new List<ITaskItem>();
             if (this.inputItems1 == null)
             {
@@ -310,7 +310,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetCommonItems()
         {
-            this.Log.LogMessage("Getting Common Items");
+            this.LogTaskMessage("Getting Common Items");
             this.outputItems = new List<ITaskItem>();
             if (this.inputItems1 == null)
             {
@@ -348,7 +348,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void StringToItemCol()
         {
-            this.Log.LogMessage("Converting String To Item Collection");
+            this.LogTaskMessage("Converting String To Item Collection");
 
             if (string.IsNullOrEmpty(this.ItemString))
             {
@@ -375,7 +375,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void RemoveDuplicateFiles()
         {
-            this.Log.LogMessage("Removing Duplicates");
+            this.LogTaskMessage("Removing Duplicates");
             if (this.inputItems1 == null)
             {
                 Log.LogError("InputItems1 is required");
@@ -400,7 +400,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetCurrentDirectory()
         {
-            this.Log.LogMessage("Getting Current Directory");
+            this.LogTaskMessage("Getting Current Directory");
             System.IO.FileInfo projFile = new System.IO.FileInfo(BuildEngine.ProjectFileOfTaskNode);
 
             if (projFile.Directory != null)
@@ -411,7 +411,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetItemCount()
         {
-            this.Log.LogMessage("Getting Item Count");
+            this.LogTaskMessage("Getting Item Count");
             this.ItemCount = this.InputItems1.Length;
         }
     }
