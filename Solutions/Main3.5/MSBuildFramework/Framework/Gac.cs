@@ -226,7 +226,7 @@ namespace MSBuild.ExtensionPack.Framework
                 {
                     if (string.IsNullOrEmpty(this.RemoteAssemblyPath))
                     {
-                        this.Log.LogError("RemotePath is Required");
+                        this.Log.LogError("RemoteAssemblyPath is Required");
                         return;
                     }
 
