@@ -73,13 +73,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Set the Source to synchronise from
         /// </summary>
         [Required]
-        public string Source { get; set; }
+        public ITaskItem Source { get; set; }
 
         /// <summary>
         /// Set the Destination to synchronise to
         /// </summary>
         [Required]
-        public string Destination { get; set; }
+        public ITaskItem Destination { get; set; }
 
         /// <summary>
         /// Set the SyncOptions collection. Default is ExplicitDetectChanges | RecycleDeletedFiles
@@ -106,9 +106,9 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // Check that the Source exists
-            if (!Directory.Exists(this.Source))
+            if (!Directory.Exists(this.Source.GetMetadata("FullPath")))
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Source Folder does not exist: {0}", this.Source));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Source Folder does not exist: {0}", this.Source.GetMetadata("FullPath")));
                 return;
             }
 
@@ -174,15 +174,15 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void SyncFolders()
         {
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Syncing Folders: {0} and {1}. Direction: {2}", this.Source, this.Destination, this.Direction));
-            if (!Directory.Exists(this.Destination))
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Syncing Folders: {0} and {1}. Direction: {2}", this.Source.GetMetadata("FullPath"), this.Destination.GetMetadata("FullPath"), this.Direction));
+            if (!Directory.Exists(this.Destination.GetMetadata("FullPath")))
             {
-                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Destination Folder: {0}", this.Destination));
-                Directory.CreateDirectory(this.Destination);    
+                this.Log.LogMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Creating Destination Folder: {0}", this.Destination.GetMetadata("FullPath")));
+                Directory.CreateDirectory(this.Destination.GetMetadata("FullPath"));    
             }
 
-            Guid sourceSyncId = GetSyncId(Path.Combine(this.Source, this.IdFileName));
-            Guid destinationSyncId = GetSyncId(Path.Combine(this.Destination, this.IdFileName));
+            Guid sourceSyncId = GetSyncId(Path.Combine(this.Source.GetMetadata("FullPath"), this.IdFileName));
+            Guid destinationSyncId = GetSyncId(Path.Combine(this.Destination.GetMetadata("FullPath"), this.IdFileName));
             FileSyncScopeFilter filter = new FileSyncScopeFilter();
 
             // Exclude the IdFileName by default
@@ -200,8 +200,8 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // Detect Changes
-            this.DetectChanges(sourceSyncId, this.Source, filter);
-            this.DetectChanges(destinationSyncId, this.Destination, filter);
+            this.DetectChanges(sourceSyncId, this.Source.GetMetadata("FullPath"), filter);
+            this.DetectChanges(destinationSyncId, this.Destination.GetMetadata("FullPath"), filter);
 
             // Synchronise
             this.SyncFiles(sourceSyncId, destinationSyncId, filter);
@@ -209,8 +209,8 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void SyncFiles(Guid sourceSyncId, Guid destinationSyncId, FileSyncScopeFilter filter)
         {
-            using (FileSyncProvider sourceProvider = new FileSyncProvider(sourceSyncId, this.Source, filter, this.syncOptions))
-            using (FileSyncProvider destinationProvider = new FileSyncProvider(destinationSyncId, this.Destination, filter, this.syncOptions))
+            using (FileSyncProvider sourceProvider = new FileSyncProvider(sourceSyncId, this.Source.GetMetadata("FullPath"), filter, this.syncOptions))
+            using (FileSyncProvider destinationProvider = new FileSyncProvider(destinationSyncId, this.Destination.GetMetadata("FullPath"), filter, this.syncOptions))
             {
                 if (this.ShowOutput)
                 {

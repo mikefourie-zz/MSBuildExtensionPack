@@ -79,7 +79,7 @@ namespace MSBuild.ExtensionPack.Security
         /// <summary>
         /// Sets the name of the file.
         /// </summary>
-        public string FileName { get; set; }
+        public ITaskItem FileName { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -133,9 +133,15 @@ namespace MSBuild.ExtensionPack.Security
         /// </summary>
         private void Add()
         {
-            if (System.IO.File.Exists(this.FileName) == false)
+            if (this.FileName == null)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "FileName not found: {0}", this.FileName));
+                this.Log.LogError("FileName not provided");
+                return;
+            }
+
+            if (System.IO.File.Exists(this.FileName.GetMetadata("FullPath")) == false)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "FileName not found: {0}", this.FileName.GetMetadata("FullPath")));
                 return;
             }
 
@@ -147,9 +153,9 @@ namespace MSBuild.ExtensionPack.Security
             }
 
             keyflags |= X509KeyStorageFlags.PersistKeySet;
-            cert.Import(this.FileName, this.CertPassword, keyflags);
+            cert.Import(this.FileName.GetMetadata("FullPath"), this.CertPassword, keyflags);
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Certificate: {0} to Store: {1}", this.FileName, this.StoreName));
+            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Adding Certificate: {0} to Store: {1}", this.FileName.GetMetadata("FullPath"), this.StoreName));
             X509Store store = new X509Store(this.StoreName, locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
             store.Add(cert);

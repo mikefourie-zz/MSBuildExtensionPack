@@ -45,12 +45,12 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets the KeyFile to use when Signing the Assemblies
         /// </summary>
-        public string KeyFile { get; set; }
+        public ITaskItem KeyFile { get; set; }
 
         /// <summary>
         /// Sets the folder path to sn.exe
         /// </summary>
-        public string ToolPath { get; set; }
+        public ITaskItem ToolPath { get; set; }
 
         /// <summary>
         /// Sets the PublicKeyToken for AddSkipVerification
@@ -110,10 +110,16 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Sign()
         {
-            if (!System.IO.File.Exists(this.KeyFile))
+            if (this.KeyFile == null)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "KeyFile not found: {0}", this.KeyFile));
-                return;   
+                this.Log.LogError("KeyFile not supplied");
+                return;
+            }
+
+            if (!System.IO.File.Exists(this.KeyFile.GetMetadata("FullPath")))
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "KeyFile not found: {0}", this.KeyFile.GetMetadata("FullPath")));
+                return;
             }
 
             foreach (ITaskItem assembly in this.Assemblies)
@@ -126,7 +132,7 @@ namespace MSBuild.ExtensionPack.Framework
                     CommandLineBuilder commandLine = new CommandLineBuilder();
                     commandLine.AppendSwitch("-q -R");
                     commandLine.AppendFileNameIfNotNull(assembly);
-                    commandLine.AppendFileNameIfNotNull(this.KeyFile);
+                    commandLine.AppendFileNameIfNotNull(this.KeyFile.GetMetadata("FullPath"));
                     this.Run(commandLine.ToString());
                     commandLine = new CommandLineBuilder();
                     commandLine.AppendSwitch("-vf");
@@ -142,7 +148,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Run(string args)
         {
-            Process proc = new Process { StartInfo = { FileName = Path.Combine(this.ToolPath, ToolName), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
+            Process proc = new Process { StartInfo = { FileName = Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
             proc.StartInfo.Arguments = args;
             this.Log.LogMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
             proc.Start();
