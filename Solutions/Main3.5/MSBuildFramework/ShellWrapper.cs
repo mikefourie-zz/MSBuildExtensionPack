@@ -7,12 +7,14 @@ namespace MSBuild.ExtensionPack
     using System.Collections.Specialized;
     using System.Diagnostics;
     using System.IO;
+    using System.Text;
 
     /// <summary>
     /// ShellExecute.
     /// </summary>
     internal sealed class ShellWrapper
     {
+        private static StringBuilder stdOut;
         private System.Collections.Specialized.NameValueCollection envars = new NameValueCollection();
 
         public ShellWrapper(string executable, string arguments)
@@ -67,7 +69,7 @@ namespace MSBuild.ExtensionPack
         /// <returns>int</returns>
         public int Execute()
         {
-            Process proc = null;
+            Process proc = new Process();
             try
             {
                 string cmdPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe");
@@ -86,35 +88,49 @@ namespace MSBuild.ExtensionPack
                     startInfo.EnvironmentVariables[key] = this.EnvironmentVariables[key];
                 }
 
-                proc = System.Diagnostics.Process.Start(startInfo);
-                if (proc != null)
-                {
-                    proc.WaitForExit(Int32.MaxValue);
-                    this.StandardOutput = proc.StandardOutput.ReadToEnd();
-                    this.StandardError = proc.StandardError.ReadToEnd();
-                }
+                // Set event handler to asynchronously read the output. We need to do this to avoid deadlock conditions.
+                stdOut = new StringBuilder(string.Empty);
+                proc.OutputDataReceived += SortOutputHandler;
+
+                proc.StartInfo = startInfo;
+                proc.Start();
+                proc.BeginOutputReadLine();
+
+                // its ok to read the one stream synchronously
+                this.StandardError = proc.StandardError.ReadToEnd();
+
+                // wait for exit after reading the streams to avoid deadlock
+                proc.WaitForExit(Int32.MaxValue);
+
+                // now we can read all the output.
+                this.StandardOutput = stdOut.ToString();
             }
             finally
             {
                 // get the exit code and release the process handle
-                if (proc != null)
+                if (!proc.HasExited)
                 {
-                    if (!proc.HasExited)
+                    // not exited yet within our timeout so kill the process
+                    proc.Kill();
+                    while (!proc.HasExited)
                     {
-                        // not exited yet within our timeout so kill the process
-                        proc.Kill();
-                        while (!proc.HasExited)
-                        {                            
-                            System.Threading.Thread.Sleep(50);
-                        }
+                        System.Threading.Thread.Sleep(50);
                     }
-
-                    this.ExitCode = proc.ExitCode;
-                    proc.Close();
                 }
+
+                this.ExitCode = proc.ExitCode;
+                proc.Close();
             }
 
             return this.ExitCode;
+        }
+
+        private static void SortOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        {
+            if (!String.IsNullOrEmpty(outLine.Data))
+            {
+                stdOut.Append(Environment.NewLine + outLine.Data);
+            }
         }
     }
 }
