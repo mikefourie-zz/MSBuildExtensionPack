@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack
 
         internal void LogTaskWarning(string message)
         {
-            this.LogTaskWarning(message);
+            this.Log.LogWarning(message);
         }
 
         internal void LogTaskMessage(MessageImportance messageImportance, string message)
