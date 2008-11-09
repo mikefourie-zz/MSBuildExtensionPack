@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// Wraps the StyleCopConsole class to provide a mechanism for scanning files for StyleCop compliance.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Scan</i> (<b>Required: </b>SourceFiles <b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile, SettingsFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
+    /// <para><i>Scan</i> (<b>Required: </b>SourceFiles, SettingsFile<b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -69,7 +69,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Sets the log file.
         /// </summary>
-        public string LogFile { get; set; }
+        public ITaskItem LogFile { get; set; }
 
         /// <summary>
         /// Gets whether the scan succeeded.
@@ -119,7 +119,8 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Sets the path to the settings file to load.
         /// </summary>
-        public string SettingsFile { get; set; }
+        [Required]
+        public ITaskItem SettingsFile { get; set; }
 
         /// <summary>
         /// InternalExecute
@@ -145,56 +146,58 @@ namespace MSBuild.ExtensionPack.CodeQuality
         private void Scan()
         {
             this.LogTaskMessage("Performing StyleCop scan...");
-            if (File.Exists(this.SettingsFile) == false)
+            if (File.Exists(this.SettingsFile.GetMetadata("FullPath")) == false)
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Settings file was not found: {0}", this.SettingsFile));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Settings file was not found: {0}", this.SettingsFile.GetMetadata("FullPath")));
                 return;
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
             List<string> addinPaths = new List<string>();
-            StyleCopConsole console = new StyleCopConsole(this.SettingsFile, this.CacheResults, null, addinPaths, true);
-            Configuration configuration = new Configuration(new string[0]);
-            CodeProject project = new CodeProject(DateTime.Now.ToLongTimeString().GetHashCode(), null, configuration);
-            foreach (ITaskItem item2 in this.SourceFiles)
+            using (StyleCopConsole console = new StyleCopConsole(this.SettingsFile.GetMetadata("FullPath"), this.CacheResults, null, addinPaths, true))
             {
-                if (this.ShowOutput)
+                Configuration configuration = new Configuration(new string[0]);
+                CodeProject project = new CodeProject(DateTime.Now.ToLongTimeString().GetHashCode(), null, configuration);
+                foreach (ITaskItem item2 in this.SourceFiles)
                 {
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding file: {0}", item2.ItemSpec));
+                    if (this.ShowOutput)
+                    {
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding file: {0}", item2.ItemSpec));
+                    }
+
+                    if (!console.Core.Environment.AddSourceCode(project, item2.ItemSpec, null))
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to add file: {0}", item2.ItemSpec));
+                        return;
+                    }
                 }
 
-                if (!console.Core.Environment.AddSourceCode(project, item2.ItemSpec, null))
+                try
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to add file: {0}", item2.ItemSpec));
-                    return;
-                }
-            }
+                    if (this.ShowOutput)
+                    {
+                        console.OutputGenerated += this.OnOutputGenerated;
+                    }
 
-            try
-            {
-                if (this.ShowOutput)
+                    console.ViolationEncountered += this.OnViolationEncountered;
+                    CodeProject[] projects = new[] { project };
+                    console.Start(projects, this.ForceFullAnalysis);
+                }
+                finally
                 {
-                    console.OutputGenerated += this.OnOutputGenerated;
-                }
+                    if (this.ShowOutput)
+                    {
+                        console.OutputGenerated -= this.OnOutputGenerated;
+                    }
 
-                console.ViolationEncountered += this.OnViolationEncountered;
-                CodeProject[] projects = new[] { project };
-                console.Start(projects, this.ForceFullAnalysis);
-            }
-            finally
-            {
-                if (this.ShowOutput)
-                {
-                    console.OutputGenerated -= this.OnOutputGenerated;
+                    console.ViolationEncountered -= this.OnViolationEncountered;
                 }
-
-                console.ViolationEncountered -= this.OnViolationEncountered;
             }
 
             // log the results to disk if there have been failures AND LogFile is specified
-            if (string.IsNullOrEmpty(this.LogFile) == false && this.Succeeded == false)
+            if (this.LogFile != null && this.Succeeded == false)
             {
-                using (StreamWriter streamWriter = new StreamWriter(this.LogFile, false, Encoding.UTF8))
+                using (StreamWriter streamWriter = new StreamWriter(this.LogFile.GetMetadata("FullPath"), false, Encoding.UTF8))
                 {
                     foreach (ITaskItem i in this.FailedFiles)
                     {

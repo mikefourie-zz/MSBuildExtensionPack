@@ -14,14 +14,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// See the Command Line Reference on MSDN (http://msdn.microsoft.com/en-us/library/003ssz4z(VS.80).aspx) for full details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Checkout</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Checkin</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Cloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Create</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Decloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Delete</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
+    /// <para><i>Checkout</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
+    /// <para><i>Checkin</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
+    /// <para><i>Cloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
+    /// <para><i>Create</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
+    /// <para><i>Decloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
+    /// <para><i>Delete</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
     /// <para><i>Destroy</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Get</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
+    /// <para><i>Get</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -78,7 +78,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the database.
         /// </summary>
-        public string Database { get; set; }
+        public ITaskItem Database { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -133,14 +133,23 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.shellWrapper = new ShellWrapper(this.fileName);
-            this.shellWrapper.EnvironmentVariables.Add("SSDIR", this.Database);   
+
+            if (this.Database != null)
+            {
+                this.shellWrapper.EnvironmentVariables.Add("SSDIR", this.Database.GetMetadata("FullPath"));
+            }   
+
             if (string.IsNullOrEmpty(this.UserName))
             {
                 this.UserName = Environment.UserName;
             }
+            
+            if (!string.IsNullOrEmpty(this.UserName))
+            {
+                this.shellWrapper.EnvironmentVariables.Add("SSUSER", this.UserName);
+            }
 
-            this.shellWrapper.EnvironmentVariables.Add("SSUSER", this.UserName);
-            if (string.IsNullOrEmpty(this.UserPassword) == false)
+            if (!string.IsNullOrEmpty(this.UserPassword))
             {
                 this.shellWrapper.EnvironmentVariables.Add("SSPWD", this.UserPassword);
             }
