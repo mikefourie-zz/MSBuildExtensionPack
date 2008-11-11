@@ -45,7 +45,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string VB6Path { get; set; }
 
         /// <summary>
-        /// Sets the projects.
+        /// Sets the projects. Use an 'OutDir' metadata item to specify the output directory. The OutDir will be created if it does not exist.
         /// </summary>
         [Required]
         public ITaskItem[] Projects { get; set; }
@@ -117,6 +117,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 }
                 else
                 {
+                    if (!Directory.Exists(project.GetMetadata("OutDir")))
+                    {
+                        Directory.CreateDirectory(project.GetMetadata("OutDir"));
+                    }
+
                     proc.StartInfo.Arguments = @"/MAKE /OUT " + @"""" + project.ItemSpec + ".log" + @""" " + @"""" + project.ItemSpec + @"""" + " /outdir " + @"""" + project.GetMetadata("OutDir") + @"""";
                 }
 
