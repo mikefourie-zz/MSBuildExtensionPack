@@ -13,6 +13,7 @@ namespace MSBuild.ExtensionPack.Framework
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>Escape</i> (<b>Required: </b> InputString <b>Output: </b> OutputString)</para>
     /// <para><i>GetCommonItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>GetCurrentDirectory</i> (<b>Output: </b> CurrentDirectory)</para>
     /// <para><i>GetDistinctItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
@@ -43,6 +44,11 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Col3 Include="bye"/>
     ///             <DuplicateFiles Include="C:\Demo\**\*"/>
     ///         </ItemGroup>
+    ///         <!-- Escape a string with special MSBuild characters -->
+    ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Escape" InString="hello how;are *you">
+    ///             <Output TaskParameter="OutString" PropertyName="out"/>
+    ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+    ///         <Message Text="OutString: $(out)"/>
     ///         <!-- Sort an ItemGroup alphabetically -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Sort" InputItems1="@(Col1)">
     ///             <Output TaskParameter="OutputItems" ItemName="sorted"/>
@@ -58,12 +64,12 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output TaskParameter="OutputItems" ItemName="LastItem"/>
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
     ///         <Message Text="Last Item: %(LastItem.Identity)"/>
-    ///         <!-- Get common items. Observe that this can be accomplished without using a custom task. -->
+    ///         <!-- Get common items. Note that this can be accomplished without using a custom task. -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetCommonItems" InputItems1="@(Col1)" InputItems2="@(Col3)">
     ///             <Output TaskParameter="OutputItems" ItemName="comm"/>
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
     ///         <Message Text="Common Items: %(comm.Identity)"/>
-    ///         <!-- Get distinct items. Observe that this can be accomplished without using a custom task. -->
+    ///         <!-- Get distinct items. Note that this can be accomplished without using a custom task. -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetDistinctItems" InputItems1="@(Col1)" InputItems2="@(Col3)">
     ///             <Output TaskParameter="OutputItems" ItemName="distinct"/>
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
@@ -116,6 +122,17 @@ namespace MSBuild.ExtensionPack.Framework
         public string Separator { get; set; }
 
         /// <summary>
+        /// Sets the input string
+        /// </summary>
+        public string InString { get; set; }
+        
+        /// <summary>
+        /// Gets the output string
+        /// </summary>
+        [Output]
+        public string OutString { get; set; }
+
+        /// <summary>
         /// Sets InputItems1.
         /// </summary>
         public ITaskItem[] InputItems1
@@ -158,6 +175,9 @@ namespace MSBuild.ExtensionPack.Framework
 
             switch (this.TaskAction)
             {
+                case "Escape":
+                    this.Escape();
+                    break;
                 case "RemoveDuplicateFiles":
                     this.RemoveDuplicateFiles();
                     break;
@@ -189,6 +209,18 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private void Escape()
+        {
+            if (string.IsNullOrEmpty(this.InString))
+            {
+                Log.LogError("InString is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Escaping string: {0}", this.InString));
+            this.OutString = Microsoft.Build.BuildEngine.Utilities.Escape(this.InString);
         }
 
         private void Sort()

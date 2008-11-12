@@ -15,6 +15,11 @@
             <Col3 Include="bye"/>
             <DuplicateFiles Include="C:\Demo\**\*"/>
         </ItemGroup>
+        <!-- Escape a string with special MSBuild characters -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Escape" InString="hello how;are *you">
+            <Output TaskParameter="OutString" PropertyName="out"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="OutString: $(out)"/>
         <!-- Sort an ItemGroup alphabetically -->
         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Sort" InputItems1="@(Col1)">
             <Output TaskParameter="OutputItems" ItemName="sorted"/>
