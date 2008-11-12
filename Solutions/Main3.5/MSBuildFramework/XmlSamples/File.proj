@@ -19,7 +19,7 @@
     <Target Name="Default">
         <!-- Filter a collection of files based on their content -->
         <Message Text="MyProjects %(MyFiles.Identity)"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplica3tion.targets" Files="@(MyFiles)">
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
             <Output TaskParameter="IncludedFiles" ItemName="WebProjects"/>
             <Output TaskParameter="ExcludedFiles" ItemName="NonWebProjects"/>
             <Output TaskParameter="IncludedFileCount" PropertyName="WebProjectsCount"/>
