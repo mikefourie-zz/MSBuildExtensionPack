@@ -5,7 +5,6 @@ namespace MSBuild.ExtensionPack.FileSystem
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
     using System.Security.Cryptography;
@@ -15,15 +14,16 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b> CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
-    /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b> Checksum)</para>
-    /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b> Replacement, Path, TextEncoding, Files)</para>
+    /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
+    /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
+    /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
+    /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    ///  <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -36,10 +36,24 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <AtFiles Include="c:\demo\file1.txt">
     ///             <Attributes>ReadOnly;Hidden</Attributes>
     ///         </AtFiles>
+    ///         <AtFiles2 Include="c:\demo\file1.txt">
+    ///             <Attributes>Normal</Attributes>
+    ///         </AtFiles2>
+    ///         <MyFiles Include="C:\demo\**\*.csproj"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
-    ///         <!-- Set some attributes -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
+    ///         <!-- Filter a collection of files based on their content -->
+    ///         <Message Text="MyProjects %(MyFiles.Identity)"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
+    ///             <Output TaskParameter="IncludedFiles" ItemName="WebProjects"/>
+    ///             <Output TaskParameter="ExcludedFiles" ItemName="NonWebProjects"/>
+    ///             <Output TaskParameter="IncludedFileCount" PropertyName="WebProjectsCount"/>
+    ///             <Output TaskParameter="ExcludedFileCount" PropertyName="NonWebProjectsCount"/>
+    ///         </MSBuild.ExtensionPack.FileSystem.File>
+    ///         <Message Text="WebProjects: %(WebProjects.Identity)"/>
+    ///         <Message Text="NonWebProjects: %(NonWebProjects.Identity)"/>
+    ///         <Message Text="WebProjectsCount: $(WebProjectsCount)"/>
+    ///         <Message Text="NonWebProjectsCount: $(NonWebProjectsCount)"/>
     ///         <!-- Get the checksum of a file -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Checksum" PropertyName="chksm"/>
@@ -51,13 +65,20 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <!-- Count the number of lines in a file and exclude comments -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(FilesToCount)" CommentIdentifiers="//">
     ///             <Output TaskParameter="CodeLinecount" PropertyName="csharplines"/>
+    ///             <Output TaskParameter="IncludedFiles" ItemName="MyIncludedFiles"/>
+    ///             <Output TaskParameter="ExcludedFiles" ItemName="MyExcludedFiles"/>
     ///         </MSBuild.ExtensionPack.FileSystem.File>
     ///         <Message Text="C# CodeLinecount: $(csharplines)"/>
+    ///         <Message Text="MyIncludedFiles: %(MyIncludedFiles.Identity)"/>
+    ///         <Message Text="MyExcludedFiles: %(MyExcludedFiles.Identity)"/>
     ///         <!-- Count all lines in a file -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(AllFilesToCount)">
     ///             <Output TaskParameter="TotalLinecount" PropertyName="AllLines"/>
     ///         </MSBuild.ExtensionPack.FileSystem.File>
     ///         <Message Text="All Files TotalLinecount: $(AllLines)"/>
+    ///         <!-- Set some attributes -->
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles2)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -67,6 +88,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         private Encoding fileEncoding = Encoding.UTF8;
         private Regex parseRegex;
         private string[] commentIdentifiers;
+        private List<ITaskItem> excludedFiles;
+        private List<ITaskItem> includedFiles;
 
         /// <summary>
         /// Sets the regex pattern.
@@ -169,7 +192,21 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Item collection of files Excluded from the count.
         /// </summary>
         [Output]
-        public Collection<ITaskItem> ExcludedFiles { get; set; }
+        public ITaskItem[] ExcludedFiles
+        {
+            get { return this.excludedFiles == null ? null : this.excludedFiles.ToArray(); }
+            set { this.excludedFiles = new List<ITaskItem>(value); }
+        }
+
+        /// <summary>
+        /// Item collection of files included after filtering operations
+        /// </summary>
+        [Output]
+        public ITaskItem[] IncludedFiles
+        {
+            get { return this.includedFiles == null ? null : this.includedFiles.ToArray(); }
+            set { this.includedFiles = new List<ITaskItem>(value); }
+        }
 
         /// <summary>
         /// Performs the action of this task.
@@ -186,11 +223,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case "CountLines":
                     this.CountLines();
                     break;
-                case "Replace":
-                    this.Replace();
+                case "FilterByContent":
+                    this.FilterByContent();
                     break;
                 case "GetChecksum":
                     this.GetChecksum();
+                    break;
+                case "Replace":
+                    this.Replace();
                     break;
                 case "SetAttributes":
                     this.SetAttributes();
@@ -242,6 +282,54 @@ namespace MSBuild.ExtensionPack.FileSystem
             return flags;
         }
 
+        private void FilterByContent()
+        {
+            if (this.Files == null)
+            {
+                Log.LogError("Files is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.RegexPattern))
+            {
+                Log.LogError("RegexPattern is required.");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Filter file collection by content: {0}", this.RegexPattern));
+
+            this.includedFiles = new List<ITaskItem>();
+            this.excludedFiles = new List<ITaskItem>();
+            foreach (ITaskItem f in this.Files)
+            {
+                string entireFile;
+
+                using (StreamReader streamReader = new StreamReader(f.ItemSpec))
+                {
+                    entireFile = streamReader.ReadToEnd();
+                }
+
+                // Load the regex to use
+                this.parseRegex = new Regex(this.RegexPattern, RegexOptions.Compiled);
+
+                // Match the regular expression pattern against a text string.
+                Match m = this.parseRegex.Match(entireFile);
+                if (m.Success)
+                {
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Included: {0}", f.ItemSpec));
+                    this.includedFiles.Add(f);
+                }
+                else
+                {
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Excluded: {0}", f.ItemSpec));
+                    this.excludedFiles.Add(f);
+                }
+            }
+
+            this.IncludedFilecount = this.includedFiles.Count;
+            this.ExcludedFilecount = this.excludedFiles.Count;
+        }
+
         private void SetAttributes()
         {
             if (this.Files == null)
@@ -285,7 +373,8 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             this.LogTaskMessage("Counting Lines");
             DateTime start = DateTime.Now;
-            this.ExcludedFiles = new Collection<ITaskItem>();
+            this.excludedFiles = new List<ITaskItem>();
+            this.includedFiles = new List<ITaskItem>();
             
             foreach (ITaskItem f in this.Files)
             {
@@ -294,18 +383,19 @@ namespace MSBuild.ExtensionPack.FileSystem
                     FileInfo thisFile = new FileInfo(f.ItemSpec);
                     if (this.MaxSize > 0 && thisFile.Length / 1024 > this.MaxSize)
                     {
-                        this.ExcludedFiles.Add(f);
+                        this.excludedFiles.Add(f);
                         break;
                     }
 
                     if (this.MinSize > 0 && thisFile.Length / 1024 < this.MinSize)
                     {
-                        this.ExcludedFiles.Add(f);
+                        this.excludedFiles.Add(f);
                         break;
                     }
                 }
                 
                 this.IncludedFilecount++;
+                this.includedFiles.Add(f);
                 using (StreamReader re = System.IO.File.OpenText(f.ItemSpec))
                 {
                     string input;
@@ -335,7 +425,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (this.ExcludedFiles != null)
             {
-                this.ExcludedFilecount = this.ExcludedFiles.Count;
+                this.ExcludedFilecount = this.excludedFiles.Count;
             }
             
             TimeSpan t = DateTime.Now - start;
