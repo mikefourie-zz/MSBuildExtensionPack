@@ -5,13 +5,16 @@ namespace MSBuild.ExtensionPack.Framework
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Reflection;
+    using System.Text;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>GetInfo</i> (<b>Required: </b>NetAssembly <b>Output: </b>OutputItems)</para>
     /// <para><i>GetMethodInfo</i> (<b>Required: </b>NetAssembly, NetClass, <b>Output: </b>OutputItems)</para>
     /// <para><i>Invoke</i> (<b>Required: </b>NetAssembly <b>Optional: </b>NetMethod, NetArguments<b>Output: </b>ReturnValue)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
@@ -43,8 +46,19 @@ namespace MSBuild.ExtensionPack.Framework
     ///                 <Type>string</Type>
     ///             </ArgsF>
     ///         </ItemGroup>
+    ///         <!-- Get information on an assembly -->
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.dll">
+    ///             <Output TaskParameter="OutputItems" ItemName="Info"/>
+    ///         </MSBuild.ExtensionPack.Framework.Assembly>
+    ///         <Message Text="Identity: %(Info.Identity)" />
+    ///         <Message Text="FullName: %(Info.FullName)" />
+    ///         <Message Text="PublicKeyToken: %(Info.PublicKeyToken)" />
+    ///         <Message Text="Culture: %(Info.Culture)" />
+    ///         <Message Text="CultureDisplayName: %(Info.CultureDisplayName)" />
+    ///         <Message Text="FileVersion: %(Info.FileVersion)" />
+    ///         <Message Text="AssemblyVersion: %(Info.AssemblyVersion)" />
     ///         <!-- This will cause a default constructor call only -->
-    ///          <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
     ///         <!--Invoke the assembly with the args collection of arguments -->
     ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="AssemblyDemo" NetMethod="AddNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Result" PropertyName="R"/>
@@ -74,7 +88,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// Sets the name of the Assembly
         /// </summary>
         [Required]
-        public string NetAssembly { get; set; }
+        public ITaskItem NetAssembly { get; set; }
 
         /// <summary>
         /// Sets the name of the Class
@@ -93,7 +107,9 @@ namespace MSBuild.ExtensionPack.Framework
         public string Result { get; set; }
 
         /// <summary>
-        /// Gets the outputitems. For a call to GetMethodInfo, the outputitems are in the following format:
+        /// Gets the outputitems.
+        /// <para/>For a call to GetMethodInfo, OutputItems provides the following metadata: Parameters
+        /// <para/>For a call to GetInfo, OutputItems provides the following metadata: AssemblyVersion, FileVersion, Culture, CultureDisplayName, FullName, PublicKeyToken
         /// </summary>
         [Output]
         public ITaskItem[] OutputItems
@@ -117,11 +133,23 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Assembly: {0}", this.NetAssembly));
-            this.assembly = System.Reflection.Assembly.LoadFrom(this.NetAssembly);
+            if (!System.IO.File.Exists(this.NetAssembly.GetMetadata("FullPath")))
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "File not found: {0}", this.NetAssembly.GetMetadata("FullPath")));
+
+                // set the OutputItems so we dont get a null ref exception.
+                this.OutputItems = new ITaskItem[0];
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Assembly: {0}", this.NetAssembly.GetMetadata("FullPath")));
+            this.assembly = System.Reflection.Assembly.LoadFrom(this.NetAssembly.GetMetadata("FullPath"));
 
             switch (this.TaskAction)
             {
+                case "GetInfo":
+                    this.GetInfo();
+                    break;
                 case "Invoke":
                     this.Invoke();
                     break;
@@ -134,9 +162,39 @@ namespace MSBuild.ExtensionPack.Framework
             }
         }
 
+        private void GetInfo()
+        {
+            if (this.assembly != null)
+            {
+                this.outputItems = new List<ITaskItem>();
+                ITaskItem t = new TaskItem(this.NetAssembly.GetMetadata("FileName"));
+
+                // get the PublicKeyToken
+                byte[] pt = this.assembly.GetName().GetPublicKeyToken();
+                StringBuilder s = new System.Text.StringBuilder();
+                for (int i = 0; i < pt.GetLength(0); i++)
+                {
+                    s.Append(pt[i].ToString("x2", CultureInfo.InvariantCulture));
+                }
+
+                // set some other metadata items
+                t.SetMetadata("PublicKeyToken", s.ToString());
+                t.SetMetadata("FullName", this.assembly.GetName().FullName);
+                t.SetMetadata("Culture", this.assembly.GetName().CultureInfo.Name);
+                t.SetMetadata("CultureDisplayName", this.assembly.GetName().CultureInfo.DisplayName);
+                t.SetMetadata("AssemblyVersion", this.assembly.GetName().Version.ToString());
+
+                // get the assembly file version
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(this.assembly.Location);
+                System.Version v = new System.Version(versionInfo.FileMajorPart, versionInfo.FileMinorPart, versionInfo.FileBuildPart, versionInfo.FilePrivatePart);
+                t.SetMetadata("FileVersion", v.ToString());              
+                this.outputItems.Add(t);
+            }
+        }
+
         private void GetMethodInfo()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting MethodInfo for: {0}", this.NetAssembly));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting MethodInfo for: {0}", this.NetAssembly.GetMetadata("FullPath")));
             this.outputItems = new List<ITaskItem>();
             foreach (Type type in this.assembly.GetTypes())
             {
