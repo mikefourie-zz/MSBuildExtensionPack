@@ -259,28 +259,28 @@ namespace MSBuild.ExtensionPack.Framework
             switch (this.Comparison.ToUpperInvariant())
             {
                 case "GREATERTHAN":
-                    this.Result = string.Compare(this.String1, this.String2, strcom) > 0;
+                    this.Result = string.Compare(this.String1, this.String2, this.strcom) > 0;
                     break;
                 case "LESSTHAN":
-                    this.Result = string.Compare(this.String1, this.String2, strcom) < 0;
+                    this.Result = string.Compare(this.String1, this.String2, this.strcom) < 0;
                     break;
                 case "GREATERTHANOREQUALS":
-                    this.Result = string.Compare(this.String1, this.String2, strcom) >= 0;
+                    this.Result = string.Compare(this.String1, this.String2, this.strcom) >= 0;
                     break;
                 case "LESSTHANOREQUALS":
-                    this.Result = string.Compare(this.String1, this.String2, strcom) <= 0;
+                    this.Result = string.Compare(this.String1, this.String2, this.strcom) <= 0;
                     break;
                 case "EQUALS":
-                    this.Result = string.Compare(this.String1, this.String2, strcom) == 0;
+                    this.Result = string.Compare(this.String1, this.String2, this.strcom) == 0;
                     break;
                 case "CONTAINS":
-                    this.Result = this.String1.IndexOf(this.String2, strcom) >= 0;
+                    this.Result = this.String1.IndexOf(this.String2, this.strcom) >= 0;
                     break;
                 case "STARTSWITH":
-                    this.Result = this.String1.StartsWith(this.String2, strcom);
+                    this.Result = this.String1.StartsWith(this.String2, this.strcom);
                     break;
                 case "ENDSWITH":
-                    this.Result = this.String1.EndsWith(this.String2, strcom);
+                    this.Result = this.String1.EndsWith(this.String2, this.strcom);
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid Comparison passed: {0}. Valid Comparisons are GREATERTHAN, LESSTHAN, GREATERTHANOREQUALS, LESSTHANOREQUALS, EQUALS, CONTAINS, STARTSWITH, ENDSWITH", this.Comparison.ToUpperInvariant()));

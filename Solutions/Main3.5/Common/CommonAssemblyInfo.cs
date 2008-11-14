@@ -7,15 +7,15 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 [assembly:AssemblyVersion("3.5.0.0")]
-[assembly: AssemblyFileVersion("3.5.0.0")]
+[assembly:AssemblyFileVersion("3.5.0.0")]
 [assembly:PermissionSet(SecurityAction.RequestMinimum, Name = "FullTrust")]
 [assembly:PermissionSet(SecurityAction.RequestOptional, Name = "Nothing")]
-[assembly: AssemblyCompany("http://www.codeplex.com/MSBuildExtensionPack")]
-[assembly: AssemblyCopyright("Copyright © 2008 http://www.codeplex.com/MSBuildExtensionPack")]
-[assembly: AssemblyTrademark("Mike Fourie")]
+[assembly:AssemblyCompany("http://www.MSBuildExtensionPack.com")]
+[assembly:AssemblyCopyright("Copyright © 2008 http://www.MSBuildExtensionPack.com")]
+[assembly:AssemblyTrademark("Mike Fourie")]
 [assembly:NeutralResourcesLanguage("en-GB")]
 [assembly:AssemblyCulture("en-GB")]
-[assembly: AssemblyProduct("MSBuild Extension Pack")]
+[assembly:AssemblyProduct("MSBuild Extension Pack")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

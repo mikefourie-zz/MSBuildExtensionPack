@@ -143,12 +143,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
             {
                 this.UserName = Environment.UserName;
             }
-            
-            if (!string.IsNullOrEmpty(this.UserName))
-            {
-                this.shellWrapper.EnvironmentVariables.Add("SSUSER", this.UserName);
-            }
 
+            this.shellWrapper.EnvironmentVariables.Add("SSUSER", this.UserName);
             if (!string.IsNullOrEmpty(this.UserPassword))
             {
                 this.shellWrapper.EnvironmentVariables.Add("SSPWD", this.UserPassword);
