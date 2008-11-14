@@ -158,6 +158,8 @@
     <Compile Include="Computer\ComponentServices.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SqlServer\SqlCmd.cs" />
+    <Compile Include="SqlServer\SqlCmdWrapper.cs" />
     <Compile Include="UI\Console.cs">
       <SubType>Code</SubType>
     </Compile>
