@@ -42,7 +42,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///         <Message Text="Pending Changes Exist: $(DoChangesExist)"/>
     ///         <!-- Perfrom various other source control operations -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemPath="C:\projects\SpeedCMMI\Demo1" Version="2008" WorkingDirectory="C:\projects\SpeedCMMI"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Demo1" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="&quot;Code reviewer&quot;=&quot;buildrobot&quot;;" OverrideText="Justdoit" />
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Demo1" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="Code reviewer=buildrobot" OverrideText="Justdoit" />
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Add" ItemPath="C:\projects\SpeedCMMI\Demo1" Version="2008" WorkingDirectory="C:\projects\SpeedCMMI"/>
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemCol="@(FilesToAdd)" WorkingDirectory="C:\projects\SpeedCMMI" ContinueOnError="true"/>
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemCol="@(FilesToAdd)" WorkingDirectory="C:\projects\SpeedCMMI"/>
@@ -53,9 +53,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemCol="@(FilesToAdd)" WorkingDirectory="C:\projects\SpeedCMMI" ContinueOnError="true"/>
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Get" ItemPath="C:\Projects\SpeedCMMI\Demo1" WorkingDirectory="C:\projects\SpeedCMMI"/>
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Merge" ItemPath="C:\Projects\SpeedCMMI\Client2" Destination="C:\Projects\SpeedCMMI\Client" WorkingDirectory="C:\projects\SpeedCMMI"/>
-    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Client" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="&quot;Code reviewer&quot;=&quot;buildrobot&quot;;" OverrideText="Justdoit" />
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Client" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="Code reviewer=buildrobot" OverrideText="Justdoit" />
     ///     </Target>
-    /// </Project>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -298,7 +297,19 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void Checkin()
         {
-            this.ExecuteCommand("checkin", String.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\" /notes:{1}", this.Comments, this.Notes), "/noprompt /recursive");
+            string comment = string.Empty;
+            if (!string.IsNullOrEmpty(this.Comments))
+            {
+                comment = String.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\"", this.Comments);
+            }
+
+            string note = string.Empty;
+            if (!string.IsNullOrEmpty(this.Notes))
+            {
+                note = String.Format(CultureInfo.CurrentCulture, "/notes:\"{0}\"", this.Notes);
+            }
+
+            this.ExecuteCommand("checkin", String.Format(CultureInfo.CurrentCulture, "{0} {1}", comment, note), "/noprompt /recursive");
         }
 
         private void Delete()
@@ -337,7 +348,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!this.Recursive)
             {
-                lastOptions += lastOptions.Replace("/recursive", string.Empty);
+                lastOptions = lastOptions.Replace("/recursive", string.Empty);
             }
 
             arguments += " " + lastOptions;
