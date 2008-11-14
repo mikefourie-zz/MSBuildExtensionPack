@@ -3,10 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.SqlServer
 {
-    using System;
-    using System.IO;    
     using Microsoft.Build.Framework;
-    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// Wraps the SQL Server command line executable SqlCmd.exe.
@@ -34,9 +31,9 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///     <Target Name="Default">
     ///         <!-- Perfrom various sql server operations -->
     ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" LoginId="sa" Password="sa" CommandLineQuery="SELECT @@VERSION;" />
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" TrustedConnection="true" Server="(local)" Database="AdventureWorks" InputFiles="@(InputFile)"/>
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" TrustedConnection="true" Server="(local)" Database="AdventureWorks" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt" />
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" TrustedConnection="true" Server="(local)" Database="AdventureWorks" InputFiles="@(InputFile)" OutputFile="C:\Output.txt" Variables="@(Variable)" />
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="AdventureWorks" InputFiles="@(InputFile)"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="AdventureWorks" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt" />
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="AdventureWorks" InputFiles="@(InputFile)" OutputFile="C:\Output.txt" Variables="@(Variable)" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -44,17 +41,15 @@ namespace MSBuild.ExtensionPack.SqlServer
     public class SqlCmd : BaseTask
     {
         private const string ExecutionMessage = "Executing '{0}' with '{1}'";
-        private const string InputFileAndQuerySpecifiedError = "SqlCmd: The InputFiles and Query options are mutually exclusive.";
         private const string InputFileMessage = "Adding input file '{0}'";
         private const string InvalidSqlCmdPathError = "Unable to resolve path to sqlcmd.exe. Assuming it is in the PATH environment variable.";
         private const string InvalidTaskActionError = "Invalid TaskAction passed: {0}";
-        private const string LoginTimeOutRangeError = "The LoginTimeOut value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
-        private const string InvalidLoginArgumentsSpecified = "The TrustedConnection and LoginId/Password options are mutually exclusive.";
+        private const string LoginTimeOutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
         private const string QueryMessage = "Adding query '{0}'";
-        private const string QueryTimeOutRangeError = "The QueryTimeOut value specified '{0}' does not fall in the allowed range of 1 to 65535.";
+        private const string QueryTimeOutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
 
-        private int loginTimeOut = 8;
-        private int queryTimeOut = 0;
+        private int loginTimeout = 8;
+        private int queryTimeout;
         private string server = ".";
 
         /// <summary>
@@ -65,7 +60,6 @@ namespace MSBuild.ExtensionPack.SqlServer
             this.DisableVariableSubstitution = false;
             this.EchoInput = false;
             this.RedirectStandardError = false;
-            this.TrustedConnection = true;
             this.UseClientRegionalSettings = false;
         }
 
@@ -77,35 +71,21 @@ namespace MSBuild.ExtensionPack.SqlServer
 #region Login Related Options
 
         /// <summary>
-        /// <para>Gets or sets the user login id. If neither the <see cref="LoginId"/> or <see cref="Password"/> option is specified,
+        /// <para>Gets or sets the user login id. If neither the <see cref="LogOn"/> or <see cref="Password"/> option is specified,
         /// <see cref="SqlCmd"/> tries to connect by using Microsoft Windows Authentication mode. Authentication is
         /// based on the Windows account of the user who is running <see cref="SqlCmd"/>.</para>
-        /// <para>If the <see cref="LoginId"/> option is used with the <see cref="TrustedConnection"/> option, an error message
-        /// is generated.</para>
         /// <para><b>Note:</b> The <i>OSQLUSER</i> environment variable is available for backwards compatibility. The <i>
         /// SQLCMDUSER</i> environment variable takes precedence over the <i>OSQLUSER</i> environment variable. This 
         /// means that <see cref="SqlCmd"/> and <b>osql</b> can be used next to each other without interference.</para>
         /// </summary>
-        public string LoginId { get; set; }
+        public string LogOn { get; set; }
 
         /// <summary>
-        /// <para>Gets or sets the user specified password. Passwords are case-sensitive. If the <see cref="LoginId"/> option
+        /// <para>Gets or sets the user specified password. Passwords are case-sensitive. If the <see cref="LogOn"/> option
         /// is used and the <see cref="Password"/> option is not used, and the <i>SQLCMDPASSWORD</i> environment variable
         /// has not been set, <see cref="SqlCmd"/> uses the default password (NULL).</para>
-        /// <para><b>Note:</b> If the <see cref="Password"/> option is used with the <see cref="TrustedConnection"/> option
-        /// an error message is generated.</para>
         /// </summary>
         public string Password { get; set; }
-
-        /// <summary>
-        /// <para>Gets or sets a flag indicating the use of a trusted connection instead of using a username and password to
-        /// log on to SQL Server. By default, without the <see cref="TrustedConnection"/> flag set, the <see cref="SqlCmd"/>
-        /// uses the trusted connection option.</para>
-        /// <para>The <see cref="TrustedConnection"/> option ignores possible user name and password environmental 
-        /// variable settings such as <i>SQLCMDPASSWORD</i>. If the <see cref="TrustedConnection"/> option is used together
-        /// with the <see cref="LoginId"/> option or the <see cref="Password"/> option, an error message is generated.</para>
-        /// </summary>
-        public bool TrustedConnection { get; set; }
 
         /// <summary>
         /// Changes the password for a user.
@@ -136,7 +116,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// using the stored procedure <b>sp_who</b>. If this option is not specified, the default is the current computer name. This name 
         /// can be used to identify different sqlcmd sessions.
         /// </summary>
-        public string WorkStationName { get; set; }
+        public string Workstation { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the database to connect to. Issues a <code>USE</code> <i>db_name</i> statement when you start 
@@ -152,18 +132,18 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// out value must be a number between 0 and 65534. If the value supplied is not numeric or does not fall into that range,
         /// the <see cref="SqlCmd"/> generates an error message. A value of 0 specifies the time-out to be indefinite.
         /// </summary>
-        public int LoginTimeOut
+        public int LoginTimeout
         {
             get
             {
-                return this.loginTimeOut;
+                return this.loginTimeout;
             }
 
             set
             {
                 if (value >= 0 && value <= 65534)
                 {
-                    this.loginTimeOut = value;
+                    this.loginTimeout = value;
                 }
                 else
                 {
@@ -198,13 +178,10 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <para>If the <see cref="UnicodeOutput"/> option is specified, the <i>output file</i> is stored in Unicode format.
         /// If the file name is not valid, an error message is generated, and <see cref="SqlCmd"/> exits. <see cref="SqlCmd"/> does 
         /// not support concurrent writing of multiple <see cref="SqlCmd"/> processes to the same file. The file output will be 
-        /// corrupted or incorrect. See the <!--see cref="CodePage"/--> CodePage switch for more information about file formats. This file 
-        /// will be created if it does not exist. A file of the same name from a prior <see cref="SqlCmd"/> session will be 
-        /// overwritten. The file specified here is not the stdout file. If a stdout file is specified this file will not be used.</para>
+        /// corrupted or incorrect. This file will be created if it does not exist. A file of the same name from a prior <see cref="SqlCmd"/> session 
+        /// will be overwritten. The file specified here is not the stdout file. If a stdout file is specified this file will not be used.</para>
         /// </summary>
         public string OutputFile { get; set; }
-
-        ////public string CodePage { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that indicates if the <see cref="OutputFile"/> is stored in Unicode format, regardless of the 
@@ -259,13 +236,13 @@ namespace MSBuild.ExtensionPack.SqlServer
         {
             get
             {
-                if (this.queryTimeOut < 1)
+                if (this.queryTimeout < 1)
                 {
                     return 1;
                 }
                 else
                 {
-                    return this.queryTimeOut;
+                    return this.queryTimeout;
                 }
             }
 
@@ -273,7 +250,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 if (value >= 1 && value <= 65535)
                 {
-                    this.queryTimeOut = value;
+                    this.queryTimeout = value;
                 }
                 else
                 {
@@ -307,36 +284,6 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         public int Headers { get; set; }
 
-        /*
-        public string ColumnSeparator { get; set; }
-        public int ColumnWidth { get; set; }
-        public bool RemoveTrailingSpaces { get; set; }
-        public bool RemoveControlCharacters { get; set; }
-        public int DisplayFixedTypeWidth { get; set; }
-        public int DisplayVariableTypeWidth { get; set; }
-         */
-#endregion
-
-#region Error Reporting Options
-
-        /*
-        public bool OnErrorBatchAbort { get; set; }
-        public int SeverityLevel { get; set; }
-        public int ErrorLevel { get; set; }
-         */
-#endregion
-
-#region Miscellaneous Options
-
-        /*
-        public int PacketSize { get; set; }
-        public string BatchTerminator { get; set; }
-        public string ListServers { get; set; }
-        public bool PrintStatistics { get; set; }
-        public bool DisableCommands { get; set; }
-        public bool ShowUsage { get; set; }
-         */
-
 #endregion
 
         protected override void InternalExecute()
@@ -359,22 +306,22 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Login Related Options
 
             // Login Id
-            if (!string.IsNullOrEmpty(this.LoginId))
+            if (!string.IsNullOrEmpty(this.LogOn))
             {
                 sb.Append(" -U ");
-                sb.Append(this.LoginId);
-            }
+                sb.Append(this.LogOn);
 
-            // Password
-            if (!string.IsNullOrEmpty(this.Password))
-            {
-                sb.Append(" -P ");
-                sb.Append(this.Password);
+                // Only pass in the password if a user id has been specified
+                // Password
+                if (!string.IsNullOrEmpty(this.Password))
+                {
+                    sb.Append(" -P ");
+                    sb.Append(this.Password);
+                }
             }
-
-            // Trusted Connection
-            if (this.TrustedConnection)
+            else
             {
+                // default to assume Trusted
                 sb.Append(" -E ");
             }
 
@@ -393,10 +340,10 @@ namespace MSBuild.ExtensionPack.SqlServer
             }
 
             // Workstation
-            if (!string.IsNullOrEmpty(this.WorkStationName))
+            if (!string.IsNullOrEmpty(this.Workstation))
             {
                 sb.Append(" -H ");
-                sb.Append(this.WorkStationName);
+                sb.Append(this.Workstation);
             }
 
             if (!string.IsNullOrEmpty(this.Database))
@@ -407,7 +354,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
             // Login Timeout
             sb.Append(" -l ");
-            sb.Append(this.LoginTimeOut);
+            sb.Append(this.LoginTimeout);
 
             if (this.DedicatedAdminConnection)
             {
@@ -516,7 +463,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private void ExecuteCommand(string arguments)
         {
-            var sqlCmdWrapper = new SqlCmdWrapper(this.SqlCmdPath, arguments);
+            var sqlCmdWrapper = new SqlCmdWrapper(this.SqlCmdPath, arguments, this.WorkingDirectory);
 
             this.Log.LogMessage(MessageImportance.Low, ExecutionMessage, sqlCmdWrapper.Executable, arguments);
 
@@ -542,19 +489,8 @@ namespace MSBuild.ExtensionPack.SqlServer
                 this.SqlCmdPath = "sqlcmd.exe";
             }
 
-            if (!this.ValidateArguments())
-            {
-                // Exit
-                return;
-            }
-
             // Build out the arguments
             var arguments = this.BuildArguments();
-
-#if DEBUG
-            Console.WriteLine(arguments);
-#endif
-
             this.ExecuteCommand(arguments);
         }
 
@@ -566,20 +502,6 @@ namespace MSBuild.ExtensionPack.SqlServer
                     this.LogTaskWarning("Exit Code 1. Failure: " + error);
                     break;
             }
-        }
-
-        private bool ValidateArguments()
-        {
-            if ((!string.IsNullOrEmpty(this.LoginId) || !string.IsNullOrEmpty(this.Password))
-                && this.TrustedConnection)
-            {
-                // Log the error and exit
-                this.Log.LogError(InvalidLoginArgumentsSpecified);
-                return false;
-            }
-
-            // Default return
-            return true;
         }
     }
 }

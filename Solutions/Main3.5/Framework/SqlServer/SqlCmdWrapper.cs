@@ -10,12 +10,13 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     internal sealed class SqlCmdWrapper
     {
-        private NameValueCollection envars = new NameValueCollection();
+        private readonly NameValueCollection envars = new NameValueCollection();
 
-        internal SqlCmdWrapper(string executable, string arguments)
+        internal SqlCmdWrapper(string executable, string arguments, string workingDirectory)
         {
             this.Arguments = arguments;
             this.Executable = executable;
+            this.WorkingDirectory = workingDirectory;
         }
 
         /// <summary>
