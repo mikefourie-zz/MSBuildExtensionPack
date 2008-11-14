@@ -14,12 +14,12 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
-    ///     <ItemGroup>
+    ///   <PropertyGroup>
+    ///       <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///       <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///   </PropertyGroup>
+    ///   <Import Project="$(TPath)"/>
+    ///   <ItemGroup>
     ///       <InputFile Include="Sample1">
     ///           <Value>C:\File1.sql</Value>
     ///       </InputFile>
@@ -29,20 +29,30 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///       <InputFile Include="Sample2">
     ///           <Value>C:\File3.sql</Value>
     ///       </InputFile>
-    ///     </ItemGroup>
-    ///     <ItemGroup>
+    ///   </ItemGroup>
+    ///   <ItemGroup>
     ///       <Variable Include="DbName">
     ///           <Value>master</Value>
     ///       </Variable>
-    ///     </ItemGroup>
-    ///     <Target Name="Default">
-    ///     <!-- Perfrom various sql server operations -->
+    ///   </ItemGroup>
+    ///   <Target Name="Default">
+    ///       <!-- Perfrom various sql server operations -->
+    ///
+    ///       <!-- Simple CommandLineQuery -->
     ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" CommandLineQuery="SELECT @@VERSION;" />
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" CommandLineQuery="SELECT @@VERSION;" />
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" InputFiles="@(InputFile)" />
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" InputFiles="@(InputFile)" Variables="@(Variable)" />
-    ///     </Target>
+    ///
+    ///       <!-- Simple CommandLineQuery setting the Server and Database -->
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" />
+    ///
+    ///       <!-- Simple CommandLineQuery setting the Server and Database and outputing to a file -->
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
+    ///
+    ///       <!-- Simple CommandLineQuery setting the Server and Database and running external files -->
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" />
+    ///
+    ///       <!-- Simple CommandLineQuery setting the Server and Database, running external files and using variable substition -->
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" Variables="@(Variable)" />
+    ///   </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>  

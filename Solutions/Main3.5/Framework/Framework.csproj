@@ -261,6 +261,7 @@
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
+    <None Include="XmlSamples\SqlServer.proj" />
     <None Include="XmlSamples\Xml.proj" />
     <None Include="XmlSamples\Iis6ServiceExtension.proj" />
     <None Include="XmlSamples\Iis6VirtualDirectory.proj" />
