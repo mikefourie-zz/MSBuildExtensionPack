@@ -20,20 +20,28 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <ItemGroup>
-    ///         <InputFile>C:\File1.sql</InputFile>
-    ///         <InputFile>C:\File2.sql</InputFile>
-    ///         <InputFile>C:\File3.sql</InputFile>
+    ///       <InputFile Include="Sample1">
+    ///           <Value>C:\File1.sql</Value>
+    ///       </InputFile>
+    ///       <InputFile Include="Sample2">
+    ///           <Value>C:\File2.sql</Value>
+    ///       </InputFile>
+    ///       <InputFile Include="Sample2">
+    ///           <Value>C:\File3.sql</Value>
+    ///       </InputFile>
     ///     </ItemGroup>
     ///     <ItemGroup>
-    ///         <Variable Name="MyVar">AdventureWorks</Variable>
-    ///         <Variable Name="MyVar1">Master</Variable>
+    ///       <Variable Include="DbName">
+    ///           <Value>master</Value>
+    ///       </Variable>
     ///     </ItemGroup>
     ///     <Target Name="Default">
-    ///         <!-- Perfrom various sql server operations -->
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" LoginId="sa" Password="sa" CommandLineQuery="SELECT @@VERSION;" />
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="AdventureWorks" InputFiles="@(InputFile)"/>
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="AdventureWorks" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt" />
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="AdventureWorks" InputFiles="@(InputFile)" OutputFile="C:\Output.txt" Variables="@(Variable)" />
+    ///     <!-- Perfrom various sql server operations -->
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" CommandLineQuery="SELECT @@VERSION;" />
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" CommandLineQuery="SELECT @@VERSION;" />
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" InputFiles="@(InputFile)" />
+    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(MasterDb)" InputFiles="@(InputFile)" Variables="@(Variable)" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -371,7 +379,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                     this.Log.LogMessage(MessageImportance.Low, InputFileMessage, file.ItemSpec);
                     sb.Append(" -i ");
                     sb.Append("\"");
-                    sb.Append(file.ItemSpec);
+                    sb.Append(file.GetMetadata("Value"));
                     sb.Append("\"");
                 }
             }
@@ -445,9 +453,9 @@ namespace MSBuild.ExtensionPack.SqlServer
                 foreach (ITaskItem variable in this.Variables)
                 {
                     sb.Append(" -v ");
-                    sb.Append(variable.GetMetadata("Name"));
-                    sb.Append("=\"");
                     sb.Append(variable.ItemSpec);
+                    sb.Append("=\"");
+                    sb.Append(variable.GetMetadata("Value"));
                     sb.Append("\"");
                 }
             }
@@ -463,7 +471,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private void ExecuteCommand(string arguments)
         {
-            var sqlCmdWrapper = new SqlCmdWrapper(this.SqlCmdPath, arguments, this.WorkingDirectory);
+            var sqlCmdWrapper = new SqlCmdWrapper(this.SqlCmdPath, arguments, string.Empty);
 
             this.Log.LogMessage(MessageImportance.Low, ExecutionMessage, sqlCmdWrapper.Executable, arguments);
 
