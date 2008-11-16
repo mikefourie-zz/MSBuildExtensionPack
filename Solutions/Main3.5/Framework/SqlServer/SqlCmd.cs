@@ -36,20 +36,14 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///       </Variable>
     ///   </ItemGroup>
     ///   <Target Name="Default">
-    ///       <!-- Perfrom various sql server operations -->
-    ///
     ///       <!-- Simple CommandLineQuery -->
     ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" CommandLineQuery="SELECT @@VERSION;" />
-    ///
     ///       <!-- Simple CommandLineQuery setting the Server and Database -->
     ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" />
-    ///
     ///       <!-- Simple CommandLineQuery setting the Server and Database and outputing to a file -->
     ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
-    ///
     ///       <!-- Simple CommandLineQuery setting the Server and Database and running external files -->
     ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" />
-    ///
     ///       <!-- Simple CommandLineQuery setting the Server and Database, running external files and using variable substition -->
     ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" Variables="@(Variable)" />
     ///   </Target>
@@ -165,7 +159,6 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    // Through an error
                     this.Log.LogWarning(LoginTimeOutRangeError, value);
                 }
             }
@@ -258,10 +251,8 @@ namespace MSBuild.ExtensionPack.SqlServer
                 {
                     return 1;
                 }
-                else
-                {
-                    return this.queryTimeout;
-                }
+
+                return this.queryTimeout;
             }
 
             set
@@ -272,7 +263,6 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    // Through an error
                     this.Log.LogWarning(QueryTimeOutRangeError, value);
                 }
             }

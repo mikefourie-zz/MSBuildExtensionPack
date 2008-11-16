@@ -11,7 +11,7 @@
     <InputFile Include="Sample2">
       <Value>C:\File2.sql</Value>
     </InputFile>
-    <InputFile Include="Sample2">
+    <InputFile Include="Sample3">
       <Value>C:\File3.sql</Value>
     </InputFile>
   </ItemGroup>
@@ -21,20 +21,14 @@
     </Variable>
   </ItemGroup>
   <Target Name="Default">
-    <!-- Perfrom various sql server operations -->
-    
     <!-- Simple CommandLineQuery -->
     <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" CommandLineQuery="SELECT @@VERSION;" />
-    
     <!-- Simple CommandLineQuery setting the Server and Database -->
     <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" />
-
     <!-- Simple CommandLineQuery setting the Server and Database and outputing to a file -->
     <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
-
     <!-- Simple CommandLineQuery setting the Server and Database and running external files -->
     <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" />
-
     <!-- Simple CommandLineQuery setting the Server and Database, running external files and using variable substition -->
     <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" Variables="@(Variable)" />
   </Target>
