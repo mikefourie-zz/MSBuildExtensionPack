@@ -121,7 +121,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public ITaskItem[] TargetFiles { get; set; }
 
         /// <summary>
-        /// The file encoding to write the new file in. The task will attempt to default to the current file encoding.
+        /// The file encoding to write the new file in. The task will attempt to default to the current file encoding. If TargetFiles is specified, individual encodings can be specified by providing an Encoding metadata value.
         /// </summary>
         public string TextEncoding { get; set; }
 
@@ -177,12 +177,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                     return System.Text.Encoding.Unicode;
                 case "UTF7":
                     return System.Text.Encoding.UTF7;
+                case "UTF8":
+                    return System.Text.Encoding.UTF8;
                 case "UTF32":
                     return System.Text.Encoding.UTF32;
                 case "BigEndianUnicode":
                     return System.Text.Encoding.BigEndianUnicode;
                 default:
-                    return System.Text.Encoding.UTF8;
+                    return null;
             }
         }
 
