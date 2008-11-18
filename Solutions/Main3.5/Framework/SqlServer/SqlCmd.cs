@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.SqlServer
 {
+    using System.Globalization;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -13,40 +14,32 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///   <PropertyGroup>
-    ///       <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///       <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///   </PropertyGroup>
-    ///   <Import Project="$(TPath)"/>
-    ///   <ItemGroup>
-    ///       <InputFile Include="Sample1">
-    ///           <Value>C:\File1.sql</Value>
-    ///       </InputFile>
-    ///       <InputFile Include="Sample2">
-    ///           <Value>C:\File2.sql</Value>
-    ///       </InputFile>
-    ///       <InputFile Include="Sample2">
-    ///           <Value>C:\File3.sql</Value>
-    ///       </InputFile>
-    ///   </ItemGroup>
-    ///   <ItemGroup>
-    ///       <Variable Include="DbName">
-    ///           <Value>master</Value>
-    ///       </Variable>
-    ///   </ItemGroup>
-    ///   <Target Name="Default">
-    ///       <!-- Simple CommandLineQuery -->
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" CommandLineQuery="SELECT @@VERSION;" />
-    ///       <!-- Simple CommandLineQuery setting the Server and Database -->
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" />
-    ///       <!-- Simple CommandLineQuery setting the Server and Database and outputing to a file -->
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
-    ///       <!-- Simple CommandLineQuery setting the Server and Database and running external files -->
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" />
-    ///       <!-- Simple CommandLineQuery setting the Server and Database, running external files and using variable substition -->
-    ///       <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" Variables="@(Variable)" />
-    ///   </Target>
+    ///  <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <ItemGroup>
+    ///         <InputFile Include="C:\File1.sql"/>
+    ///         <InputFile Include="C:\File2.sql"/>
+    ///         <InputFile Include="C:\File3.sql"/>
+    ///     </ItemGroup>
+    ///     <ItemGroup>
+    ///         <Variable Include="DbName">
+    ///             <Value>master</Value>
+    ///         </Variable>
+    ///     </ItemGroup>
+    ///     <Target Name="Default">
+    ///         <!-- Simple CommandLineQuery -->
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" CommandLineQuery="SELECT @@VERSION;" />
+    ///         <!-- Simple CommandLineQuery setting the Server and Database and outputing to a file -->
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" CommandLineQuery="SELECT @@VERSION;" OutputFile="C:\Output.txt"/>
+    ///         <!-- Simple CommandLineQuery setting the Server and Database and running external files -->
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" />
+    ///         <!-- Simple CommandLineQuery setting the Server and Database, running external files and using variable substition -->
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlCmd TaskAction="Execute" Server="(local)" Database="@(DbName)" InputFiles="@(InputFile)" Variables="@(Variable)" />
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>  
@@ -376,10 +369,10 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 foreach (ITaskItem file in this.InputFiles)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, InputFileMessage, file.ItemSpec);
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
                     sb.Append(" -i ");
                     sb.Append("\"");
-                    sb.Append(file.GetMetadata("Value"));
+                    sb.Append(file.GetMetadata("FullPath"));
                     sb.Append("\"");
                 }
             }
@@ -420,7 +413,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 foreach (ITaskItem query in this.CommandLineQuery)
                 {
-                    this.Log.LogMessage(MessageImportance.Low, QueryMessage, query.ItemSpec);
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentUICulture, QueryMessage, query.ItemSpec));
                     sb.Append(" -Q ");
                     sb.Append("\"");
                     sb.Append(query.ItemSpec);
@@ -473,7 +466,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         {
             var sqlCmdWrapper = new SqlCmdWrapper(this.SqlCmdPath, arguments, string.Empty);
 
-            this.Log.LogMessage(MessageImportance.Low, ExecutionMessage, sqlCmdWrapper.Executable, arguments);
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentUICulture, ExecutionMessage, sqlCmdWrapper.Executable, arguments));
 
             // Get the return value
             int returnValue = sqlCmdWrapper.Execute();
@@ -481,7 +474,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Write out the output
             if (!string.IsNullOrEmpty(sqlCmdWrapper.StandardOutput))
             {
-                this.Log.LogMessage(MessageImportance.Normal, sqlCmdWrapper.StandardOutput);
+                this.LogTaskMessage(MessageImportance.Normal, sqlCmdWrapper.StandardOutput);
             }
 
             // Write out any errors
@@ -493,7 +486,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Resolve the path to the sqlcmd.exe tool
             if (!System.IO.File.Exists(this.SqlCmdPath))
             {
-                this.Log.LogMessage(MessageImportance.Low, InvalidSqlCmdPathError);
+                this.LogTaskMessage(MessageImportance.Low, InvalidSqlCmdPathError);
                 this.SqlCmdPath = "sqlcmd.exe";
             }
 
