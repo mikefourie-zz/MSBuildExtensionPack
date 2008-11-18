@@ -97,6 +97,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Engine, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Tasks.v3.5" />
@@ -247,7 +248,7 @@
     <Compile Include="Web\Iis6Website.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Web\Iis6ServiceExtension.cs">
+    <Compile Include="Web\Iis6ServiceExtensionFile.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Xml\Xml.cs" />
@@ -283,7 +284,7 @@
     <None Include="XmlSamples\Assembly.proj" />
     <None Include="XmlSamples\SqlServer.proj" />
     <None Include="XmlSamples\Xml.proj" />
-    <None Include="XmlSamples\Iis6ServiceExtension.proj" />
+    <None Include="XmlSamples\Iis6ServiceExtensionFile.proj" />
     <None Include="XmlSamples\Iis6VirtualDirectory.proj" />
     <None Include="XmlSamples\Iis6Website.proj" />
     <None Include="XmlSamples\Iis6AppPool.proj" />
@@ -321,16 +322,6 @@
     <None Include="XmlSamples\Wmi.proj" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="COMAdmin">
-      <Guid>{F618C513-DFB8-11D1-A2CF-00805FC79235}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="SqlServer\SqlVersionDataClass.dbml.layout">
       <DependentUpon>SqlVersionDataClass.dbml</DependentUpon>
@@ -351,6 +342,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <PropertyGroup>

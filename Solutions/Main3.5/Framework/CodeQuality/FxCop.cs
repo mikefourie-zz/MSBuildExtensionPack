@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, OverrideText, Project <b>Output: </b>AnalysisFailed, OutputText)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project <b>Output: </b>AnalysisFailed, OutputText)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -134,11 +134,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// Sets the ConsoleXsl (/consoleXsl option)
         /// </summary>
         public string ConsoleXsl { get; set; }
-
-        /// <summary>
-        /// Lets you set text to override check-in policies
-        /// </summary>
-        public string OverrideText { get; set; }
 
         /// <summary>
         /// Set the name of the .fxcop project to use
