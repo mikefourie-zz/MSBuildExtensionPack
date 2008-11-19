@@ -5,12 +5,14 @@ namespace MSBuild.ExtensionPack.SqlServer
 {
     using System.Globalization;
     using Microsoft.Build.Framework;
+    using MSBuild.ExtensionPack.SqlServer.Extended;
 
     /// <summary>
     /// Wraps the SQL Server command line executable SqlCmd.exe.
     /// <para />
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: </b>)</para>
+    /// <para><i>Execute</i> (<b>Required: CommandLineQuery or InputFiles </b> <b>Optional: </b>Database, DedicatedAdminConnection, DisableVariableSubstitution, EchoInput, EnableQuotedIdentifiers, Headers, LoginTimeout, LogOn, NewPassword, OutputFile, Password, QueryTimeout, RedirectStandardError, Server, SqlCmdPath, UnicodeOutput, UseClientRegionalSettings, Variables, Workstation)</para>
+    /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
