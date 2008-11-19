@@ -14,14 +14,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// See the Command Line Reference on MSDN (http://msdn.microsoft.com/en-us/library/003ssz4z(VS.80).aspx) for full details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Checkout</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
-    /// <para><i>Checkin</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
-    /// <para><i>Cloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
-    /// <para><i>Create</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
-    /// <para><i>Decloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
-    /// <para><i>Delete</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
-    /// <para><i>Destroy</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion)</para>
-    /// <para><i>Get</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion)</para>
+    /// <para><i>Checkout</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
+    /// <para><i>Checkin</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
+    /// <para><i>Cloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
+    /// <para><i>Create</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
+    /// <para><i>Decloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
+    /// <para><i>Delete</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
+    /// <para><i>Destroy</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, SSVersion, SuppressI)</para>
+    /// <para><i>Get</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -62,7 +62,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string FilePath { get; set; }
 
         /// <summary>
-        /// Sets the Arguments. Defaults to -I- (Ignores all and tells the command not to ask for input under any circumstances). See http://msdn.microsoft.com/en-us/library/hsxzf2az(VS.80).aspx for full options.
+        /// Set to true to prevent -I- being added to your custom Arguments. Default is False
+        /// </summary>
+        public bool SuppressI { get; set; }
+
+        /// <summary>
+        /// Sets the Arguments. Defaults to -I- (Ignores all and tells the command not to ask for input under any circumstances) unless SuppressI is set to true. See http://msdn.microsoft.com/en-us/library/hsxzf2az(VS.80).aspx for full options.
         /// </summary>
         public string Arguments { get; set; }
 
@@ -90,9 +95,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.Arguments))
+            if (string.IsNullOrEmpty(this.Arguments) && !this.SuppressI)
             {
                 this.Arguments = "-I-";
+            }
+            else
+            {
+                if (this.Arguments.IndexOf("-I-", StringComparison.Ordinal) < 0 && !this.SuppressI)
+                {
+                    this.Arguments += " -I-";
+                }
             }
 
             string args = String.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);

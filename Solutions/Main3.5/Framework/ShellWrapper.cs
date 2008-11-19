@@ -6,7 +6,6 @@ namespace MSBuild.ExtensionPack
     using System;
     using System.Collections.Specialized;
     using System.Diagnostics;
-    using System.IO;
     using System.Text;
 
     /// <summary>
@@ -72,16 +71,14 @@ namespace MSBuild.ExtensionPack
             Process proc = new Process();
             try
             {
-                string cmdPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe");
-                string commandLine = "/C \"" + cmdPath + " /S /C \"\"" + this.Executable + "\" " + this.Arguments;
-                ProcessStartInfo startInfo = new ProcessStartInfo(cmdPath, commandLine)
-                                                 {
-                                                     UseShellExecute = false,
-                                                     CreateNoWindow = true,
-                                                     WorkingDirectory = this.WorkingDirectory,
-                                                     RedirectStandardOutput = true,
-                                                     RedirectStandardError = true
-                                                 };
+                ProcessStartInfo startInfo = new ProcessStartInfo(this.Executable, this.Arguments)
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = this.WorkingDirectory,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
 
                 foreach (string key in this.EnvironmentVariables)
                 {

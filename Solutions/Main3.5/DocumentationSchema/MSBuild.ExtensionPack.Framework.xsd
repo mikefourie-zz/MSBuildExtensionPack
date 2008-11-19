@@ -836,6 +836,7 @@
                     <xs:attribute name="Arguments"/>
                     <xs:attribute name="SSVersion"/>
                     <xs:attribute name="Database"/>
+                    <xs:attribute name="SuppressI"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
