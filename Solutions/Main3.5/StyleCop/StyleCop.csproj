@@ -49,16 +49,13 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="Microsoft.StyleCop, Version=4.3.0.8, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3\Microsoft.StyleCop.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.StyleCop.CSharp, Version=4.3.0.8, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3\Microsoft.StyleCop.CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.StyleCop.CSharp.Rules, Version=4.3.0.8, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3\Microsoft.StyleCop.CSharp.Rules.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -87,6 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="XmlSamples\StyleCop.proj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyReferences\Microsoft.StyleCop.CSharp.dll" />
+    <Content Include="AssemblyReferences\Microsoft.StyleCop.CSharp.Rules.dll" />
+    <Content Include="AssemblyReferences\Microsoft.StyleCop.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

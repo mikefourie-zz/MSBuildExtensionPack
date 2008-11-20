@@ -43,14 +43,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.BizTalk.Admin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.BizTalk.ApplicationDeployment.Engine, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ReferencedAssemblies\Microsoft.BizTalk.ApplicationDeployment.Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.BizTalk.Deployment, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ReferencedAssemblies\Microsoft.BizTalk.Deployment.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.BizTalk.ApplicationDeployment.Engine, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.BizTalk.Deployment, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.BizTalk.ExplorerOM, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
@@ -88,7 +82,10 @@
     <None Include="XmlSamples\BTApplication.proj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ReferencedAssemblies\" />
+    <Content Include="AssemblyReferences\Microsoft.BizTalk.Admin.dll" />
+    <Content Include="AssemblyReferences\Microsoft.BizTalk.ApplicationDeployment.Engine.dll" />
+    <Content Include="AssemblyReferences\Microsoft.BizTalk.Deployment.dll" />
+    <Content Include="AssemblyReferences\Microsoft.BizTalk.ExplorerOM.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

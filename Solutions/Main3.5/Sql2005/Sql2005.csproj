@@ -78,6 +78,12 @@
     <None Include="XmlSamples\Server2005.proj" />
     <None Include="XmlSamples\Database2005.proj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyReferences\Microsoft.SqlServer.ConnectionInfo.dll" />
+    <Content Include="AssemblyReferences\Microsoft.SqlServer.Smo.dll" />
+    <Content Include="AssemblyReferences\Microsoft.SqlServer.SmoEnum.dll" />
+    <Content Include="AssemblyReferences\Microsoft.SqlServer.SqlEnum.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

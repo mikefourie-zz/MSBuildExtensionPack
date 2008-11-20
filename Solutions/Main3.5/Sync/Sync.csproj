@@ -46,14 +46,8 @@
     <Reference Include="Microsoft.Build.Utilities.v3.5">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Microsoft.Synchronization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Sync Framework\v1.0\Runtime\x86\Microsoft.Synchronization.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Synchronization.Files, Version=1.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Sync Framework\v1.0\Runtime\x86\Microsoft.Synchronization.Files.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Synchronization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Synchronization.Files, Version=1.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -81,6 +75,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="XmlSamples\Sync.proj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyReferences\Microsoft.Synchronization.dll" />
+    <Content Include="AssemblyReferences\Microsoft.Synchronization.Files.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

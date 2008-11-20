@@ -48,10 +48,7 @@
     <Reference Include="Microsoft.Build.Utilities.v3.5">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Microsoft.Web.Administration, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Windows\System32\inetsrv\Microsoft.Web.Administration.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Web.Administration, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -85,7 +82,7 @@
     <None Include="XmlSamples\IIS7Websiteproj.proj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TempReferences\Microsoft.Web.Administration.dll" />
+    <Content Include="AssemblyReferences\Microsoft.Web.Administration.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

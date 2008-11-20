@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8D8428EA-4270-493D-A968-D6F94F99CC00}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -61,7 +61,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="vjslib" />
+    <Reference Include="vjslib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\BaseTask.cs">
@@ -79,6 +79,7 @@
     <None Include="XmlSamples\Zip.proj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AssemblyReferences\vjslib.dll" />
     <Content Include="XmlSamples\MotorData\Cars\Dodge.txt" />
     <Content Include="XmlSamples\MotorData\Cars\lexus.txt" />
     <Content Include="XmlSamples\MotorData\rootfile1.txt" />

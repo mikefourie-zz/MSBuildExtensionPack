@@ -55,9 +55,6 @@
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -70,6 +67,8 @@
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AssemblyReferences\Microsoft.TeamFoundation.Build.Client.dll" />
+    <Content Include="AssemblyReferences\Microsoft.TeamFoundation.Client.dll" />
     <Content Include="XmlSamples\DevEnv.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
