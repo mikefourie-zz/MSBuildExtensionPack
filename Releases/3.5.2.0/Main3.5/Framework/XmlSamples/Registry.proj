@@ -1,0 +1,30 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Create a key -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="CreateKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
+        <!-- Check if a key is empty -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="CheckEmpty" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp">
+            <Output PropertyName="REmpty" TaskParameter="Empty"/>
+        </MSBuild.ExtensionPack.Computer.Registry>
+        <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
+        <!-- Set a value -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting" Data="21"/>
+        <!-- Get the value out -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="Get" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting">
+            <Output PropertyName="RData" TaskParameter="Data"/>
+        </MSBuild.ExtensionPack.Computer.Registry>
+        <Message Text="Registry Value: $(RData)"/>
+        <!-- Check if a key is empty again -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="CheckEmpty" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp">
+            <Output PropertyName="REmpty" TaskParameter="Empty"/>
+        </MSBuild.ExtensionPack.Computer.Registry>
+        <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
+        <!-- Delete a key -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
+    </Target>
+</Project>

@@ -1,0 +1,22 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Add an assembly to the local cache -->
+        <MSBuild.ExtensionPack.Framework.Gac TaskAction="AddAssembly" AssemblyPath="c:\AnAssembly.dll"/>
+        <!-- Remove an assembly from the local cache -->
+        <MSBuild.ExtensionPack.Framework.Gac TaskAction="RemoveAssembly" AssemblyName="AnAssembly Version=3.0.8000.0,PublicKeyToken=f251491100750aea"/>
+        <!-- Add an assembly to a remote machine cache. Note that gacutil.exe must exist on the remote server and be in it's Path environment variable -->
+        <MSBuild.ExtensionPack.Framework.Gac TaskAction="AddAssembly" AssemblyPath="c:\aaa.dll" RemoteAssemblyPath="\\ANEWVM\c$\apath\aaa.dll" MachineName="ANEWVM" UserName="Administrator" UserPassword="O123"/>
+        <!-- Remove an assembly from a remote machine cache -->
+        <MSBuild.ExtensionPack.Framework.Gac TaskAction="RemoveAssembly" AssemblyName="aaa, Version=1.0.0.0,PublicKeyToken=e24a7ed7109b7e39" MachineName="ANEWVM" UserName="Admministrator" UserPassword="O123"/>
+        <!-- Check whether an assembly exists in the local cache -->
+        <MSBuild.ExtensionPack.Framework.Gac TaskAction="CheckExists" AssemblyName="aaa, Version=1.0.0.0,PublicKeyToken=e24a7ed7109b7e39">
+            <Output PropertyName="Exists2" TaskParameter="Exists"/>
+        </MSBuild.ExtensionPack.Framework.Gac>
+        <Message Text="Exists: $(Exists2)"/>
+    </Target>
+</Project>
