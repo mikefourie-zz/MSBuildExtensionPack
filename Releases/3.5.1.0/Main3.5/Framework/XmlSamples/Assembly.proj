@@ -1,0 +1,56 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <!-- define a set of arguments to use against an assembly -->
+            <Args Include="1">
+                <Type>int</Type>
+            </Args>
+            <Args Include="2">
+                <Type>int</Type>
+            </Args>
+            <ArgsM Include="2.9845">
+                <Type>decimal</Type>
+            </ArgsM>
+            <ArgsM Include="1.9845">
+                <Type>decimal</Type>
+            </ArgsM>
+            <ArgsF Include="C:\Demo1 - Please Delete">
+                <Type>string</Type>
+            </ArgsF>
+        </ItemGroup>
+        <!-- Get information on an assembly -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.dll">
+            <Output TaskParameter="OutputItems" ItemName="Info"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="Identity: %(Info.Identity)" />
+        <Message Text="FullName: %(Info.FullName)" />
+        <Message Text="PublicKeyToken: %(Info.PublicKeyToken)" />
+        <Message Text="Culture: %(Info.Culture)" />
+        <Message Text="CultureDisplayName: %(Info.CultureDisplayName)" />
+        <Message Text="FileVersion: %(Info.FileVersion)" />
+        <Message Text="AssemblyVersion: %(Info.AssemblyVersion)" />
+        <!-- This will cause a default constructor call only -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+        <!--Invoke the assembly with the args collection of arguments -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="AssemblyDemo" NetMethod="AddNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+            <Output TaskParameter="Result" PropertyName="R"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="Result: $(R)"/>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsM)" NetClass="AssemblyDemo" NetMethod="MultiplyNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+            <Output TaskParameter="Result" PropertyName="R"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="Result: $(R)"/>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsF)" NetClass="AssemblyDemo" NetMethod="CreateFolder" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetMethod="CreateDefaultFolder" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+        <!-- Extract some information on the assembly interface -->
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetMethodInfo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+            <Output TaskParameter="OutputItems" ItemName="TypeInfo"/>
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <Message Text="%(TypeInfo.Identity) %(TypeInfo.Parameters)" />
+    </Target>
+</Project>

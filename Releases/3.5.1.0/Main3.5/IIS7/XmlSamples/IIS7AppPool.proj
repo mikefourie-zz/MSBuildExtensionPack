@@ -1,0 +1,20 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Create an AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="Create" Name="NewAppPool100" RecycleRequests="45" RecycleInterval="1987" Force="true" MaxProcesses="5"/>
+        <!-- Modify an AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="Modify" Name="NewAppPool100" RecycleRequests="-1" RecycleInterval="-1"/>
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="Create" Name="NewAppPool200" Force="true"  MaxProcesses="4" IdentityType="SpecificUser" PoolIdentity="MiniMe" IdentityPassword="MiniPass" QueueLength="400" IdleTimeOut="5000"/>
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="Modify" Name="NewAppPool200" RecycleRequests="222" RecycleInterval="443" RecycleTimes="07:33,08:44,17:54" MaxProcesses="3"  QueueLength="598"/>
+        <!-- Set the PipelineMode in the AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="SetPipelineMode" Name="NewAppPool200" PipelineMode="Classic"/>
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="SetPipelineMode" Name="NewAppPool200" PipelineMode="Integrated"/>
+        <!-- Set the Identity for the AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="SetIdentity" Name="NewAppPool200" IdentityType="LocalService"/>
+    </Target>
+</Project>
