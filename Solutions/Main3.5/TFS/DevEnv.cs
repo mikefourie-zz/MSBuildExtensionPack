@@ -1,5 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="DevEnv.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// This task is based on the DevEnv task written by Aaron Hallberg (http://blogs.msdn.com/aaronhallberg/archive/2007/07/12/team-build-devenv-task.aspx). It is used here with permission.
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Tfs
 {

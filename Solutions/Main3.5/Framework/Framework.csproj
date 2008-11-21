@@ -158,6 +158,9 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="FileSystem\Share.cs" />
+    <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
+    <Compile Include="Framework\AssemblyInfo\AssemblyInfoWrapper.cs" />
+    <Compile Include="Framework\AssemblyInfo\Version.cs" />
     <Compile Include="SqlServer\SqlVersionDataClass.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -323,6 +326,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets" />
     <None Include="SqlServer\SqlVersionDataClass.dbml.layout">
       <DependentUpon>SqlVersionDataClass.dbml</DependentUpon>
     </None>
