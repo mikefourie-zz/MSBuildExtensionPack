@@ -11,6 +11,8 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     /// <summary>
     /// The SqlVersion task provides the ability to manage multiple build versions in a simple database table.
+    /// </summary>
+    /// <remarks>
     /// <para/>
     /// The following TSql can be used to create the supported table structure:
     /// <para/>
@@ -47,7 +49,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetVersion</i> (<b>Required: </b> BuildName, DatabaseName <b>Optional:</b> FieldToIncrement, Delimiter, PaddingCount, PaddingDigit <b>Output: </b>Major, Minor, Build, Revision, Version)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
-    /// </summary>
+    /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Target Name="BuildNumberOverrideTarget">
