@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// <para />
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Execute</i> (<b>Required: </b>CommandLineQuery or InputFiles  <b>Optional: </b>Database, DedicatedAdminConnection, DisableVariableSubstitution, EchoInput, EnableQuotedIdentifiers, Headers, LoginTimeout, LogOn, NewPassword, OutputFile, Password, QueryTimeout, RedirectStandardError, Server, SqlCmdPath, UnicodeOutput, UseClientRegionalSettings, Variables, Workstation)</para>
-    /// <para><b>Remote Execution Support:</b> NA</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

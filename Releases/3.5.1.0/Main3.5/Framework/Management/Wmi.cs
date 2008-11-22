@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Management
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: </b> Class, Namespace, Method <b> Optional: </b>Instance, MethodParameters<b>Output: </b>ReturnValue)</para>
+    /// <para><i>Execute</i> (<b>Required: </b> Class, Namespace, Method <b> Optional: </b>Instance, MethodParameters <b>Output: </b>ReturnValue)</para>
     /// <para><i>Query</i> (<b>Required: </b> Class, Properties <b>Output: </b>Info (ITaskItem))</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>

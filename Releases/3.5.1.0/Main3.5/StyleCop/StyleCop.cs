@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// Wraps the StyleCopConsole class to provide a mechanism for scanning files for StyleCop compliance.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Scan</i> (<b>Required: </b>SourceFiles, SettingsFile<b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
+    /// <para><i>Scan</i> (<b>Required: </b>SourceFiles, SettingsFile <b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>

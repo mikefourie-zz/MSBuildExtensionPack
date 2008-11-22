@@ -11,6 +11,10 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     /// <summary>
     /// The SqlVersion task provides the ability to manage multiple build versions in a simple database table.
+    /// <para />
+    /// <b>Valid TaskActions are:</b>
+    /// <para><i>GetVersion</i> (<b>Required: </b>BuildName, DatabaseName <b>Optional: </b>Delimiter, FieldToIncrement, PaddingCount, PaddingDigit <b>Output: </b>Build, Major, Minor, Revision, Version)</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <remarks>
     /// <para/>
