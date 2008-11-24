@@ -60,11 +60,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </example>
     public class TfsSource : BaseTask
     {
-        private string tfexe;
+        private string teamFoundationExe;
         private string version = "2008";
         private bool recursive = true;
         private ShellWrapper shellWrapper;
-        private string itemspec = string.Empty;
+        private string itemSpec = string.Empty;
         private int returnValue;
         private string returnOutput;
 
@@ -335,7 +335,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemspec, options);
+            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemSpec, options);
             if (string.IsNullOrEmpty(this.OverrideText) == false)
             {
                 arguments += " /override:\"" + this.OverrideText + "\"";
@@ -353,7 +353,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             arguments += " " + lastOptions;
 
-            this.shellWrapper = new ShellWrapper(this.tfexe, arguments);
+            this.shellWrapper = new ShellWrapper(this.teamFoundationExe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
@@ -378,12 +378,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 foreach (ITaskItem i in this.ItemCol)
                 {
-                    this.itemspec += "\"" + i.ItemSpec + "\" ";
+                    this.itemSpec += "\"" + i.ItemSpec + "\" ";
                 }
             }
             else
             {
-                this.itemspec = "\"" + this.ItemPath + "\"";
+                this.itemSpec = "\"" + this.ItemPath + "\"";
             }
 
             return true;
@@ -422,13 +422,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(vstools))
             {
-                this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.teamFoundationExe = Path.Combine(vstools, @"..\IDE\tf.exe");
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.teamFoundationExe));
             }
 
-            if (!File.Exists(this.tfexe))
+            if (!File.Exists(this.teamFoundationExe))
             {
-                this.tfexe = "tf.exe";
+                this.teamFoundationExe = "tf.exe";
                 this.LogTaskMessage(MessageImportance.Low, "Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
             }
         }

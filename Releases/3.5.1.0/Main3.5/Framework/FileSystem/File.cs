@@ -434,9 +434,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.TotalFilecount = this.IncludedFilecount + this.ExcludedFilecount;
         }
 
-        /// <summary>
-        /// Replace File
-        /// </summary>
         private void Replace()
         {
             if (!string.IsNullOrEmpty(this.TextEncoding))
@@ -474,9 +471,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the path.
-        /// </summary>
         private void ProcessPath()
         {
             string originalPath = this.Path;
@@ -527,14 +521,10 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the folder.
-        /// </summary>
-        /// <param name="filseSysInfo">The FS info.</param>
-        private void ProcessFolder(IEnumerable<FileSystemInfo> filseSysInfo)
+        private void ProcessFolder(IEnumerable<FileSystemInfo> fileSysInfo)
         {
             // Iterate through each item.
-            foreach (FileSystemInfo i in filseSysInfo)
+            foreach (FileSystemInfo i in fileSysInfo)
             {
                 // Check to see if this is a DirectoryInfo object.
                 if (i is DirectoryInfo)
@@ -553,9 +543,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the collection.
-        /// </summary>
         private void ProcessCollection()
         {
             if (this.Files == null)
@@ -572,11 +559,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Parses the and replace file.
-        /// </summary>
-        /// <param name="parseFile">The parse file.</param>
-        /// <param name="checkExists">if set to <c>true</c> [check exists].</param>
         private void ParseAndReplaceFile(string parseFile, bool checkExists)
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Processing File: {0}", parseFile));

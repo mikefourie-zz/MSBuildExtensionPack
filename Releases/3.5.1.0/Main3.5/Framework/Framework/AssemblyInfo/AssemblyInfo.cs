@@ -1199,7 +1199,7 @@ namespace MSBuild.ExtensionPack.Framework
         // already present in the assemblyinfo file. If the stub isn't there then it can't be set. This method
         // goes through and validates that a stub is present in the file for any of the properties that were set
         // on the task.
-        private bool ValidateFileEntries(AssemblyInfoWrapper assemblyInfo, string filename)
+        private bool ValidateFileEntries(AssemblyInfoWrapper assemblyInfo, string fileName)
         {
             if (((this.AssemblyBuildNumber != null) ||
                  (this.AssemblyRevision != null) ||
@@ -1207,7 +1207,7 @@ namespace MSBuild.ExtensionPack.Framework
                  (this.AssemblyMinorVersion != null)) &&
                 (assemblyInfo["AssemblyVersion"] == null))
             {
-                this.Log.LogError("Unable to update the AssemblyVersion for {0}: No stub entry for AssemblyVersion was found in the AssemblyInfo file.", filename);
+                this.Log.LogError("Unable to update the AssemblyVersion for {0}: No stub entry for AssemblyVersion was found in the AssemblyInfo file.", fileName);
                 return false;
             }
 
@@ -1217,63 +1217,63 @@ namespace MSBuild.ExtensionPack.Framework
                  (this.AssemblyFileMinorVersion != null)) &&
                 (assemblyInfo["AssemblyFileVersion"] == null))
             {
-                this.Log.LogError("Unable to update the AssemblyFileVersion for {0}: No stub entry for AssemblyFileVersion was found in the AssemblyInfo file.", filename);
+                this.Log.LogError("Unable to update the AssemblyFileVersion for {0}: No stub entry for AssemblyFileVersion was found in the AssemblyInfo file.", fileName);
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyCompany, assemblyInfo, "AssemblyCompany", filename))
+            if (!this.ValidateFileEntry(this.AssemblyCompany, assemblyInfo, "AssemblyCompany", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyConfiguration, assemblyInfo, "AssemblyConfiguration", filename))
+            if (!this.ValidateFileEntry(this.AssemblyConfiguration, assemblyInfo, "AssemblyConfiguration", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyCopyright, assemblyInfo, "AssemblyCopyright", filename))
+            if (!this.ValidateFileEntry(this.AssemblyCopyright, assemblyInfo, "AssemblyCopyright", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyCulture, assemblyInfo, "AssemblyCulture", filename))
+            if (!this.ValidateFileEntry(this.AssemblyCulture, assemblyInfo, "AssemblyCulture", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyDescription, assemblyInfo, "AssemblyDescription", filename))
+            if (!this.ValidateFileEntry(this.AssemblyDescription, assemblyInfo, "AssemblyDescription", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyProduct, assemblyInfo, "AssemblyProduct", filename))
+            if (!this.ValidateFileEntry(this.AssemblyProduct, assemblyInfo, "AssemblyProduct", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyTitle, assemblyInfo, "AssemblyTitle", filename))
+            if (!this.ValidateFileEntry(this.AssemblyTitle, assemblyInfo, "AssemblyTitle", fileName))
             {
                 return false;
             }
 
-            if (!this.ValidateFileEntry(this.AssemblyTrademark, assemblyInfo, "AssemblyTrademark", filename))
+            if (!this.ValidateFileEntry(this.AssemblyTrademark, assemblyInfo, "AssemblyTrademark", fileName))
             {
                 return false;
             }
 
             if (this.AssemblyIncludeSigningInformation)
             {
-                if (!this.ValidateFileEntry(this.AssemblyDelaySign, assemblyInfo, "AssemblyDelaySign", filename))
+                if (!this.ValidateFileEntry(this.AssemblyDelaySign, assemblyInfo, "AssemblyDelaySign", fileName))
                 {
                     return false;
                 }
 
-                if (!this.ValidateFileEntry(this.AssemblyKeyFile, assemblyInfo, "AssemblyKeyFile", filename))
+                if (!this.ValidateFileEntry(this.AssemblyKeyFile, assemblyInfo, "AssemblyKeyFile", fileName))
                 {
                     return false;
                 }
 
-                if (!this.ValidateFileEntry(this.AssemblyKeyName, assemblyInfo, "AssemblyKeyName", filename))
+                if (!this.ValidateFileEntry(this.AssemblyKeyName, assemblyInfo, "AssemblyKeyName", fileName))
                 {
                     return false;
                 }
@@ -1284,11 +1284,11 @@ namespace MSBuild.ExtensionPack.Framework
 
         // This validates a single attribute in the file given the value passed into the task, and the file attribute to look up.
         // The filename is only used for making the error message pretty.
-        private bool ValidateFileEntry(string taskAttributeValue, AssemblyInfoWrapper assemblyInfo, string fileAttribute, string filename)
+        private bool ValidateFileEntry(string taskAttributeValue, AssemblyInfoWrapper assemblyInfo, string fileAttribute, string fileName)
         {
             if ((taskAttributeValue != null) && (assemblyInfo[fileAttribute] == null))
             {
-                this.Log.LogError("Unable to update the {0} for {1}: No stub entry for {0} was found in the AssemblyInfo file.", fileAttribute, filename);
+                this.Log.LogError("Unable to update the {0} for {1}: No stub entry for {0} was found in the AssemblyInfo file.", fileAttribute, fileName);
                 return false;
             }
 

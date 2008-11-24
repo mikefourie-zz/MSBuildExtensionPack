@@ -355,18 +355,18 @@ namespace MSBuild.ExtensionPack.FileSystem
             return acl.ToArray();
         }
 
-        private ManagementObject BuildTrustee(string username)
+        private ManagementObject BuildTrustee(string userName)
         {
-            if (!username.Contains(@"\"))
+            if (!userName.Contains(@"\"))
             {
                 // default to local user
-                username = Environment.MachineName + @"\" + username;
+                userName = Environment.MachineName + @"\" + userName;
             }
 
             // build the trustee
-            string[] usernameParts = username.Split('\\');
-            string domain = usernameParts[0];
-            string alias = usernameParts[1];
+            string[] userNameParts = userName.Split('\\');
+            string domain = userNameParts[0];
+            string alias = userNameParts[1];
             ManagementObject account = this.GetAccount(domain, alias);
             ManagementObject sid = GetSecurityIdentifier(account);
             ManagementPath trusteePath = new ManagementPath("Win32_Trustee");

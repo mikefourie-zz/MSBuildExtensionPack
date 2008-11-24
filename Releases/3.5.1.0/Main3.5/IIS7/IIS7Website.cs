@@ -162,7 +162,7 @@ namespace MSBuild.ExtensionPack.Web
                         break;
                     case "Start":
                     case "Stop":
-                        this.ControlWebSite();
+                        this.ControlWebsite();
                         break;
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -249,7 +249,7 @@ namespace MSBuild.ExtensionPack.Web
             this.iisServerManager.CommitChanges();
         }
 
-        private void ControlWebSite()
+        private void ControlWebsite()
         {
             if (!this.SiteExists())
             {

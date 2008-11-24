@@ -51,7 +51,7 @@ namespace MSBuild.ExtensionPack.Web
         private ServerManager iisServerManager;
         private bool autoStart = true;
         private ManagedPipelineMode managedPM = ManagedPipelineMode.Integrated;
-        private ProcessModelIdentityType pmit = ProcessModelIdentityType.LocalService;
+        private ProcessModelIdentityType processModelType = ProcessModelIdentityType.LocalService;
         private ApplicationPool pool;
 
         /// <summary>
@@ -113,8 +113,8 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         public string IdentityType
         {
-            get { return this.pmit.ToString(); }
-            set { this.pmit = (ProcessModelIdentityType)Enum.Parse(typeof(ProcessModelIdentityType), value); }
+            get { return this.processModelType.ToString(); }
+            set { this.processModelType = (ProcessModelIdentityType)Enum.Parse(typeof(ProcessModelIdentityType), value); }
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace MSBuild.ExtensionPack.Web
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
-            this.pool.ProcessModel.IdentityType = this.pmit;
+            this.pool.ProcessModel.IdentityType = this.processModelType;
 
             if (this.IdentityType == "SpecificUser")
             {
@@ -344,7 +344,7 @@ namespace MSBuild.ExtensionPack.Web
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode));
             this.pool.ManagedPipelineMode = this.managedPM;
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
-            this.pool.ProcessModel.IdentityType = this.pmit;
+            this.pool.ProcessModel.IdentityType = this.processModelType;
             if (this.IdentityType == "SpecificUser")
             {
                 this.pool.ProcessModel.UserName = this.PoolIdentity;

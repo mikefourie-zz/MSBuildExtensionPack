@@ -162,11 +162,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.DoDetokenise();
         }
 
-        /// <summary>
-        /// Gets the encoding.
-        /// </summary>
-        /// <param name="enc">The enc.</param>
-        /// <returns>Encoding</returns>
         private static Encoding GetTextEncoding(string enc)
         {
             switch (enc)
@@ -281,10 +276,10 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        private void ProcessFolder(IEnumerable<FileSystemInfo> filseSysInfo)
+        private void ProcessFolder(IEnumerable<FileSystemInfo> fileSysInfo)
         {
             // Iterate through each item.
-            foreach (FileSystemInfo i in filseSysInfo)
+            foreach (FileSystemInfo i in fileSysInfo)
             {
                 // Check to see if this is a DirectoryInfo object.
                 if (i is DirectoryInfo)
@@ -303,9 +298,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the collection.
-        /// </summary>
         private void ProcessCollection()
         {
             if (this.TargetFiles == null)
@@ -322,12 +314,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Detokenises the file.
-        /// </summary>
-        /// <param name="file">The file.</param>
-        /// <param name="checkExists">if set to <c>true</c> [check exists].</param>
-        /// <param name="enc">The enc.</param>
         private void DetokeniseFileProvided(string file, bool checkExists, Encoding enc)
         {
             this.FilesProcessed++;
@@ -388,15 +374,10 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Finds the replacement property
-        /// </summary>
-        /// <param name="m">Regex Match</param>
-        /// <returns>propertyvalue string</returns>
-        private string FindReplacement(Match m)
+        private string FindReplacement(Group regexMatch)
         {
             // Get the match.
-            string propertyFound = m.Captures[0].ToString();
+            string propertyFound = regexMatch.Captures[0].ToString();
             
             // Extract the keyword from the match.
             string extractedProperty = Regex.Match(propertyFound, ParseRegexPatternExtract).Captures[0].ToString();

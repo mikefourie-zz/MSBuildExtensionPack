@@ -97,7 +97,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets the IIS path.
         /// </summary>
         /// <value>The IIS path.</value>
-        internal string IISPath
+        internal string IisPath
         {
             get { return "IIS://" + this.MachineName + "/W3SVC"; }
         }
@@ -119,10 +119,10 @@ namespace MSBuild.ExtensionPack.Web
                 case "Stop":
                 case "Pause":
                 case "Continue":
-                    this.ControlWebSite();
+                    this.ControlWebsite();
                     break;
                 case "CheckExists":
-                    this.CheckSiteExists();
+                    this.CheckWebsiteExists();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -130,28 +130,28 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private static void UpdateMetabaseProperty(DirectoryEntry entry, string metabasePropertyName, string metabaseProperty)
+        private static void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
-            if (metabaseProperty.IndexOf('|') == -1)
+            if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metabasePropertyName, metabaseProperty);
+                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
                 entry.Invoke("SetInfo");
             }
             else
             {
-                entry.Invoke("Put", metabasePropertyName, string.Empty);
+                entry.Invoke("Put", metaBasePropertyName, string.Empty);
                 entry.Invoke("SetInfo");
-                string[] metabaseProperties = metabaseProperty.Split('|');
+                string[] metabaseProperties = metaBaseProperty.Split('|');
                 foreach (string metabasePropertySplit in metabaseProperties)
                 {
-                    entry.Properties[metabasePropertyName].Add(metabasePropertySplit);
+                    entry.Properties[metaBasePropertyName].Add(metabasePropertySplit);
                 }
 
                 entry.CommitChanges();
             }
         }
 
-        private bool CheckSiteExists()
+        private bool CheckWebsiteExists()
         {
             this.LoadWebsite();
             if (this.websiteEntry != null)
@@ -164,7 +164,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private DirectoryEntry LoadWebService()
         {
-            return new DirectoryEntry(this.IISPath);
+            return new DirectoryEntry(this.IisPath);
         }
 
         private void LoadWebsite()
@@ -252,7 +252,7 @@ namespace MSBuild.ExtensionPack.Web
                             string propName = propPair[0];
                             string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
-                            UpdateMetabaseProperty(this.websiteEntry, propName, propValue);
+                            UpdateMetaBaseProperty(this.websiteEntry, propName, propValue);
                         }
                     }
 
@@ -265,7 +265,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Delete()
         {
-            if (this.CheckSiteExists())
+            if (this.CheckWebsiteExists())
             {
                 using (DirectoryEntry webService = this.LoadWebService())
                 {
@@ -279,9 +279,9 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private void ControlWebSite()
+        private void ControlWebsite()
         {
-            if (this.CheckSiteExists())
+            if (this.CheckWebsiteExists())
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "{0} Website: {1}", this.TaskAction, this.Name));
                 

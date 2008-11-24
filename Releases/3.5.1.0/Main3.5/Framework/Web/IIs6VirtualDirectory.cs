@@ -95,7 +95,7 @@ namespace MSBuild.ExtensionPack.Web
         [Required]
         public string Website { get; set; }
 
-        internal string IISPath
+        internal string IisPath
         {
             get { return "IIS://" + this.MachineName + "/W3SVC"; }
         }
@@ -127,21 +127,21 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private static void UpdateMetabaseProperty(DirectoryEntry entry, string metabasePropertyName, string metabaseProperty)
+        private static void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
-            if (metabaseProperty.IndexOf('|') == -1)
+            if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metabasePropertyName, metabaseProperty);
+                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
                 entry.Invoke("SetInfo");
             }
             else
             {
-                entry.Invoke("Put", metabasePropertyName, string.Empty);
+                entry.Invoke("Put", metaBasePropertyName, string.Empty);
                 entry.Invoke("SetInfo");
-                string[] metabaseProperties = metabaseProperty.Split('|');
+                string[] metabaseProperties = metaBaseProperty.Split('|');
                 foreach (string metabasePropertySplit in metabaseProperties)
                 {
-                    entry.Properties[metabasePropertyName].Add(metabasePropertySplit);
+                    entry.Properties[metaBasePropertyName].Add(metabasePropertySplit);
                 }
 
                 entry.CommitChanges();
@@ -150,10 +150,10 @@ namespace MSBuild.ExtensionPack.Web
 
         private DirectoryEntry LoadWebService()
         {
-            DirectoryEntry webService = new DirectoryEntry(this.IISPath);
+            DirectoryEntry webService = new DirectoryEntry(this.IisPath);
             if (webService == null)
             {
-                throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Iis DirectoryServices Unavailable: {0}", this.IISPath));
+                throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Iis DirectoryServices Unavailable: {0}", this.IisPath));
             }
 
             return webService;
@@ -207,7 +207,7 @@ namespace MSBuild.ExtensionPack.Web
                         if (string.Compare(webEntry.Properties["ServerComment"][0].ToString(), websiteName, StringComparison.CurrentCultureIgnoreCase) == 0)
                         {
                             int websiteIdentifier = int.Parse(webEntry.Name, CultureInfo.InvariantCulture);
-                            string rootVdirPath = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/ROOT", this.IISPath, websiteIdentifier);
+                            string rootVdirPath = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/ROOT", this.IisPath, websiteIdentifier);
                             DirectoryEntry vdirEntry = new DirectoryEntry(rootVdirPath);
                             return vdirEntry;
                         }
@@ -281,7 +281,7 @@ namespace MSBuild.ExtensionPack.Web
 
                     this.websiteEntry.CommitChanges();
                     vdirEntry.CommitChanges();
-                    UpdateMetabaseProperty(vdirEntry, "AppFriendlyName", this.Name);
+                    UpdateMetaBaseProperty(vdirEntry, "AppFriendlyName", this.Name);
                 }
 
                 // Now loop through all the metabase properties specified.
@@ -293,10 +293,8 @@ namespace MSBuild.ExtensionPack.Web
                         string[] propPair = s.Split(new[] { '=' });
                         string propName = propPair[0];
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
-
-                        UpdateMetabaseProperty(vdirEntry, propName, propValue);
+                        UpdateMetaBaseProperty(vdirEntry, propName, propValue);
                     }
                 }
 

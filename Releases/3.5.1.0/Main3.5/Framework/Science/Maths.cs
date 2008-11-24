@@ -190,7 +190,7 @@ namespace MSBuild.ExtensionPack.Science
             this.Result = this.total;
         }
 
-        private static float DecimalToSgl_Dbl(decimal argument)
+        private static float DecimalToSglDbl(decimal argument)
         {
             return decimal.ToSingle(argument);
         }
@@ -271,7 +271,7 @@ namespace MSBuild.ExtensionPack.Science
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Evaluating Expression: {0}", this.Expression));
             DataTable dt = new DataTable { Locale = CultureInfo.CurrentCulture };
-            this.total = DecimalToSgl_Dbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
+            this.total = DecimalToSglDbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
         }
 
         private void Divide()

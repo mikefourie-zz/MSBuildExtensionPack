@@ -51,9 +51,9 @@ namespace MSBuild.ExtensionPack.SqlServer
         private const string InputFileMessage = "Adding input file '{0}'";
         private const string InvalidSqlCmdPathError = "Unable to resolve path to sqlcmd.exe. Assuming it is in the PATH environment variable.";
         private const string InvalidTaskActionError = "Invalid TaskAction passed: {0}";
-        private const string LoginTimeOutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
+        private const string LoginTimeoutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
         private const string QueryMessage = "Adding query '{0}'";
-        private const string QueryTimeOutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
+        private const string QueryTimeoutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
 
         private int loginTimeout = 8;
         private int queryTimeout;
@@ -154,7 +154,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(LoginTimeOutRangeError, value);
+                    this.Log.LogWarning(LoginTimeoutRangeError, value);
                 }
             }
         }
@@ -258,7 +258,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(QueryTimeOutRangeError, value);
+                    this.Log.LogWarning(QueryTimeoutRangeError, value);
                 }
             }
         }

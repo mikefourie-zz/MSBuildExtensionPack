@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     public class SourceSafe : BaseTask
     {
         private ShellWrapper shellWrapper;
-        private string ssafeVersion = "2005";
+        private string sourceSafeVersion = "2005";
         private string fileName = "ss.exe";
 
         /// <summary>
@@ -76,8 +76,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         public string SSVersion
         {
-            get { return this.ssafeVersion; }
-            set { this.ssafeVersion = value; }
+            get { return this.sourceSafeVersion; }
+            set { this.sourceSafeVersion = value; }
         }
 
         /// <summary>
@@ -95,9 +95,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.Arguments) && !this.SuppressI)
+            if (string.IsNullOrEmpty(this.Arguments))
             {
-                this.Arguments = "-I-";
+                if (!this.SuppressI)
+                {
+                    this.Arguments = "-I-";
+                }
             }
             else
             {
@@ -109,7 +112,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             string args = String.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Executing: {0} {1}", this.fileName, args));
-            this.ExecuteVSS(args);
+            this.ExecuteVisualSourceSafe(args);
         }
 
         private bool GetVersionInformation()
@@ -166,7 +169,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             return true;
         }
 
-        private void ExecuteVSS(string args)
+        private void ExecuteVisualSourceSafe(string args)
         {
             this.shellWrapper.Arguments = args;
 

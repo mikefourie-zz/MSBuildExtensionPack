@@ -217,9 +217,9 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.ProcessDeleteAll(d);
         }
 
-        private void ProcessDeleteAll(DirectoryInfo d)
+        private void ProcessDeleteAll(DirectoryInfo dirInfo)
         {
-            foreach (DirectoryInfo child in d.GetDirectories())
+            foreach (DirectoryInfo child in dirInfo.GetDirectories())
             {
                 // Load the regex to use
                 Regex reg = new Regex(this.Match, RegexOptions.IgnoreCase | RegexOptions.Compiled);

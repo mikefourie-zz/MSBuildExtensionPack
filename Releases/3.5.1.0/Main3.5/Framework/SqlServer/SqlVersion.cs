@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     {
         private int fieldToIncrement;
         private bool trustedConnection;
-        private SqlVersionDataClass dblinq;
+        private SqlVersionDataClass databaseLinq;
         private string delimiter = ".";
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             }
 
             string conStr = this.trustedConnection ? string.Format(CultureInfo.CurrentCulture, @"Data Source={0};Initial Catalog={1};Integrated Security=True", this.MachineName, this.DatabaseName) : string.Format(CultureInfo.CurrentCulture, @"Data Source={0};Initial Catalog={1};UID={2};PWD={3}", this.MachineName, this.DatabaseName, this.UserName, this.UserPassword);
-            using (this.dblinq = new SqlVersionDataClass(conStr))
+            using (this.databaseLinq = new SqlVersionDataClass(conStr))
             {
                 switch (this.TaskAction)
                 {
@@ -198,7 +198,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
             using (TransactionScope ts = new TransactionScope())
             {
-                var query = this.dblinq.BuildNumbers.Where(r => r.SequenceName == this.BuildName);
+                var query = this.databaseLinq.BuildNumbers.Where(r => r.SequenceName == this.BuildName);
                 
                 var row = query.Single();
                 switch (this.fieldToIncrement)
@@ -230,7 +230,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 this.Build = row.Build.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
                 this.Revision = row.Increment;
                 this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", row.Major, row.Minor, row.Build.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), row.Increment, this.Delimiter);
-                this.dblinq.SubmitChanges();
+                this.databaseLinq.SubmitChanges();
                 ts.Complete();
             }
         }

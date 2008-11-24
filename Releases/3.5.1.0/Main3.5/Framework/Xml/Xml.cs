@@ -196,7 +196,7 @@ namespace MSBuild.ExtensionPack.Xml
             switch (this.TaskAction)
             {
                 case "TransForm":
-                    this.TransForm();
+                    this.Transform();
                     break;
                 case "Validate":
                     this.Validate();
@@ -207,7 +207,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
         }
 
-        private void TransForm()
+        private void Transform()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Transforming: {0}", this.XmlFile));
             XDocument xslDoc;

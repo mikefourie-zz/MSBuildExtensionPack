@@ -12,9 +12,9 @@ namespace MSBuild.ExtensionPack.Web
         private object comObject;
         private Type comObjectType;
 
-        public ComWrapper(object o)
+        public ComWrapper(object value)
         {
-            this.Initialize(o);
+            this.Initialize(value);
         }
 
         internal object CallMethod(string methodName)
@@ -27,9 +27,9 @@ namespace MSBuild.ExtensionPack.Web
             return this.comObjectType.InvokeMember(methodName, BindingFlags.Default | BindingFlags.InvokeMethod, null, this.comObject, args, CultureInfo.InvariantCulture);
         }
 
-        private void Initialize(object o)
+        private void Initialize(object value)
         {
-            this.comObject = o;
+            this.comObject = value;
             this.comObjectType = this.comObject.GetType();
         }
     }

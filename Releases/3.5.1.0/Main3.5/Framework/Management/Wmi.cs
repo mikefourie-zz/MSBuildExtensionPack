@@ -128,7 +128,7 @@ namespace MSBuild.ExtensionPack.Management
             switch (this.TaskAction)
             {
                 case "Execute":
-                    this.ExecuteWMI();
+                    this.ExecuteWmi();
                     break;
                 case "Query":
                     this.Query();
@@ -139,7 +139,7 @@ namespace MSBuild.ExtensionPack.Management
             }
         }
 
-        private void ExecuteWMI()
+        private void ExecuteWmi()
         {
             this.GetManagementScope(this.Namespace);
             string managementPath = this.Class;

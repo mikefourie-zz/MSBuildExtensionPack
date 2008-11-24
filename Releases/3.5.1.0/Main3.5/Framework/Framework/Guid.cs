@@ -42,7 +42,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class Guid : BaseTask
     {
-        private System.Guid internalguid;
+        private System.Guid internalGuid;
 
         /// <summary>
         /// 32 digits separated by hyphens: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -50,7 +50,7 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public string[] FormattedGuidString
         {
-            get { return new[] { this.internalguid.ToString("D", CultureInfo.CurrentCulture) }; }
+            get { return new[] { this.internalGuid.ToString("D", CultureInfo.CurrentCulture) }; }
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public string[] GuidString
         {
-            get { return new[] { this.internalguid.ToString("N", CultureInfo.CurrentCulture) }; }
+            get { return new[] { this.internalGuid.ToString("N", CultureInfo.CurrentCulture) }; }
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void Get()
         {
             this.LogTaskMessage("Getting random GUID");
-            this.internalguid = System.Guid.NewGuid();
+            this.internalGuid = System.Guid.NewGuid();
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace MSBuild.ExtensionPack.Framework
             byte[] data = new byte[16];
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             rng.GetBytes(data);
-            this.internalguid = new System.Guid(data);
+            this.internalGuid = new System.Guid(data);
         }
     }
 }

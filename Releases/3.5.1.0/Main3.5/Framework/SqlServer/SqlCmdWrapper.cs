@@ -9,7 +9,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
 
     internal sealed class SqlCmdWrapper
     {
-        private readonly NameValueCollection envars = new NameValueCollection();
+        private readonly NameValueCollection environmentVars = new NameValueCollection();
 
         internal SqlCmdWrapper(string executable, string arguments, string workingDirectory)
         {
@@ -50,7 +50,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
 
         internal NameValueCollection EnvironmentVariables
         {
-            get { return this.envars; }
+            get { return this.environmentVars; }
         }
 
         /// <summary>

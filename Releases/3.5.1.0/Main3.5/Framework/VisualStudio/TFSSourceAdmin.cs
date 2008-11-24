@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </example>
     public class TfsSourceAdmin : BaseTask
     {
-        private string tfexe;
+        private string teamFoundationExe;
         private string version = "2008";
         private ShellWrapper shellWrapper;
 
@@ -117,7 +117,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
 
-            this.shellWrapper = new ShellWrapper(this.tfexe, arguments);
+            this.shellWrapper = new ShellWrapper(this.teamFoundationExe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
@@ -162,13 +162,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(vstools))
             {
-                this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.teamFoundationExe = Path.Combine(vstools, @"..\IDE\tf.exe");
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.teamFoundationExe));
             }
 
-            if (!File.Exists(this.tfexe))
+            if (!File.Exists(this.teamFoundationExe))
             {
-                this.tfexe = "tf.exe";
+                this.teamFoundationExe = "tf.exe";
                 this.LogTaskMessage("Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
             }
         }

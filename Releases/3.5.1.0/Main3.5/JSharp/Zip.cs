@@ -69,7 +69,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </example>  
     public class Zip : BaseTask
     {
-        private ZipOutputStream zos;
+        private ZipOutputStream zipOutStream;
 
         /// <summary>
         /// Sets the files to Compress
@@ -134,7 +134,7 @@ namespace MSBuild.ExtensionPack.Compression
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating ZipFile: {0}", this.ZipFileName));
-            this.zos = new ZipOutputStream(new java.io.FileOutputStream(this.ZipFileName.GetMetadata("FullPath")));
+            this.zipOutStream = new ZipOutputStream(new java.io.FileOutputStream(this.ZipFileName.GetMetadata("FullPath")));
             try
             {
                 if (this.CompressFiles != null)
@@ -158,14 +158,14 @@ namespace MSBuild.ExtensionPack.Compression
 
                         ZipEntry z = new ZipEntry(zipentry);
                         z.setMethod(ZipEntry.DEFLATED);
-                        this.zos.putNextEntry(z);
+                        this.zipOutStream.putNextEntry(z);
                         try
                         {
                             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0}", zipentry));
                             java.io.FileInputStream s = new java.io.FileInputStream(filePath);
                             try
                             {
-                                CopyStream(s, this.zos);
+                                CopyStream(s, this.zipOutStream);
                             }
                             finally
                             {
@@ -174,7 +174,7 @@ namespace MSBuild.ExtensionPack.Compression
                         }
                         finally
                         {
-                            this.zos.closeEntry();
+                            this.zipOutStream.closeEntry();
                         }
                     }
                 }
@@ -192,14 +192,14 @@ namespace MSBuild.ExtensionPack.Compression
             }
             finally
             {
-                this.zos.close();
+                this.zipOutStream.close();
             }
         }
 
-        private void ProcessFolder(IEnumerable<FileSystemInfo> filseSysInfo)
+        private void ProcessFolder(IEnumerable<FileSystemInfo> fileSysInfo)
         {
             // Iterate through each item.
-            foreach (FileSystemInfo i in filseSysInfo)
+            foreach (FileSystemInfo i in fileSysInfo)
             {
                 // Check to see if this is a DirectoryInfo object.
                 if (i is DirectoryInfo)
@@ -224,8 +224,8 @@ namespace MSBuild.ExtensionPack.Compression
                     zipentry += @"/";
                     ZipEntry z = new ZipEntry(zipentry);
                     z.setMethod(ZipEntry.DEFLATED);
-                    this.zos.putNextEntry(z);
-                    this.zos.closeEntry();
+                    this.zipOutStream.putNextEntry(z);
+                    this.zipOutStream.closeEntry();
 
                     // Cast the object to a DirectoryInfo object.
                     DirectoryInfo dirInfo = (DirectoryInfo)i;
@@ -252,14 +252,14 @@ namespace MSBuild.ExtensionPack.Compression
 
                     ZipEntry z = new ZipEntry(zipentry);
                     z.setMethod(ZipEntry.DEFLATED);
-                    this.zos.putNextEntry(z);
+                    this.zipOutStream.putNextEntry(z);
                     try
                     {
                         this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0}", zipentry));
                         java.io.FileInputStream s = new java.io.FileInputStream(filePath);
                         try
                         {
-                            CopyStream(s, this.zos);
+                            CopyStream(s, this.zipOutStream);
                         }
                         finally
                         {
@@ -268,7 +268,7 @@ namespace MSBuild.ExtensionPack.Compression
                     }
                     finally
                     {
-                        this.zos.closeEntry();
+                        this.zipOutStream.closeEntry();
                     }
                 }
             }
@@ -290,7 +290,7 @@ namespace MSBuild.ExtensionPack.Compression
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Extracting ZipFile: {0} to: {1}", this.ZipFileName, this.ExtractPath));
             ZipFile zf = new ZipFile(this.ZipFileName.GetMetadata("FullPath"));
-            foreach (ZipEntry zipEntry in new EnumerationWrapper(zf.entries()))
+            foreach (ZipEntry zipEntry in new EnumerationWrapperCollection(zf.entries()))
             {
                 java.io.InputStream s = zf.getInputStream(zipEntry);
                 try

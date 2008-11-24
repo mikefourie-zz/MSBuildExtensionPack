@@ -148,27 +148,27 @@ namespace MSBuild.ExtensionPack.Web
         /// Parse certificate hash from a string.
         /// </summary>
         /// <remarks>Based on code from: http://www.codeproject.com/KB/recipes/hexencoding.aspx</remarks>
-        /// <param name="hexString">hex values, can be space, dash or not-delimited</param>
+        /// <param name="hexValue">hex values, can be space, dash or not-delimited</param>
         /// <returns>byte[] encoded value</returns>
-        private static byte[] HexToData(string hexString)
+        private static byte[] HexToData(string hexValue)
         {
-            if (hexString == null)
+            if (hexValue == null)
             {
                 return null;
             }
 
-            hexString = hexString.Replace(" ", string.Empty);
-            hexString = hexString.Replace("-", string.Empty);
-            if (hexString.Length % 2 == 1)
+            hexValue = hexValue.Replace(" ", string.Empty);
+            hexValue = hexValue.Replace("-", string.Empty);
+            if (hexValue.Length % 2 == 1)
             {
                 // Up to you whether to pad the first or last byte
-                hexString = '0' + hexString;
+                hexValue = '0' + hexValue;
             }
 
-            byte[] data = new byte[hexString.Length / 2];
+            byte[] data = new byte[hexValue.Length / 2];
             for (int i = 0; i < data.Length; i++)
             {
-                data[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+                data[i] = Convert.ToByte(hexValue.Substring(i * 2, 2), 16);
             }
 
             return data;
