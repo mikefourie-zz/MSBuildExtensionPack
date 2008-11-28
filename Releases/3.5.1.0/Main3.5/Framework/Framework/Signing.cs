@@ -40,46 +40,45 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class Signing : BaseTask
     {
-        private const string cCAddSkipVerificationTaskAction = "AddSkipVerification";
-        private const string cRemoveAllSkipVerificationTaskAction = "RemoveAllSkipVerification";
-        private const string cSignTaskAction = "Sign";
+        private const string CAddSkipVerificationTaskAction = "AddSkipVerification";
+        private const string RemoveAllSkipVerificationTaskAction = "RemoveAllSkipVerification";
+        private const string SignTaskAction = "Sign";
         
         private const string ToolName = "sn.exe";
 
-        [DropdownValue(cCAddSkipVerificationTaskAction)]
-        [DropdownValue(cRemoveAllSkipVerificationTaskAction)]
-        [DropdownValue(cSignTaskAction)]
+        [DropdownValue(CAddSkipVerificationTaskAction)]
+        [DropdownValue(RemoveAllSkipVerificationTaskAction)]
+        [DropdownValue(SignTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
         
         /// <summary>
         /// Sets the KeyFile to use when Signing the Assemblies
         /// </summary>
-        [TaskAction(cSignTaskAction, true)]
+        [TaskAction(SignTaskAction, true)]
         public ITaskItem KeyFile { get; set; }
 
         /// <summary>
         /// Sets the folder path to sn.exe
         /// </summary>
-        [TaskAction(cCAddSkipVerificationTaskAction, false)]
-        [TaskAction(cRemoveAllSkipVerificationTaskAction, false)]
-        [TaskAction(cSignTaskAction, false)]
+        [TaskAction(CAddSkipVerificationTaskAction, false)]
+        [TaskAction(RemoveAllSkipVerificationTaskAction, false)]
+        [TaskAction(SignTaskAction, false)]
         public ITaskItem ToolPath { get; set; }
 
         /// <summary>
         /// Sets the PublicKeyToken for AddSkipVerification
         /// </summary>
-        [TaskAction(cCAddSkipVerificationTaskAction, true)]
+        [TaskAction(CAddSkipVerificationTaskAction, true)]
         public string PublicKeyToken { get; set; }
 
         /// <summary>
         /// Sets the Item Collection of Assemblies to sign
         /// </summary>
-        [TaskAction(cSignTaskAction, true)]
+        [TaskAction(SignTaskAction, true)]
         public ITaskItem[] Assemblies { get; set; }
 
         protected override void InternalExecute()

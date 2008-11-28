@@ -53,13 +53,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </example>
     public class FxCop : BaseTask
     {
-        private const string cAnalyseTaskAction = "Analyse";
+        private const string AnalyseTaskAction = "Analyse";
         
         private string fxcopPath;
         private bool logToConsole = true;
         private bool showSummary = true;
 
-        [DropdownValue(cAnalyseTaskAction)]
+        [DropdownValue(AnalyseTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -69,31 +69,31 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Sets the Item Collection of assemblies to analyse (/file option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, true)]
+        [TaskAction(AnalyseTaskAction, true)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// Sets the DependencyDirectories :(/directory option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public ITaskItem[] DependencyDirectories { get; set; }
 
         /// <summary>
         /// Sets the name of an analysis report or project file to import (/import option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public ITaskItem[] Imports { get; set; }
 
         /// <summary>
         /// Sets the location of rule libraries to load (/rule option). Prefix the Rules path with ! to treat warnings as errors
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public ITaskItem[] Rules { get; set; }
 
         /// <summary>
         /// Set to true to display a summary (/summary option). Default is true
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public bool ShowSummary
         {
             get { return this.showSummary; }
@@ -103,19 +103,19 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Set to true to output verbose information during analysis (/verbose option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public bool Verbose { get; set; }
 
         /// <summary>
         /// Saves the results of the analysis in the project file. This option is ignored if the /project option is not specified (/update option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public bool UpdateProject { get; set; }
 
         /// <summary>
         /// Set to true to direct analysis output to the console (/console option). Default is true
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public bool LogToConsole
         {
             get { return this.logToConsole; }
@@ -125,13 +125,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Specifies the types to analyze
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string Types { get; set; }
 
         /// <summary>
         /// Sets the path to FxCopCmd.exe. Default is 32bit: 'c:\Program Files\Microsoft FxCop 1.36\FxCopCmd.exe', 64bit: 'c:\Program Files (x86)\Microsoft FxCop 1.36\FxCopCmd.exe'
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string FxCopPath
         {
             get { return this.fxcopPath; }
@@ -141,40 +141,40 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Sets the ReportXsl (/outXsl: option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string ReportXsl { get; set; }
         
         /// <summary>
         /// Set the name of the file for the analysis report
         /// </summary>
         [Required]
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string OutputFile { get; set; }
 
         /// <summary>
         /// Sets the ConsoleXsl (/consoleXsl option)
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string ConsoleXsl { get; set; }
 
         /// <summary>
         /// Set the name of the .fxcop project to use
         /// </summary>
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string Project { get; set; }
 
         /// <summary>
         /// Gets AnalysisFailed. True if FxCop logged Code Analysis errors to the Output file.
         /// </summary>
         [Output]
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public bool AnalysisFailed { get; set; }
 
         /// <summary>
         /// Gets the OutputText emitted during analysis
         /// </summary>
         [Output]
-        [TaskAction(cAnalyseTaskAction, false)]
+        [TaskAction(AnalyseTaskAction, false)]
         public string OutputText { get; set; }
 
         protected override void InternalExecute()

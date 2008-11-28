@@ -52,75 +52,64 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class EventLog : BaseTask
     {
-        private const string cCheckExistsTaskAction = "CheckExists";
-        private const string cClearTaskAction = "Clear";
-        private const string cCreateTaskAction = "Create";
-        private const string cDeleteTaskAction = "Delete";
-        private const string cModifyTaskAction = "Modify";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string ClearTaskAction = "Clear";
+        private const string CreateTaskAction = "Create";
+        private const string DeleteTaskAction = "Delete";
+        private const string ModifyTaskAction = "Modify";
 
-        [DropdownValue(cCheckExistsTaskAction)]
-        [DropdownValue(cClearTaskAction)]
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cDeleteTaskAction)]
-        [DropdownValue(cModifyTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(ClearTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(ModifyTaskAction)]
         public override string TaskAction
         {
-            get
-            {
-                return base.TaskAction;
-            }
-            set
-            {
-                base.TaskAction = value;
-            }
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
         }
+
         /// <summary>
         /// Sets the size of the max.
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
-        [TaskAction(cModifyTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(ModifyTaskAction, false)]
         public int MaxSize { get; set; }
 
         /// <summary>
         /// Sets the retention. Any value > 0 is interpreted as days to retain. Use -1 for 'Overwrite as needed'. Use -2 for 'Never Overwrite'
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
-        [TaskAction(cModifyTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(ModifyTaskAction, false)]
         public int Retention { get; set; }
 
         /// <summary>
         /// Sets the name of the Event Log
         /// </summary>
         [Required]
-        [TaskAction(cCheckExistsTaskAction, true)]
-        [TaskAction(cClearTaskAction, true)]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cDeleteTaskAction, true)]
-        [TaskAction(cModifyTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(ClearTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(ModifyTaskAction, true)]
         public string LogName { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the event log exists.
         /// </summary>
         [Output]
-        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
-        [TaskAction(cCheckExistsTaskAction, false)]
-        [TaskAction(cClearTaskAction, false)]
-        [TaskAction(cCreateTaskAction, false)]
-        [TaskAction(cDeleteTaskAction, false)]
-        [TaskAction(cModifyTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(ClearTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(ModifyTaskAction, false)]
         public override string MachineName
         {
-            get
-            {
-                return base.MachineName;
-            }
-            set
-            {
-                base.MachineName = value;
-            }
+            get { return base.MachineName; }
+            set { base.MachineName = value; }
         }
         
         /// <summary>

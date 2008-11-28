@@ -35,45 +35,44 @@ namespace MSBuild.ExtensionPack.Security
     /// </example>    
     public class Certificate : BaseTask
     {
-        private const string cAddTaskAction = "Add";
-        private const string cRemoveTaskAction = "Remove";
+        private const string AddTaskAction = "Add";
+        private const string RemoveTaskAction = "Remove";
         
         private string storeName = "MY";
 
-        [DropdownValue(cAddTaskAction)]
-        [DropdownValue(cRemoveTaskAction)]
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(RemoveTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets a value indicating whether to use the MachineStore. Default is false
         /// </summary>
-        [TaskAction(cAddTaskAction, false)]
-        [TaskAction(cRemoveTaskAction, false)]
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(RemoveTaskAction, false)]
         public bool MachineStore { get; set; }
 
         /// <summary>
         /// Sets the password for the pfx file from which the certificate is to be imported, defaults to blank
         /// </summary>
-        [TaskAction(cAddTaskAction, false)]
+        [TaskAction(AddTaskAction, false)]
         public string CertPassword { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether the certificate is exportable.
         /// </summary>
-        [TaskAction(cAddTaskAction, false)]
+        [TaskAction(AddTaskAction, false)]
         public bool Exportable { get; set; }
 
         /// <summary>
         /// Gets the thumbprint. Used to uniquely identify certificate in further tasks
         /// </summary>
         [Output]
-        [TaskAction(cAddTaskAction, false)]
-        [TaskAction(cRemoveTaskAction, true)]
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(RemoveTaskAction, true)]
         public string Thumbprint { get; set; }
 
         /// <summary>
@@ -88,8 +87,8 @@ namespace MSBuild.ExtensionPack.Security
         /// TrustedPeople:        The store for directly trusted people and resources<br />
         /// TrustedPublisher:     The store for directly trusted publishers<br />
         /// </summary>
-        [TaskAction(cAddTaskAction, false)]
-        [TaskAction(cRemoveTaskAction, false)]
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(RemoveTaskAction, false)]
         public string StoreName
         {
             get { return this.storeName; }
@@ -99,7 +98,7 @@ namespace MSBuild.ExtensionPack.Security
         /// <summary>
         /// Sets the name of the file.
         /// </summary>
-        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(AddTaskAction, true)]
         public ITaskItem FileName { get; set; }
 
         /// <summary>

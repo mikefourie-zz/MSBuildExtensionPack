@@ -33,31 +33,29 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>  
     public class Thread : BaseTask
     {
-        private const string cAbortTaskAction = "Abort";
-        private const string cSleepTaskAction = "Sleep";
-        private const string cSpinWaitTaskAction = "SpinWait";
+        private const string AbortTaskAction = "Abort";
+        private const string SleepTaskAction = "Sleep";
+        private const string SpinWaitTaskAction = "SpinWait";
 
-        [DropdownValue(cAbortTaskAction)]
-        [DropdownValue(cSleepTaskAction)]
-        [DropdownValue(cSpinWaitTaskAction)]
+        [DropdownValue(AbortTaskAction)]
+        [DropdownValue(SleepTaskAction)]
+        [DropdownValue(SpinWaitTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
-
 
         /// <summary>
         /// Number of millseconds to sleep for
         /// </summary>
-        [TaskAction(cSleepTaskAction, true)]
+        [TaskAction(SleepTaskAction, true)]
         public int Timeout { get; set; }
 
         /// <summary>
         /// Number of iterations to wait for
         /// </summary>
-        [TaskAction(cSpinWaitTaskAction, true)]
+        [TaskAction(SpinWaitTaskAction, true)]
         public int Iterations { get; set; }
 
         /// <summary>

@@ -69,53 +69,52 @@ namespace MSBuild.ExtensionPack.Compression
     /// </example>  
     public class Zip : BaseTask
     {
-        private const string cCreateTaskAction = "Create";
-        private const string cExtractTaskAction = "Extract";
+        private const string CreateTaskAction = "Create";
+        private const string ExtractTaskAction = "Extract";
         
         private ZipOutputStream zipOutStream;
 
-		/// <summary>
-		/// Sets the TaskAction.
-		/// </summary>
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cExtractTaskAction)]
+        /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(ExtractTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the files to Compress
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] CompressFiles { set; get; }
 
         /// <summary>
         /// Sets the Path to Zip.
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem CompressPath { get; set; }
 
         /// <summary>
         /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem RemoveRoot { get; set; }
 
         /// <summary>
         /// Sets the name of the Zip File
         /// </summary>
         [Required]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cExtractTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ZipFileName { get; set; }
 
         /// <summary>
         /// Path to extract the zip file to
         /// </summary>
-        [TaskAction(cExtractTaskAction, true)]
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ExtractPath { get; set; }
 
         /// <summary>

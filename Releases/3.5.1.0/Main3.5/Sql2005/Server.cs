@@ -42,42 +42,42 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// </example>
     public class Server : BaseTask
     {
-        private const string cGetConnectionCountTaskAction = "GetConnectionCount";
-        private const string cGetInfoTaskAction = "GetInfo";
+        private const string GetConnectionCountTaskAction = "GetConnectionCount";
+        private const string GetInfoTaskAction = "GetInfo";
         
         private bool trustedConnection;
         private SMO.Server sqlServer;
 
-		/// <summary>
-		/// Sets the TaskAction.
-		/// </summary>
-        [DropdownValue(cGetConnectionCountTaskAction)]
-        [DropdownValue(cGetInfoTaskAction)]
+        /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(GetConnectionCountTaskAction)]
+        [DropdownValue(GetInfoTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
+
         /// <summary>
         /// Set to true to create a NonPooledConnection to the server. Default is false.
         /// </summary>
-        [TaskAction(cGetConnectionCountTaskAction, false)]
-        [TaskAction(cGetInfoTaskAction, false)]
+        [TaskAction(GetConnectionCountTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
         public bool NoPooling { get; set; }
 
         /// <summary>
         /// Gets the number of connections the server has open
         /// </summary>
         [Output]
-        [TaskAction(cGetConnectionCountTaskAction, false)]
+        [TaskAction(GetConnectionCountTaskAction, false)]
         public int ConnectionCount { get; set; }
 
         /// <summary>
         /// Gets the Information TaskItem. Each available property is added as metadata.
         /// </summary>
         [Output]
-        [TaskAction(cGetInfoTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
         public ITaskItem Information { get; set; }
 
         /// <summary>

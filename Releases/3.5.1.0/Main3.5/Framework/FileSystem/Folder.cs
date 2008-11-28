@@ -57,53 +57,52 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </example>
     public class Folder : BaseTask
     {
-        private const string cAddSecurityTaskAction = "CountLines";
-        private const string cDeleteAllTaskAction = "DeleteAll";
-        private const string cMoveTaskAction = "Move";
-        private const string cRemoveContentTaskAction = "RemoveContent";
-        private const string cRemoveSecurityTaskAction = "RemoveSecurity";
+        private const string AddSecurityTaskAction = "CountLines";
+        private const string DeleteAllTaskAction = "DeleteAll";
+        private const string MoveTaskAction = "Move";
+        private const string RemoveContentTaskAction = "RemoveContent";
+        private const string RemoveSecurityTaskAction = "RemoveSecurity";
         
         private AccessControlType accessType = AccessControlType.Allow;
 
-        [DropdownValue(cAddSecurityTaskAction)]
-        [DropdownValue(cDeleteAllTaskAction)]
-        [DropdownValue(cMoveTaskAction)]
-        [DropdownValue(cRemoveContentTaskAction)]
-        [DropdownValue(cRemoveSecurityTaskAction)]
+        [DropdownValue(AddSecurityTaskAction)]
+        [DropdownValue(DeleteAllTaskAction)]
+        [DropdownValue(MoveTaskAction)]
+        [DropdownValue(RemoveContentTaskAction)]
+        [DropdownValue(RemoveSecurityTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the path to remove content from, or the base path for Delete
         /// </summary>
         [Required]
-        [TaskAction(cAddSecurityTaskAction, true)]
-        [TaskAction(cDeleteAllTaskAction, true)]
-        [TaskAction(cMoveTaskAction, true)]
-        [TaskAction(cRemoveContentTaskAction, true)]
-        [TaskAction(cRemoveSecurityTaskAction, true)]
+        [TaskAction(AddSecurityTaskAction, true)]
+        [TaskAction(DeleteAllTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
+        [TaskAction(RemoveContentTaskAction, true)]
+        [TaskAction(RemoveSecurityTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets the regular expression to match in the name of a folder for Delete. Case is ignored.
         /// </summary>
-        [TaskAction(cDeleteAllTaskAction, true)]
+        [TaskAction(DeleteAllTaskAction, true)]
         public string Match { get; set; }
 
         /// <summary>
         /// Sets the TargetPath for a renamed folder
         /// </summary>
-        [TaskAction(cMoveTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
         public string TargetPath { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to delete readonly files when performing RemoveContent
         /// </summary>
-        [TaskAction(cRemoveContentTaskAction, false)]
+        [TaskAction(RemoveContentTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -112,15 +111,15 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <para/>     <Permission>Read,etc</Permission>
         /// <para/> </UsersCol>
         /// </summary>
-        [TaskAction(cAddSecurityTaskAction, true)]
-        [TaskAction(cRemoveSecurityTaskAction, true)]
+        [TaskAction(AddSecurityTaskAction, true)]
+        [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
-        [TaskAction(cAddSecurityTaskAction, false)]
-        [TaskAction(cRemoveSecurityTaskAction, false)]
+        [TaskAction(AddSecurityTaskAction, false)]
+        [TaskAction(RemoveSecurityTaskAction, false)]
         public string AccessType
         {
             get { return this.accessType.ToString(); }

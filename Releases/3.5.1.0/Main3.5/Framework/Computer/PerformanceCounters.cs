@@ -48,76 +48,64 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class PerformanceCounters : BaseTask
     {
-        private const string cAddTaskAction = "Add";
-        private const string cGetValueAction = "GetValue";
-        private const string cRemoveTaskAction = "Remove";
+        private const string AddTaskAction = "Add";
+        private const string GetValueAction = "GetValue";
+        private const string RemoveTaskAction = "Remove";
 
-        [DropdownValue(cAddTaskAction)]
-        [DropdownValue(cGetValueAction)]
-        [DropdownValue(cRemoveTaskAction)]
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(GetValueAction)]
+        [DropdownValue(RemoveTaskAction)]
         public override string TaskAction
         {
-            get
-            {
-                return base.TaskAction;
-            }
-            set
-            {
-                base.TaskAction = value;
-            }
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
         }
 
         /// <summary>
         /// Sets the CategoryName
         /// </summary>
         [Required]
-        [TaskAction(cAddTaskAction, true)]
-        [TaskAction(cGetValueAction, true)]
-        [TaskAction(cRemoveTaskAction, true)]
+        [TaskAction(AddTaskAction, true)]
+        [TaskAction(GetValueAction, true)]
+        [TaskAction(RemoveTaskAction, true)]
         public string CategoryName { get; set; }
 
         /// <summary>
         /// Sets the description of the custom category.
         /// </summary>
-        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(AddTaskAction, true)]
         public string CategoryHelp { get; set; }
 
         /// <summary>
         /// Gets the value of the counter
         /// </summary>
         [Output]
-        [TaskAction(cGetValueAction, false)]
+        [TaskAction(GetValueAction, false)]
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the name of the counter.
         /// </summary>
-        [TaskAction(cGetValueAction, true)]
+        [TaskAction(GetValueAction, true)]
         public string CounterName { get; set; }       
 
         /// <summary>
         /// Sets a value indicating whether to create a multiple instance performance counter. Default is false
         /// </summary>
-        [TaskAction(cAddTaskAction, false)]
+        [TaskAction(AddTaskAction, false)]
         public bool MultiInstance { get; set; }
 
         /// <summary>
         /// Sets the TaskItem[] that specifies the counters to create as part of the new category.
         /// </summary>
-        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(AddTaskAction, true)]
         public ITaskItem[] CounterList { get; set; }
 
-        [TaskAction(cGetValueAction, false)]
+        [TaskAction(GetValueAction, false)]
         public override string MachineName
         {
-            get
-            {
-                return base.MachineName;
-            }
-            set
-            {
-                base.MachineName = value;
-            }
+            get { return base.MachineName; }
+            set { base.MachineName = value; }
         }
 
         /// <summary>

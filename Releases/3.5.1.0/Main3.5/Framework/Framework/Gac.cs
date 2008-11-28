@@ -43,39 +43,38 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class Gac : BaseTask
     {
-        private const string cAddAssemblyTaskAction = "AddAssembly";
-        private const string cCheckExistsTaskAction = "CheckExists";
-        private const string cRemoveAssemblyTaskAction = "RemoveAssembly";
+        private const string AddAssemblyTaskAction = "AddAssembly";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string RemoveAssemblyTaskAction = "RemoveAssembly";
 
-        [DropdownValue(cAddAssemblyTaskAction)]
-        [DropdownValue(cCheckExistsTaskAction)]
-        [DropdownValue(cRemoveAssemblyTaskAction)]
+        [DropdownValue(AddAssemblyTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(RemoveAssemblyTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
-        [TaskAction(cAddAssemblyTaskAction, false)]
-        [TaskAction(cCheckExistsTaskAction, false)]
-        [TaskAction(cRemoveAssemblyTaskAction, false)]
+        [TaskAction(AddAssemblyTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(RemoveAssemblyTaskAction, false)]
         public override string MachineName
         {
-            get{return base.MachineName;}
-            set{base.MachineName = value;}
+            get { return base.MachineName; }
+            set { base.MachineName = value; }
         }
 
-        [TaskAction(cAddAssemblyTaskAction, false)]
-        [TaskAction(cRemoveAssemblyTaskAction, false)]
+        [TaskAction(AddAssemblyTaskAction, false)]
+        [TaskAction(RemoveAssemblyTaskAction, false)]
         public override string UserName
         {
             get { return base.UserName; }
             set { base.UserName = value; }
         }
 
-        [TaskAction(cAddAssemblyTaskAction, false)]
-        [TaskAction(cRemoveAssemblyTaskAction, false)]
+        [TaskAction(AddAssemblyTaskAction, false)]
+        [TaskAction(RemoveAssemblyTaskAction, false)]
         public override string UserPassword
         {
             get { return base.UserPassword; }
@@ -85,20 +84,20 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets the remote path of the assembly. Note that gacutil.exe must exist on the remote server and be in it's Path environment variable
         /// </summary>
-        [TaskAction(cAddAssemblyTaskAction, false)]
+        [TaskAction(AddAssemblyTaskAction, false)]
         public string RemoteAssemblyPath { get; set; }
 
         /// <summary>
         /// Sets the path to the assembly to be added the GAC
         /// </summary>
-        [TaskAction(cAddAssemblyTaskAction, true)]
+        [TaskAction(AddAssemblyTaskAction, true)]
         public ITaskItem AssemblyPath { get; set; }
 
         /// <summary>
         /// Sets the name of the assembly.
         /// </summary>
-        [TaskAction(cCheckExistsTaskAction, true)]
-        [TaskAction(cRemoveAssemblyTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(RemoveAssemblyTaskAction, true)]
         public string AssemblyName { get; set; }
 
         /// <summary>

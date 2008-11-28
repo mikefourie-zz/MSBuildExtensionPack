@@ -49,73 +49,71 @@ namespace MSBuild.ExtensionPack.Compression
     /// </example>
     public class Cab : BaseTask
     {
-        private const string cAddFileTaskAction = "AddFile";
-        private const string cCreateTaskAction = "Create";
-        private const string cExtractTaskAction = "Extract";
+        private const string AddFileTaskAction = "AddFile";
+        private const string CreateTaskAction = "Create";
+        private const string ExtractTaskAction = "Extract";
         
         private string extractFile = "/E";
 
-        [DropdownValue(cAddFileTaskAction)]
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cExtractTaskAction)]
+        [DropdownValue(AddFileTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(ExtractTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
-
 
         /// <summary>
         /// Sets the path to extract to
         /// </summary>
-        [TaskAction(cExtractTaskAction, true)]
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ExtractTo { get; set; }
 
         /// <summary>
         /// Sets the CAB file. Required.
         /// </summary>
         [Required]
-        [TaskAction(cAddFileTaskAction, true)]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cExtractTaskAction, true)]
+        [TaskAction(AddFileTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem CabFile { get; set; }
 
         /// <summary>
         /// Sets the path to cab
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem PathToCab { get; set; }
 
         /// <summary>
         /// Sets whether to add files and folders recursively if PathToCab is specified.
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public bool Recursive { get; set; }
         
         /// <summary>
         /// Sets the files to cab
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] FilesToCab { get; set; }
 
         /// <summary>
         /// Sets the path to CabArc.Exe
         /// </summary>
-        [TaskAction(cAddFileTaskAction, true)]
+        [TaskAction(AddFileTaskAction, true)]
         public ITaskItem CabExePath { get; set; }
 
         /// <summary>
         /// Sets the path to extrac32.exe
         /// </summary>
-        [TaskAction(cAddFileTaskAction, true)]
-        [TaskAction(cExtractTaskAction, true)]
+        [TaskAction(AddFileTaskAction, true)]
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ExtractExePath { get; set; }
 
         /// <summary>
         /// Sets the files to extract. Default is /E, which is all.
         /// </summary>
-        [TaskAction(cExtractTaskAction, false)]
+        [TaskAction(ExtractTaskAction, false)]
         public string ExtractFile
         {
             get { return this.extractFile; }
@@ -125,25 +123,25 @@ namespace MSBuild.ExtensionPack.Compression
         /// <summary>
         /// Sets a value indicating whether [preserve paths]
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public bool PreservePaths { get; set; }
 
         /// <summary>
         /// Sets the prefixes to strip. Delimit with ';'
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public string StripPrefixes { get; set; }
 
         /// <summary>
         /// Sets the new file to add to the Cab File
         /// </summary>
-        [TaskAction(cAddFileTaskAction, true)]
+        [TaskAction(AddFileTaskAction, true)]
         public ITaskItem NewFile { get; set; }
 
         /// <summary>
         /// Sets the path to add the file to
         /// </summary>
-        [TaskAction(cAddFileTaskAction, true)]
+        [TaskAction(AddFileTaskAction, true)]
         public string NewFileDestination { get; set; }
 
         /// <summary>

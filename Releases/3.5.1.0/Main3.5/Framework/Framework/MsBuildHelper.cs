@@ -96,31 +96,31 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class MSBuildHelper : BaseTask
     {
-        private const string cEscapeTaskAction = "Escape";
-        private const string cGetCommonItemsTaskAction = "GetCommonItems";
-        private const string cGetCurrentDirectoryTaskAction = "GetCurrentDirectory";
-        private const string cGetDistinctItemsTaskAction = "GetDistinctItems";
-        private const string cGetItemTaskAction = "GetItem";
-        private const string cGetItemCountTaskAction = "GetItemCount";
-        private const string cGetLastItemTaskAction = "GetLastItem";
-        private const string cRemoveDuplicateFilesTaskAction = "RemoveDuplicateFiles";
-        private const string cSortTaskAction = "Sort";
-        private const string cStringToItemColTaskAction = "StringToItemCol";
+        private const string EscapeTaskAction = "Escape";
+        private const string GetCommonItemsTaskAction = "GetCommonItems";
+        private const string GetCurrentDirectoryTaskAction = "GetCurrentDirectory";
+        private const string GetDistinctItemsTaskAction = "GetDistinctItems";
+        private const string GetItemTaskAction = "GetItem";
+        private const string GetItemCountTaskAction = "GetItemCount";
+        private const string GetLastItemTaskAction = "GetLastItem";
+        private const string RemoveDuplicateFilesTaskAction = "RemoveDuplicateFiles";
+        private const string SortTaskAction = "Sort";
+        private const string StringToItemColTaskAction = "StringToItemCol";
         
         private List<ITaskItem> inputItems1;
         private List<ITaskItem> inputItems2;
         private List<ITaskItem> outputItems;
 
-        [DropdownValue(cEscapeTaskAction)]
-        [DropdownValue(cGetCommonItemsTaskAction)]
-        [DropdownValue(cGetCurrentDirectoryTaskAction)]
-        [DropdownValue(cGetDistinctItemsTaskAction)]
-        [DropdownValue(cGetItemTaskAction)]
-        [DropdownValue(cGetItemCountTaskAction)]
-        [DropdownValue(cGetLastItemTaskAction)]
-        [DropdownValue(cRemoveDuplicateFilesTaskAction)]
-        [DropdownValue(cSortTaskAction)]
-        [DropdownValue(cStringToItemColTaskAction)]
+        [DropdownValue(EscapeTaskAction)]
+        [DropdownValue(GetCommonItemsTaskAction)]
+        [DropdownValue(GetCurrentDirectoryTaskAction)]
+        [DropdownValue(GetDistinctItemsTaskAction)]
+        [DropdownValue(GetItemTaskAction)]
+        [DropdownValue(GetItemCountTaskAction)]
+        [DropdownValue(GetLastItemTaskAction)]
+        [DropdownValue(RemoveDuplicateFilesTaskAction)]
+        [DropdownValue(SortTaskAction)]
+        [DropdownValue(StringToItemColTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -131,25 +131,25 @@ namespace MSBuild.ExtensionPack.Framework
         /// Gets the current directory
         /// </summary>
         [Output]
-        [TaskAction(cGetCurrentDirectoryTaskAction, false)]
+        [TaskAction(GetCurrentDirectoryTaskAction, false)]
         public string CurrentDirectory { get; set; }
 
         /// <summary>
         /// Sets the position of the Item to get
         /// </summary>
-        [TaskAction(cGetItemTaskAction, true)]
+        [TaskAction(GetItemTaskAction, true)]
         public int Position { get; set; }
 
         /// <summary>
         /// Sets the string to convert to a Task Item
         /// </summary>
-        [TaskAction(cStringToItemColTaskAction, true)]
+        [TaskAction(StringToItemColTaskAction, true)]
         public string ItemString { get; set; }
 
         /// <summary>
         /// Sets the separator to use to split the ItemString when calling StringToItemCol
         /// </summary>
-        [TaskAction(cStringToItemColTaskAction, true)]
+        [TaskAction(StringToItemColTaskAction, true)]
         public string Separator { get; set; }
 
         /// <summary>
@@ -166,13 +166,13 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets InputItems1.
         /// </summary>
-        [TaskAction(cGetCommonItemsTaskAction, true)]
-        [TaskAction(cGetDistinctItemsTaskAction, true)]
-        [TaskAction(cGetItemTaskAction, true)]
-        [TaskAction(cGetItemCountTaskAction, true)]
-        [TaskAction(cGetLastItemTaskAction, true)]
-        [TaskAction(cRemoveDuplicateFilesTaskAction, true)]
-        [TaskAction(cSortTaskAction, true)]
+        [TaskAction(GetCommonItemsTaskAction, true)]
+        [TaskAction(GetDistinctItemsTaskAction, true)]
+        [TaskAction(GetItemTaskAction, true)]
+        [TaskAction(GetItemCountTaskAction, true)]
+        [TaskAction(GetLastItemTaskAction, true)]
+        [TaskAction(RemoveDuplicateFilesTaskAction, true)]
+        [TaskAction(SortTaskAction, true)]
         public ITaskItem[] InputItems1
         {
             get { return this.inputItems1.ToArray(); }
@@ -182,8 +182,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets InputItems2.
         /// </summary>
-        [TaskAction(cGetCommonItemsTaskAction, true)]
-        [TaskAction(cGetDistinctItemsTaskAction, true)]
+        [TaskAction(GetCommonItemsTaskAction, true)]
+        [TaskAction(GetDistinctItemsTaskAction, true)]
         public ITaskItem[] InputItems2
         {
             get { return this.inputItems2.ToArray(); }
@@ -194,13 +194,13 @@ namespace MSBuild.ExtensionPack.Framework
         /// Gets the OutputItems.
         /// </summary>
         [Output]
-        [TaskAction(cGetCommonItemsTaskAction, false)]
-        [TaskAction(cGetDistinctItemsTaskAction, false)]
-        [TaskAction(cGetItemTaskAction, false)]
-        [TaskAction(cGetLastItemTaskAction, false)]
-        [TaskAction(cRemoveDuplicateFilesTaskAction, false)]
-        [TaskAction(cSortTaskAction, true)]
-        [TaskAction(cStringToItemColTaskAction, false)]
+        [TaskAction(GetCommonItemsTaskAction, false)]
+        [TaskAction(GetDistinctItemsTaskAction, false)]
+        [TaskAction(GetItemTaskAction, false)]
+        [TaskAction(GetLastItemTaskAction, false)]
+        [TaskAction(RemoveDuplicateFilesTaskAction, false)]
+        [TaskAction(SortTaskAction, true)]
+        [TaskAction(StringToItemColTaskAction, false)]
         public ITaskItem[] OutputItems
         {
             get { return this.outputItems == null ? null : this.outputItems.ToArray(); }
@@ -211,11 +211,11 @@ namespace MSBuild.ExtensionPack.Framework
         /// Gets the ItemCount.
         /// </summary>
         [Output]
-        [TaskAction(cGetCommonItemsTaskAction, false)]
-        [TaskAction(cGetDistinctItemsTaskAction, false)]
-        [TaskAction(cGetItemCountTaskAction, false)]
-        [TaskAction(cRemoveDuplicateFilesTaskAction, false)]
-        [TaskAction(cStringToItemColTaskAction, false)]
+        [TaskAction(GetCommonItemsTaskAction, false)]
+        [TaskAction(GetDistinctItemsTaskAction, false)]
+        [TaskAction(GetItemCountTaskAction, false)]
+        [TaskAction(RemoveDuplicateFilesTaskAction, false)]
+        [TaskAction(StringToItemColTaskAction, false)]
         public int ItemCount { get; set; }
 
         protected override void InternalExecute()

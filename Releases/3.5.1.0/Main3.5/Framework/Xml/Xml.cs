@@ -95,75 +95,74 @@ namespace MSBuild.ExtensionPack.Xml
     /// </example>
     public class XmlTask : BaseTask
     {
-        private const string cTransformTaskAction = "Transform";
-        private const string cValidateTaskAction = "Validate";
+        private const string TransformTaskAction = "Transform";
+        private const string ValidateTaskAction = "Validate";
         
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
 
-        [DropdownValue(cTransformTaskAction)]
-        [DropdownValue(cValidateTaskAction)]
+        [DropdownValue(TransformTaskAction)]
+        [DropdownValue(ValidateTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the XmlFile
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
-        [TaskAction(cValidateTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
+        [TaskAction(ValidateTaskAction, false)]
         public string XmlFile { get; set; }
 
         /// <summary>
         /// Sets the XslTransformFile
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public string XslTransformFile { get; set; }
 
         /// <summary>
         /// Sets the XmlFile
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
-        [TaskAction(cValidateTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
+        [TaskAction(ValidateTaskAction, false)]
         public string Xml { get; set; }
 
         /// <summary>
         /// Sets the XslTransformFile
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public string XslTransform { get; set; }
 
         /// <summary>
         /// Sets the OutputFile
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public string OutputFile { get; set; }
 
         /// <summary>
         /// Sets the Schema Files collection
         /// </summary>
-        [TaskAction(cValidateTaskAction, true)]
+        [TaskAction(ValidateTaskAction, true)]
         public ITaskItem[] SchemaFiles { get; set; }
 
         /// <summary>
         /// Set the OmitXmlDeclaration option for TransForm. Default is False
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public bool OmitXmlDeclaration { get; set; }
 
         /// <summary>
         /// Set the Indent option for TransForm. Default is False
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public bool Indent { get; set; }
 
         /// <summary>
         /// Set the Encoding option for TransForm. Default is UTF8
         /// </summary>
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public string TextEncoding
         {
             get { return this.fileEncoding.ToString(); }
@@ -174,15 +173,15 @@ namespace MSBuild.ExtensionPack.Xml
         /// Gets whether an XmlFile is valid xml
         /// </summary>
         [Output]
-        [TaskAction(cValidateTaskAction, false)]
+        [TaskAction(ValidateTaskAction, false)]
         public bool IsValid { get; set; }
 
         /// <summary>
         /// Get the Output
         /// </summary>
         [Output]
-        [TaskAction(cValidateTaskAction, false)]
-        [TaskAction(cTransformTaskAction, false)]
+        [TaskAction(ValidateTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public string Output { get; set; }
 
         /// <summary>

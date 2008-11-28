@@ -36,51 +36,50 @@ namespace MSBuild.ExtensionPack.Communication
     /// </example>
     public class Email : BaseTask
     {
-        private const string cSendTaskAction = "Send";	
+        private const string SendTaskAction = "Send";
         
         private string format = "HTML";
         private string priority = "Normal";
 
-        [DropdownValue(cSendTaskAction)]
+        [DropdownValue(SendTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// The SMTP server to use to send the email.
         /// </summary>
         [Required]
-        [TaskAction(cSendTaskAction, true)]
+        [TaskAction(SendTaskAction, true)]
         public string SmtpServer { get; set; }
 
         /// <summary>
         /// The email address to send the email from.
         /// </summary>
         [Required]
-        [TaskAction(cSendTaskAction, true)]
+        [TaskAction(SendTaskAction, true)]
         public string MailFrom { get; set; }
 
         /// <summary>
         /// Sets the Item Colleciton of email address to send the email to.
         /// </summary>
         [Required]
-        [TaskAction(cSendTaskAction, true)]
+        [TaskAction(SendTaskAction, true)]
         public ITaskItem[] MailTo { get; set; }
 
         /// <summary>
         /// The subject of the email.
         /// </summary>
         [Required]
-        [TaskAction(cSendTaskAction, true)]
+        [TaskAction(SendTaskAction, true)]
         public string Subject { get; set; }
 
         /// <summary>
         /// The priority of the email. Default is Normal
         /// </summary>
-        [TaskAction(cSendTaskAction, false)]
+        [TaskAction(SendTaskAction, false)]
         public string Priority
         {
             get { return this.priority; }
@@ -90,13 +89,13 @@ namespace MSBuild.ExtensionPack.Communication
         /// <summary>
         /// The body of the email.
         /// </summary>
-        [TaskAction(cSendTaskAction, false)]
+        [TaskAction(SendTaskAction, false)]
         public string Body { get; set; }
 
         /// <summary>
         /// Sets the format of the email. Default is HTML
         /// </summary>
-        [TaskAction(cSendTaskAction, false)]
+        [TaskAction(SendTaskAction, false)]
         public string Format
         {
             get { return this.format; }
@@ -106,7 +105,7 @@ namespace MSBuild.ExtensionPack.Communication
         /// <summary>
         /// An Item Collection of full paths of files to attach to the email.
         /// </summary>
-        [TaskAction(cSendTaskAction, false)]
+        [TaskAction(SendTaskAction, false)]
         public ITaskItem[] Attachments { get; set; }
 
         /// <summary>

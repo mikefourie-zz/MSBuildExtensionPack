@@ -50,43 +50,36 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class SystemDrive : BaseTask
     {
-        private const string cCheckDriveSpaceTaskAction = "CheckDriveSpace";
-        private const string cGetDrivesTaskAction = "GetDrives";
+        private const string CheckDriveSpaceTaskAction = "CheckDriveSpace";
+        private const string GetDrivesTaskAction = "GetDrives";
         
         private List<ITaskItem> drives;
         private List<ITaskItem> skipDrives;
 
-        [DropdownValue(cCheckDriveSpaceTaskAction)]
-        [DropdownValue(cGetDrivesTaskAction)]
+        [DropdownValue(CheckDriveSpaceTaskAction)]
+        [DropdownValue(GetDrivesTaskAction)]
         public override string TaskAction
         {
-            get
-            {
-                return base.TaskAction;
-            }
-            set
-            {
-                base.TaskAction = value;
-            }
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
         }
-
 
         /// <summary>
         /// Sets the unit. Supports Kb, Mb(default), Gb, Tb
         /// </summary>
-        [TaskAction(cCheckDriveSpaceTaskAction, false)]
+        [TaskAction(CheckDriveSpaceTaskAction, false)]
         public string Unit { get; set; }
 
         /// <summary>
         /// Sets the drive.
         /// </summary>
-        [TaskAction(cCheckDriveSpaceTaskAction, true)]
+        [TaskAction(CheckDriveSpaceTaskAction, true)]
         public string Drive { get; set; }
 
         /// <summary>
         /// Sets the min space.
         /// </summary>
-        [TaskAction(cCheckDriveSpaceTaskAction, true)]
+        [TaskAction(CheckDriveSpaceTaskAction, true)]
         public long MinSpace { get; set; }
 
         /// <summary>
@@ -97,7 +90,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Metadata: Name, VolumeLabel, AvailableFreeSpace, DriveFormat, TotalSize, TotalFreeSpace, IsReady (LocalMachine only), RootDirectory (LocalMachine only)
         /// </summary>
         [Output]
-        [TaskAction(cGetDrivesTaskAction, false)]
+        [TaskAction(GetDrivesTaskAction, false)]
         public ITaskItem[] Drives
         {
             get { return this.drives.ToArray(); }
@@ -107,7 +100,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the drives to skip. ITaskItem
         /// </summary>
-        [TaskAction(cGetDrivesTaskAction, true)]
+        [TaskAction(GetDrivesTaskAction, true)]
         public ITaskItem[] SkipDrives
         {
             get { return this.skipDrives.ToArray(); }

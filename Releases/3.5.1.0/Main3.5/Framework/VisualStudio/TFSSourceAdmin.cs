@@ -35,55 +35,54 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </example>
     public class TfsSourceAdmin : BaseTask
     {
-        private const string cBranchTaskAction = "Branch";
-        private const string cRenameTaskAction = "Rename";	
+        private const string BranchTaskAction = "Branch";
+        private const string RenameTaskAction = "Rename";
         
         private string teamFoundationExe;
         private string version = "2008";
         private ShellWrapper shellWrapper;
 
-        [DropdownValue(cBranchTaskAction)]
-        [DropdownValue(cRenameTaskAction)]
+        [DropdownValue(BranchTaskAction)]
+        [DropdownValue(RenameTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the version spec for Branch
         /// </summary>
-        [TaskAction(cBranchTaskAction, false)]
-        [TaskAction(cRenameTaskAction, false)]
+        [TaskAction(BranchTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
         public string VersionSpec { get; set; }
 
         /// <summary>
         /// ItemSpec to branch
         /// </summary>
-        [TaskAction(cBranchTaskAction, true)]
-        [TaskAction(cRenameTaskAction, true)]
+        [TaskAction(BranchTaskAction, true)]
+        [TaskAction(RenameTaskAction, true)]
         public string OldItem { get; set; }
 
         /// <summary>
         /// ItemSpec to branch too
         /// </summary>
-        [TaskAction(cBranchTaskAction, true)]
-        [TaskAction(cRenameTaskAction, true)]
+        [TaskAction(BranchTaskAction, true)]
+        [TaskAction(RenameTaskAction, true)]
         public string NewItem { get; set; }
 
         /// <summary>
         /// Sets the working directory.
         /// </summary>
-        [TaskAction(cBranchTaskAction, false)]
-        [TaskAction(cRenameTaskAction, false)]
+        [TaskAction(BranchTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Sets the version of Tfs. Default is 2008
         /// </summary>
-        [TaskAction(cBranchTaskAction, false)]
-        [TaskAction(cRenameTaskAction, false)]
+        [TaskAction(BranchTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
         public string Version
         {
             get { return this.version; }

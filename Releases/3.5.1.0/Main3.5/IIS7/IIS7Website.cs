@@ -65,71 +65,70 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>  
     public class Iis7Website : BaseTask
     {
-        private const string cAddApplicationTaskAction = "AddApplication";
-        private const string cAddVirtualDirectoryTaskAction = "AddVirtualDirectory";
-        private const string cCheckExistsTaskAction = "CheckExists";
-        private const string cCreateTaskAction = "Create";
-        private const string cDeleteTaskAction = "Delete";
-        private const string cGetInfoTaskAction = "GetInfo";
-        private const string cModifyPathTaskAction = "ModifyPath";
-        private const string cStartTaskAction = "Start";
-        private const string cStopTaskAction = "Stop";
+        private const string AddApplicationTaskAction = "AddApplication";
+        private const string AddVirtualDirectoryTaskAction = "AddVirtualDirectory";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string CreateTaskAction = "Create";
+        private const string DeleteTaskAction = "Delete";
+        private const string GetInfoTaskAction = "GetInfo";
+        private const string ModifyPathTaskAction = "ModifyPath";
+        private const string StartTaskAction = "Start";
+        private const string StopTaskAction = "Stop";
 
         private ServerManager iisServerManager;
         private Site website;
 
-		/// <summary>
-		/// Sets the TaskAction.
-		/// </summary>
-        [DropdownValue(cAddApplicationTaskAction)]
-        [DropdownValue(cAddVirtualDirectoryTaskAction)]
-        [DropdownValue(cCheckExistsTaskAction)]
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cDeleteTaskAction)]
-        [DropdownValue(cGetInfoTaskAction)]
-        [DropdownValue(cModifyPathTaskAction)]
-        [DropdownValue(cStartTaskAction)]
-        [DropdownValue(cStopTaskAction)]
+        /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(AddApplicationTaskAction)]
+        [DropdownValue(AddVirtualDirectoryTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(GetInfoTaskAction)]
+        [DropdownValue(ModifyPathTaskAction)]
+        [DropdownValue(StartTaskAction)]
+        [DropdownValue(StopTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the name of the Website
         /// </summary>
         [Required]
-        [TaskAction(cAddApplicationTaskAction, true)]
-        [TaskAction(cAddVirtualDirectoryTaskAction, true)]
-        [TaskAction(cCheckExistsTaskAction, true)]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cDeleteTaskAction, true)]
-        [TaskAction(cGetInfoTaskAction, true)]
-        [TaskAction(cModifyPathTaskAction, true)]
-        [TaskAction(cStartTaskAction, true)]
-        [TaskAction(cStopTaskAction, true)]
+        [TaskAction(AddApplicationTaskAction, true)]
+        [TaskAction(AddVirtualDirectoryTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(GetInfoTaskAction, true)]
+        [TaskAction(ModifyPathTaskAction, true)]
+        [TaskAction(StartTaskAction, true)]
+        [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// ITaskItem of Applications
         /// </summary>
-        [TaskAction(cAddApplicationTaskAction, true)]
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(AddApplicationTaskAction, true)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Applications { get; set; }
 
         /// <summary>
         /// ITaskItem of VirtualDirectories
         /// </summary>
-        [TaskAction(cAddVirtualDirectoryTaskAction, true)]
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(AddVirtualDirectoryTaskAction, true)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] VirtualDirectories { get; set; }
 
         /// <summary>
         /// Sets the path.
         /// </summary>
-        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
@@ -140,27 +139,27 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the port.
         /// </summary>
-        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
         public int Port { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Gets the site id. [Output]
         /// </summary>
         [Output]
-        [TaskAction(cGetInfoTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
         public long SiteId { get; set; }
 
         /// <summary>
         /// Gets the SiteInfo Item. Identity = Name, MetaData = ApplicationPoolName, PhysicalPath, Id, State
         /// </summary>
         [Output]
-        [TaskAction(cGetInfoTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
         public ITaskItem SiteInfo { get; set; }
 
         /// <summary>
@@ -173,7 +172,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the website exists
         /// </summary>
         [Output]
-        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>

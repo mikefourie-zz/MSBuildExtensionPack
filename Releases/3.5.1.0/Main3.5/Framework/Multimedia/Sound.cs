@@ -40,23 +40,22 @@ namespace MSBuild.ExtensionPack.Multimedia
     /// </example>  
     public class Sound : BaseTask
     {
-        private const string cPlayTaskAction = "Play";	
+        private const string PlayTaskAction = "Play";
         
         private int repeat = 1;
         private int interval = 10;
 
-        [DropdownValue(cPlayTaskAction)]
+        [DropdownValue(PlayTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the interval between beebs. Default is 10ms. Value must be between 10 and 5000
         /// </summary>
-        [TaskAction(cPlayTaskAction, false)]
+        [TaskAction(PlayTaskAction, false)]
         public int Interval
         {
             get { return this.interval; }
@@ -66,7 +65,7 @@ namespace MSBuild.ExtensionPack.Multimedia
         /// <summary>
         /// Sets the number of times to play the sound. Default is 1. Value must be between 1 and 20
         /// </summary>
-        [TaskAction(cPlayTaskAction, false)]
+        [TaskAction(PlayTaskAction, false)]
         public int Repeat
         {
             get { return this.repeat; }
@@ -76,13 +75,13 @@ namespace MSBuild.ExtensionPack.Multimedia
         /// <summary>
         /// Sets the sound file to play
         /// </summary>
-        [TaskAction(cPlayTaskAction, false)]
+        [TaskAction(PlayTaskAction, false)]
         public string SoundFile { get; set; }
 
         /// <summary>
         /// Sets the SystemSound to play. Supports: Asterisk, Beep, Exclamation, Hand, Question. Does not support Repeat or Interval.
         /// </summary>
-        [TaskAction(cPlayTaskAction, false)]
+        [TaskAction(PlayTaskAction, false)]
         public string SystemSound { get; set; }
 
         /// <summary>

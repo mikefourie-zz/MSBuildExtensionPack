@@ -54,32 +54,26 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class Registry : BaseTask
     {
-        private const string cCheckEmptyTaskAction = "CheckEmpty";
-        private const string cCreateKeyTaskAction = "CreateKey";
-        private const string cDeleteKeyTaskAction = "DeleteKey";
-        private const string cDeleteKeyTreeTaskAction = "DeleteKeyTree";
-        private const string cGetTaskAction = "Get";
-        private const string cSetTaskAction = "Set";
+        private const string CheckEmptyTaskAction = "CheckEmpty";
+        private const string CreateKeyTaskAction = "CreateKey";
+        private const string DeleteKeyTaskAction = "DeleteKey";
+        private const string DeleteKeyTreeTaskAction = "DeleteKeyTree";
+        private const string GetTaskAction = "Get";
+        private const string SetTaskAction = "Set";
         
         private RegistryKey registryKey;
         private RegistryHive hive;
 
-        [DropdownValue(cCheckEmptyTaskAction)]
-        [DropdownValue(cCreateKeyTaskAction)]
-        [DropdownValue(cDeleteKeyTaskAction)]
-        [DropdownValue(cDeleteKeyTreeTaskAction)]
-        [DropdownValue(cGetTaskAction)]
-        [DropdownValue(cSetTaskAction)]
+        [DropdownValue(CheckEmptyTaskAction)]
+        [DropdownValue(CreateKeyTaskAction)]
+        [DropdownValue(DeleteKeyTaskAction)]
+        [DropdownValue(DeleteKeyTreeTaskAction)]
+        [DropdownValue(GetTaskAction)]
+        [DropdownValue(SetTaskAction)]
         public override string TaskAction
         {
-            get
-            {
-                return base.TaskAction;
-            }
-            set
-            {
-                base.TaskAction = value;
-            }
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
         }
 
         /// <summary>
@@ -91,45 +85,45 @@ namespace MSBuild.ExtensionPack.Computer
         /// Gets the data.
         /// </summary>
         [Output]
-        [TaskAction(cGetTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
         public string Data { get; set; }
 
         /// <summary>
         /// Sets the value. If Value is not provided, an attempt will be made to read the Default Value.
         /// </summary>
-        [TaskAction(cGetTaskAction, true)]
-        [TaskAction(cSetTaskAction, true)]        
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]        
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the registry hive.
         /// </summary>
         [Required]
-        [TaskAction(cCheckEmptyTaskAction, true)]
-        [TaskAction(cCreateKeyTaskAction, true)]
-        [TaskAction(cDeleteKeyTaskAction, true)]
-        [TaskAction(cDeleteKeyTreeTaskAction, true)]
-        [TaskAction(cGetTaskAction, true)]
-        [TaskAction(cSetTaskAction, true)]
+        [TaskAction(CheckEmptyTaskAction, true)]
+        [TaskAction(CreateKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTreeTaskAction, true)]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]
         public string RegistryHive { get; set; }
 
         /// <summary>
         /// Sets the key.
         /// </summary>
         [Required]
-        [TaskAction(cCheckEmptyTaskAction, true)]
-        [TaskAction(cCreateKeyTaskAction, true)]
-        [TaskAction(cDeleteKeyTaskAction, true)]
-        [TaskAction(cDeleteKeyTreeTaskAction, true)]
-        [TaskAction(cGetTaskAction, true)]
-        [TaskAction(cSetTaskAction, true)]
+        [TaskAction(CheckEmptyTaskAction, true)]
+        [TaskAction(CreateKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTreeTaskAction, true)]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
         /// Indicates whether the Registry Key is empty or not
         /// </summary>
         [Output]
-        [TaskAction(cCheckEmptyTaskAction, false)]
+        [TaskAction(CheckEmptyTaskAction, false)]
         public bool Empty { get; set; }
 
         /// <summary>

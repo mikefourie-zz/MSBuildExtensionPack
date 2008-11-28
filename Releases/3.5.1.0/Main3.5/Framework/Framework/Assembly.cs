@@ -81,42 +81,41 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class Assembly : BaseTask
     {
-        private const string cGetInfoTaskAction = "GetInfo";
-        private const string cGetMethodInfoTaskAction = "GetMethodInfo";
-        private const string cInvokeTaskAction = "Invoke";
+        private const string GetInfoTaskAction = "GetInfo";
+        private const string GetMethodInfoTaskAction = "GetMethodInfo";
+        private const string InvokeTaskAction = "Invoke";
         
         private System.Reflection.Assembly assembly;
         private List<ITaskItem> outputItems;
 
-        [DropdownValue(cGetInfoTaskAction)]
-        [DropdownValue(cGetMethodInfoTaskAction)]
-        [DropdownValue(cInvokeTaskAction)]
+        [DropdownValue(GetInfoTaskAction)]
+        [DropdownValue(GetMethodInfoTaskAction)]
+        [DropdownValue(InvokeTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the name of the Assembly
         /// </summary>
         [Required]
-        [TaskAction(cGetInfoTaskAction, true)]
-        [TaskAction(cGetMethodInfoTaskAction, true)]
-        [TaskAction(cInvokeTaskAction, true)]
+        [TaskAction(GetInfoTaskAction, true)]
+        [TaskAction(GetMethodInfoTaskAction, true)]
+        [TaskAction(InvokeTaskAction, true)]
         public ITaskItem NetAssembly { get; set; }
 
         /// <summary>
         /// Sets the name of the Class
         /// </summary>
-        [TaskAction(cGetMethodInfoTaskAction, true)]
+        [TaskAction(GetMethodInfoTaskAction, true)]
         public string NetClass { get; set; }
 
         /// <summary>
         /// Sets the name of the Method. If this is not provided, a call is made to the default constructor.
         /// </summary>
-        [TaskAction(cInvokeTaskAction, false)]
+        [TaskAction(InvokeTaskAction, false)]
         public string NetMethod { get; set; }
 
         /// <summary>
@@ -131,8 +130,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para/>For a call to GetInfo, OutputItems provides the following metadata: AssemblyVersion, FileVersion, Culture, CultureDisplayName, FullName, PublicKeyToken
         /// </summary>
         [Output]
-        [TaskAction(cGetInfoTaskAction, false)]
-        [TaskAction(cGetMethodInfoTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
+        [TaskAction(GetMethodInfoTaskAction, false)]
         public ITaskItem[] OutputItems
         {
             get { return this.outputItems.ToArray(); }
@@ -145,7 +144,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///        <Type>int</Type>
         ///    </Args>
         /// </summary>
-        [TaskAction(cInvokeTaskAction, false)]
+        [TaskAction(InvokeTaskAction, false)]
         public ITaskItem[] NetArguments { get; set; }
 
         protected override void InternalExecute()

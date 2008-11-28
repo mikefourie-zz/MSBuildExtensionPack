@@ -45,33 +45,32 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>
     public class Iis6AppPool : BaseTask
     {
-        private const string cCreateTaskAction = "Create";
-        private const string cCheckExistsTaskAction = "CheckExists";
-        private const string cDeleteTaskAction = "Delete";
-        private const string cModifyTaskAction = "Modify";
-        private const string cStartTaskAction = "Start";
-        private const string cStopTaskAction = "Stop";
+        private const string CreateTaskAction = "Create";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string DeleteTaskAction = "Delete";
+        private const string ModifyTaskAction = "Modify";
+        private const string StartTaskAction = "Start";
+        private const string StopTaskAction = "Stop";
         
         private string properties;
 
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cCheckExistsTaskAction)]
-        [DropdownValue(cDeleteTaskAction)]
-        [DropdownValue(cModifyTaskAction)]
-        [DropdownValue(cStartTaskAction)]
-        [DropdownValue(cStopTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(ModifyTaskAction)]
+        [DropdownValue(StartTaskAction)]
+        [DropdownValue(StopTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
         
         /// <summary>
         /// Sets the app pool properties. This is a semicolon seperated list, e.g. AppPoolAutoStart=TRUE;PeriodicRestartTime=0
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
-        [TaskAction(cModifyTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(ModifyTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -82,19 +81,19 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the AppPool. Required.
         /// </summary>
         [Required]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cCheckExistsTaskAction, true)]
-        [TaskAction(cDeleteTaskAction, true)]
-        [TaskAction(cModifyTaskAction, true)]
-        [TaskAction(cStartTaskAction, true)]
-        [TaskAction(cStopTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(ModifyTaskAction, true)]
+        [TaskAction(StartTaskAction, true)]
+        [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets whether the app pool exists. Output
         /// </summary>
         [Output]
-        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         internal string IisPath

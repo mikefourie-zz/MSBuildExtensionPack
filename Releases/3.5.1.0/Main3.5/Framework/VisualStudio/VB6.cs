@@ -37,29 +37,27 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </example>
     public class VB6 : BaseTask
     {
-        private const string cBuildTaskAction = "Build";
+        private const string BuildTaskAction = "Build";      
+        private string visualBasicPath;
 
-        [DropdownValue(cBuildTaskAction)]
+        [DropdownValue(BuildTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
         }
 
-        
-        private string visualBasicPath;
-
         /// <summary>
         /// Sets the VB6Path. Default is C:\Program Files\Microsoft Visual Studio\VB98\VB6.exe
         /// </summary>
-        [TaskAction(cBuildTaskAction, false)]
+        [TaskAction(BuildTaskAction, false)]
         public string VB6Path { get; set; }
 
         /// <summary>
         /// Sets the projects. Use an 'OutDir' metadata item to specify the output directory. The OutDir will be created if it does not exist.
         /// </summary>
         [Required]
-        [TaskAction(cBuildTaskAction, true)]
+        [TaskAction(BuildTaskAction, true)]
         public ITaskItem[] Projects { get; set; }
 
         protected override void InternalExecute()

@@ -49,9 +49,9 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </example> 
     public class Share : BaseTask
     {
-        private const string cCheckExistsTaskAction = "CheckExists";
-        private const string cDeleteTaskAction = "Delete";
-        private const string cCreateTaskAction = "Create";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string DeleteTaskAction = "Delete";
+        private const string CreateTaskAction = "Create";
 
         #region enums
         private enum ReturnCode : uint
@@ -108,54 +108,53 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
         #endregion
 
-        [DropdownValue(cCheckExistsTaskAction)]
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
-
         }
 
         /// <summary>
         /// Sets the desctiption for the share
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the share name
         /// </summary>
         [Required]
-        [TaskAction(cCheckExistsTaskAction, true)]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
         public string ShareName { get; set; }
 
         /// <summary>
         /// Sets the share path
         /// </summary>
-        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
         public string SharePath { get; set; }
 
         /// <summary>
         /// Sets the maximum number of allowed users for the share
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public int MaximumAllowed { get; set; }
 
         /// <summary>
         /// Sets whether to create the SharePath if it doesnt exist. Default is false
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public bool CreateSharePath { get; set; }
 
         /// <summary>
         /// Gets whether the share exists
         /// </summary>
         [Output]
-        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
@@ -167,13 +166,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </Allow>
         /// ]]></code>    
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] AllowUsers { get; set; }
 
         /// <summary>
         /// Sets a collection of users not allowed to access the share
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] DenyUsers { get; set; }
 
         /// <summary>

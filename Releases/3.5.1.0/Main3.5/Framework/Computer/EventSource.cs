@@ -46,39 +46,33 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class EventSource : BaseTask
     {
-        private const string cCheckExistsTaskAction = "CheckExists";
-        private const string cCreateTaskAction = "Create";
-        private const string cDeleteTaskAction = "Delete";
-        private const string cLogTaskAction = "Log";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string CreateTaskAction = "Create";
+        private const string DeleteTaskAction = "Delete";
+        private const string LogTaskAction = "Log";
         
         private System.Diagnostics.EventLogEntryType logType = System.Diagnostics.EventLogEntryType.Error;
 
-        [DropdownValue(cCheckExistsTaskAction)]
-        [DropdownValue(cCreateTaskAction)]
-        [DropdownValue(cDeleteTaskAction)]
-        [DropdownValue(cLogTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(LogTaskAction)]
         public override string TaskAction
         {
-            get
-            {
-                return base.TaskAction;
-            }
-            set
-            {
-                base.TaskAction = value;
-            }
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
         }
 
         /// <summary>
         /// Sets the event id.
         /// </summary>
-        [TaskAction(cLogTaskAction, true)]
+        [TaskAction(LogTaskAction, true)]
         public string EventId { get; set; }
 
         /// <summary>
         /// Sets the Event Log Entry Type. Possible values are: Error, FailureAudit, Information, SuccessAudit, Warning.
         /// </summary>
-        [TaskAction(cLogTaskAction, true)]
+        [TaskAction(LogTaskAction, true)]
         public string LogType
         {
             get { return this.logType.ToString(); }
@@ -88,52 +82,46 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the description for the logentry
         /// </summary>
-        [TaskAction(cLogTaskAction, true)]
+        [TaskAction(LogTaskAction, true)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the source name
         /// </summary>
         [Required]
-        [TaskAction(cCheckExistsTaskAction, true)]
-        [TaskAction(cCreateTaskAction, true)]
-        [TaskAction(cDeleteTaskAction, true)]
-        [TaskAction(cLogTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(LogTaskAction, true)]
         public string Source { get; set; }
 
         /// <summary>
         /// Sets the name of the log the source's entries are written to, e.g Application, Security, System, YOUREVENTLOG.
         /// </summary>
-        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
         public string LogName { get; set; }
 
         /// <summary>
         /// Set to true to delete any existing matching eventsource when creating 
         /// </summary>
-        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the EventSource exists.
         /// </summary>
         [Output]
-        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
-        [TaskAction(cCheckExistsTaskAction, false)]
-        [TaskAction(cCreateTaskAction, false)]
-        [TaskAction(cDeleteTaskAction, false)]
-        [TaskAction(cLogTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(LogTaskAction, false)]
         public override string MachineName
         {
-            get
-            {
-                return base.MachineName;
-            }
-            set
-            {
-                base.MachineName = value;
-            }
+            get { return base.MachineName; }
+            set { base.MachineName = value; }
         }
         
         /// <summary>
