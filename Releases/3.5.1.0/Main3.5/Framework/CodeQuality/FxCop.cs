@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.CodeQuality
 {
+    using System;
     using System.Diagnostics;
     using System.Globalization;
     using Microsoft.Build.Framework;
@@ -27,7 +28,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///         <DependencyDirectories Include="c:\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3"/>
     ///         <!-- Define a bespoke set of rules to run. Prefix the Rules path with ! to treat warnings as errors -->
     ///         <Rules Include="c:\Program Files (x86)\Microsoft FxCop 1.36\Rules\DesignRules.dll"/>
-    ///         <Files Include="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.CodeQuality.StyleCop.dll"/>
+    ///         <Files Include="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Call the task using a collection of files and all default rules -->
@@ -255,7 +256,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 foreach (ITaskItem i in this.DependencyDirectories)
                 {
-                    arguments += " /directory:\"" + i.ItemSpec + "\"";
+                    string path = i.ItemSpec;
+                    if (path.EndsWith(@"\", StringComparison.OrdinalIgnoreCase) || path.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        path = path.Substring(0, path.Length - 1);
+                    }
+
+                    arguments += " /directory:\"" + path + "\"";
                 }
             }
 
