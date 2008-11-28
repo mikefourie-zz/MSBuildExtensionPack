@@ -44,14 +44,37 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>  
     public class Iis7Binding : BaseTask
     {
+        private const string cAddTaskAction = "Add";
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cModifyTaskAction = "Modify";
+        private const string cRemoveTaskAction = "Remove";	
+        
         private ServerManager iisServerManager;
         private Site website;
         private string bindingProtocol = "http";
- 
+
+		/// <summary>
+		/// Sets the TaskAction.
+		/// </summary>
+        [DropdownValue(cAddTaskAction)]
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cModifyTaskAction)]
+        [DropdownValue(cRemoveTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+
         /// <summary>
         /// Sets the name of the Website
         /// </summary>
         [Required]
+        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cModifyTaskAction, true)]
+        [TaskAction(cRemoveTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -66,16 +89,22 @@ namespace MSBuild.ExtensionPack.Web
         /// <para/>
         /// Example: *:80:sample.example.com or : *:443:
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cModifyTaskAction, true)]
+        [TaskAction(cRemoveTaskAction, true)]
         public string BindingInformation { get; set; }
 
         /// <summary>
         /// Sets the PreviousBindingInformation to use when calling Modify
         /// </summary>
+        [TaskAction(cModifyTaskAction, true)]
         public string PreviousBindingInformation { get; set; }
 
         /// <summary>
         /// Sets the PreviousBindingProtocol to use when calling Modify
         /// </summary>
+        [TaskAction(cModifyTaskAction, true)]
         public string PreviousBindingProtocol { get; set; }
 
         /// <summary>
@@ -85,22 +114,28 @@ namespace MSBuild.ExtensionPack.Web
         /// <para/>
         /// Example: 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public string CertificateHash { get; set; }
 
         /// <summary>
         /// The name of the certificate store. Default is "MY" for the personal store
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public string CertificateStoreName { get; set; }
 
         /// <summary>
         /// Gets whether the binding exists
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Binding protocol. Example: "http", "https", "ftp". Default is http.
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
+        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(cRemoveTaskAction, false)]
         public string BindingProtocol
         {
             get { return this.bindingProtocol; }

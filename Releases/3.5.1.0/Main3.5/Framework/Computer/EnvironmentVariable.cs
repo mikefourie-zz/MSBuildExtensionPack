@@ -54,18 +54,39 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class EnvironmentVariable : BaseTask
     {
+        private const string cGetTaskAction = "Get";
+        private const string cSetTaskAction = "Set";
+        
         private EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
+
+        [DropdownValue(cGetTaskAction)]
+        [DropdownValue(cSetTaskAction)]
+        public override string TaskAction
+        {
+            get
+            {
+                return base.TaskAction;
+            }
+            set
+            {
+                base.TaskAction = value;
+            }
+        }
 
         /// <summary>
         /// Gets the value. May be a string array.
         /// </summary>
         [Output]
+        [TaskAction(cGetTaskAction, false)]
+        [TaskAction(cSetTaskAction, true)]
         public string[] Value { get; set; }
 
         /// <summary>
         /// The name of the Environment Variable
         /// </summary>
         [Required]
+        [TaskAction(cGetTaskAction, true)]
+        [TaskAction(cSetTaskAction, true)]
         public string Variable { set; get; }
 
         /// <summary>

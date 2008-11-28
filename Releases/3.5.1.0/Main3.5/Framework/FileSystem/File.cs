@@ -85,35 +85,62 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </example>
     public class File : BaseTask
     {
+		private const string cCountLinesTaskAction = "CountLines";		
+		private const string cGetChecksumTaskAction = "GetChecksum";
+		private const string cFilterByContentTaskAction = "FilterByContent";
+		private const string cReplaceTaskAction = "Replace";
+		private const string cSetAttributesTaskAction = "SetAttributes";
+		
+		
+
         private Encoding fileEncoding = Encoding.UTF8;
         private Regex parseRegex;
         private string[] commentIdentifiers;
         private List<ITaskItem> excludedFiles;
         private List<ITaskItem> includedFiles;
 
+		[DropdownValue(cCountLinesTaskAction)]
+		[DropdownValue(cGetChecksumTaskAction)]
+		[DropdownValue(cFilterByContentTaskAction)]				
+		[DropdownValue(cReplaceTaskAction)]
+		[DropdownValue(cSetAttributesTaskAction)]		
+		public override string TaskAction
+		{
+			get { return base.TaskAction; }
+			set { base.TaskAction = value; }
+
+		}
+
         /// <summary>
         /// Sets the regex pattern.
-        /// </summary>
+        /// </summary>	
+		[TaskAction(cReplaceTaskAction, true)]
+		[TaskAction(cFilterByContentTaskAction, true)]
         public string RegexPattern { get; set; }
 
         /// <summary>
         /// The replacement text to use
         /// </summary>
+		[TaskAction(cReplaceTaskAction, false)]
         public string Replacement { get; set; }
 
         /// <summary>
         /// A path to process. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.
         /// </summary>
+		[TaskAction(cGetChecksumTaskAction, true)]
+		[TaskAction(cReplaceTaskAction, false)]
         public string Path { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding.
         /// </summary>
+		[TaskAction(cReplaceTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Sets characters to be interpreted as comment identifiers. Semi-colon delimited. Only single line comments are currently supported.
         /// </summary>
+		[TaskAction(cCountLinesTaskAction, false)]
         public string CommentIdentifiers
         { 
             set { this.commentIdentifiers = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); }
@@ -122,76 +149,95 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// An ItemList of files to process. If calling SetAttributes, include the attributes in an Attributes metadata tag, separated by a semicolon.
         /// </summary>
+		[TaskAction(cCountLinesTaskAction, true)]
+		[TaskAction(cSetAttributesTaskAction, true)]
+		[TaskAction(cReplaceTaskAction, false)]
+		[TaskAction(cFilterByContentTaskAction, true)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// Gets the total number of lines counted
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
         public int TotalLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of comment lines counted
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
         public int CommentLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of empty lines countered. Whitespace is ignored.
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
         public int EmptyLinecount { get; set; }
       
         /// <summary>
         /// Gets the number of files counted
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
         public int TotalFilecount { get; set; }
 
         /// <summary>
         /// Gets the number of code lines countered. This is calculated as Total - Comment - Empty
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
         public int CodeLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of excluded files
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
+		[TaskAction(cFilterByContentTaskAction, false)]
         public int ExcludedFilecount { get; set; }
 
         /// <summary>
         /// Gets the number of included files
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
+		[TaskAction(cFilterByContentTaskAction, false)]
         public int IncludedFilecount { get; set; }
 
         /// <summary>
         /// Sets the maximum size of files to count
         /// </summary>
+		[TaskAction(cCountLinesTaskAction, false)]
         public int MaxSize { get; set; }
 
         /// <summary>
         /// sets the minimum size of files to count
         /// </summary>
+		[TaskAction(cCountLinesTaskAction, false)]
         public int MinSize { get; set; }
 
         /// <summary>
         /// Gets the time taken to count the files. Value in seconds.
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
         public string ElapsedTime { get; set; }
 
         /// <summary>
         /// Gets the file checksum
         /// </summary>
         [Output]
+		[TaskAction(cGetChecksumTaskAction, false)]
         public string Checksum { get; set; }
 
         /// <summary>
         /// Item collection of files Excluded from the count.
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
+		[TaskAction(cFilterByContentTaskAction, false)]
         public ITaskItem[] ExcludedFiles
         {
             get { return this.excludedFiles == null ? null : this.excludedFiles.ToArray(); }
@@ -202,6 +248,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Item collection of files included after filtering operations
         /// </summary>
         [Output]
+		[TaskAction(cCountLinesTaskAction, false)]
+		[TaskAction(cFilterByContentTaskAction, false)]
         public ITaskItem[] IncludedFiles
         {
             get { return this.includedFiles == null ? null : this.includedFiles.ToArray(); }

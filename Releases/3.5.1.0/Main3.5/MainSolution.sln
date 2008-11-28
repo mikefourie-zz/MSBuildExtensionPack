@@ -2,6 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06FDB13A-E163-49EE-AC60-4EF4085DADC5}"
 	ProjectSection(SolutionItems) = preProject
+		Common\Attributes.cs = Common\Attributes.cs
 		Common\BaseTask.cs = Common\BaseTask.cs
 		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
 		Common\ExtensionPack.public.snk = Common\ExtensionPack.public.snk

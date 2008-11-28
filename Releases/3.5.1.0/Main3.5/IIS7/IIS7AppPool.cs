@@ -48,6 +48,35 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>  
     public class Iis7AppPool : BaseTask
     {
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cCreateTaskAction = "Create";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cGetInfoTaskAction = "GetInfo";
+        private const string cModifyTaskAction = "Modify";
+        private const string cSetIdentityTaskAction = "SetIdentity";
+        private const string cSetPipelineModeTaskAction = "SetPipelineMode";
+        private const string cStartTaskAction = "Start";
+        private const string cStopTaskAction = "Stop";
+
+		/// <summary>
+		/// Sets the TaskAction.
+		/// </summary>
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(cGetInfoTaskAction)]
+        [DropdownValue(cModifyTaskAction)]
+        [DropdownValue(cSetIdentityTaskAction)]
+        [DropdownValue(cSetPipelineModeTaskAction)]
+        [DropdownValue(cStartTaskAction)]
+        [DropdownValue(cStopTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+
         private ServerManager iisServerManager;
         private bool autoStart = true;
         private ManagedPipelineMode managedPM = ManagedPipelineMode.Integrated;
@@ -57,46 +86,64 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the private memory (kb) a process can use before the process is recycled. Default is 0. Set > 0 to use. Set to -1 to restore the Application Pool Default.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public long PeriodicRestartPrivateMemory { get; set; }
 
         /// <summary>
         /// Sets the maximum number of requests to queue before rejecting additional requests. Default is 0. Set > 0 to use. Set to -1 to restore the Application Pool Default.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public long QueueLength { get; set; }
 
         /// <summary>
         /// Sets a TimeSpan value in minutes for the period of time a process should remain idle. Set > 0 to use. Set to -1 to restore the Application Pool Default.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public long IdleTimeout { get; set; }
 
         /// <summary>
         /// Sets the maximum number of worker processes allowed for the AppPool. Set to -1 to restore the Application Pool Default.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public long MaxProcesses { get; set; }
 
         /// <summary>
         /// Sets a TimeSpan value in minutes for the period of time that should elapse before a worker process is recycled. Default is 29 hours. Set > 0 to use. Set to -1 to restore the Application Pool Default for Modify or -1 to Disable Recycling.PeriodicRestartTime for Create
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public long PeriodicRestartTime { get; set; }
 
         /// <summary>
         /// Sets the times that the application pool should recycle. Format is 'hh:mm,hh:mm,hh:mm'. Set to "-1" to clear the RecycleTimes
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public string RecycleTimes { get; set; }
 
         /// <summary>
         /// Sets the fixed number of requests to recycle the application pool. Set to -1 to restore the Application Pool Default.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public int RecycleRequests { get; set; }
 
         /// <summary>
         /// Sets the RecycleInterval in minutes for the application pool. Set to -1 to restore the Application Pool Default.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public int RecycleInterval { get; set; }      
 
         /// <summary>
         /// Set whether the application pool should start automatically. Default is true.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public bool AutoStart
         {
             get { return this.autoStart; }
@@ -106,11 +153,15 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets whether 32-bit applications are enabled on 64-bit processors. Default is false.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public bool Enable32BitAppOnWin64 { get; set; }
 
         /// <summary>
         /// Sets the ProcessModelIdentityType. Default is LocalService
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cSetIdentityTaskAction, false)]
         public string IdentityType
         {
             get { return this.processModelType.ToString(); }
@@ -120,21 +171,29 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the user name associated with the security identity under which the application pool runs.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cSetIdentityTaskAction, false)]
         public string PoolIdentity { get; set; }
 
         /// <summary>
         /// Sets the password associated with the PoolIdentity property.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cSetIdentityTaskAction, false)]
         public string IdentityPassword { get; set; }
 
         /// <summary>
         /// Sets the version number of the .NET Framework used by the application pool. Default is "v2.0".
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public string ManagedRuntimeVersion { get; set; }
 
         /// <summary>
         /// Sets the ManagedPipelineMode. Default is ManagedPipelineMode.Integrated.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cSetPipelineModeTaskAction, false)]
         public string PipelineMode
         {
             get { return this.managedPM.ToString(); }
@@ -145,11 +204,20 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the AppPool
         /// </summary>
         [Required]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(cGetInfoTaskAction, true)]
+        [TaskAction(cModifyTaskAction, true)]
+        [TaskAction(cStartTaskAction, true)]
+        [TaskAction(cStopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -162,6 +230,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the Application Pool exists
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>

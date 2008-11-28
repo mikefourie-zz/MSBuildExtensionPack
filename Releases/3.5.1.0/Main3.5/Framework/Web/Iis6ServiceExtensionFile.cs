@@ -35,8 +35,22 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>
     public class Iis6ServiceExtensionFile : BaseTask
     {
+        private const string cAddTaskAction = "Add";
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cDeleteTaskAction = "Delete";
+        
         private ExtensionPermission permission = ExtensionPermission.Allowed;
 
+        [DropdownValue(cAddTaskAction)]
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+        
         /// <summary>
         /// ExtensionPermission.
         /// </summary>
@@ -57,26 +71,33 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the Path to the web extension service file.
         /// </summary>
         [Required]
+        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets whether the file can be deleted from the Web Service Extension Restriction List.
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public bool Deletable { get; set; }
 
         /// <summary>
         /// Sets the Description of the web service extension being added
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public string Description { get; set; }
 
         /// <summary>
         /// A unique text ID associated with one or more ISAPIs or CGIs required for enabling the group
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public string GroupId { get; set; }
 
         /// <summary>
         /// Sets whether the extension is Allowed or Prohibited. Default is Allowed.
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public string Permission
         { 
             get { return this.permission.ToString(); }
@@ -86,12 +107,14 @@ namespace MSBuild.ExtensionPack.Web
             /// <summary>
         /// Set to true to delete an existing extension of the same name. Default is false.
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Gets whether the service extension file exists. Output
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         public bool FileExists()

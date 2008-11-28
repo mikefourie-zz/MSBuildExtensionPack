@@ -52,14 +52,37 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>
     public class Iis6Website : BaseTask
     {
+        private const string cCreateTaskAction = "Create";
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cContinueTaskAction = "Continue";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cStartTaskAction = "Start";
+        private const string cStopTaskAction = "Stop";
+        private const string cPauseTaskAction = "Pause";
+
         private DirectoryEntry websiteEntry;
         private string properties;
         private int sleep = 250;
+
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cContinueTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(cStartTaskAction)]
+        [DropdownValue(cStopTaskAction)]
+        [DropdownValue(cPauseTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
 
         /// <summary>
         /// Gets or sets the app pool properties.
         /// </summary>
         /// <value>The app pool properties.</value>
+        [TaskAction(cCreateTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -71,11 +94,19 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         /// <value>The name.</value>
         [Required]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cContinueTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(cStartTaskAction, true)]
+        [TaskAction(cStopTaskAction, true)]
+        [TaskAction(cPauseTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Set force to true to delete an existing website when calling Create. Default is false.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -91,6 +122,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the website exists.
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>

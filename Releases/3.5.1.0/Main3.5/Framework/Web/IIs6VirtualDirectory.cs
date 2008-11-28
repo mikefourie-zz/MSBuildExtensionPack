@@ -32,6 +32,8 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
+        private const string cCreateTaskAction = "Create";	
+        
         private DirectoryEntry websiteEntry;
         private string properties;
         private string directoryType = "IIsWebVirtualDir";
@@ -39,14 +41,24 @@ namespace MSBuild.ExtensionPack.Web
         private string appPool = "DefaultAppPool";
         private string name = "ROOT";
 
+        [DropdownValue(cCreateTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+
         /// <summary>
         /// Sets the Parent
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public string Parent { get; set; }
 
         /// <summary>
         /// Sets whether an Application is required. Defaults to true.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public bool RequireApplication
         {
             get { return this.requireApplication; }
@@ -56,6 +68,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the DirectoryType. Supports IIsWebDirectory and IIsWebVirtualDir. Default is IIsWebVirtualDir.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public string DirectoryType
         {
             get { return this.directoryType; }
@@ -65,6 +78,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the AppPool to run in. Default is 'DefaultAppPool'
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public string AppPool
         {
             get { return this.appPool; }
@@ -74,6 +88,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -83,6 +98,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the name of the Virtual Directory. Defaults to 'ROOT'
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public string Name
         {
             get { return this.name; }
@@ -93,6 +109,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the Website to add the Virtual Directory to.
         /// </summary>
         [Required]
+        [TaskAction(cCreateTaskAction, true)]
         public string Website { get; set; }
 
         internal string IisPath

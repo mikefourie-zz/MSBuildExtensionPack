@@ -48,37 +48,77 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class PerformanceCounters : BaseTask
     {
+        private const string cAddTaskAction = "Add";
+        private const string cGetValueAction = "GetValue";
+        private const string cRemoveTaskAction = "Remove";
+
+        [DropdownValue(cAddTaskAction)]
+        [DropdownValue(cGetValueAction)]
+        [DropdownValue(cRemoveTaskAction)]
+        public override string TaskAction
+        {
+            get
+            {
+                return base.TaskAction;
+            }
+            set
+            {
+                base.TaskAction = value;
+            }
+        }
+
         /// <summary>
         /// Sets the CategoryName
         /// </summary>
         [Required]
+        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(cGetValueAction, true)]
+        [TaskAction(cRemoveTaskAction, true)]
         public string CategoryName { get; set; }
 
         /// <summary>
         /// Sets the description of the custom category.
         /// </summary>
+        [TaskAction(cAddTaskAction, true)]
         public string CategoryHelp { get; set; }
 
         /// <summary>
         /// Gets the value of the counter
         /// </summary>
         [Output]
+        [TaskAction(cGetValueAction, false)]
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the name of the counter.
         /// </summary>
+        [TaskAction(cGetValueAction, true)]
         public string CounterName { get; set; }       
 
         /// <summary>
         /// Sets a value indicating whether to create a multiple instance performance counter. Default is false
         /// </summary>
+        [TaskAction(cAddTaskAction, false)]
         public bool MultiInstance { get; set; }
 
         /// <summary>
         /// Sets the TaskItem[] that specifies the counters to create as part of the new category.
         /// </summary>
+        [TaskAction(cAddTaskAction, true)]
         public ITaskItem[] CounterList { get; set; }
+
+        [TaskAction(cGetValueAction, false)]
+        public override string MachineName
+        {
+            get
+            {
+                return base.MachineName;
+            }
+            set
+            {
+                base.MachineName = value;
+            }
+        }
 
         /// <summary>
         /// Performs the action of this task.

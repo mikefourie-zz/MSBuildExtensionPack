@@ -46,16 +46,39 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class EventSource : BaseTask
     {
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cCreateTaskAction = "Create";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cLogTaskAction = "Log";
+        
         private System.Diagnostics.EventLogEntryType logType = System.Diagnostics.EventLogEntryType.Error;
+
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(cLogTaskAction)]
+        public override string TaskAction
+        {
+            get
+            {
+                return base.TaskAction;
+            }
+            set
+            {
+                base.TaskAction = value;
+            }
+        }
 
         /// <summary>
         /// Sets the event id.
         /// </summary>
+        [TaskAction(cLogTaskAction, true)]
         public string EventId { get; set; }
 
         /// <summary>
         /// Sets the Event Log Entry Type. Possible values are: Error, FailureAudit, Information, SuccessAudit, Warning.
         /// </summary>
+        [TaskAction(cLogTaskAction, true)]
         public string LogType
         {
             get { return this.logType.ToString(); }
@@ -65,30 +88,54 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the description for the logentry
         /// </summary>
+        [TaskAction(cLogTaskAction, true)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the source name
         /// </summary>
         [Required]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(cLogTaskAction, true)]
         public string Source { get; set; }
 
         /// <summary>
         /// Sets the name of the log the source's entries are written to, e.g Application, Security, System, YOUREVENTLOG.
         /// </summary>
+        [TaskAction(cCreateTaskAction, true)]
         public string LogName { get; set; }
 
         /// <summary>
         /// Set to true to delete any existing matching eventsource when creating 
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the EventSource exists.
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
+        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cDeleteTaskAction, false)]
+        [TaskAction(cLogTaskAction, false)]
+        public override string MachineName
+        {
+            get
+            {
+                return base.MachineName;
+            }
+            set
+            {
+                base.MachineName = value;
+            }
+        }
+        
         /// <summary>
         /// Performs the action of this task.
         /// </summary>

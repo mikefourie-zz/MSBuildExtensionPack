@@ -52,28 +52,77 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class EventLog : BaseTask
     {
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cClearTaskAction = "Clear";
+        private const string cCreateTaskAction = "Create";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cModifyTaskAction = "Modify";
+
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cClearTaskAction)]
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(cModifyTaskAction)]
+        public override string TaskAction
+        {
+            get
+            {
+                return base.TaskAction;
+            }
+            set
+            {
+                base.TaskAction = value;
+            }
+        }
         /// <summary>
         /// Sets the size of the max.
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public int MaxSize { get; set; }
 
         /// <summary>
         /// Sets the retention. Any value > 0 is interpreted as days to retain. Use -1 for 'Overwrite as needed'. Use -2 for 'Never Overwrite'
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public int Retention { get; set; }
 
         /// <summary>
         /// Sets the name of the Event Log
         /// </summary>
         [Required]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cClearTaskAction, true)]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(cModifyTaskAction, true)]
         public string LogName { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the event log exists.
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
+        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(cClearTaskAction, false)]
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cDeleteTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
+        public override string MachineName
+        {
+            get
+            {
+                return base.MachineName;
+            }
+            set
+            {
+                base.MachineName = value;
+            }
+        }
+        
         /// <summary>
         /// Performs the action of this task.
         /// </summary>

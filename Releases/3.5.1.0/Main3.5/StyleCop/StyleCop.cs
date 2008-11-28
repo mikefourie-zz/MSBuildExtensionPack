@@ -56,25 +56,41 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </example>
     public class StyleCop : BaseTask
     {
+        private const string cScanTaskAction = "Scan";	
+        
         private List<ITaskItem> failedFiles = new List<ITaskItem>();
         private bool fullAnalysis = true;
         private bool succeeded = true;
+
+		/// <summary>
+		/// Sets the TaskAction.
+		/// </summary>
+        [DropdownValue(cScanTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
 
         /// <summary>
         /// Gets the violation count.
         /// </summary>
         [Output]
+        [TaskAction(cScanTaskAction, false)]
         public int ViolationCount { get; set; }
 
         /// <summary>
         /// Sets the log file.
         /// </summary>
+        [TaskAction(cScanTaskAction, false)]
         public ITaskItem LogFile { get; set; }
 
         /// <summary>
         /// Gets whether the scan succeeded.
         /// </summary>
         [Output]
+        [TaskAction(cScanTaskAction, false)]
         public bool Succeeded
         {
             get { return this.succeeded; }
@@ -84,16 +100,19 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Sets a value indicating whether StyleCop should write cache files to disk after performing an analysis. Default is false.
         /// </summary>
+        [TaskAction(cScanTaskAction, false)]
         public bool CacheResults { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to ShowOutput. Default is false
         /// </summary>
+        [TaskAction(cScanTaskAction, false)]
         public bool ShowOutput { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether StyleCop should ignore cached results and perform a clean analysis. 
         /// </summary>        
+        [TaskAction(cScanTaskAction, false)]
         public bool ForceFullAnalysis
         {
             get { return this.fullAnalysis; }
@@ -104,12 +123,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// Sets the source files collection
         /// </summary>
         [Required]
+        [TaskAction(cScanTaskAction, true)]
         public ITaskItem[] SourceFiles { get; set; }
 
         /// <summary>
         /// Gets the failed files collection
         /// </summary>
         [Output]
+        [TaskAction(cScanTaskAction, false)]
         public ITaskItem[] FailedFiles
         {
             get { return this.failedFiles.ToArray(); }
@@ -120,6 +141,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// Sets the path to the settings file to load.
         /// </summary>
         [Required]
+        [TaskAction(cScanTaskAction, true)]
         public ITaskItem SettingsFile { get; set; }
 
         /// <summary>

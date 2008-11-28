@@ -45,11 +45,33 @@ namespace MSBuild.ExtensionPack.Web
     /// </example>
     public class Iis6AppPool : BaseTask
     {
+        private const string cCreateTaskAction = "Create";
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cModifyTaskAction = "Modify";
+        private const string cStartTaskAction = "Start";
+        private const string cStopTaskAction = "Stop";
+        
         private string properties;
 
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(cModifyTaskAction)]
+        [DropdownValue(cStartTaskAction)]
+        [DropdownValue(cStopTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+        
         /// <summary>
         /// Sets the app pool properties. This is a semicolon seperated list, e.g. AppPoolAutoStart=TRUE;PeriodicRestartTime=0
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cModifyTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -60,12 +82,19 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the AppPool. Required.
         /// </summary>
         [Required]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(cModifyTaskAction, true)]
+        [TaskAction(cStartTaskAction, true)]
+        [TaskAction(cStopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets whether the app pool exists. Output
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         internal string IisPath

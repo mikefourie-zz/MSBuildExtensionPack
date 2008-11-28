@@ -98,43 +98,96 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class TextString : BaseTask
     {
+        private const string cCompareTaskAction = "Compare";
+        private const string cEndsWithTaskAction = "EndsWith";
+        private const string cGetLengthTaskAction = "GetLength";
+        private const string cInsertTaskAction = "Insert";
+        private const string cPadLeftTaskAction = "PadLeft";
+        private const string cPadRightTaskAction = "PadRight";
+        private const string cRemoveTaskAction = "Remove";
+        private const string cReplaceTaskAction = "Replace";
+        private const string cStartsWithTaskAction = "StartsWith";
+        private const string cToLowerTaskAction = "ToLower";
+        private const string cToUpperTaskAction = "ToUpper";
+        private const string cTrimTaskAction = "Trim";
+        
         private bool ignoreCase = true;
         private StringComparison stringCom = StringComparison.OrdinalIgnoreCase;
+
+        [DropdownValue(cCompareTaskAction)]
+        [DropdownValue(cEndsWithTaskAction)]
+        [DropdownValue(cGetLengthTaskAction)]
+        [DropdownValue(cInsertTaskAction)]
+        [DropdownValue(cPadLeftTaskAction)]
+        [DropdownValue(cPadRightTaskAction)]
+        [DropdownValue(cRemoveTaskAction)]
+        [DropdownValue(cReplaceTaskAction)]
+        [DropdownValue(cStartsWithTaskAction)]
+        [DropdownValue(cToLowerTaskAction)]
+        [DropdownValue(cToUpperTaskAction)]
+        [DropdownValue(cTrimTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
 
         /// <summary>
         /// Sets the start index for Remove
         /// </summary>
+        [TaskAction(cInsertTaskAction, true)]
+        [TaskAction(cRemoveTaskAction, true)]
         public int StartIndex { get; set; }
 
         /// <summary>
         /// Sets the count
         /// </summary>
+        [TaskAction(cPadLeftTaskAction, false)]
+        [TaskAction(cPadRightTaskAction, false)]
+        [TaskAction(cRemoveTaskAction, false)]
         public int Count { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the result is true or false.
         /// </summary>
         [Output]
+        [TaskAction(cCompareTaskAction, false)]
+        [TaskAction(cEndsWithTaskAction, false)]
+        [TaskAction(cStartsWithTaskAction, false)]
         public bool Result { get; set; }
 
         /// <summary>
         /// Sets the string1.
         /// </summary>
+        [TaskAction(cCompareTaskAction, true)]
+        [TaskAction(cEndsWithTaskAction, true)]
+        [TaskAction(cInsertTaskAction, true)]
+        [TaskAction(cPadLeftTaskAction, true)]
+        [TaskAction(cPadRightTaskAction, true)]
+        [TaskAction(cStartsWithTaskAction, true)]
         public string String1 { get; set; }
 
         /// <summary>
         /// Sets the string2.
         /// </summary>
+        [TaskAction(cCompareTaskAction, true)]
+        [TaskAction(cEndsWithTaskAction, true)]
+        [TaskAction(cStartsWithTaskAction, true)]
         public string String2 { get; set; }
 
         /// <summary>
         /// Sets the Comparison. Supports 'GreaterThan', 'LessThan', 'GreaterThanOrEquals', 'LessThanOrEquals', 'Contains', 'StartsWith', 'EndsWith'
         /// </summary>
+        [TaskAction(cCompareTaskAction, true)]
         public string Comparison { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether [ignore case]. Default is true.
         /// </summary>
+        [TaskAction(cCompareTaskAction, false)]
+        [TaskAction(cEndsWithTaskAction, false)]
+        [TaskAction(cStartsWithTaskAction, false)]
         public bool IgnoreCase
         {
             get { return this.ignoreCase; }
@@ -144,22 +197,43 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets the old string.
         /// </summary>
+        [TaskAction(cGetLengthTaskAction, true)]
+        [TaskAction(cInsertTaskAction, true)]
+        [TaskAction(cPadLeftTaskAction, true)]
+        [TaskAction(cPadRightTaskAction, true)]
+        [TaskAction(cRemoveTaskAction, true)]
+        [TaskAction(cReplaceTaskAction, true)]
+        [TaskAction(cStartsWithTaskAction, true)]
+        [TaskAction(cToLowerTaskAction, true)]
+        [TaskAction(cToUpperTaskAction, true)]
+        [TaskAction(cTrimTaskAction, true)]
         public string OldString { get; set; }
 
         /// <summary>
         /// Gets the new string.
         /// </summary>
         [Output]
+        [TaskAction(cGetLengthTaskAction, false)]
+        [TaskAction(cInsertTaskAction, false)]
+        [TaskAction(cPadLeftTaskAction, false)]
+        [TaskAction(cPadRightTaskAction, false)]
+        [TaskAction(cRemoveTaskAction, false)]
+        [TaskAction(cReplaceTaskAction, false)]
+        [TaskAction(cToLowerTaskAction, false)]
+        [TaskAction(cToUpperTaskAction, false)]
+        [TaskAction(cTrimTaskAction, false)]
         public string NewString { get; set; }
 
         /// <summary>
         /// Sets the old value.
         /// </summary>
+        [TaskAction(cReplaceTaskAction, true)]
         public string OldValue { get; set; }
 
         /// <summary>
         /// Sets the new value.
         /// </summary>
+        [TaskAction(cReplaceTaskAction, true)]
         public string NewValue { get; set; }
 
         /// <summary>

@@ -83,33 +83,61 @@ namespace MSBuild.ExtensionPack.Science
     /// </example>
     public class Maths : BaseTask
     {
+        private const string cAddTaskAction = "Add";
+        private const string cCompareTaskAction = "Compare";
+        private const string cDivideTaskAction = "Divide";
+        private const string cEvaluateTaskAction = "Evaluate";
+        private const string cMultiplyTaskAction = "Multiply";
+        private const string cSubtractTaskAction = "Subtract";	
+
         private float[] numbers;
         private float total;
+
+        [DropdownValue(cAddTaskAction)]
+        [DropdownValue(cCompareTaskAction)]
+        [DropdownValue(cDivideTaskAction)]
+        [DropdownValue(cEvaluateTaskAction)]
+        [DropdownValue(cMultiplyTaskAction)]
+        [DropdownValue(cSubtractTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
 
         /// <summary>
         /// Sets P1.
         /// </summary>
+        [TaskAction(cCompareTaskAction, true)]
         public long P1 { get; set; }
 
         /// <summary>
         /// Gets the LogicalResult
         /// </summary>
         [Output]
+        [TaskAction(cCompareTaskAction, false)]
         public bool LogicalResult { get; set; }
 
         /// <summary>
         /// Sets P2.
         /// </summary>
+        [TaskAction(cCompareTaskAction, true)]
         public long P2 { get; set; }
 
         /// <summary>
         /// Sets the Comparison. Supports 'GreaterThan', 'LessThan', 'GreaterThanOrEquals', 'LessThanOrEquals'
         /// </summary>
+        [TaskAction(cCompareTaskAction, true)]
         public string Comparison { get; set; }
 
         /// <summary>
         /// A semicolon separated collection of numbers
         /// </summary>
+        [TaskAction(cAddTaskAction, true)]
+        [TaskAction(cDivideTaskAction, true)]
+        [TaskAction(cMultiplyTaskAction, true)]
+        [TaskAction(cSubtractTaskAction, true)]
         public string[] Numbers
         {
             set { this.numbers = ToFloatArray(value); }
@@ -119,11 +147,17 @@ namespace MSBuild.ExtensionPack.Science
         /// Gets the result.
         /// </summary>
         [Output]
+        [TaskAction(cAddTaskAction, false)]
+        [TaskAction(cDivideTaskAction, false)]
+        [TaskAction(cEvaluateTaskAction, false)]
+        [TaskAction(cMultiplyTaskAction, false)]
+        [TaskAction(cSubtractTaskAction, false)]
         public float Result { get; set; }
 
         /// <summary>
         /// Sets the expression.
         /// </summary>
+        [TaskAction(cEvaluateTaskAction, true)]
         public string Expression { get; set; }
 
         protected static float[] ToFloatArray(string[] numberArray)

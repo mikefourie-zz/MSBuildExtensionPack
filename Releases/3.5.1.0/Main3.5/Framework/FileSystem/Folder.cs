@@ -57,27 +57,53 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </example>
     public class Folder : BaseTask
     {
+        private const string cAddSecurityTaskAction = "CountLines";
+        private const string cDeleteAllTaskAction = "DeleteAll";
+        private const string cMoveTaskAction = "Move";
+        private const string cRemoveContentTaskAction = "RemoveContent";
+        private const string cRemoveSecurityTaskAction = "RemoveSecurity";
+        
         private AccessControlType accessType = AccessControlType.Allow;
+
+        [DropdownValue(cAddSecurityTaskAction)]
+        [DropdownValue(cDeleteAllTaskAction)]
+        [DropdownValue(cMoveTaskAction)]
+        [DropdownValue(cRemoveContentTaskAction)]
+        [DropdownValue(cRemoveSecurityTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
 
         /// <summary>
         /// Sets the path to remove content from, or the base path for Delete
         /// </summary>
         [Required]
+        [TaskAction(cAddSecurityTaskAction, true)]
+        [TaskAction(cDeleteAllTaskAction, true)]
+        [TaskAction(cMoveTaskAction, true)]
+        [TaskAction(cRemoveContentTaskAction, true)]
+        [TaskAction(cRemoveSecurityTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets the regular expression to match in the name of a folder for Delete. Case is ignored.
         /// </summary>
+        [TaskAction(cDeleteAllTaskAction, true)]
         public string Match { get; set; }
 
         /// <summary>
         /// Sets the TargetPath for a renamed folder
         /// </summary>
+        [TaskAction(cMoveTaskAction, true)]
         public string TargetPath { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to delete readonly files when performing RemoveContent
         /// </summary>
+        [TaskAction(cRemoveContentTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -86,11 +112,15 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <para/>     <Permission>Read,etc</Permission>
         /// <para/> </UsersCol>
         /// </summary>
+        [TaskAction(cAddSecurityTaskAction, true)]
+        [TaskAction(cRemoveSecurityTaskAction, true)]
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
+        [TaskAction(cAddSecurityTaskAction, false)]
+        [TaskAction(cRemoveSecurityTaskAction, false)]
         public string AccessType
         {
             get { return this.accessType.ToString(); }

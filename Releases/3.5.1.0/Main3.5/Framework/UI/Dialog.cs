@@ -52,14 +52,28 @@ namespace MSBuild.ExtensionPack.UI
     /// </example>
     public class Dialog : BaseTask
     {
+        private const string cShowTaskAction = "Show";
+        private const string cPromptTaskAction = "Prompt";
+
         private string title = "Message";
         private int height = 180;
         private int width = 400;
         private string button1Text = "Ok";
 
+        [DropdownValue(cShowTaskAction)]
+        [DropdownValue(cPromptTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+
         /// <summary>
         /// Sets the height of the form. Default is 400
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public int Height
         {
             get { return this.height; }
@@ -69,6 +83,8 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the width of the form. Default is 180
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public int Width
         {
             get { return this.width; }
@@ -78,6 +94,8 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the text for Button1. Default is 'Ok'
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public string Button1Text
         {
             get { return this.button1Text; }
@@ -87,22 +105,30 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the text for Button2. If no text is set the button will not be displayed
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public string Button2Text { get; set; }
 
         /// <summary>
         /// Set the text for Button3. If no text is set the button will not be displayed
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public string Button3Text { get; set; }
 
         /// <summary>
         /// Sets the text for the message that is displayed
         /// </summary>
         [Required]
+        [TaskAction(cShowTaskAction, true)]
+        [TaskAction(cPromptTaskAction, true)]
         public string Text { get; set; }
 
         /// <summary>
         /// Sets the Title of the Dialog. Default is 'Message'
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public string Title
         {
             get { return this.title; }
@@ -112,28 +138,36 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the message text colour. Default is ControlText (usually black).
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public string MessageColour { get; set; }
 
         /// <summary>
         /// Sets whether the message text is bold. Default is false.
         /// </summary>
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public bool MessageBold { get; set; }
 
         /// <summary>
         /// Set to true to use the default password character to mask the user input
         /// </summary>
+        [TaskAction(cPromptTaskAction, false)]
         public bool MaskText { get; set; }
 
         /// <summary>
         /// Gets the text of the button that the user clicked
         /// </summary>
         [Output]
+        [TaskAction(cShowTaskAction, false)]
+        [TaskAction(cPromptTaskAction, false)]
         public string ButtonClickedText { get; set; }
 
         /// <summary>
         /// Gets the text that the user typed into the Prompt
         /// </summary>
         [Output]
+        [TaskAction(cPromptTaskAction, false)]
         public string UserText { get; set; }
 
         /// <summary>

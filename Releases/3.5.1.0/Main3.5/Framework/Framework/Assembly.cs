@@ -81,23 +81,42 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class Assembly : BaseTask
     {
+        private const string cGetInfoTaskAction = "GetInfo";
+        private const string cGetMethodInfoTaskAction = "GetMethodInfo";
+        private const string cInvokeTaskAction = "Invoke";
+        
         private System.Reflection.Assembly assembly;
         private List<ITaskItem> outputItems;
+
+        [DropdownValue(cGetInfoTaskAction)]
+        [DropdownValue(cGetMethodInfoTaskAction)]
+        [DropdownValue(cInvokeTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
 
         /// <summary>
         /// Sets the name of the Assembly
         /// </summary>
         [Required]
+        [TaskAction(cGetInfoTaskAction, true)]
+        [TaskAction(cGetMethodInfoTaskAction, true)]
+        [TaskAction(cInvokeTaskAction, true)]
         public ITaskItem NetAssembly { get; set; }
 
         /// <summary>
         /// Sets the name of the Class
         /// </summary>
+        [TaskAction(cGetMethodInfoTaskAction, true)]
         public string NetClass { get; set; }
 
         /// <summary>
         /// Sets the name of the Method. If this is not provided, a call is made to the default constructor.
         /// </summary>
+        [TaskAction(cInvokeTaskAction, false)]
         public string NetMethod { get; set; }
 
         /// <summary>
@@ -112,6 +131,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para/>For a call to GetInfo, OutputItems provides the following metadata: AssemblyVersion, FileVersion, Culture, CultureDisplayName, FullName, PublicKeyToken
         /// </summary>
         [Output]
+        [TaskAction(cGetInfoTaskAction, false)]
+        [TaskAction(cGetMethodInfoTaskAction, false)]
         public ITaskItem[] OutputItems
         {
             get { return this.outputItems.ToArray(); }
@@ -124,6 +145,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///        <Type>int</Type>
         ///    </Args>
         /// </summary>
+        [TaskAction(cInvokeTaskAction, false)]
         public ITaskItem[] NetArguments { get; set; }
 
         protected override void InternalExecute()

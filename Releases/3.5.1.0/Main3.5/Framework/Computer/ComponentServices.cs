@@ -78,26 +78,59 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class ComponentServices : BaseTask
     {
+        private const string cAddComponentTaskAction = "AddComponent";
+        private const string cCheckApplicationExistsTaskAction = "CheckApplicationExists";
+        private const string cDeleteApplicationTaskAction = "DeleteApplication";
+        private const string cRemoveComponentTaskAction = "RemoveComponent";
+        private const string cSetConstructorTaskAction = "SetConstructor";
+        private const string cSetTransactionSupportTaskAction = "SetTransactionSupport";
+        private const string cShutDownApplicationTaskAction = "ShutDownApplication";
+        private const string cUpdateApplicationTaskAction = "UpdateApplication";
+        
         private ShellWrapper shellWrapper;
         private string framework = "v2.0.50727";
         private CSActivation activation = CSActivation.Local;
         private string pathToFramework;
         private TransactionOption compTransaction = TransactionOption.NotSupported;
 
+        [DropdownValue(cAddComponentTaskAction)]
+        [DropdownValue(cCheckApplicationExistsTaskAction)]
+        [DropdownValue(cDeleteApplicationTaskAction)]
+        [DropdownValue(cRemoveComponentTaskAction)]
+        [DropdownValue(cSetConstructorTaskAction)]
+        [DropdownValue(cSetTransactionSupportTaskAction)]
+        [DropdownValue(cShutDownApplicationTaskAction)]
+        [DropdownValue(cUpdateApplicationTaskAction)]
+        public override string TaskAction
+        {
+            get
+            {
+                return base.TaskAction;
+            }
+            set
+            {
+                base.TaskAction = value;
+            }
+        }
+
         /// <summary>
         /// Gets whether the application exists.
         /// </summary>
         [Output]
+        [TaskAction(cCheckApplicationExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Sets the name of the COM+ component
         /// </summary>
+        [TaskAction(cSetConstructorTaskAction, true)]
+        [TaskAction(cSetTransactionSupportTaskAction, true)]
         public string ComponentName { get; set; }
 
         /// <summary>
         /// Sets the Transaction support for the component. Supports: Ignored, None [Default], Supported, Required, RequiresNew
         /// </summary>
+        [TaskAction(cSetTransactionSupportTaskAction, true)]
         public string Transaction
         {
             get { return this.compTransaction.ToString(); }
@@ -107,26 +140,40 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the constructor string for the specified COM+ component. If empty, then the constructor support is removed
         /// </summary>
+        [TaskAction(cSetConstructorTaskAction, true)]
         public string ConstructorString { get; set; }
 
         /// <summary>
         /// Sets the name of the COM+ Application.
         /// </summary>
+        [TaskAction(cAddComponentTaskAction, true)]
+        [TaskAction(cCheckApplicationExistsTaskAction, true)]
+        [TaskAction(cDeleteApplicationTaskAction, true)]
+        [TaskAction(cSetConstructorTaskAction, true)]
+        [TaskAction(cSetTransactionSupportTaskAction, true)]
+        [TaskAction(cShutDownApplicationTaskAction, true)]
+        [TaskAction(cUpdateApplicationTaskAction, true)]
         public string ApplicationName { get; set; }
 
         /// <summary>
         /// Sets the path to the DLL to be added to the application
         /// </summary>
+        [TaskAction(cAddComponentTaskAction, true)]
+        [TaskAction(cRemoveComponentTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets the process identity for the application. Specify a valid user account or "Interactive User" to have the application assume the identity of the current logged-on user.
         /// </summary>
+        [TaskAction(cAddComponentTaskAction, false)]
+        [TaskAction(cUpdateApplicationTaskAction, false)]
         public string Identity { get; set; }
 
         /// <summary>
         /// Sets the version of the .NET FrameWork. Defaults to "v2.0.50727"
         /// </summary>
+        [TaskAction(cAddComponentTaskAction, false)]
+        [TaskAction(cRemoveComponentTaskAction, false)]
         public string Framework
         {
             get { return this.framework; }
@@ -136,6 +183,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the type of activation for the application. Defaults to "Local". Supports: Local (server application), Inproc (library application)
         /// </summary>
+        [TaskAction(cAddComponentTaskAction, false)]
+        [TaskAction(cUpdateApplicationTaskAction, false)]
         public string Activation { get; set; }
 
         protected override void InternalExecute()

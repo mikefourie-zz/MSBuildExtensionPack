@@ -32,23 +32,41 @@ namespace MSBuild.ExtensionPack.Computer
     /// </example>
     public class Network : BaseTask
     {
+        private const string cPingTaskAction = "Ping";
+        
         private int pingCount = 5;
         private int timeout = 3000;
+
+        [DropdownValue(cPingTaskAction)]
+        public override string TaskAction
+        {
+            get
+            {
+                return base.TaskAction;
+            }
+            set
+            {
+                base.TaskAction = value;
+            }
+        }
 
         /// <summary>
         /// Sets the HostName / IP
         /// </summary>
+        [TaskAction(cPingTaskAction, true)]
         public string HostName { get; set; }
 
         /// <summary>
         /// Gets whether the Host Exists
         /// </summary>
         [Output]
+        [TaskAction(cPingTaskAction, false)]
         public bool Exists { get; private set; }
 
         /// <summary>
         /// Sets the number of pings to attempt. Default is 5.
         /// </summary>
+        [TaskAction(cPingTaskAction, false)]
         public int PingCount
         {
             get { return this.pingCount; }
@@ -58,6 +76,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the timeout in ms for a Ping. Default is 3000
         /// </summary>
+        [TaskAction(cPingTaskAction, false)]
         public int Timeout
         {
             get { return this.timeout; }

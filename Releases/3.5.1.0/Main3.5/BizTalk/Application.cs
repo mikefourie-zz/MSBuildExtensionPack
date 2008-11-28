@@ -75,24 +75,135 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </example>
     public class BizTalkApplication : BaseTask
     {
+		private const string cAddReferenceTaskAction = "AddReference";
+		private const string cCheckExistsTaskAction = "CheckExists";
+		private const string cCreateTaskAction = "Create";
+		private const string cDeleteTaskAction = "Delete";
+		private const string cDisableAllReceiveLocationsTaskAction = "DisableAllReceiveLocations";
+		private const string cEnableAllReceiveLocationsTaskAction = "EnableAllReceiveLocations";
+		private const string cGetTaskAction = "Get";
+		private const string cRemoveReferenceTaskAction = "RemoveReference";
+		private const string cStartAllTaskAction = "StartAll";
+		private const string cStartAllOrchestrationsTaskAction = "StartAllOrchestrations";
+		private const string cStartAllSendPortGroupsTaskAction = "StartAllSendPortGroups";
+		private const string cStartAllSendPortsTaskAction = "StartAllSendPorts";
+		private const string cStartReferencedApplicationsTaskAction = "StartReferencedApplications";
+		private const string cStopAllTaskAction = "StopAll";
+		private const string cStopReferencedApplicationsTaskAction = "StopReferencedApplications";
+		private const string cUndeployAllPoliciesTaskAction = "UndeployAllPolicies";
+		private const string cUnenlistAllOrchestrationsTaskAction = "UnenlistAllOrchestrations";
+		private const string cUnenlistAllSendPortGroupsTaskAction = "UnenlistAllSendPortGroups";
+		private const string cUnenlistAllSendPortsTaskAction = "UnenlistAllSendPorts";
+
+
         private string database = "BizTalkMgmtDb";
         private BtsCatalogExplorer explorer;
         private OM.Application app;
+
+		/// <summary>
+		/// Sets the TaskAction.
+		/// </summary>
+		[DropdownValue(cAddReferenceTaskAction)]
+		[DropdownValue(cCheckExistsTaskAction)]
+		[DropdownValue(cCreateTaskAction)]
+		[DropdownValue(cDeleteTaskAction)]
+		[DropdownValue(cDisableAllReceiveLocationsTaskAction)]
+		[DropdownValue(cEnableAllReceiveLocationsTaskAction)]
+		[DropdownValue(cGetTaskAction)]
+		[DropdownValue(cRemoveReferenceTaskAction)]
+		[DropdownValue(cStartAllTaskAction)]
+		[DropdownValue(cStartAllOrchestrationsTaskAction)]
+		[DropdownValue(cStartAllSendPortGroupsTaskAction)]
+		[DropdownValue(cStartAllSendPortsTaskAction)]
+		[DropdownValue(cStartReferencedApplicationsTaskAction)]
+		[DropdownValue(cStopAllTaskAction)]
+		[DropdownValue(cStopReferencedApplicationsTaskAction)]
+		[DropdownValue(cUndeployAllPoliciesTaskAction)]
+		[DropdownValue(cUnenlistAllOrchestrationsTaskAction)]
+		[DropdownValue(cUnenlistAllSendPortGroupsTaskAction)]
+		[DropdownValue(cUnenlistAllSendPortsTaskAction)]
+		public override string TaskAction
+		{
+			get
+			{
+				return base.TaskAction;
+			}
+			set
+			{
+				base.TaskAction = value;
+			}
+		}
+
+
+		/// <summary>
+		/// Sets the MachineName.
+		/// </summary>
+		[TaskAction(cAddReferenceTaskAction, false)]
+		[TaskAction(cCheckExistsTaskAction, false)]
+		[TaskAction(cCreateTaskAction, false)]
+		[TaskAction(cDeleteTaskAction, false)]
+		[TaskAction(cDisableAllReceiveLocationsTaskAction, false)]
+		[TaskAction(cEnableAllReceiveLocationsTaskAction, false)]
+		[TaskAction(cGetTaskAction, false)]
+		[TaskAction(cRemoveReferenceTaskAction, false)]
+		[TaskAction(cStartAllTaskAction, false)]
+		[TaskAction(cStartAllOrchestrationsTaskAction, false)]
+		[TaskAction(cStartAllSendPortGroupsTaskAction, false)]
+		[TaskAction(cStartAllSendPortsTaskAction, false)]
+		[TaskAction(cStartReferencedApplicationsTaskAction, false)]
+		[TaskAction(cStopAllTaskAction, false)]
+		[TaskAction(cStopReferencedApplicationsTaskAction, false)]
+		[TaskAction(cUndeployAllPoliciesTaskAction, false)]
+		[TaskAction(cUnenlistAllOrchestrationsTaskAction, false)]
+		[TaskAction(cUnenlistAllSendPortGroupsTaskAction, false)]
+		[TaskAction(cUnenlistAllSendPortsTaskAction, false)]
+		public override string MachineName
+		{
+			get
+			{
+				return base.MachineName;
+			}
+			set
+			{
+				base.MachineName = value;
+			}
+		}
+
 
         /// <summary>
         /// Get or sets the Application Item Collection
         /// </summary>
         [Output]
-        public ITaskItem[] Applications { get; set; }
+		[TaskAction(cCreateTaskAction, true)]
+		[TaskAction(cDeleteTaskAction, true)]
+		[TaskAction(cDisableAllReceiveLocationsTaskAction, true)]
+		[TaskAction(cEnableAllReceiveLocationsTaskAction, true)] 
+		[TaskAction(cStartAllTaskAction, true)]
+		[TaskAction(cStartAllOrchestrationsTaskAction, true)]
+		[TaskAction(cStartAllSendPortGroupsTaskAction, true)]
+		[TaskAction(cStartAllSendPortsTaskAction, true)]
+		[TaskAction(cStartReferencedApplicationsTaskAction, true)]
+		[TaskAction(cStopAllTaskAction, true)]
+		[TaskAction(cStopReferencedApplicationsTaskAction, true)]
+		[TaskAction(cUndeployAllPoliciesTaskAction, true)]
+		[TaskAction(cUnenlistAllOrchestrationsTaskAction, true)]
+		[TaskAction(cUnenlistAllSendPortGroupsTaskAction, true)]
+		[TaskAction(cUnenlistAllSendPortsTaskAction, true)]		
+        public ITaskItem[] Applications { get; set; }		
 
         /// <summary>
         /// Sets the Referenced Applications
         /// </summary>
+		[TaskAction(cAddReferenceTaskAction, true)]
+		[TaskAction(cRemoveReferenceTaskAction, true)]
         public ITaskItem[] References { get; set; }
 
         /// <summary>
         /// Sets the Application Name
         /// </summary>
+		[TaskAction(cAddReferenceTaskAction, true)]
+		[TaskAction(cCheckExistsTaskAction, true)]
+		[TaskAction(cRemoveReferenceTaskAction, true)]
         public string Application { get; set; }
 
         /// <summary>
@@ -108,6 +219,25 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Sets the Management Database to connect to. Default is BizTalkMgmtDb
         /// </summary>
+		[TaskAction(cAddReferenceTaskAction, false)]
+		[TaskAction(cCheckExistsTaskAction, false)]
+		[TaskAction(cCreateTaskAction, false)]
+		[TaskAction(cDeleteTaskAction, false)]
+		[TaskAction(cDisableAllReceiveLocationsTaskAction, false)]
+		[TaskAction(cEnableAllReceiveLocationsTaskAction, false)]
+		[TaskAction(cGetTaskAction, false)]
+		[TaskAction(cRemoveReferenceTaskAction, false)]
+		[TaskAction(cStartAllTaskAction, false)]
+		[TaskAction(cStartAllOrchestrationsTaskAction, false)]
+		[TaskAction(cStartAllSendPortGroupsTaskAction, false)]
+		[TaskAction(cStartAllSendPortsTaskAction, false)]
+		[TaskAction(cStartReferencedApplicationsTaskAction, false)]
+		[TaskAction(cStopAllTaskAction, false)]
+		[TaskAction(cStopReferencedApplicationsTaskAction, false)]
+		[TaskAction(cUndeployAllPoliciesTaskAction, false)]
+		[TaskAction(cUnenlistAllOrchestrationsTaskAction, false)]
+		[TaskAction(cUnenlistAllSendPortGroupsTaskAction, false)]
+		[TaskAction(cUnenlistAllSendPortsTaskAction, false)]
         public string Database
         {
             get { return this.database; }

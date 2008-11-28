@@ -49,6 +49,10 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </example> 
     public class Share : BaseTask
     {
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cCreateTaskAction = "Create";
+
         #region enums
         private enum ReturnCode : uint
         {
@@ -104,36 +108,54 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
         #endregion
 
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
+
         /// <summary>
         /// Sets the desctiption for the share
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the share name
         /// </summary>
         [Required]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
         public string ShareName { get; set; }
 
         /// <summary>
         /// Sets the share path
         /// </summary>
+        [TaskAction(cCreateTaskAction, true)]
         public string SharePath { get; set; }
 
         /// <summary>
         /// Sets the maximum number of allowed users for the share
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public int MaximumAllowed { get; set; }
 
         /// <summary>
         /// Sets whether to create the SharePath if it doesnt exist. Default is false
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public bool CreateSharePath { get; set; }
 
         /// <summary>
         /// Gets whether the share exists
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
@@ -145,11 +167,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </Allow>
         /// ]]></code>    
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public ITaskItem[] AllowUsers { get; set; }
 
         /// <summary>
         /// Sets a collection of users not allowed to access the share
         /// </summary>
+        [TaskAction(cCreateTaskAction, false)]
         public ITaskItem[] DenyUsers { get; set; }
 
         /// <summary>

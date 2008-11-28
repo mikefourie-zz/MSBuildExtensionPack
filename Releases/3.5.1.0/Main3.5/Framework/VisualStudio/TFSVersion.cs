@@ -52,80 +52,107 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </example>  
     public class TfsVersion : BaseTask
     {
+        private const string cGetVersionTaskAction = "GetVersion";
+        private const string cSetVersionTaskAction = "SetVersion";
+
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
         private string delimiter = ".";
 
+        [DropdownValue(cGetVersionTaskAction)]
+        [DropdownValue(cSetVersionTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
+        
         /// <summary>
         /// Set to True to set the AssemblyVersion when calling SetVersion. Default is false.
         /// </summary>
+        [TaskAction(cSetVersionTaskAction, false)]
         public bool SetAssemblyVersion { get; set; }
 
         /// <summary>
         /// Sets the file encoding. Default is UTF8
         /// </summary>
+        [TaskAction(cSetVersionTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Sets the files to version
         /// </summary>
+        [TaskAction(cSetVersionTaskAction, true)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// Sets the Tfs Build Number. Use $(BuildNumber) for Tfs 2005 and 2008.
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, true)]
         public string TfsBuildNumber { get; set; }
 
         /// <summary>
         /// Gets or Sets the Version
         /// </summary>
         [Output]
+        [TaskAction(cGetVersionTaskAction, false)]
+        [TaskAction(cSetVersionTaskAction, true)]
         public string Version { get; set; }
 
         /// <summary>
         /// Sets the number of padding digits to use, e.g. 4
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, false)]
         public int PaddingCount { get; set; }
 
         /// <summary>
         /// Sets the padding digit to use, e.g. 0
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, false)]
         public char PaddingDigit { get; set; }
 
         /// <summary>
         /// Sets the start date to use when using VersionFormat="Elapsed"
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, false)]
         public DateTime StartDate { get; set; }
 
         /// <summary>
         /// Sets the date format to use when using VersionFormat="DateTime". e.g. MMdd
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, false)]
         public string DateFormat { get; set; }
 
         /// <summary>
         /// Sets the name of the build. For Tfs 2005 use $(BuildType), for Tfs 2008 use $(BuildDefinition)
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, false)]
         public string BuildName { get; set; }
 
         /// <summary>
         /// Sets the Version Format. Valid VersionFormats are Elapsed, DateTime
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, true)]
         public string VersionFormat { get; set; }
 
         /// <summary>
         /// Sets the minor version
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, true)]
         public int Minor { get; set; }
 
         /// <summary>
         /// Sets the major version
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, true)]
         public int Major { get; set; }
 
         /// <summary>
         /// Sets the Delimiter to use in the version number. Default is .
         /// </summary>
+        [TaskAction(cGetVersionTaskAction, false)]
         public string Delimiter
         {
             get { return this.delimiter; }

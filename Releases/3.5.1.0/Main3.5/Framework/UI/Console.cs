@@ -41,14 +41,26 @@ namespace MSBuild.ExtensionPack.UI
     /// </example>
     public class Console : BaseTask
     {
+        private const string cBeepTaskAction = "Beep";
+        private const string cReadLineTaskAction = "ReadLine";
+        
         private int duration = 333;
         private int frequency = 600;
         private int repeat = 1;
         private int interval = 10;
 
+        [DropdownValue(cBeepTaskAction)]
+        [DropdownValue(cReadLineTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
         /// <summary>
         /// Sets the interval between beebs. Default is 10ms. Value must be between 10 and 5000
         /// </summary>
+        [TaskAction(cBeepTaskAction, false)]
         public int Interval
         {
             get { return this.interval; }
@@ -58,6 +70,7 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the duration. Default is 333ms. Value must be between 1 and 10000
         /// </summary>
+        [TaskAction(cBeepTaskAction, false)]
         public int Duration
         {
             get { return this.duration; }
@@ -67,6 +80,7 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the repeat. Default is 1. Value must be between 1 and 20
         /// </summary>
+        [TaskAction(cBeepTaskAction, false)]
         public int Repeat
         {
             get { return this.repeat; }
@@ -76,6 +90,7 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the frequency. Default is 600hz. Value must be between 37 and 32767
         /// </summary>
+        [TaskAction(cBeepTaskAction, false)]
         public int Frequency
         {
             get { return this.frequency; }
@@ -85,27 +100,33 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Set the title of the console
         /// </summary>
+        [TaskAction(cBeepTaskAction, false)]
+        [TaskAction(cReadLineTaskAction, false)]
         public string Title { get; set; }
 
         /// <summary>
         /// The message to prompt the user for input. Default is "Please enter a response and press [Enter]:"
         /// </summary>
+        [TaskAction(cReadLineTaskAction, false)]
         public string UserPrompt { get; set; }
 
         /// <summary>
         /// Sets the UserResponse to lower text
         /// </summary>
+        [TaskAction(cReadLineTaskAction, false)]
         public bool ToLower { get; set; }
 
         /// <summary>
         /// Sets the UserResponse to uppper text
         /// </summary>
+        [TaskAction(cReadLineTaskAction, false)]
         public bool ToUpper { get; set; }
 
         /// <summary>
         /// Gets the response that the user typed
         /// </summary>
         [Output]
+        [TaskAction(cReadLineTaskAction, false)]
         public string UserResponse { get; set; }
 
         /// <summary>

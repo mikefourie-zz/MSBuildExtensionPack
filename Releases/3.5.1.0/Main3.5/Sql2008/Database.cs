@@ -97,15 +97,64 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// </example>
     public class Database : BaseTask
     {
+        private const string cBackupTaskAction = "Backup";
+        private const string cCheckExistsTaskAction = "CheckExists";
+        private const string cCreateTaskAction = "Create";
+        private const string cDeleteTaskAction = "Delete";
+        private const string cDeleteBackupHistoryTaskAction = "DeleteBackupHistory";
+        private const string cGetConnectionCountTaskAction = "GetConnectionCount";
+        private const string cGetInfoTaskAction = "GetInfo";
+        private const string cRenameTaskAction = "Rename";
+        private const string cRestoreTaskAction = "Restore";
+        private const string cScriptTaskAction = "Script";
+        private const string cSetOfflineTaskAction = "SetOffline";
+        private const string cSetOnlineTaskAction = "SetOnline";
+        private const string cVerifyBackupTaskAction = "VerifyBackup";	
+
         private bool trustedConnection;
         private SMO.Server sqlServer;
         private BackupActionType backupAction = BackupActionType.Database;
         private RestoreActionType restoreAction = RestoreActionType.Database;
         private int notificationInterval = 10;
 
+		/// <summary>
+		/// Sets the TaskAction.
+		/// </summary>
+        [DropdownValue(cBackupTaskAction)]
+        [DropdownValue(cCheckExistsTaskAction)]
+        [DropdownValue(cCreateTaskAction)]
+        [DropdownValue(cDeleteTaskAction)]
+        [DropdownValue(cDeleteBackupHistoryTaskAction)]
+        [DropdownValue(cGetConnectionCountTaskAction)]
+        [DropdownValue(cGetInfoTaskAction)]
+        [DropdownValue(cRenameTaskAction)]
+        [DropdownValue(cRestoreTaskAction)]
+        [DropdownValue(cScriptTaskAction)]
+        [DropdownValue(cSetOfflineTaskAction)]
+        [DropdownValue(cSetOnlineTaskAction)]
+        [DropdownValue(cVerifyBackupTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+
+        }
         /// <summary>
         /// Set to true to create a NonPooledConnection to the server. Default is false.
         /// </summary>
+        [TaskAction(cBackupTaskAction, false)]
+        [TaskAction(cCheckExistsTaskAction, false)]
+        [TaskAction(cCreateTaskAction, false)]
+        [TaskAction(cDeleteTaskAction, false)]
+        [TaskAction(cDeleteBackupHistoryTaskAction, false)]
+        [TaskAction(cGetConnectionCountTaskAction, false)]
+        [TaskAction(cGetInfoTaskAction, false)]
+        [TaskAction(cRenameTaskAction, false)]
+        [TaskAction(cRestoreTaskAction, false)]
+        [TaskAction(cScriptTaskAction, false)]
+        [TaskAction(cSetOfflineTaskAction, false)]
+        [TaskAction(cSetOnlineTaskAction, false)]
+        [TaskAction(cVerifyBackupTaskAction, false)]
         public bool NoPooling { get; set; }
 
         /// <summary>
@@ -116,6 +165,8 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Set to true to perform an Incremental backup. Default is false.
         /// </summary>
+        [TaskAction(cBackupTaskAction, false)]
+        [TaskAction(cRestoreTaskAction, false)]
         public bool Incremental { get; set; }
 
         /// <summary>
@@ -126,6 +177,19 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the database name
         /// </summary>
+        [TaskAction(cBackupTaskAction, true)]
+        [TaskAction(cCheckExistsTaskAction, true)]
+        [TaskAction(cCreateTaskAction, true)]
+        [TaskAction(cDeleteTaskAction, true)]
+        [TaskAction(cDeleteBackupHistoryTaskAction, true)]
+        [TaskAction(cGetConnectionCountTaskAction, true)]
+        [TaskAction(cGetInfoTaskAction, true)]
+        [TaskAction(cRenameTaskAction, true)]
+        [TaskAction(cRestoreTaskAction, true)]
+        [TaskAction(cScriptTaskAction, true)]
+        [TaskAction(cSetOfflineTaskAction, true)]
+        [TaskAction(cSetOnlineTaskAction, true)]
+        [TaskAction(cVerifyBackupTaskAction, true)]
         public ITaskItem DatabaseItem { get; set; }
 
         /// <summary>
@@ -136,6 +200,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the type of backup action to perform. Supports Database, Files and Log. Default is Database
         /// </summary>
+        [TaskAction(cBackupTaskAction, false)]
         public string BackupAction
         {
             get { return this.backupAction.ToString(); }
@@ -145,6 +210,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the type of restore action to perform. Supports Database, Files, Log, OnlineFiles, OnlinePage. Default is Database
         /// </summary>
+        [TaskAction(cRestoreTaskAction, false)]
         public string RestoreAction
         {
             get { return this.restoreAction.ToString(); }
@@ -154,6 +220,8 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the PercentCompleteNotification interval. Defaults to 10.
         /// </summary>
+        [TaskAction(cBackupTaskAction, false)]
+        [TaskAction(cRestoreTaskAction, false)]
         public int NotificationInterval
         {
             get { return this.notificationInterval; }
@@ -163,6 +231,8 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the DataFilePath.
         /// </summary>
+        [TaskAction(cBackupTaskAction, true)]
+        [TaskAction(cRestoreTaskAction, true)]
         public ITaskItem DataFilePath { get; set; }
 
         /// <summary>
@@ -173,12 +243,14 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the OutputFilePath.
         /// </summary>
+        [TaskAction(cScriptTaskAction, true)]
         public ITaskItem OutputFilePath { get; set; }
 
         /// <summary>
         /// Gets whether the database exists
         /// </summary>
         [Output]
+        [TaskAction(cCheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
