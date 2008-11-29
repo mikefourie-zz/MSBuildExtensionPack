@@ -54,6 +54,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>    
     /// </example>
+	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/e2afb52c-e056-ed76-7503-c57fc3125f66.htm")]
     public class StyleCop : BaseTask
     {
         private const string ScanTaskAction = "Scan";

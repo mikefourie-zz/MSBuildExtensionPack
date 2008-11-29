@@ -40,6 +40,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// </Project>
     /// ]]></code>    
     /// </example>
+	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/0ca6e6da-6c91-f2ad-1a19-487eef1b918b.htm")]
     public class Server : BaseTask
     {
         private const string GetConnectionCountTaskAction = "GetConnectionCount";

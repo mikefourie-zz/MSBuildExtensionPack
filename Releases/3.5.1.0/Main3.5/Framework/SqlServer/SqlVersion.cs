@@ -90,6 +90,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Target>
     /// ]]></code>    
     /// </example>  
+	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/06b83f53-4095-37cf-ffd4-9a0549a8f3e6.htm")]
     public class SqlVersion : BaseTask
     {
         private int fieldToIncrement;
