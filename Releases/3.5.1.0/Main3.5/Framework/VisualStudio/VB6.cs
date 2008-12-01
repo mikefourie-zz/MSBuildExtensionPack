@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
     public class VB6 : BaseTask
     {
         private const string BuildTaskAction = "Build";      

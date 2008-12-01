@@ -50,7 +50,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
         private const string CreateTaskAction = "Create";

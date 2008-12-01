@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
     public class FxCop : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";

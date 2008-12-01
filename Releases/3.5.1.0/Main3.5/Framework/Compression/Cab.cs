@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>
-	[HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/f7724cf2-0498-92d8-ba0f-26ca4772d8ee.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/f7724cf2-0498-92d8-ba0f-26ca4772d8ee.htm")]
     public class Cab : BaseTask
     {
         private const string AddFileTaskAction = "AddFile";
