@@ -67,34 +67,55 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
     public class Zip : BaseTask
     {
-        private ZipOutputStream zos;
+        private const string CreateTaskAction = "Create";
+        private const string ExtractTaskAction = "Extract";
+        
+        private ZipOutputStream zipOutStream;
+
+        /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(ExtractTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the files to Compress
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] CompressFiles { set; get; }
 
         /// <summary>
         /// Sets the Path to Zip.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem CompressPath { get; set; }
 
         /// <summary>
         /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem RemoveRoot { get; set; }
 
         /// <summary>
         /// Sets the name of the Zip File
         /// </summary>
         [Required]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ZipFileName { get; set; }
 
         /// <summary>
         /// Path to extract the zip file to
         /// </summary>
+        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ExtractPath { get; set; }
 
         /// <summary>
@@ -134,7 +155,7 @@ namespace MSBuild.ExtensionPack.Compression
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating ZipFile: {0}", this.ZipFileName));
-            this.zos = new ZipOutputStream(new java.io.FileOutputStream(this.ZipFileName.GetMetadata("FullPath")));
+            this.zipOutStream = new ZipOutputStream(new java.io.FileOutputStream(this.ZipFileName.GetMetadata("FullPath")));
             try
             {
                 if (this.CompressFiles != null)
@@ -158,14 +179,14 @@ namespace MSBuild.ExtensionPack.Compression
 
                         ZipEntry z = new ZipEntry(zipentry);
                         z.setMethod(ZipEntry.DEFLATED);
-                        this.zos.putNextEntry(z);
+                        this.zipOutStream.putNextEntry(z);
                         try
                         {
                             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0}", zipentry));
                             java.io.FileInputStream s = new java.io.FileInputStream(filePath);
                             try
                             {
-                                CopyStream(s, this.zos);
+                                CopyStream(s, this.zipOutStream);
                             }
                             finally
                             {
@@ -174,7 +195,7 @@ namespace MSBuild.ExtensionPack.Compression
                         }
                         finally
                         {
-                            this.zos.closeEntry();
+                            this.zipOutStream.closeEntry();
                         }
                     }
                 }
@@ -192,14 +213,14 @@ namespace MSBuild.ExtensionPack.Compression
             }
             finally
             {
-                this.zos.close();
+                this.zipOutStream.close();
             }
         }
 
-        private void ProcessFolder(IEnumerable<FileSystemInfo> filseSysInfo)
+        private void ProcessFolder(IEnumerable<FileSystemInfo> fileSysInfo)
         {
             // Iterate through each item.
-            foreach (FileSystemInfo i in filseSysInfo)
+            foreach (FileSystemInfo i in fileSysInfo)
             {
                 // Check to see if this is a DirectoryInfo object.
                 if (i is DirectoryInfo)
@@ -224,8 +245,8 @@ namespace MSBuild.ExtensionPack.Compression
                     zipentry += @"/";
                     ZipEntry z = new ZipEntry(zipentry);
                     z.setMethod(ZipEntry.DEFLATED);
-                    this.zos.putNextEntry(z);
-                    this.zos.closeEntry();
+                    this.zipOutStream.putNextEntry(z);
+                    this.zipOutStream.closeEntry();
 
                     // Cast the object to a DirectoryInfo object.
                     DirectoryInfo dirInfo = (DirectoryInfo)i;
@@ -252,14 +273,14 @@ namespace MSBuild.ExtensionPack.Compression
 
                     ZipEntry z = new ZipEntry(zipentry);
                     z.setMethod(ZipEntry.DEFLATED);
-                    this.zos.putNextEntry(z);
+                    this.zipOutStream.putNextEntry(z);
                     try
                     {
                         this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding File: {0}", zipentry));
                         java.io.FileInputStream s = new java.io.FileInputStream(filePath);
                         try
                         {
-                            CopyStream(s, this.zos);
+                            CopyStream(s, this.zipOutStream);
                         }
                         finally
                         {
@@ -268,7 +289,7 @@ namespace MSBuild.ExtensionPack.Compression
                     }
                     finally
                     {
-                        this.zos.closeEntry();
+                        this.zipOutStream.closeEntry();
                     }
                 }
             }
@@ -290,7 +311,7 @@ namespace MSBuild.ExtensionPack.Compression
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Extracting ZipFile: {0} to: {1}", this.ZipFileName, this.ExtractPath));
             ZipFile zf = new ZipFile(this.ZipFileName.GetMetadata("FullPath"));
-            foreach (ZipEntry zipEntry in new EnumerationWrapper(zf.entries()))
+            foreach (ZipEntry zipEntry in new EnumerationWrapperCollection(zf.entries()))
             {
                 java.io.InputStream s = zf.getInputStream(zipEntry);
                 try

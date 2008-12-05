@@ -79,25 +79,44 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
     public class Assembly : BaseTask
     {
+        private const string GetInfoTaskAction = "GetInfo";
+        private const string GetMethodInfoTaskAction = "GetMethodInfo";
+        private const string InvokeTaskAction = "Invoke";
+        
         private System.Reflection.Assembly assembly;
         private List<ITaskItem> outputItems;
+
+        [DropdownValue(GetInfoTaskAction)]
+        [DropdownValue(GetMethodInfoTaskAction)]
+        [DropdownValue(InvokeTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the name of the Assembly
         /// </summary>
         [Required]
+        [TaskAction(GetInfoTaskAction, true)]
+        [TaskAction(GetMethodInfoTaskAction, true)]
+        [TaskAction(InvokeTaskAction, true)]
         public ITaskItem NetAssembly { get; set; }
 
         /// <summary>
         /// Sets the name of the Class
         /// </summary>
+        [TaskAction(GetMethodInfoTaskAction, true)]
         public string NetClass { get; set; }
 
         /// <summary>
         /// Sets the name of the Method. If this is not provided, a call is made to the default constructor.
         /// </summary>
+        [TaskAction(InvokeTaskAction, false)]
         public string NetMethod { get; set; }
 
         /// <summary>
@@ -112,6 +131,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para/>For a call to GetInfo, OutputItems provides the following metadata: AssemblyVersion, FileVersion, Culture, CultureDisplayName, FullName, PublicKeyToken
         /// </summary>
         [Output]
+        [TaskAction(GetInfoTaskAction, false)]
+        [TaskAction(GetMethodInfoTaskAction, false)]
         public ITaskItem[] OutputItems
         {
             get { return this.outputItems.ToArray(); }
@@ -124,6 +145,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///        <Type>int</Type>
         ///    </Args>
         /// </summary>
+        [TaskAction(InvokeTaskAction, false)]
         public ITaskItem[] NetArguments { get; set; }
 
         protected override void InternalExecute()

@@ -11,6 +11,12 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     /// <summary>
     /// The SqlVersion task provides the ability to manage multiple build versions in a simple database table.
+    /// <para />
+    /// <b>Valid TaskActions are:</b>
+    /// <para><i>GetVersion</i> (<b>Required: </b>BuildName, DatabaseName <b>Optional: </b>Delimiter, FieldToIncrement, PaddingCount, PaddingDigit <b>Output: </b>Build, Major, Minor, Revision, Version)</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// </summary>
+    /// <remarks>
     /// <para/>
     /// The following TSql can be used to create the supported table structure:
     /// <para/>
@@ -47,7 +53,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetVersion</i> (<b>Required: </b> BuildName, DatabaseName <b>Optional:</b> FieldToIncrement, Delimiter, PaddingCount, PaddingDigit <b>Output: </b>Major, Minor, Build, Revision, Version)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
-    /// </summary>
+    /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Target Name="BuildNumberOverrideTarget">
@@ -84,11 +90,12 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Target>
     /// ]]></code>    
     /// </example>  
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/06b83f53-4095-37cf-ffd4-9a0549a8f3e6.htm")]
     public class SqlVersion : BaseTask
     {
         private int fieldToIncrement;
         private bool trustedConnection;
-        private SqlVersionDataClass dblinq;
+        private SqlVersionDataClass databaseLinq;
         private string delimiter = ".";
 
         /// <summary>
@@ -172,7 +179,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             }
 
             string conStr = this.trustedConnection ? string.Format(CultureInfo.CurrentCulture, @"Data Source={0};Initial Catalog={1};Integrated Security=True", this.MachineName, this.DatabaseName) : string.Format(CultureInfo.CurrentCulture, @"Data Source={0};Initial Catalog={1};UID={2};PWD={3}", this.MachineName, this.DatabaseName, this.UserName, this.UserPassword);
-            using (this.dblinq = new SqlVersionDataClass(conStr))
+            using (this.databaseLinq = new SqlVersionDataClass(conStr))
             {
                 switch (this.TaskAction)
                 {
@@ -192,7 +199,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
             using (TransactionScope ts = new TransactionScope())
             {
-                var query = this.dblinq.BuildNumbers.Where(r => r.SequenceName == this.BuildName);
+                var query = this.databaseLinq.BuildNumbers.Where(r => r.SequenceName == this.BuildName);
                 
                 var row = query.Single();
                 switch (this.fieldToIncrement)
@@ -224,7 +231,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 this.Build = row.Build.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
                 this.Revision = row.Increment;
                 this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", row.Major, row.Minor, row.Build.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), row.Increment, this.Delimiter);
-                this.dblinq.SubmitChanges();
+                this.databaseLinq.SubmitChanges();
                 ts.Complete();
             }
         }

@@ -63,30 +63,73 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
+        private const string AddApplicationTaskAction = "AddApplication";
+        private const string AddVirtualDirectoryTaskAction = "AddVirtualDirectory";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string CreateTaskAction = "Create";
+        private const string DeleteTaskAction = "Delete";
+        private const string GetInfoTaskAction = "GetInfo";
+        private const string ModifyPathTaskAction = "ModifyPath";
+        private const string StartTaskAction = "Start";
+        private const string StopTaskAction = "Stop";
+
         private ServerManager iisServerManager;
         private Site website;
+
+        /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(AddApplicationTaskAction)]
+        [DropdownValue(AddVirtualDirectoryTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(GetInfoTaskAction)]
+        [DropdownValue(ModifyPathTaskAction)]
+        [DropdownValue(StartTaskAction)]
+        [DropdownValue(StopTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the name of the Website
         /// </summary>
         [Required]
+        [TaskAction(AddApplicationTaskAction, true)]
+        [TaskAction(AddVirtualDirectoryTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(GetInfoTaskAction, true)]
+        [TaskAction(ModifyPathTaskAction, true)]
+        [TaskAction(StartTaskAction, true)]
+        [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// ITaskItem of Applications
         /// </summary>
+        [TaskAction(AddApplicationTaskAction, true)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Applications { get; set; }
 
         /// <summary>
         /// ITaskItem of VirtualDirectories
         /// </summary>
+        [TaskAction(AddVirtualDirectoryTaskAction, true)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] VirtualDirectories { get; set; }
 
         /// <summary>
         /// Sets the path.
         /// </summary>
+        [TaskAction(CreateTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
@@ -97,23 +140,27 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the port.
         /// </summary>
+        [TaskAction(CreateTaskAction, true)]
         public int Port { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Gets the site id. [Output]
         /// </summary>
         [Output]
+        [TaskAction(GetInfoTaskAction, false)]
         public long SiteId { get; set; }
 
         /// <summary>
         /// Gets the SiteInfo Item. Identity = Name, MetaData = ApplicationPoolName, PhysicalPath, Id, State
         /// </summary>
         [Output]
+        [TaskAction(GetInfoTaskAction, false)]
         public ITaskItem SiteInfo { get; set; }
 
         /// <summary>
@@ -126,6 +173,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the website exists
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
@@ -162,7 +210,7 @@ namespace MSBuild.ExtensionPack.Web
                         break;
                     case "Start":
                     case "Stop":
-                        this.ControlWebSite();
+                        this.ControlWebsite();
                         break;
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -249,7 +297,7 @@ namespace MSBuild.ExtensionPack.Web
             this.iisServerManager.CommitChanges();
         }
 
-        private void ControlWebSite()
+        private void ControlWebsite()
         {
             if (!this.SiteExists())
             {

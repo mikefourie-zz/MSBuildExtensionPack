@@ -93,54 +93,77 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
+        private const string TransformTaskAction = "Transform";
+        private const string ValidateTaskAction = "Validate";
+        
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
+
+        [DropdownValue(TransformTaskAction)]
+        [DropdownValue(ValidateTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the XmlFile
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
+        [TaskAction(ValidateTaskAction, false)]
         public string XmlFile { get; set; }
 
         /// <summary>
         /// Sets the XslTransformFile
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
         public string XslTransformFile { get; set; }
 
         /// <summary>
         /// Sets the XmlFile
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
+        [TaskAction(ValidateTaskAction, false)]
         public string Xml { get; set; }
 
         /// <summary>
         /// Sets the XslTransformFile
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
         public string XslTransform { get; set; }
 
         /// <summary>
         /// Sets the OutputFile
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
         public string OutputFile { get; set; }
 
         /// <summary>
         /// Sets the Schema Files collection
         /// </summary>
+        [TaskAction(ValidateTaskAction, true)]
         public ITaskItem[] SchemaFiles { get; set; }
 
         /// <summary>
         /// Set the OmitXmlDeclaration option for TransForm. Default is False
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
         public bool OmitXmlDeclaration { get; set; }
 
         /// <summary>
         /// Set the Indent option for TransForm. Default is False
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
         public bool Indent { get; set; }
 
         /// <summary>
         /// Set the Encoding option for TransForm. Default is UTF8
         /// </summary>
+        [TaskAction(TransformTaskAction, false)]
         public string TextEncoding
         {
             get { return this.fileEncoding.ToString(); }
@@ -151,12 +174,15 @@ namespace MSBuild.ExtensionPack.Xml
         /// Gets whether an XmlFile is valid xml
         /// </summary>
         [Output]
+        [TaskAction(ValidateTaskAction, false)]
         public bool IsValid { get; set; }
 
         /// <summary>
         /// Get the Output
         /// </summary>
         [Output]
+        [TaskAction(ValidateTaskAction, false)]
+        [TaskAction(TransformTaskAction, false)]
         public string Output { get; set; }
 
         /// <summary>
@@ -196,7 +222,7 @@ namespace MSBuild.ExtensionPack.Xml
             switch (this.TaskAction)
             {
                 case "TransForm":
-                    this.TransForm();
+                    this.Transform();
                     break;
                 case "Validate":
                     this.Validate();
@@ -207,7 +233,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
         }
 
-        private void TransForm()
+        private void Transform()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Transforming: {0}", this.XmlFile));
             XDocument xslDoc;

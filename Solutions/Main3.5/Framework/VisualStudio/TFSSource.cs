@@ -58,64 +58,137 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
     public class TfsSource : BaseTask
     {
-        private string tfexe;
+        private const string AddTaskAction = "Add";
+        private const string CheckinTaskAction = "Checkin";
+        private const string CheckoutTaskAction = "Checkout";
+        private const string DeleteTaskAction = "Delete";
+        private const string GetTaskAction = "Get";
+        private const string MergeTaskAction = "Merge";
+        private const string GetPendingChangesTaskAction = "GetPendingChanges";
+        private const string UndoCheckoutTaskAction = "UndoCheckout";
+        private const string UndeleteTaskAction = "Undelete";
+        
+        private string teamFoundationExe;
         private string version = "2008";
         private bool recursive = true;
         private ShellWrapper shellWrapper;
-        private string itemspec = string.Empty;
+        private string itemSpec = string.Empty;
         private int returnValue;
         private string returnOutput;
+
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(CheckinTaskAction)]
+        [DropdownValue(CheckoutTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(GetTaskAction)]
+        [DropdownValue(MergeTaskAction)]
+        [DropdownValue(GetPendingChangesTaskAction)]
+        [DropdownValue(UndoCheckoutTaskAction)]
+        [DropdownValue(UndeleteTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the version spec for Get
         /// </summary>
+        [TaskAction(MergeTaskAction, false)]
         public string VersionSpec { get; set; }
 
         /// <summary>
         /// Forces all files to be retrieved, not just those that are out-of-date.
         /// </summary>
+        [TaskAction(GetTaskAction, false)]
         public bool All { get; set; }
 
         /// <summary>
         /// Overwrites writable files that are not checked out.
         /// </summary>
+        [TaskAction(GetTaskAction, false)]
         public bool Overwrite { get; set; }
 
         /// <summary>
         /// Implies All and Overwrite.
         /// </summary>
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(MergeTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Set to true to perform a merge without a basis version
         /// </summary>
+        [TaskAction(MergeTaskAction, false)]
         public bool Baseless { get; set; }
 
         /// <summary>
         /// Sets the TFS Server
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckinTaskAction, false)]
+        [TaskAction(CheckoutTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(MergeTaskAction, false)]
+        [TaskAction(GetPendingChangesTaskAction, true)]
+        [TaskAction(UndoCheckoutTaskAction, false)]
+        [TaskAction(UndeleteTaskAction, false)]
         public string Server { get; set; }
 
         /// <summary>
         /// Sets the files or folders to use.
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckinTaskAction, false)]
+        [TaskAction(CheckoutTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(MergeTaskAction, false)]
+        [TaskAction(GetPendingChangesTaskAction, true)]
+        [TaskAction(UndoCheckoutTaskAction, false)]
+        [TaskAction(UndeleteTaskAction, false)]
         public string ItemPath { get; set; }
 
         /// <summary>
         /// Sets the Item Collection of files to use.
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckinTaskAction, false)]
+        [TaskAction(CheckoutTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(UndoCheckoutTaskAction, false)]
+        [TaskAction(UndeleteTaskAction, false)]
         public ITaskItem[] ItemCol { get; set; }
 
         /// <summary>
         /// Sets the working directory. If the directory is mapped in a workspace, then there is no need to specify the Server.
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckinTaskAction, false)]
+        [TaskAction(CheckoutTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(UndoCheckoutTaskAction, false)]
+        [TaskAction(UndeleteTaskAction, false)]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Sets the version of Tfs. Default is 2008
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckinTaskAction, false)]
+        [TaskAction(CheckoutTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(MergeTaskAction, false)]
+        [TaskAction(GetPendingChangesTaskAction, true)]
+        [TaskAction(UndoCheckoutTaskAction, false)]
+        [TaskAction(UndeleteTaskAction, false)]
         public string Version
         {
             get { return this.version; }
@@ -125,21 +198,33 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the comments.
         /// </summary>
+        [TaskAction(CheckinTaskAction, false)]
         public string Comments { get; set; }
 
         /// <summary>
         /// Sets the Destination for a Merge
         /// </summary>
+        [TaskAction(MergeTaskAction, false)]
         public string Destination { get; set; }
 
         /// <summary>
         /// Sets the notes.
         /// </summary>
+        [TaskAction(CheckinTaskAction, false)]
         public string Notes { get; set; }
 
         /// <summary>
         /// Sets whether the Tfs operation should be recursive. Default is true.
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckinTaskAction, false)]
+        [TaskAction(CheckoutTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(MergeTaskAction, false)]
+        [TaskAction(GetPendingChangesTaskAction, true)]
+        [TaskAction(UndoCheckoutTaskAction, false)]
+        [TaskAction(UndeleteTaskAction, false)]
         public bool Recursive
         {
             get { return this.recursive; }
@@ -150,12 +235,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Gets the pending changes in the format '/Format:detailed'
         /// </summary>
         [Output]
+        [TaskAction(GetPendingChangesTaskAction, true)]
         public string PendingChanges { get; set; }
 
         /// <summary>
         /// Gets whether pending changes exist for a given ItemPath
         /// </summary>
         [Output]
+        [TaskAction(GetPendingChangesTaskAction, true)]
         public bool PendingChangesExist { get; set; }
 
         /// <summary>
@@ -335,7 +422,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemspec, options);
+            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemSpec, options);
             if (string.IsNullOrEmpty(this.OverrideText) == false)
             {
                 arguments += " /override:\"" + this.OverrideText + "\"";
@@ -353,7 +440,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             arguments += " " + lastOptions;
 
-            this.shellWrapper = new ShellWrapper(this.tfexe, arguments);
+            this.shellWrapper = new ShellWrapper(this.teamFoundationExe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
@@ -378,12 +465,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 foreach (ITaskItem i in this.ItemCol)
                 {
-                    this.itemspec += "\"" + i.ItemSpec + "\" ";
+                    this.itemSpec += "\"" + i.ItemSpec + "\" ";
                 }
             }
             else
             {
-                this.itemspec = "\"" + this.ItemPath + "\"";
+                this.itemSpec = "\"" + this.ItemPath + "\"";
             }
 
             return true;
@@ -422,13 +509,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(vstools))
             {
-                this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.teamFoundationExe = Path.Combine(vstools, @"..\IDE\tf.exe");
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.teamFoundationExe));
             }
 
-            if (!File.Exists(this.tfexe))
+            if (!File.Exists(this.teamFoundationExe))
             {
-                this.tfexe = "tf.exe";
+                this.teamFoundationExe = "tf.exe";
                 this.LogTaskMessage(MessageImportance.Low, "Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
             }
         }

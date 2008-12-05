@@ -55,29 +55,55 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
+        private const string AddSecurityTaskAction = "CountLines";
+        private const string DeleteAllTaskAction = "DeleteAll";
+        private const string MoveTaskAction = "Move";
+        private const string RemoveContentTaskAction = "RemoveContent";
+        private const string RemoveSecurityTaskAction = "RemoveSecurity";
+        
         private AccessControlType accessType = AccessControlType.Allow;
+
+        [DropdownValue(AddSecurityTaskAction)]
+        [DropdownValue(DeleteAllTaskAction)]
+        [DropdownValue(MoveTaskAction)]
+        [DropdownValue(RemoveContentTaskAction)]
+        [DropdownValue(RemoveSecurityTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the path to remove content from, or the base path for Delete
         /// </summary>
         [Required]
+        [TaskAction(AddSecurityTaskAction, true)]
+        [TaskAction(DeleteAllTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
+        [TaskAction(RemoveContentTaskAction, true)]
+        [TaskAction(RemoveSecurityTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets the regular expression to match in the name of a folder for Delete. Case is ignored.
         /// </summary>
+        [TaskAction(DeleteAllTaskAction, true)]
         public string Match { get; set; }
 
         /// <summary>
         /// Sets the TargetPath for a renamed folder
         /// </summary>
+        [TaskAction(MoveTaskAction, true)]
         public string TargetPath { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to delete readonly files when performing RemoveContent
         /// </summary>
+        [TaskAction(RemoveContentTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -86,11 +112,15 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <para/>     <Permission>Read,etc</Permission>
         /// <para/> </UsersCol>
         /// </summary>
+        [TaskAction(AddSecurityTaskAction, true)]
+        [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
+        [TaskAction(AddSecurityTaskAction, false)]
+        [TaskAction(RemoveSecurityTaskAction, false)]
         public string AccessType
         {
             get { return this.accessType.ToString(); }
@@ -217,9 +247,9 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.ProcessDeleteAll(d);
         }
 
-        private void ProcessDeleteAll(DirectoryInfo d)
+        private void ProcessDeleteAll(DirectoryInfo dirInfo)
         {
-            foreach (DirectoryInfo child in d.GetDirectories())
+            foreach (DirectoryInfo child in dirInfo.GetDirectories())
             {
                 // Load the regex to use
                 Regex reg = new Regex(this.Match, RegexOptions.IgnoreCase | RegexOptions.Compiled);

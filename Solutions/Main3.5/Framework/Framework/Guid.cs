@@ -40,26 +40,42 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/ceb07d01-751c-0c5a-09b3-fc712ace6f13.htm")]
     public class Guid : BaseTask
     {
-        private System.Guid internalguid;
+        private const string CreateTaskAction = "Create";
+        private const string CreateCryptoTaskAction = "CreateCrypto";
+        
+        private System.Guid internalGuid;
+
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(CreateCryptoTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// 32 digits separated by hyphens: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         /// </summary>
         [Output]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(CreateCryptoTaskAction, false)]
         public string[] FormattedGuidString
         {
-            get { return new[] { this.internalguid.ToString("D", CultureInfo.CurrentCulture) }; }
+            get { return new[] { this.internalGuid.ToString("D", CultureInfo.CurrentCulture) }; }
         }
 
         /// <summary>
         /// 32 digits: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         /// </summary>
         [Output]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(CreateCryptoTaskAction, false)]
         public string[] GuidString
         {
-            get { return new[] { this.internalguid.ToString("N", CultureInfo.CurrentCulture) }; }
+            get { return new[] { this.internalGuid.ToString("N", CultureInfo.CurrentCulture) }; }
         }
 
         /// <summary>
@@ -92,7 +108,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void Get()
         {
             this.LogTaskMessage("Getting random GUID");
-            this.internalguid = System.Guid.NewGuid();
+            this.internalGuid = System.Guid.NewGuid();
         }
 
         /// <summary>
@@ -104,7 +120,7 @@ namespace MSBuild.ExtensionPack.Framework
             byte[] data = new byte[16];
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             rng.GetBytes(data);
-            this.internalguid = new System.Guid(data);
+            this.internalGuid = new System.Guid(data);
         }
     }
 }

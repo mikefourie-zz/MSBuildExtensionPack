@@ -34,9 +34,9 @@
             <MyValidXml>
                 <![CDATA[
                 <D>
-	                <Name full="Mike" type="3f3">
-		                <Place>aPlace</Place>
-	                </Name>
+                    <Name full="Mike" type="3f3">
+                        <Place>aPlace</Place>
+                    </Name>
                 </D>]]>
             </MyValidXml>
         </PropertyGroup>

@@ -95,8 +95,23 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/599c249c-bc36-8b71-c6f4-935708b18eb8.htm")]
     public class Database : BaseTask
     {
+        private const string BackupTaskAction = "Backup";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string CreateTaskAction = "Create";
+        private const string DeleteTaskAction = "Delete";
+        private const string DeleteBackupHistoryTaskAction = "DeleteBackupHistory";
+        private const string GetConnectionCountTaskAction = "GetConnectionCount";
+        private const string GetInfoTaskAction = "GetInfo";
+        private const string RenameTaskAction = "Rename";
+        private const string RestoreTaskAction = "Restore";
+        private const string ScriptTaskAction = "Script";
+        private const string SetOfflineTaskAction = "SetOffline";
+        private const string SetOnlineTaskAction = "SetOnline";
+        private const string VerifyBackupTaskAction = "VerifyBackup";
+
         private bool trustedConnection;
         private SMO.Server sqlServer;
         private BackupActionType backupAction = BackupActionType.Database;
@@ -104,8 +119,43 @@ namespace MSBuild.ExtensionPack.Sql2008
         private int notificationInterval = 10;
 
         /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(BackupTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(DeleteBackupHistoryTaskAction)]
+        [DropdownValue(GetConnectionCountTaskAction)]
+        [DropdownValue(GetInfoTaskAction)]
+        [DropdownValue(RenameTaskAction)]
+        [DropdownValue(RestoreTaskAction)]
+        [DropdownValue(ScriptTaskAction)]
+        [DropdownValue(SetOfflineTaskAction)]
+        [DropdownValue(SetOnlineTaskAction)]
+        [DropdownValue(VerifyBackupTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
+        /// <summary>
         /// Set to true to create a NonPooledConnection to the server. Default is false.
         /// </summary>
+        [TaskAction(BackupTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(DeleteBackupHistoryTaskAction, false)]
+        [TaskAction(GetConnectionCountTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
+        [TaskAction(RestoreTaskAction, false)]
+        [TaskAction(ScriptTaskAction, false)]
+        [TaskAction(SetOfflineTaskAction, false)]
+        [TaskAction(SetOnlineTaskAction, false)]
+        [TaskAction(VerifyBackupTaskAction, false)]
         public bool NoPooling { get; set; }
 
         /// <summary>
@@ -116,6 +166,8 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Set to true to perform an Incremental backup. Default is false.
         /// </summary>
+        [TaskAction(BackupTaskAction, false)]
+        [TaskAction(RestoreTaskAction, false)]
         public bool Incremental { get; set; }
 
         /// <summary>
@@ -126,6 +178,19 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the database name
         /// </summary>
+        [TaskAction(BackupTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(DeleteBackupHistoryTaskAction, true)]
+        [TaskAction(GetConnectionCountTaskAction, true)]
+        [TaskAction(GetInfoTaskAction, true)]
+        [TaskAction(RenameTaskAction, true)]
+        [TaskAction(RestoreTaskAction, true)]
+        [TaskAction(ScriptTaskAction, true)]
+        [TaskAction(SetOfflineTaskAction, true)]
+        [TaskAction(SetOnlineTaskAction, true)]
+        [TaskAction(VerifyBackupTaskAction, true)]
         public ITaskItem DatabaseItem { get; set; }
 
         /// <summary>
@@ -136,6 +201,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the type of backup action to perform. Supports Database, Files and Log. Default is Database
         /// </summary>
+        [TaskAction(BackupTaskAction, false)]
         public string BackupAction
         {
             get { return this.backupAction.ToString(); }
@@ -145,6 +211,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the type of restore action to perform. Supports Database, Files, Log, OnlineFiles, OnlinePage. Default is Database
         /// </summary>
+        [TaskAction(RestoreTaskAction, false)]
         public string RestoreAction
         {
             get { return this.restoreAction.ToString(); }
@@ -154,6 +221,8 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the PercentCompleteNotification interval. Defaults to 10.
         /// </summary>
+        [TaskAction(BackupTaskAction, false)]
+        [TaskAction(RestoreTaskAction, false)]
         public int NotificationInterval
         {
             get { return this.notificationInterval; }
@@ -163,6 +232,8 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the DataFilePath.
         /// </summary>
+        [TaskAction(BackupTaskAction, true)]
+        [TaskAction(RestoreTaskAction, true)]
         public ITaskItem DataFilePath { get; set; }
 
         /// <summary>
@@ -173,12 +244,14 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// <summary>
         /// Sets the OutputFilePath.
         /// </summary>
+        [TaskAction(ScriptTaskAction, true)]
         public ITaskItem OutputFilePath { get; set; }
 
         /// <summary>
         /// Gets whether the database exists
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>

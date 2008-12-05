@@ -1071,4 +1071,47 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Framework.AssemblyInfo" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent mixed="false">
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="AssemblyMajorVersion"/>
+                    <xs:attribute name="AssemblyMinorVersion"/>
+                    <xs:attribute name="AssemblyBuildNumber"/>
+                    <xs:attribute name="AssemblyRevision"/>
+                    <xs:attribute name="AssemblyVersion"/>
+                    <xs:attribute name="AssemblyBuildNumberType"/>
+                    <xs:attribute name="AssemblyRevisionType"/>
+                    <xs:attribute name="AssemblyBuildNumberFormat"/>
+                    <xs:attribute name="AssemblyRevisionFormat"/>
+                    <xs:attribute name="MaxAssemblyVersion"/>
+                    <xs:attribute name="AssemblyFileMajorVersion"/>
+                    <xs:attribute name="AssemblyFileMinorVersion"/>
+                    <xs:attribute name="AssemblyFileBuildNumber"/>
+                    <xs:attribute name="AssemblyFileRevision"/>
+                    <xs:attribute name="AssemblyFileVersion"/>
+                    <xs:attribute name="AssemblyFileBuildNumberType"/>
+                    <xs:attribute name="AssemblyFileRevisionType"/>
+                    <xs:attribute name="AssemblyFileBuildNumberFormat"/>
+                    <xs:attribute name="AssemblyFileRevisionFormat"/>
+                    <xs:attribute name="MaxAssemblyFileVersion"/>
+                    <xs:attribute name="AssemblyTitle"/>
+                    <xs:attribute name="AssemblyDescription"/>
+                    <xs:attribute name="AssemblyConfiguration"/>
+                    <xs:attribute name="AssemblyCompany"/>
+                    <xs:attribute name="AssemblyProduct"/>
+                    <xs:attribute name="AssemblyCopyright"/>
+                    <xs:attribute name="AssemblyTrademark"/>
+                    <xs:attribute name="AssemblyCulture"/>
+                    <xs:attribute name="AssemblyGuid"/>
+                    <xs:attribute name="AssemblyIncludeSigningInformation" />
+                    <xs:attribute name="AssemblyDelaySign"/>
+                    <xs:attribute name="AssemblyKeyFile"/>
+                    <xs:attribute name="AssemblyKeyName"/>
+                    <xs:attribute name="ComVisible"/>
+                    <xs:attribute name="AssemblyInfoFiles" use="required" />
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>

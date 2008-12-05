@@ -52,20 +52,36 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
     public class EnvironmentVariable : BaseTask
     {
+        private const string GetTaskAction = "Get";
+        private const string SetTaskAction = "Set";
+        
         private EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
+
+        [DropdownValue(GetTaskAction)]
+        [DropdownValue(SetTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Gets the value. May be a string array.
         /// </summary>
         [Output]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(SetTaskAction, true)]
         public string[] Value { get; set; }
 
         /// <summary>
         /// The name of the Environment Variable
         /// </summary>
         [Required]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]
         public string Variable { set; get; }
 
         /// <summary>

@@ -33,29 +33,47 @@ namespace MSBuild.ExtensionPack.Security
     /// </Project>
     /// ]]></code>    
     /// </example>    
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
     public class Certificate : BaseTask
     {
+        private const string AddTaskAction = "Add";
+        private const string RemoveTaskAction = "Remove";
+        
         private string storeName = "MY";
+
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(RemoveTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets a value indicating whether to use the MachineStore. Default is false
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(RemoveTaskAction, false)]
         public bool MachineStore { get; set; }
 
         /// <summary>
         /// Sets the password for the pfx file from which the certificate is to be imported, defaults to blank
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
         public string CertPassword { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether the certificate is exportable.
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
         public bool Exportable { get; set; }
 
         /// <summary>
         /// Gets the thumbprint. Used to uniquely identify certificate in further tasks
         /// </summary>
         [Output]
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(RemoveTaskAction, true)]
         public string Thumbprint { get; set; }
 
         /// <summary>
@@ -70,6 +88,8 @@ namespace MSBuild.ExtensionPack.Security
         /// TrustedPeople:        The store for directly trusted people and resources<br />
         /// TrustedPublisher:     The store for directly trusted publishers<br />
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(RemoveTaskAction, false)]
         public string StoreName
         {
             get { return this.storeName; }
@@ -79,6 +99,7 @@ namespace MSBuild.ExtensionPack.Security
         /// <summary>
         /// Sets the name of the file.
         /// </summary>
+        [TaskAction(AddTaskAction, true)]
         public ITaskItem FileName { get; set; }
 
         /// <summary>

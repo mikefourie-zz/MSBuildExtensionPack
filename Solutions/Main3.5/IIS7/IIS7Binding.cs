@@ -41,17 +41,40 @@ namespace MSBuild.ExtensionPack.Web
     ///     </Target>
     /// </Project>
     /// ]]></code>    
-    /// </example>  
+    /// </example> 
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/7a6bc9b8-0852-8ade-d496-d3fbe3d3f94b.htm")]
     public class Iis7Binding : BaseTask
     {
+        private const string AddTaskAction = "Add";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string ModifyTaskAction = "Modify";
+        private const string RemoveTaskAction = "Remove";
+        
         private ServerManager iisServerManager;
         private Site website;
         private string bindingProtocol = "http";
- 
+
+        /// <summary>
+        /// Sets the TaskAction.
+        /// </summary>
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(ModifyTaskAction)]
+        [DropdownValue(RemoveTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Sets the name of the Website
         /// </summary>
         [Required]
+        [TaskAction(AddTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(ModifyTaskAction, true)]
+        [TaskAction(RemoveTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -66,16 +89,22 @@ namespace MSBuild.ExtensionPack.Web
         /// <para/>
         /// Example: *:80:sample.example.com or : *:443:
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(ModifyTaskAction, true)]
+        [TaskAction(RemoveTaskAction, true)]
         public string BindingInformation { get; set; }
 
         /// <summary>
         /// Sets the PreviousBindingInformation to use when calling Modify
         /// </summary>
+        [TaskAction(ModifyTaskAction, true)]
         public string PreviousBindingInformation { get; set; }
 
         /// <summary>
         /// Sets the PreviousBindingProtocol to use when calling Modify
         /// </summary>
+        [TaskAction(ModifyTaskAction, true)]
         public string PreviousBindingProtocol { get; set; }
 
         /// <summary>
@@ -85,22 +114,28 @@ namespace MSBuild.ExtensionPack.Web
         /// <para/>
         /// Example: 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
         public string CertificateHash { get; set; }
 
         /// <summary>
         /// The name of the certificate store. Default is "MY" for the personal store
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
         public string CertificateStoreName { get; set; }
 
         /// <summary>
         /// Gets whether the binding exists
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Binding protocol. Example: "http", "https", "ftp". Default is http.
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(RemoveTaskAction, false)]
         public string BindingProtocol
         {
             get { return this.bindingProtocol; }
@@ -148,27 +183,27 @@ namespace MSBuild.ExtensionPack.Web
         /// Parse certificate hash from a string.
         /// </summary>
         /// <remarks>Based on code from: http://www.codeproject.com/KB/recipes/hexencoding.aspx</remarks>
-        /// <param name="hexString">hex values, can be space, dash or not-delimited</param>
+        /// <param name="hexValue">hex values, can be space, dash or not-delimited</param>
         /// <returns>byte[] encoded value</returns>
-        private static byte[] HexToData(string hexString)
+        private static byte[] HexToData(string hexValue)
         {
-            if (hexString == null)
+            if (hexValue == null)
             {
                 return null;
             }
 
-            hexString = hexString.Replace(" ", string.Empty);
-            hexString = hexString.Replace("-", string.Empty);
-            if (hexString.Length % 2 == 1)
+            hexValue = hexValue.Replace(" ", string.Empty);
+            hexValue = hexValue.Replace("-", string.Empty);
+            if (hexValue.Length % 2 == 1)
             {
                 // Up to you whether to pad the first or last byte
-                hexString = '0' + hexString;
+                hexValue = '0' + hexValue;
             }
 
-            byte[] data = new byte[hexString.Length / 2];
+            byte[] data = new byte[hexValue.Length / 2];
             for (int i = 0; i < data.Length; i++)
             {
-                data[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+                data[i] = Convert.ToByte(hexValue.Substring(i * 2, 2), 16);
             }
 
             return data;

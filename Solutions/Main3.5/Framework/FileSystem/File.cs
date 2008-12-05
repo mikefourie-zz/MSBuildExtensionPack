@@ -83,37 +83,61 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
+        private const string CountLinesTaskAction = "CountLines";
+        private const string GetChecksumTaskAction = "GetChecksum";
+        private const string FilterByContentTaskAction = "FilterByContent";
+        private const string ReplaceTaskAction = "Replace";
+        private const string SetAttributesTaskAction = "SetAttributes";
         private Encoding fileEncoding = Encoding.UTF8;
         private Regex parseRegex;
         private string[] commentIdentifiers;
         private List<ITaskItem> excludedFiles;
         private List<ITaskItem> includedFiles;
 
+        [DropdownValue(CountLinesTaskAction)]
+        [DropdownValue(GetChecksumTaskAction)]
+        [DropdownValue(FilterByContentTaskAction)]
+        [DropdownValue(ReplaceTaskAction)]
+        [DropdownValue(SetAttributesTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Sets the regex pattern.
         /// </summary>
+        [TaskAction(ReplaceTaskAction, true)]
+        [TaskAction(FilterByContentTaskAction, true)]
         public string RegexPattern { get; set; }
 
         /// <summary>
         /// The replacement text to use
         /// </summary>
+        [TaskAction(ReplaceTaskAction, false)]
         public string Replacement { get; set; }
 
         /// <summary>
         /// A path to process. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.
         /// </summary>
+        [TaskAction(GetChecksumTaskAction, true)]
+        [TaskAction(ReplaceTaskAction, false)]
         public string Path { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding.
         /// </summary>
+        [TaskAction(ReplaceTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Sets characters to be interpreted as comment identifiers. Semi-colon delimited. Only single line comments are currently supported.
         /// </summary>
+        [TaskAction(CountLinesTaskAction, false)]
         public string CommentIdentifiers
         { 
             set { this.commentIdentifiers = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); }
@@ -122,76 +146,95 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// An ItemList of files to process. If calling SetAttributes, include the attributes in an Attributes metadata tag, separated by a semicolon.
         /// </summary>
+        [TaskAction(CountLinesTaskAction, true)]
+        [TaskAction(SetAttributesTaskAction, true)]
+        [TaskAction(ReplaceTaskAction, false)]
+        [TaskAction(FilterByContentTaskAction, true)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// Gets the total number of lines counted
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
         public int TotalLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of comment lines counted
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
         public int CommentLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of empty lines countered. Whitespace is ignored.
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
         public int EmptyLinecount { get; set; }
       
         /// <summary>
         /// Gets the number of files counted
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
         public int TotalFilecount { get; set; }
 
         /// <summary>
         /// Gets the number of code lines countered. This is calculated as Total - Comment - Empty
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
         public int CodeLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of excluded files
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
+        [TaskAction(FilterByContentTaskAction, false)]
         public int ExcludedFilecount { get; set; }
 
         /// <summary>
         /// Gets the number of included files
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
+        [TaskAction(FilterByContentTaskAction, false)]
         public int IncludedFilecount { get; set; }
 
         /// <summary>
         /// Sets the maximum size of files to count
         /// </summary>
+        [TaskAction(CountLinesTaskAction, false)]
         public int MaxSize { get; set; }
 
         /// <summary>
         /// sets the minimum size of files to count
         /// </summary>
+        [TaskAction(CountLinesTaskAction, false)]
         public int MinSize { get; set; }
 
         /// <summary>
         /// Gets the time taken to count the files. Value in seconds.
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
         public string ElapsedTime { get; set; }
 
         /// <summary>
         /// Gets the file checksum
         /// </summary>
         [Output]
+        [TaskAction(GetChecksumTaskAction, false)]
         public string Checksum { get; set; }
 
         /// <summary>
         /// Item collection of files Excluded from the count.
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
+        [TaskAction(FilterByContentTaskAction, false)]
         public ITaskItem[] ExcludedFiles
         {
             get { return this.excludedFiles == null ? null : this.excludedFiles.ToArray(); }
@@ -202,6 +245,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Item collection of files included after filtering operations
         /// </summary>
         [Output]
+        [TaskAction(CountLinesTaskAction, false)]
+        [TaskAction(FilterByContentTaskAction, false)]
         public ITaskItem[] IncludedFiles
         {
             get { return this.includedFiles == null ? null : this.includedFiles.ToArray(); }
@@ -434,9 +479,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.TotalFilecount = this.IncludedFilecount + this.ExcludedFilecount;
         }
 
-        /// <summary>
-        /// Replace File
-        /// </summary>
         private void Replace()
         {
             if (!string.IsNullOrEmpty(this.TextEncoding))
@@ -474,9 +516,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the path.
-        /// </summary>
         private void ProcessPath()
         {
             string originalPath = this.Path;
@@ -527,14 +566,10 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the folder.
-        /// </summary>
-        /// <param name="filseSysInfo">The FS info.</param>
-        private void ProcessFolder(IEnumerable<FileSystemInfo> filseSysInfo)
+        private void ProcessFolder(IEnumerable<FileSystemInfo> fileSysInfo)
         {
             // Iterate through each item.
-            foreach (FileSystemInfo i in filseSysInfo)
+            foreach (FileSystemInfo i in fileSysInfo)
             {
                 // Check to see if this is a DirectoryInfo object.
                 if (i is DirectoryInfo)
@@ -553,9 +588,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Processes the collection.
-        /// </summary>
         private void ProcessCollection()
         {
             if (this.Files == null)
@@ -572,11 +604,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        /// <summary>
-        /// Parses the and replace file.
-        /// </summary>
-        /// <param name="parseFile">The parse file.</param>
-        /// <param name="checkExists">if set to <c>true</c> [check exists].</param>
         private void ParseAndReplaceFile(string parseFile, bool checkExists)
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Processing File: {0}", parseFile));

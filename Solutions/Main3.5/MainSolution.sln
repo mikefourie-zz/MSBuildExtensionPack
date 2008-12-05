@@ -2,6 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06FDB13A-E163-49EE-AC60-4EF4085DADC5}"
 	ProjectSection(SolutionItems) = preProject
+		Common\Attributes.cs = Common\Attributes.cs
 		Common\BaseTask.cs = Common\BaseTask.cs
 		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
 		Common\ExtensionPack.public.snk = Common\ExtensionPack.public.snk
@@ -20,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 		DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd = DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd = DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Sql2005.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sql2005.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Sql2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sql2008.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd = DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
