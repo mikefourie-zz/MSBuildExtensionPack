@@ -1,5 +1,6 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
+      <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -151,6 +152,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+		<Compile Include="..\Common\Attributes.cs">
+			<Link>Attributes.cs</Link>
+		</Compile>
     <Compile Include="..\Common\BaseTask.cs">
       <Link>BaseTask.cs</Link>
     </Compile>
@@ -255,7 +259,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Xml\Xml.cs" />
-  </ItemGroup>
+	</ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Application\" />
   </ItemGroup>

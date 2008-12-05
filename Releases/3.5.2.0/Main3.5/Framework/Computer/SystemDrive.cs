@@ -48,24 +48,39 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
     public class SystemDrive : BaseTask
     {
+        private const string CheckDriveSpaceTaskAction = "CheckDriveSpace";
+        private const string GetDrivesTaskAction = "GetDrives";
+        
         private List<ITaskItem> drives;
         private List<ITaskItem> skipDrives;
+
+        [DropdownValue(CheckDriveSpaceTaskAction)]
+        [DropdownValue(GetDrivesTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the unit. Supports Kb, Mb(default), Gb, Tb
         /// </summary>
+        [TaskAction(CheckDriveSpaceTaskAction, false)]
         public string Unit { get; set; }
 
         /// <summary>
         /// Sets the drive.
         /// </summary>
+        [TaskAction(CheckDriveSpaceTaskAction, true)]
         public string Drive { get; set; }
 
         /// <summary>
         /// Sets the min space.
         /// </summary>
+        [TaskAction(CheckDriveSpaceTaskAction, true)]
         public long MinSpace { get; set; }
 
         /// <summary>
@@ -76,6 +91,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Metadata: Name, VolumeLabel, AvailableFreeSpace, DriveFormat, TotalSize, TotalFreeSpace, IsReady (LocalMachine only), RootDirectory (LocalMachine only)
         /// </summary>
         [Output]
+        [TaskAction(GetDrivesTaskAction, false)]
         public ITaskItem[] Drives
         {
             get { return this.drives.ToArray(); }
@@ -85,6 +101,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the drives to skip. ITaskItem
         /// </summary>
+        [TaskAction(GetDrivesTaskAction, true)]
         public ITaskItem[] SkipDrives
         {
             get { return this.skipDrives.ToArray(); }

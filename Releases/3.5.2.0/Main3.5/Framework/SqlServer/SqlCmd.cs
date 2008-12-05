@@ -11,8 +11,8 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// Wraps the SQL Server command line executable SqlCmd.exe.
     /// <para />
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: CommandLineQuery or InputFiles </b> <b>Optional: </b>Database, DedicatedAdminConnection, DisableVariableSubstitution, EchoInput, EnableQuotedIdentifiers, Headers, LoginTimeout, LogOn, NewPassword, OutputFile, Password, QueryTimeout, RedirectStandardError, Server, SqlCmdPath, UnicodeOutput, UseClientRegionalSettings, Variables, Workstation)</para>
-    /// <para><b>Remote Execution Support:</b> NA</para>
+    /// <para><i>Execute</i> (<b>Required: </b>CommandLineQuery or InputFiles  <b>Optional: </b>Database, DedicatedAdminConnection, DisableVariableSubstitution, EchoInput, EnableQuotedIdentifiers, Headers, LoginTimeout, LogOn, NewPassword, OutputFile, Password, QueryTimeout, RedirectStandardError, Server, SqlCmdPath, UnicodeOutput, UseClientRegionalSettings, Variables, Workstation)</para>
+    /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -45,23 +45,21 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
+        private const string ExecuteTaskAction = "Execute";
         private const string ExecutionMessage = "Executing '{0}' with '{1}'";
         private const string InputFileMessage = "Adding input file '{0}'";
         private const string InvalidSqlCmdPathError = "Unable to resolve path to sqlcmd.exe. Assuming it is in the PATH environment variable.";
         private const string InvalidTaskActionError = "Invalid TaskAction passed: {0}";
-        private const string LoginTimeOutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
+        private const string LoginTimeoutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
         private const string QueryMessage = "Adding query '{0}'";
-        private const string QueryTimeOutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
-
+        private const string QueryTimeoutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
         private int loginTimeout = 8;
         private int queryTimeout;
         private string server = ".";
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlCmd"/> class.
-        /// </summary>
         public SqlCmd()
         {
             this.DisableVariableSubstitution = false;
@@ -70,9 +68,17 @@ namespace MSBuild.ExtensionPack.SqlServer
             this.UseClientRegionalSettings = false;
         }
 
+        [DropdownValue(ExecuteTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Gets or sets the path to the sqlcmd.exe.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string SqlCmdPath { get; set; }
 
 #region Login Related Options
@@ -85,6 +91,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// SQLCMDUSER</i> environment variable takes precedence over the <i>OSQLUSER</i> environment variable. This 
         /// means that <see cref="SqlCmd"/> and <b>osql</b> can be used next to each other without interference.</para>
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string LogOn { get; set; }
 
         /// <summary>
@@ -92,11 +99,13 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// is used and the <see cref="Password"/> option is not used, and the <i>SQLCMDPASSWORD</i> environment variable
         /// has not been set, <see cref="SqlCmd"/> uses the default password (NULL).</para>
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string Password { get; set; }
 
         /// <summary>
         /// Changes the password for a user.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string NewPassword { get; set; }
 
         /// <summary>
@@ -111,6 +120,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <para><b>Note: </b>The <i>OSQLSERVER</i> environment variable has been kept for backward compatibility. The 
         /// <i>SQLCMDSERVER</i> environment variable takes precedence over the <i>OSQLSERVER</i> environment variable.</para>
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string Server
         {
             get { return this.server; }
@@ -123,6 +133,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// using the stored procedure <b>sp_who</b>. If this option is not specified, the default is the current computer name. This name 
         /// can be used to identify different sqlcmd sessions.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string Workstation { get; set; }
 
         /// <summary>
@@ -131,6 +142,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// the initial database. The default is your login's default-database property. If the database does not exist, an error message 
         /// is generated and <see cref="SqlCmd"/> exits.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string Database { get; set; }
 
         /// <summary>
@@ -139,6 +151,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// out value must be a number between 0 and 65534. If the value supplied is not numeric or does not fall into that range,
         /// the <see cref="SqlCmd"/> generates an error message. A value of 0 specifies the time-out to be indefinite.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public int LoginTimeout
         {
             get
@@ -154,7 +167,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(LoginTimeOutRangeError, value);
+                    this.Log.LogWarning(LoginTimeoutRangeError, value);
                 }
             }
         }
@@ -165,6 +178,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// DAC is not available, <see cref="SqlCmd"/> generates an error message and then exits. For more information about DAC, see 
         /// <a href="http://msdn.microsoft.com/en-us/library/ms189595.aspx">Using a Dedicated Administrator Connection</a>.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool DedicatedAdminConnection { get; set; }
 
 #endregion
@@ -177,6 +191,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// whether all files exist. If one or more files do not exist, <see cref="SqlCmd"/> will exit. The <see cref="InputFiles"/> and
         /// <see cref="CommandLineQuery"/> options are mutually exclusive.</para>        
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] InputFiles { get; set; }
 
         /// <summary>
@@ -187,12 +202,14 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// corrupted or incorrect. This file will be created if it does not exist. A file of the same name from a prior <see cref="SqlCmd"/> session 
         /// will be overwritten. The file specified here is not the stdout file. If a stdout file is specified this file will not be used.</para>
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public string OutputFile { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that indicates if the <see cref="OutputFile"/> is stored in Unicode format, regardless of the 
         /// format of the <see cref="InputFiles"/>.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool UnicodeOutput { get; set; }
 
         /// <summary>
@@ -201,12 +218,14 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// have a severity level of 11 or higher are redirected. If you specify <b>1</b>, all error message output including 
         /// PRINT is redirected. Has no effect if you use <see cref="OutputFile"/>. By default, messages are sent to <b>stdout</b>.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool RedirectStandardError { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that indicates if the SQL Server OLE DB provider uses the client regional settings when it converts
         /// currency, and date and time data to character data. The default is server regional settings.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool UseClientRegionalSettings { get; set; }
 
 #endregion
@@ -217,11 +236,13 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// Gets or sets one or more command line queries to execute when <see cref="SqlCmd"/> starts, but does not exit
         /// sqlcmd when the query has finished running.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] CommandLineQuery { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that indicates if the input scripts are written to the standard output device (<b>stdout</b>).
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool EchoInput { get; set; }
 
         /// <summary>
@@ -229,6 +250,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// default, it is set to <code>OFF</code>. For more information, see 
         /// <a href="http://msdn.microsoft.com/en-us/library/ms174393.aspx">SET QUOTED_IDENTIFIER (Transact-SQL).</a>
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool EnableQuotedIdentifiers { get; set; }
 
         /// <summary>
@@ -238,6 +260,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <see cref="SqlCmd"/> generates an error message.</para>
         /// <para><b>Note:</b> The actual time out value may vary from the specified <i>time_out</i> value by several seconds.</para>
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public int QueryTimeout
         {
             get
@@ -258,7 +281,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(QueryTimeOutRangeError, value);
+                    this.Log.LogWarning(QueryTimeoutRangeError, value);
                 }
             }
         }
@@ -268,12 +291,14 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <see cref="Variables"/> and values. If there are errors in any of the values specified, <see cref="SqlCmd"/> generates an error 
         /// message and then exits.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] Variables { get; set; }
 
         /// <summary>
         /// Causes <see cref="SqlCmd"/> to ignore scripting variables. This is useful when a script contains many INSERT statements that 
         /// may contain strings that have the same format as regular variables, such as $(variable_name).
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public bool DisableVariableSubstitution { get; set; }
 
 #endregion
@@ -285,6 +310,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// query results. This option sets the sqlcmd scripting variable <i>SQLCMDHEADERS</i>. Use -1 to specify that headers must not be 
         /// printed. Any value that is not valid causes <see cref="SqlCmd"/> to generate an error message and then exit.
         /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
         public int Headers { get; set; }
 
 #endregion

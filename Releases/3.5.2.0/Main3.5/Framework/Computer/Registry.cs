@@ -52,10 +52,30 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
+        private const string CheckEmptyTaskAction = "CheckEmpty";
+        private const string CreateKeyTaskAction = "CreateKey";
+        private const string DeleteKeyTaskAction = "DeleteKey";
+        private const string DeleteKeyTreeTaskAction = "DeleteKeyTree";
+        private const string GetTaskAction = "Get";
+        private const string SetTaskAction = "Set";
+        
         private RegistryKey registryKey;
         private RegistryHive hive;
+
+        [DropdownValue(CheckEmptyTaskAction)]
+        [DropdownValue(CreateKeyTaskAction)]
+        [DropdownValue(DeleteKeyTaskAction)]
+        [DropdownValue(DeleteKeyTreeTaskAction)]
+        [DropdownValue(GetTaskAction)]
+        [DropdownValue(SetTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the type of the data.
@@ -66,29 +86,45 @@ namespace MSBuild.ExtensionPack.Computer
         /// Gets the data.
         /// </summary>
         [Output]
+        [TaskAction(GetTaskAction, false)]
         public string Data { get; set; }
 
         /// <summary>
         /// Sets the value. If Value is not provided, an attempt will be made to read the Default Value.
         /// </summary>
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]        
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the registry hive.
         /// </summary>
         [Required]
+        [TaskAction(CheckEmptyTaskAction, true)]
+        [TaskAction(CreateKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTreeTaskAction, true)]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]
         public string RegistryHive { get; set; }
 
         /// <summary>
         /// Sets the key.
         /// </summary>
         [Required]
+        [TaskAction(CheckEmptyTaskAction, true)]
+        [TaskAction(CreateKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTreeTaskAction, true)]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
         /// Indicates whether the Registry Key is empty or not
         /// </summary>
         [Output]
+        [TaskAction(CheckEmptyTaskAction, false)]
         public bool Empty { get; set; }
 
         /// <summary>

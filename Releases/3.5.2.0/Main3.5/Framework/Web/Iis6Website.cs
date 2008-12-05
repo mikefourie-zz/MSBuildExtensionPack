@@ -50,16 +50,39 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
+        private const string CreateTaskAction = "Create";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string ContinueTaskAction = "Continue";
+        private const string DeleteTaskAction = "Delete";
+        private const string StartTaskAction = "Start";
+        private const string StopTaskAction = "Stop";
+        private const string PauseTaskAction = "Pause";
+
         private DirectoryEntry websiteEntry;
         private string properties;
         private int sleep = 250;
+
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(ContinueTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(StartTaskAction)]
+        [DropdownValue(StopTaskAction)]
+        [DropdownValue(PauseTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Gets or sets the app pool properties.
         /// </summary>
         /// <value>The app pool properties.</value>
+        [TaskAction(CreateTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -71,11 +94,19 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         /// <value>The name.</value>
         [Required]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(ContinueTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(StartTaskAction, true)]
+        [TaskAction(StopTaskAction, true)]
+        [TaskAction(PauseTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Set force to true to delete an existing website when calling Create. Default is false.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -91,13 +122,14 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the website exists.
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Gets the IIS path.
         /// </summary>
         /// <value>The IIS path.</value>
-        internal string IISPath
+        internal string IisPath
         {
             get { return "IIS://" + this.MachineName + "/W3SVC"; }
         }
@@ -119,10 +151,10 @@ namespace MSBuild.ExtensionPack.Web
                 case "Stop":
                 case "Pause":
                 case "Continue":
-                    this.ControlWebSite();
+                    this.ControlWebsite();
                     break;
                 case "CheckExists":
-                    this.CheckSiteExists();
+                    this.CheckWebsiteExists();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -130,28 +162,28 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private static void UpdateMetabaseProperty(DirectoryEntry entry, string metabasePropertyName, string metabaseProperty)
+        private static void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
-            if (metabaseProperty.IndexOf('|') == -1)
+            if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metabasePropertyName, metabaseProperty);
+                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
                 entry.Invoke("SetInfo");
             }
             else
             {
-                entry.Invoke("Put", metabasePropertyName, string.Empty);
+                entry.Invoke("Put", metaBasePropertyName, string.Empty);
                 entry.Invoke("SetInfo");
-                string[] metabaseProperties = metabaseProperty.Split('|');
+                string[] metabaseProperties = metaBaseProperty.Split('|');
                 foreach (string metabasePropertySplit in metabaseProperties)
                 {
-                    entry.Properties[metabasePropertyName].Add(metabasePropertySplit);
+                    entry.Properties[metaBasePropertyName].Add(metabasePropertySplit);
                 }
 
                 entry.CommitChanges();
             }
         }
 
-        private bool CheckSiteExists()
+        private bool CheckWebsiteExists()
         {
             this.LoadWebsite();
             if (this.websiteEntry != null)
@@ -164,7 +196,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private DirectoryEntry LoadWebService()
         {
-            return new DirectoryEntry(this.IISPath);
+            return new DirectoryEntry(this.IisPath);
         }
 
         private void LoadWebsite()
@@ -252,7 +284,7 @@ namespace MSBuild.ExtensionPack.Web
                             string propName = propPair[0];
                             string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
-                            UpdateMetabaseProperty(this.websiteEntry, propName, propValue);
+                            UpdateMetaBaseProperty(this.websiteEntry, propName, propValue);
                         }
                     }
 
@@ -265,7 +297,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Delete()
         {
-            if (this.CheckSiteExists())
+            if (this.CheckWebsiteExists())
             {
                 using (DirectoryEntry webService = this.LoadWebService())
                 {
@@ -279,9 +311,9 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private void ControlWebSite()
+        private void ControlWebsite()
         {
-            if (this.CheckSiteExists())
+            if (this.CheckWebsiteExists())
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "{0} Website: {1}", this.TaskAction, this.Name));
                 

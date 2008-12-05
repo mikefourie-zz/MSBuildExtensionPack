@@ -59,32 +59,84 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
     public class WindowsService : BaseTask
     {
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string DisableTaskAction = "Disable";
+        private const string InstallTaskAction = "Install";
+        private const string SetAutomaticTaskAction = "SetAutomatic";
+        private const string SetManualTaskAction = "SetManual";
+        private const string StartTaskAction = "Start";
+        private const string StopTaskAction = "Stop";
+        private const string UninstallTaskAction = "Uninstall";
+        private const string UpdateIdentityTaskAction = "UpdateIdentity";
+
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(DisableTaskAction)]
+        [DropdownValue(InstallTaskAction)]
+        [DropdownValue(SetAutomaticTaskAction)]
+        [DropdownValue(SetManualTaskAction)]
+        [DropdownValue(StartTaskAction)]
+        [DropdownValue(StopTaskAction)]
+        [DropdownValue(UninstallTaskAction)]
+        [DropdownValue(UpdateIdentityTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(DisableTaskAction, false)]
+        [TaskAction(SetAutomaticTaskAction, false)]
+        [TaskAction(SetManualTaskAction, false)]
+        [TaskAction(StartTaskAction, false)]
+        [TaskAction(StopTaskAction, false)]
+        [TaskAction(UpdateIdentityTaskAction, false)]
+        public override string MachineName
+        {
+            get { return base.MachineName; }
+            set { base.MachineName = value; }
+        }
+        
         /// <summary>
         /// Gets whether the service exists
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Sets the user.
         /// </summary>
+        [TaskAction(UpdateIdentityTaskAction, true)]
         public string User { get; set; }
 
         /// <summary>
         /// Sets the name of Service.
         /// </summary>
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(DisableTaskAction, true)]
+        [TaskAction(InstallTaskAction, true)]
+        [TaskAction(SetAutomaticTaskAction, true)]
+        [TaskAction(SetManualTaskAction, true)]
+        [TaskAction(StartTaskAction, true)]
+        [TaskAction(StopTaskAction, true)]
+        [TaskAction(UpdateIdentityTaskAction, true)]
         public string ServiceName { get; set; }
 
         /// <summary>
         /// Sets the path of the service executable
         /// </summary>
+        [TaskAction(InstallTaskAction, true)]
+        [TaskAction(UninstallTaskAction, true)]
         public ITaskItem ServicePath { get; set; }
 
         /// <summary>
         /// Sets user password
         /// </summary>
+        [TaskAction(UpdateIdentityTaskAction, true)]
         public string Password { get; set; }
 
         /// <summary>

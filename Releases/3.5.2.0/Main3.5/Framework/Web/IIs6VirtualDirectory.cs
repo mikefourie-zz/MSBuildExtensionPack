@@ -30,8 +30,11 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
+        private const string CreateTaskAction = "Create";
+        
         private DirectoryEntry websiteEntry;
         private string properties;
         private string directoryType = "IIsWebVirtualDir";
@@ -39,14 +42,23 @@ namespace MSBuild.ExtensionPack.Web
         private string appPool = "DefaultAppPool";
         private string name = "ROOT";
 
+        [DropdownValue(CreateTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Sets the Parent
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string Parent { get; set; }
 
         /// <summary>
         /// Sets whether an Application is required. Defaults to true.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public bool RequireApplication
         {
             get { return this.requireApplication; }
@@ -56,6 +68,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the DirectoryType. Supports IIsWebDirectory and IIsWebVirtualDir. Default is IIsWebVirtualDir.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string DirectoryType
         {
             get { return this.directoryType; }
@@ -65,6 +78,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the AppPool to run in. Default is 'DefaultAppPool'
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string AppPool
         {
             get { return this.appPool; }
@@ -74,6 +88,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -83,6 +98,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the name of the Virtual Directory. Defaults to 'ROOT'
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string Name
         {
             get { return this.name; }
@@ -93,9 +109,10 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the Website to add the Virtual Directory to.
         /// </summary>
         [Required]
+        [TaskAction(CreateTaskAction, true)]
         public string Website { get; set; }
 
-        internal string IISPath
+        internal string IisPath
         {
             get { return "IIS://" + this.MachineName + "/W3SVC"; }
         }
@@ -127,21 +144,21 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private static void UpdateMetabaseProperty(DirectoryEntry entry, string metabasePropertyName, string metabaseProperty)
+        private static void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
-            if (metabaseProperty.IndexOf('|') == -1)
+            if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metabasePropertyName, metabaseProperty);
+                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
                 entry.Invoke("SetInfo");
             }
             else
             {
-                entry.Invoke("Put", metabasePropertyName, string.Empty);
+                entry.Invoke("Put", metaBasePropertyName, string.Empty);
                 entry.Invoke("SetInfo");
-                string[] metabaseProperties = metabaseProperty.Split('|');
+                string[] metabaseProperties = metaBaseProperty.Split('|');
                 foreach (string metabasePropertySplit in metabaseProperties)
                 {
-                    entry.Properties[metabasePropertyName].Add(metabasePropertySplit);
+                    entry.Properties[metaBasePropertyName].Add(metabasePropertySplit);
                 }
 
                 entry.CommitChanges();
@@ -150,10 +167,10 @@ namespace MSBuild.ExtensionPack.Web
 
         private DirectoryEntry LoadWebService()
         {
-            DirectoryEntry webService = new DirectoryEntry(this.IISPath);
+            DirectoryEntry webService = new DirectoryEntry(this.IisPath);
             if (webService == null)
             {
-                throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Iis DirectoryServices Unavailable: {0}", this.IISPath));
+                throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Iis DirectoryServices Unavailable: {0}", this.IisPath));
             }
 
             return webService;
@@ -207,7 +224,7 @@ namespace MSBuild.ExtensionPack.Web
                         if (string.Compare(webEntry.Properties["ServerComment"][0].ToString(), websiteName, StringComparison.CurrentCultureIgnoreCase) == 0)
                         {
                             int websiteIdentifier = int.Parse(webEntry.Name, CultureInfo.InvariantCulture);
-                            string rootVdirPath = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/ROOT", this.IISPath, websiteIdentifier);
+                            string rootVdirPath = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/ROOT", this.IisPath, websiteIdentifier);
                             DirectoryEntry vdirEntry = new DirectoryEntry(rootVdirPath);
                             return vdirEntry;
                         }
@@ -281,7 +298,7 @@ namespace MSBuild.ExtensionPack.Web
 
                     this.websiteEntry.CommitChanges();
                     vdirEntry.CommitChanges();
-                    UpdateMetabaseProperty(vdirEntry, "AppFriendlyName", this.Name);
+                    UpdateMetaBaseProperty(vdirEntry, "AppFriendlyName", this.Name);
                 }
 
                 // Now loop through all the metabase properties specified.
@@ -293,10 +310,8 @@ namespace MSBuild.ExtensionPack.Web
                         string[] propPair = s.Split(new[] { '=' });
                         string propName = propPair[0];
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
-
-                        UpdateMetabaseProperty(vdirEntry, propName, propValue);
+                        UpdateMetaBaseProperty(vdirEntry, propName, propValue);
                     }
                 }
 

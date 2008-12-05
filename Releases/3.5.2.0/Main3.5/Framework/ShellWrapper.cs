@@ -13,8 +13,8 @@ namespace MSBuild.ExtensionPack
     /// </summary>
     internal sealed class ShellWrapper
     {
+        private readonly System.Collections.Specialized.NameValueCollection environmentVars = new NameValueCollection();
         private static StringBuilder stdOut;
-        private System.Collections.Specialized.NameValueCollection envars = new NameValueCollection();
 
         public ShellWrapper(string executable, string arguments)
         {
@@ -59,7 +59,7 @@ namespace MSBuild.ExtensionPack
 
         public NameValueCollection EnvironmentVariables
         {
-            get { return this.envars; }
+            get { return this.environmentVars; }
         }
 
         /// <summary>
@@ -122,11 +122,11 @@ namespace MSBuild.ExtensionPack
             return this.ExitCode;
         }
 
-        private static void SortOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        private static void SortOutputHandler(object sendingProcess, DataReceivedEventArgs outline)
         {
-            if (!String.IsNullOrEmpty(outLine.Data))
+            if (!String.IsNullOrEmpty(outline.Data))
             {
-                stdOut.Append(Environment.NewLine + outLine.Data);
+                stdOut.Append(Environment.NewLine + outline.Data);
             }
         }
     }

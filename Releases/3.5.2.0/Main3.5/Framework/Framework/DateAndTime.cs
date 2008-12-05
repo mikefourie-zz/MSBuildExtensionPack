@@ -49,28 +49,46 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/1c668832-24f2-d646-1f66-7ea1f3e76415.htm")]
     public class DateAndTime : BaseTask
     {
-         /// <summary>
-         /// The start time to use for GetElapsed
-         /// </summary>
+        private const string GetTaskAction = "Get";
+        private const string GetElapsedTaskAction = "GetElapsed";
+
+        [DropdownValue(GetTaskAction)]
+        [DropdownValue(GetElapsedTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
+        /// <summary>
+        /// The start time to use for GetElapsed
+        /// </summary>
+        [TaskAction(GetElapsedTaskAction, true)]
         public DateTime Start { get; set; }
 
         /// <summary>
         /// The end time to use for GetElapsed. Default is DateTime.Now
         /// </summary>
+        [TaskAction(GetElapsedTaskAction, false)]
         public DateTime End { get; set; }
 
         /// <summary>
         /// Format to apply to the Result. For GetTime, Format can be any valid DateTime format. For GetElapsed, Format can be Milliseconds, Seconds, Minutes, Hours or Days
         /// </summary>
         [Required]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(GetElapsedTaskAction, true)]
         public string Format { get; set; }
 
         /// <summary>
         /// The output Result
         /// </summary>
         [Output]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(GetElapsedTaskAction, false)]
         public string Result { get; set; }
 
         protected override void InternalExecute()

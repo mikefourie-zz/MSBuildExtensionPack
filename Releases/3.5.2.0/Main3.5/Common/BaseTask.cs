@@ -19,12 +19,12 @@ namespace MSBuild.ExtensionPack
         /// <summary>
         /// Sets the TaskAction.
         /// </summary>
-        public string TaskAction { get; set; }
+        public virtual string TaskAction { get; set; }
 
         /// <summary>
         /// Sets the MachineName.
         /// </summary>
-        public string MachineName
+        public virtual string MachineName
         {
             get { return this.machineName ?? Environment.MachineName; }
             set { this.machineName = value; }
@@ -33,12 +33,12 @@ namespace MSBuild.ExtensionPack
         /// <summary>
         /// Sets the UserName
         /// </summary>
-        public string UserName { get; set; }
+        public virtual string UserName { get; set; }
 
         /// <summary>
         /// Sets the UserPassword.
         /// </summary>
-        public string UserPassword { get; set; }
+        public virtual string UserPassword { get; set; }
 
         /// <summary>
         /// Sets the authority to be used to authenticate the specified user.

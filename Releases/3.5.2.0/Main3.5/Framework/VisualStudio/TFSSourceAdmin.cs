@@ -33,35 +33,57 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/3a47a393-8a00-ad50-a5e7-55b3f131a724.htm")]
     public class TfsSourceAdmin : BaseTask
     {
-        private string tfexe;
+        private const string BranchTaskAction = "Branch";
+        private const string RenameTaskAction = "Rename";
+        
+        private string teamFoundationExe;
         private string version = "2008";
         private ShellWrapper shellWrapper;
+
+        [DropdownValue(BranchTaskAction)]
+        [DropdownValue(RenameTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets the version spec for Branch
         /// </summary>
+        [TaskAction(BranchTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
         public string VersionSpec { get; set; }
 
         /// <summary>
         /// ItemSpec to branch
         /// </summary>
+        [TaskAction(BranchTaskAction, true)]
+        [TaskAction(RenameTaskAction, true)]
         public string OldItem { get; set; }
 
         /// <summary>
         /// ItemSpec to branch too
         /// </summary>
+        [TaskAction(BranchTaskAction, true)]
+        [TaskAction(RenameTaskAction, true)]
         public string NewItem { get; set; }
 
         /// <summary>
         /// Sets the working directory.
         /// </summary>
+        [TaskAction(BranchTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Sets the version of Tfs. Default is 2008
         /// </summary>
+        [TaskAction(BranchTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
         public string Version
         {
             get { return this.version; }
@@ -117,7 +139,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
 
-            this.shellWrapper = new ShellWrapper(this.tfexe, arguments);
+            this.shellWrapper = new ShellWrapper(this.teamFoundationExe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
@@ -162,13 +184,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(vstools))
             {
-                this.tfexe = Path.Combine(vstools, @"..\IDE\tf.exe");
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.tfexe));
+                this.teamFoundationExe = Path.Combine(vstools, @"..\IDE\tf.exe");
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF.exe path resolved to: {0}", this.teamFoundationExe));
             }
 
-            if (!File.Exists(this.tfexe))
+            if (!File.Exists(this.teamFoundationExe))
             {
-                this.tfexe = "tf.exe";
+                this.teamFoundationExe = "tf.exe";
                 this.LogTaskMessage("Unable to resolve TF.exe path. Assuming it is in the PATH environment variable.");
             }
         }

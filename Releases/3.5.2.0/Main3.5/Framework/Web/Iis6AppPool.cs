@@ -43,13 +43,35 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
     public class Iis6AppPool : BaseTask
     {
+        private const string CreateTaskAction = "Create";
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string DeleteTaskAction = "Delete";
+        private const string ModifyTaskAction = "Modify";
+        private const string StartTaskAction = "Start";
+        private const string StopTaskAction = "Stop";
+        
         private string properties;
 
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(ModifyTaskAction)]
+        [DropdownValue(StartTaskAction)]
+        [DropdownValue(StopTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+        
         /// <summary>
         /// Sets the app pool properties. This is a semicolon seperated list, e.g. AppPoolAutoStart=TRUE;PeriodicRestartTime=0
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(ModifyTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -60,15 +82,22 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the AppPool. Required.
         /// </summary>
         [Required]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(ModifyTaskAction, true)]
+        [TaskAction(StartTaskAction, true)]
+        [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets whether the app pool exists. Output
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
-        internal string IISPath
+        internal string IisPath
         {
             get { return "IIS://" + this.MachineName + "/W3SVC"; }
         }
@@ -106,21 +135,21 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
-        private void UpdateMetabaseProperty(DirectoryEntry entry, string metabasePropertyName, string metabaseProperty)
+        private void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
-            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Applying Property: {0}({1})", metabasePropertyName, metabaseProperty));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Applying Property: {0}({1})", metaBasePropertyName, metaBaseProperty));
 
-            if (metabaseProperty.IndexOf('|') == -1)
+            if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Properties[metabasePropertyName].Value = metabaseProperty;
+                entry.Properties[metaBasePropertyName].Value = metaBaseProperty;
             }
             else
             {
-                entry.Properties[metabasePropertyName].Value = string.Empty;
-                string[] metabaseProperties = metabaseProperty.Split('|');
+                entry.Properties[metaBasePropertyName].Value = string.Empty;
+                string[] metabaseProperties = metaBaseProperty.Split('|');
                 foreach (string metabasePropertySplit in metabaseProperties)
                 {
-                    entry.Properties[metabasePropertyName].Add(metabasePropertySplit);
+                    entry.Properties[metaBasePropertyName].Add(metabasePropertySplit);
                 }
 
                 entry.CommitChanges();
@@ -149,7 +178,7 @@ namespace MSBuild.ExtensionPack.Web
                     {
                         string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-                        this.UpdateMetabaseProperty(appPoolEntry, propPair[0], propValue);
+                        this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
                     }
 
                     appPoolEntry.CommitChanges();
@@ -166,7 +195,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private DirectoryEntry LoadAppPools()
         {
-            string poolsPath = string.Format(CultureInfo.InvariantCulture, "{0}/AppPools", this.IISPath);
+            string poolsPath = string.Format(CultureInfo.InvariantCulture, "{0}/AppPools", this.IisPath);
             DirectoryEntry appPools = new DirectoryEntry(poolsPath);
             if (appPools == null)
             {
@@ -255,7 +284,7 @@ namespace MSBuild.ExtensionPack.Web
                     {
                         string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-                        this.UpdateMetabaseProperty(appPoolEntry, propPair[0], propValue);
+                        this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
                     }
 
                     appPoolEntry.CommitChanges();

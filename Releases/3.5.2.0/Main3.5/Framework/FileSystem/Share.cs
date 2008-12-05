@@ -47,8 +47,13 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example> 
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
+        private const string CheckExistsTaskAction = "CheckExists";
+        private const string DeleteTaskAction = "Delete";
+        private const string CreateTaskAction = "Create";
+
         #region enums
         private enum ReturnCode : uint
         {
@@ -104,36 +109,53 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
         #endregion
 
+        [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Sets the desctiption for the share
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the share name
         /// </summary>
         [Required]
+        [TaskAction(CheckExistsTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
         public string ShareName { get; set; }
 
         /// <summary>
         /// Sets the share path
         /// </summary>
+        [TaskAction(CreateTaskAction, true)]
         public string SharePath { get; set; }
 
         /// <summary>
         /// Sets the maximum number of allowed users for the share
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public int MaximumAllowed { get; set; }
 
         /// <summary>
         /// Sets whether to create the SharePath if it doesnt exist. Default is false
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public bool CreateSharePath { get; set; }
 
         /// <summary>
         /// Gets whether the share exists
         /// </summary>
         [Output]
+        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
@@ -145,11 +167,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </Allow>
         /// ]]></code>    
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] AllowUsers { get; set; }
 
         /// <summary>
         /// Sets a collection of users not allowed to access the share
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] DenyUsers { get; set; }
 
         /// <summary>
@@ -355,18 +379,18 @@ namespace MSBuild.ExtensionPack.FileSystem
             return acl.ToArray();
         }
 
-        private ManagementObject BuildTrustee(string username)
+        private ManagementObject BuildTrustee(string userName)
         {
-            if (!username.Contains(@"\"))
+            if (!userName.Contains(@"\"))
             {
                 // default to local user
-                username = Environment.MachineName + @"\" + username;
+                userName = Environment.MachineName + @"\" + userName;
             }
 
             // build the trustee
-            string[] usernameParts = username.Split('\\');
-            string domain = usernameParts[0];
-            string alias = usernameParts[1];
+            string[] userNameParts = userName.Split('\\');
+            string domain = userNameParts[0];
+            string alias = userNameParts[1];
             ManagementObject account = this.GetAccount(domain, alias);
             ManagementObject sid = GetSecurityIdentifier(account);
             ManagementPath trusteePath = new ManagementPath("Win32_Trustee");

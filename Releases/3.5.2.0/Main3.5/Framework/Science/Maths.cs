@@ -81,35 +81,63 @@ namespace MSBuild.ExtensionPack.Science
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
     public class Maths : BaseTask
     {
+        private const string AddTaskAction = "Add";
+        private const string CompareTaskAction = "Compare";
+        private const string DivideTaskAction = "Divide";
+        private const string EvaluateTaskAction = "Evaluate";
+        private const string MultiplyTaskAction = "Multiply";
+        private const string SubtractTaskAction = "Subtract";
+
         private float[] numbers;
         private float total;
+
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(CompareTaskAction)]
+        [DropdownValue(DivideTaskAction)]
+        [DropdownValue(EvaluateTaskAction)]
+        [DropdownValue(MultiplyTaskAction)]
+        [DropdownValue(SubtractTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
 
         /// <summary>
         /// Sets P1.
         /// </summary>
+        [TaskAction(CompareTaskAction, true)]
         public long P1 { get; set; }
 
         /// <summary>
         /// Gets the LogicalResult
         /// </summary>
         [Output]
+        [TaskAction(CompareTaskAction, false)]
         public bool LogicalResult { get; set; }
 
         /// <summary>
         /// Sets P2.
         /// </summary>
+        [TaskAction(CompareTaskAction, true)]
         public long P2 { get; set; }
 
         /// <summary>
         /// Sets the Comparison. Supports 'GreaterThan', 'LessThan', 'GreaterThanOrEquals', 'LessThanOrEquals'
         /// </summary>
+        [TaskAction(CompareTaskAction, true)]
         public string Comparison { get; set; }
 
         /// <summary>
         /// A semicolon separated collection of numbers
         /// </summary>
+        [TaskAction(AddTaskAction, true)]
+        [TaskAction(DivideTaskAction, true)]
+        [TaskAction(MultiplyTaskAction, true)]
+        [TaskAction(SubtractTaskAction, true)]
         public string[] Numbers
         {
             set { this.numbers = ToFloatArray(value); }
@@ -119,11 +147,17 @@ namespace MSBuild.ExtensionPack.Science
         /// Gets the result.
         /// </summary>
         [Output]
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(DivideTaskAction, false)]
+        [TaskAction(EvaluateTaskAction, false)]
+        [TaskAction(MultiplyTaskAction, false)]
+        [TaskAction(SubtractTaskAction, false)]
         public float Result { get; set; }
 
         /// <summary>
         /// Sets the expression.
         /// </summary>
+        [TaskAction(EvaluateTaskAction, true)]
         public string Expression { get; set; }
 
         protected static float[] ToFloatArray(string[] numberArray)
@@ -190,7 +224,7 @@ namespace MSBuild.ExtensionPack.Science
             this.Result = this.total;
         }
 
-        private static float DecimalToSgl_Dbl(decimal argument)
+        private static float DecimalToSglDbl(decimal argument)
         {
             return decimal.ToSingle(argument);
         }
@@ -271,7 +305,7 @@ namespace MSBuild.ExtensionPack.Science
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Evaluating Expression: {0}", this.Expression));
             DataTable dt = new DataTable { Locale = CultureInfo.CurrentCulture };
-            this.total = DecimalToSgl_Dbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
+            this.total = DecimalToSglDbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
         }
 
         private void Divide()

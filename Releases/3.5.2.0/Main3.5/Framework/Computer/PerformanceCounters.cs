@@ -46,39 +46,68 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/7badb83c-0162-f8c7-afd0-969f571268fe.htm")]
     public class PerformanceCounters : BaseTask
     {
+        private const string AddTaskAction = "Add";
+        private const string GetValueAction = "GetValue";
+        private const string RemoveTaskAction = "Remove";
+
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(GetValueAction)]
+        [DropdownValue(RemoveTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Sets the CategoryName
         /// </summary>
         [Required]
+        [TaskAction(AddTaskAction, true)]
+        [TaskAction(GetValueAction, true)]
+        [TaskAction(RemoveTaskAction, true)]
         public string CategoryName { get; set; }
 
         /// <summary>
         /// Sets the description of the custom category.
         /// </summary>
+        [TaskAction(AddTaskAction, true)]
         public string CategoryHelp { get; set; }
 
         /// <summary>
         /// Gets the value of the counter
         /// </summary>
         [Output]
+        [TaskAction(GetValueAction, false)]
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the name of the counter.
         /// </summary>
+        [TaskAction(GetValueAction, true)]
         public string CounterName { get; set; }       
 
         /// <summary>
         /// Sets a value indicating whether to create a multiple instance performance counter. Default is false
         /// </summary>
+        [TaskAction(AddTaskAction, false)]
         public bool MultiInstance { get; set; }
 
         /// <summary>
         /// Sets the TaskItem[] that specifies the counters to create as part of the new category.
         /// </summary>
+        [TaskAction(AddTaskAction, true)]
         public ITaskItem[] CounterList { get; set; }
+
+        [TaskAction(GetValueAction, false)]
+        public override string MachineName
+        {
+            get { return base.MachineName; }
+            set { base.MachineName = value; }
+        }
 
         /// <summary>
         /// Performs the action of this task.

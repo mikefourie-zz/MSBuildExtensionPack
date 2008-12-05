@@ -7,11 +7,11 @@ namespace MSBuild.ExtensionPack.Compression
     using System.Collections;
     using java.util;
 
-    internal class EnumerationWrapper : IEnumerable
+    internal class EnumerationWrapperCollection : IEnumerable
     {
         private readonly Enumeration methodEnumeration;
 
-        internal EnumerationWrapper(Enumeration method)
+        internal EnumerationWrapperCollection(Enumeration method)
         {
             if (method == null)
             {

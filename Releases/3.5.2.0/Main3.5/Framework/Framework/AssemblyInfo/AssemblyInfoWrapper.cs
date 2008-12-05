@@ -16,17 +16,17 @@ namespace MSBuild.ExtensionPack.Framework
         private readonly Dictionary<string, int> attributeIndex = new Dictionary<string, int>();
         private readonly Regex attributeNamePattern = new Regex(@"[aA]ssembly:?\s*(?<attributeName>\w+)\s*\(", RegexOptions.Compiled);
         private readonly Regex attributeStringValuePattern = new Regex(@"""(?<attributeValue>.*?)""", RegexOptions.Compiled);
-        private readonly Regex multiLineCSharpCommentEndPattern = new Regex(@".*?\*/", RegexOptions.Compiled);
-        private readonly Regex multiLineCSharpCommentStartPattern = new Regex(@"\s*/\*^\*", RegexOptions.Compiled);
+        private readonly Regex multilineCSharpCommentEndPattern = new Regex(@".*?\*/", RegexOptions.Compiled);
+        private readonly Regex multilineCSharpCommentStartPattern = new Regex(@"\s*/\*^\*", RegexOptions.Compiled);
         private readonly List<string> rawFileLines = new List<string>();
         private readonly Regex singleLineCSharpCommentPattern = new Regex(@"\s*//", RegexOptions.Compiled);
         private readonly Regex singleLineVbCommentPattern = new Regex(@"\s*'", RegexOptions.Compiled);
 
         //// The ^\* is so the regex works with J# files that use /** to indicate the actual attribute lines.
         //// This does mean that lines like /** in C# will get treated as valid lines, but that's a real borderline case.
-        public AssemblyInfoWrapper(string filename)
+        public AssemblyInfoWrapper(string fileName)
         {
-            StreamReader reader = File.OpenText(filename);
+            StreamReader reader = File.OpenText(fileName);
             int lineNumber = 0;
             string input;
             MatchCollection matches;
@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Framework
                 }
 
                 // Skip multi-line C# comments
-                if (this.multiLineCSharpCommentStartPattern.IsMatch(input))
+                if (this.multilineCSharpCommentStartPattern.IsMatch(input))
                 {
                     lineNumber++;
                     skipLine = true;
@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.Framework
                 }
 
                 // Stop skipping when we're at the end of a C# multiline comment
-                if (this.multiLineCSharpCommentEndPattern.IsMatch(input) && skipLine)
+                if (this.multilineCSharpCommentEndPattern.IsMatch(input) && skipLine)
                 {
                     lineNumber++;
                     skipLine = false;
@@ -137,7 +137,7 @@ namespace MSBuild.ExtensionPack.Framework
             }
         }
 
-        public void Write(StreamWriter streamWriter)
+        public void Write(TextWriter streamWriter)
         {
             foreach (string line in this.rawFileLines)
             {
