@@ -92,6 +92,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string ReplaceTaskAction = "Replace";
         private const string SetAttributesTaskAction = "SetAttributes";
         private Encoding fileEncoding = Encoding.UTF8;
+        private string replacement = string.Empty;
         private Regex parseRegex;
         private string[] commentIdentifiers;
         private List<ITaskItem> excludedFiles;
@@ -116,10 +117,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         public string RegexPattern { get; set; }
 
         /// <summary>
-        /// The replacement text to use
+        /// The replacement text to use. Default is String.Empty
         /// </summary>
         [TaskAction(ReplaceTaskAction, false)]
-        public string Replacement { get; set; }
+        public string Replacement
+        {
+            get { return this.replacement; }
+            set { this.replacement = value; }
+        }
 
         /// <summary>
         /// A path to process. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.

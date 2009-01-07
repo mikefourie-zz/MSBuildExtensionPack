@@ -167,6 +167,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             switch (enc)
             {
+                case "DEFAULT":
+                    return System.Text.Encoding.Default;
                 case "ASCII":
                     return System.Text.Encoding.ASCII;
                 case "Unicode":
@@ -180,6 +182,11 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case "BigEndianUnicode":
                     return System.Text.Encoding.BigEndianUnicode;
                 default:
+                    if (!string.IsNullOrEmpty(enc))
+                    {
+                        return Encoding.GetEncoding(enc);
+                    }
+
                     return null;
             }
         }
@@ -207,7 +214,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 {
                     try
                     {
-                        this.fileEncoding = Encoding.GetEncoding(this.TextEncoding);
+                        this.fileEncoding = GetTextEncoding(this.TextEncoding);
                     }
                     catch (ArgumentException)
                     {
@@ -335,7 +342,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             // Open the file and attempt to read the encoding from the BOM
             string fileContent;
-            using (StreamReader streamReader = new StreamReader(file, true))
+            using (StreamReader streamReader = new StreamReader(file, this.fileEncoding, true))
             {
                 // Read the file.
                 fileContent = streamReader.ReadToEnd();

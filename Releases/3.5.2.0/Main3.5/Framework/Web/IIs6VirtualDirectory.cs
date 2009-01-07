@@ -117,6 +117,11 @@ namespace MSBuild.ExtensionPack.Web
             get { return "IIS://" + this.MachineName + "/W3SVC"; }
         }
 
+        internal string AppPoolsPath
+        {
+            get { return "IIS://" + this.MachineName + "/W3SVC/AppPools"; }
+        }
+
         public void Dispose()
         {
             this.Dispose(true);
@@ -270,12 +275,12 @@ namespace MSBuild.ExtensionPack.Web
                     this.websiteEntry = new DirectoryEntry(parentPath);
                     try
                     {
-                        vdirEntry = (DirectoryEntry)this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
+                        vdirEntry = (DirectoryEntry) this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
                     }
                     catch (TargetInvocationException tie)
                     {
                         Exception e = tie.InnerException;
-                        COMException ce = (COMException)e;
+                        COMException ce = (COMException) e;
                         if (ce != null)
                         {
                             // HRESULT 0x800700B7, "Cannot create a file when that file already exists. "
@@ -325,6 +330,11 @@ namespace MSBuild.ExtensionPack.Web
                     }
                     else
                     {
+                        if (!DirectoryEntry.Exists(this.AppPoolsPath + @"/" + this.AppPool))
+                        {
+                            throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "AppPool not found: {0}", this.AppPool));
+                        }
+
                         vdirEntry.Invoke("AppCreate3", 1, this.AppPool, false);
                     }
                 }

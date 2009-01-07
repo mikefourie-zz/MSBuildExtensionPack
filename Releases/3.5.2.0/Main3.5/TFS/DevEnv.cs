@@ -61,14 +61,12 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// The Url of the Team Foundation Server.
         /// </summary>
-        [Required]
-        public Uri TeamFoundationServerUrl { get; set; }
+        public string TeamFoundationServerUrl { get; set; }
 
         /// <summary>
         /// The Uri of the Build for which this task is executing.
         /// </summary>
-        [Required]
-        public Uri BuildUri { get; set; }
+        public string BuildUri { get; set; }
         
         /// <summary>
         /// The solution to be built using DevEnv. Either Solution or Project (or both) must be specified.
@@ -143,9 +141,9 @@ namespace MSBuild.ExtensionPack.Tfs
             {
                 if (this.build == null)
                 {
-                    TeamFoundationServer tfs = TeamFoundationServerFactory.GetServer(this.TeamFoundationServerUrl.ToString());
+                    TeamFoundationServer tfs = TeamFoundationServerFactory.GetServer(this.TeamFoundationServerUrl);
                     IBuildServer buildServer = (IBuildServer)tfs.GetService(typeof(IBuildServer));
-                    this.build = buildServer.GetAllBuildDetails(new Uri(this.BuildUri.ToString()));
+                    this.build = buildServer.GetAllBuildDetails(new Uri(this.BuildUri));
                 }
 
                 return this.build;
