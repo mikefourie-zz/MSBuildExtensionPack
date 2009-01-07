@@ -56,8 +56,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
     public class FxCop : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
-        
-        private string fxcopPath;
         private bool logToConsole = true;
         private bool showSummary = true;
 
@@ -131,14 +129,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public string Types { get; set; }
 
         /// <summary>
-        /// Sets the path to FxCopCmd.exe. Default is 32bit: 'c:\Program Files\Microsoft FxCop 1.36\FxCopCmd.exe', 64bit: 'c:\Program Files (x86)\Microsoft FxCop 1.36\FxCopCmd.exe'
+        /// Sets the path to FxCopCmd.exe. Default is [Program Files]\Microsoft FxCop 1.36\FxCopCmd.exe
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
-        public string FxCopPath
-        {
-            get { return this.fxcopPath; }
-            set { this.fxcopPath = value; }
-        }
+        public string FxCopPath { get; set; }
         
         /// <summary>
         /// Sets the ReportXsl (/outXsl: option)
@@ -188,17 +182,20 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             if (string.IsNullOrEmpty(this.FxCopPath))
             {
-                if (System.IO.File.Exists(@"c:\Program Files\Microsoft FxCop 1.36\FxCopCmd.exe"))
+                string programFilePath = Environment.GetEnvironmentVariable("ProgramFiles");
+                if (string.IsNullOrEmpty(programFilePath))
                 {
-                    this.fxcopPath = @"c:\Program Files\Microsoft FxCop 1.36\FxCopCmd.exe";
+                    Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
+                    return;
                 }
-                else if (System.IO.File.Exists(@"c:\Program Files (x86)\Microsoft FxCop 1.36\FxCopCmd.exe"))
+
+                if (System.IO.File.Exists(programFilePath + @"\Microsoft FxCop 1.36\FxCopCmd.exe"))
                 {
-                    this.fxcopPath = @"c:\Program Files (x86)\Microsoft FxCop 1.36\FxCopCmd.exe";
+                    this.FxCopPath = programFilePath + @"\Microsoft FxCop 1.36\FxCopCmd.exe";
                 }
                 else
                 {
-                    Log.LogError("FxCopCmd.exe was not found in the default location. Use FxCopPath to specify it.");
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "FxCopCmd.exe was not found in the default location. Use FxCopPath to specify it. Searched at: {0}", programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"));
                     return;
                 }
             }

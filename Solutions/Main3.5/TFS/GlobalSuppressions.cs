@@ -6,3 +6,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Env", Scope = "type", Target = "MSBuild.ExtensionPack.Tfs.DevEnv", Justification = "The spelling is fine")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames", Justification = "Delay Signed")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Dropdown", Scope = "type", Target = "MSBuild.ExtensionPack.DropdownValueAttribute")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "MSBuild.ExtensionPack.Tfs.DevEnv.#BuildUri", Justification = "Uri is not supported by MSBuild")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "MSBuild.ExtensionPack.Tfs.DevEnv.#TeamFoundationServerUrl", Justification = "Uri is not supported by MSBuild")]

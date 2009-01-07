@@ -39,7 +39,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
     public class VB6 : BaseTask
     {
         private const string BuildTaskAction = "Build";      
-        private string visualBasicPath;
 
         [DropdownValue(BuildTaskAction)]
         public override string TaskAction
@@ -49,7 +48,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         }
 
         /// <summary>
-        /// Sets the VB6Path. Default is C:\Program Files\Microsoft Visual Studio\VB98\VB6.exe
+        /// Sets the VB6Path. Default is [Program Files]\Microsoft Visual Studio\VB98\VB6.exe
         /// </summary>
         [TaskAction(BuildTaskAction, false)]
         public string VB6Path { get; set; }
@@ -70,17 +69,20 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (string.IsNullOrEmpty(this.VB6Path))
             {
-                if (File.Exists(@"C:\Program Files\Microsoft Visual Studio\VB98\VB6.exe"))
+                string programFilePath = Environment.GetEnvironmentVariable("ProgramFiles");
+                if (string.IsNullOrEmpty(programFilePath))
                 {
-                    this.visualBasicPath = @"C:\Program Files\Microsoft Visual Studio\VB98\VB6.exe";
+                    Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
+                    return;
                 }
-                else if (File.Exists(@"C:\Program Files (x86)\Microsoft Visual Studio\VB98\VB6.exe"))
+                
+                if (File.Exists(programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"))
                 {
-                    this.visualBasicPath = @"C:\Program Files (x86)\Microsoft Visual Studio\VB98\VB6.exe";
+                    this.VB6Path = programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe";
                 }
                 else
                 {
-                    Log.LogError("VB6.exe was not found in the default location. Use VB6Path to specify it.");
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "VB6.exe was not found in the default location. Use VB6Path to specify it. Searched at: {0}", programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"));
                     return;
                 }
             }
@@ -118,7 +120,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             using (Process proc = new Process())
             {
-                proc.StartInfo.FileName = this.visualBasicPath;
+                proc.StartInfo.FileName = this.VB6Path;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
