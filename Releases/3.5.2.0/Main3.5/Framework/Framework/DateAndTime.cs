@@ -40,6 +40,11 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
     ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
     ///         <Message Text="Hours Since $(Start): $(DTResult)"/>
+    ///         <!-- Get the total elapsed time since the start date -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" Format="Total">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Total Elapsed Time Since $(Start): $(DTResult)"/>
     ///         <!-- Get the time in the specified format -->
     ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy">
     ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
@@ -76,7 +81,7 @@ namespace MSBuild.ExtensionPack.Framework
         public DateTime End { get; set; }
 
         /// <summary>
-        /// Format to apply to the Result. For GetTime, Format can be any valid DateTime format. For GetElapsed, Format can be Milliseconds, Seconds, Minutes, Hours or Days
+        /// Format to apply to the Result. For GetTime, Format can be any valid DateTime format. For GetElapsed, Format can be Milliseconds, Seconds, Minutes, Hours, Days or Total. Total returns dd:hh:mm:ss
         /// </summary>
         [Required]
         [TaskAction(GetTaskAction, true)]
@@ -144,6 +149,9 @@ namespace MSBuild.ExtensionPack.Framework
                     break;
                 case "Days":
                     this.Result = t.TotalDays.ToString(CultureInfo.CurrentCulture);
+                    break;
+                case "Total":
+                    this.Result = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}", t.Days.ToString("00", CultureInfo.CurrentCulture), t.Hours.ToString("00", CultureInfo.CurrentCulture), t.Minutes.ToString("00", CultureInfo.CurrentCulture), t.Seconds.ToString("00", CultureInfo.CurrentCulture));
                     break;
             }
         }
