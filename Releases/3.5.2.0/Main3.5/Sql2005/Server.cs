@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Sql2005
         /// </summary>
         protected override void InternalExecute()
         {
-            if (string.IsNullOrEmpty(this.UserName) || string.IsNullOrEmpty(this.UserPassword))
+            if (string.IsNullOrEmpty(this.UserName))
             {
                 this.LogTaskMessage(MessageImportance.Low, "Using a Trusted Connection");
                 this.trustedConnection = true;
