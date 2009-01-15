@@ -20,6 +20,8 @@
         <Message Text="Date Version is $(NewVersion)"/>
         <!-- Set the version in a collection of files -->
         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)"/>
+        <!-- Set the version in a collection of files, forcing AssemblyFileVersion to be inserted even if it was not present in the affected file -->
+        <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)" ForceSetVersion="true"/>
         <!-- Get a version number based on the elapsed days since a given date and use a comma as the delimiter -->
         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="GetVersion" Delimiter="," BuildName="YOURBUILD" TfsBuildNumber="YOURBUILD_20080703.1" VersionFormat="Elapsed" StartDate="17 Nov 1976" PaddingCount="4" PaddingDigit="1" Major="3" Minor="5">
             <Output TaskParameter="Version" PropertyName="NewcppVersion" />

@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b> PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter <b>Output: </b>Version)</para>
     /// <para><b>Please Note:</b> The output of GetVersion should not be used to change the $(BuildNumber). For guidance, see: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!404.entry</para>
-    /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion</para>
+    /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion, ForceSetVersion</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -41,6 +41,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///         <Message Text="Date Version is $(NewVersion)"/>
     ///         <!-- Set the version in a collection of files -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)"/>
+    ///         <!-- Set the version in a collection of files, forcing AssemblyFileVersion to be inserted even if it was not present in the affected file -->
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)" ForceSetVersion="true"/>
     ///         <!-- Get a version number based on the elapsed days since a given date and use a comma as the delimiter -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="GetVersion" Delimiter="," BuildName="YOURBUILD" TfsBuildNumber="YOURBUILD_20080703.1" VersionFormat="Elapsed" StartDate="17 Nov 1976" PaddingCount="4" PaddingDigit="1" Major="3" Minor="5">
     ///             <Output TaskParameter="Version" PropertyName="NewcppVersion" />
@@ -55,6 +57,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     {
         private const string GetVersionTaskAction = "GetVersion";
         private const string SetVersionTaskAction = "SetVersion";
+        private const string AppendAssemblyVersionFormat = "\n[assembly: System.Reflection.AssemblyVersion(\"{0}\")]";
+        private const string AppendAssemblyFileVersionFormat = "\n[assembly: System.Reflection.AssemblyFileVersion(\"{0}\")]";
 
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
@@ -74,6 +78,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         [TaskAction(SetVersionTaskAction, false)]
         public bool SetAssemblyVersion { get; set; }
+
+        /// <summary>
+        /// Set to true to force SetVersion action to update files that do not have AssemblyVersion | AssemblyFileVersion
+        /// present.  Default is false.  ForceSetVersion does not affect AssemblyVersion when SetAssemblyVersion is false.
+        /// </summary>
+        [TaskAction(SetVersionTaskAction, false)]
+        public bool ForceSetVersion { get; set; }
 
         /// <summary>
         /// Sets the file encoding. Default is UTF8
@@ -271,10 +282,19 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 // Parse the entire file.
                 string newFile = this.regexExpression.Replace(entireFile, @"AssemblyFileVersion(""" + this.Version + @""")");
+                if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase))
+                {
+                    newFile = newFile.AppendFormat(AppendAssemblyFileVersionFormat, this.Version);
+                }
 
                 if (this.SetAssemblyVersion)
                 {
+                    string originalFile = newFile;
                     newFile = this.regexAssemblyVersion.Replace(newFile, @"AssemblyVersion(""" + this.Version + @""")");
+                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        newFile = newFile.AppendFormat(AppendAssemblyVersionFormat, this.Version);
+                    }
                 }
 
                 // Write out the new contents.

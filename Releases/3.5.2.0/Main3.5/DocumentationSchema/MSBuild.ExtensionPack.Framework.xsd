@@ -663,6 +663,11 @@
                                 <xs:enumeration value="Evaluate"/>
                                 <xs:enumeration value="Multiply"/>
                                 <xs:enumeration value="Subtract"/>
+                                <xs:enumeration value="And"/>
+                                <xs:enumeration value="Or"/>
+                                <xs:enumeration value="Modulus"/>
+                                <xs:enumeration value="LeftShift"/>
+                                <xs:enumeration value="RightShift"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -928,6 +933,7 @@
                     <xs:attribute name="Minor"/>
                     <xs:attribute name="Major"/>
                     <xs:attribute name="Delimiter"/>
+                    <xs:attribute name="ForceSetVersion"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
