@@ -332,11 +332,13 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="AddAttributes"/>
                                 <xs:enumeration value="CountLines"/>
                                 <xs:enumeration value="GetChecksum"/>
                                 <xs:enumeration value="FilterByContent"/>
                                 <xs:enumeration value="Replace"/>
                                 <xs:enumeration value="SetAttributes"/>
+                                <xs:enumeration value="RemoveAttributes"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
