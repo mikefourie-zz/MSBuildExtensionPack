@@ -123,3 +123,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Analyse", Scope = "member", Target = "MSBuild.ExtensionPack.CodeQuality.FxCop.#AnalyseTaskAction")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Checkin", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.SourceSafe.#CheckinTaskAction")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Decloak", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.SourceSafe.#DecloakTaskAction")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "bool", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.DateAndTime.#BoolResult")]

@@ -9,6 +9,8 @@ namespace MSBuild.ExtensionPack.Framework
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>CheckBetween</i> (<b>Required: </b>Start, End <b>Output: </b> BoolResult)</para>
+    /// <para><i>CheckLater</i> (<b>Required: </b>Start <b>Output: </b> BoolResult)</para>
     /// <para><i>Get</i> (<b>Required: </b>Format <b>Output: </b> Result)</para>
     /// <para><i>GetElapsed</i> (<b>Required: </b>Format, Start <b>Optional: </b>End <b>Output: </b> Result)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -50,6 +52,16 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
     ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
     ///         <Message Text="Date / Time: $(DTResult)"/>
+    ///         <!-- Check if its later than a given time -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckLater" Start="14:10">
+    ///             <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Later: $(DTResult)"/>
+    ///         <!-- Check if the current time is between two times -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckBetween" Start="14:10" End="14:25">
+    ///             <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Between: $(DTResult)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -59,7 +71,11 @@ namespace MSBuild.ExtensionPack.Framework
     {
         private const string GetTaskAction = "Get";
         private const string GetElapsedTaskAction = "GetElapsed";
+        private const string CheckLaterTaskAction = "CheckLater";
+        private const string CheckBetweenTaskAction = "CheckBetween";
 
+        [DropdownValue(CheckBetweenTaskAction)]
+        [DropdownValue(CheckLaterTaskAction)]
         [DropdownValue(GetTaskAction)]
         [DropdownValue(GetElapsedTaskAction)]
         public override string TaskAction
@@ -69,8 +85,10 @@ namespace MSBuild.ExtensionPack.Framework
         }
 
         /// <summary>
-        /// The start time to use for GetElapsed
+        /// The start time to use
         /// </summary>
+        [TaskAction(CheckBetweenTaskAction, true)]
+        [TaskAction(CheckLaterTaskAction, true)]
         [TaskAction(GetElapsedTaskAction, true)]
         public DateTime Start { get; set; }
 
@@ -78,12 +96,12 @@ namespace MSBuild.ExtensionPack.Framework
         /// The end time to use for GetElapsed. Default is DateTime.Now
         /// </summary>
         [TaskAction(GetElapsedTaskAction, false)]
+        [TaskAction(CheckBetweenTaskAction, true)]
         public DateTime End { get; set; }
 
         /// <summary>
         /// Format to apply to the Result. For GetTime, Format can be any valid DateTime format. For GetElapsed, Format can be Milliseconds, Seconds, Minutes, Hours, Days or Total. Total returns dd:hh:mm:ss
         /// </summary>
-        [Required]
         [TaskAction(GetTaskAction, true)]
         [TaskAction(GetElapsedTaskAction, true)]
         public string Format { get; set; }
@@ -96,6 +114,14 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(GetElapsedTaskAction, false)]
         public string Result { get; set; }
 
+        /// <summary>
+        /// The output boolean result.
+        /// </summary>
+        [Output]
+        [TaskAction(CheckBetweenTaskAction, false)]
+        [TaskAction(CheckLaterTaskAction, false)]
+        public bool BoolResult { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -105,16 +131,52 @@ namespace MSBuild.ExtensionPack.Framework
 
             switch (this.TaskAction)
             {
-                case "Get":
+                case GetTaskAction:
                     this.GetDate();
                     break;
-                case "GetElapsed":
+                case GetElapsedTaskAction:
                     this.GetElapsed();
+                    break;
+                case CheckLaterTaskAction:
+                    this.CheckLater();
+                    break;
+                case CheckBetweenTaskAction:
+                    this.CheckBetween();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private void CheckLater()
+        {
+            if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                Log.LogError("Start must be specified");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is later than: {1}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
+            this.BoolResult = DateTime.Now > this.Start;
+        }
+
+        private void CheckBetween()
+        {
+            if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                Log.LogError("Start must be specified");
+                return;
+            }
+
+            if (this.End == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                Log.LogError("End must be specified");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is between: {1} and: {2}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.End.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
+            this.BoolResult = DateTime.Now > this.Start && DateTime.Now < this.End;
         }
 
         private void GetElapsed()
@@ -153,6 +215,9 @@ namespace MSBuild.ExtensionPack.Framework
                 case "Total":
                     this.Result = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}", t.Days.ToString("00", CultureInfo.CurrentCulture), t.Hours.ToString("00", CultureInfo.CurrentCulture), t.Minutes.ToString("00", CultureInfo.CurrentCulture), t.Seconds.ToString("00", CultureInfo.CurrentCulture));
                     break;
+                default:
+                    Log.LogError("Format must be specified");
+                    return;
             }
         }
 

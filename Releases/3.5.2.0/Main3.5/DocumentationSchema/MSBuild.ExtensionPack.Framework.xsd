@@ -445,6 +445,8 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="CheckBetween"/>
+                                <xs:enumeration value="CheckLater"/>
                                 <xs:enumeration value="Get"/>
                                 <xs:enumeration value="GetElapsed"/>
                             </xs:restriction>
@@ -452,7 +454,7 @@
                     </xs:attribute>
                     <xs:attribute name="Start"/>
                     <xs:attribute name="End"/>
-                    <xs:attribute name="Format" type="msb:non_empty_string" use="required"/>
+                    <xs:attribute name="Format"/>
                     <xs:attribute name="Result"/>
                 </xs:extension>
             </xs:complexContent>

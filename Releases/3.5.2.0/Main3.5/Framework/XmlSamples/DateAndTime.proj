@@ -33,5 +33,15 @@
             <Output TaskParameter="Result" PropertyName="DTResult"/>
         </MSBuild.ExtensionPack.Framework.DateAndTime>
         <Message Text="Date / Time: $(DTResult)"/>
+        <!-- Check if its later than a given time -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckLater" Start="14:10">
+            <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Later: $(DTResult)"/>
+        <!-- Check if the current time is between two times -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckBetween" Start="14:10" End="14:25">
+            <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Between: $(DTResult)"/>
     </Target>
 </Project>
