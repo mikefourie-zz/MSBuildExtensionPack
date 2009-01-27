@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
     <ProjectType>Local</ProjectType>
@@ -164,6 +164,7 @@
     <Compile Include="..\Common\StringExtension.cs">
       <Link>StringExtension.cs</Link>
     </Compile>
+    <Compile Include="Communication\Twitter.cs" />
     <Compile Include="FileSystem\Share.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfoWrapper.cs" />
@@ -341,6 +342,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
     <EmbeddedResource Include="UI\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
