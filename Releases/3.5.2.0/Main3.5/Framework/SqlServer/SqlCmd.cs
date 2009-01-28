@@ -452,7 +452,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Echo Input
             if (this.EchoInput)
             {
-                sb.Append(" - e ");
+                sb.Append(" -e ");
             }
 
             // Enabled Quoted Identifiers
