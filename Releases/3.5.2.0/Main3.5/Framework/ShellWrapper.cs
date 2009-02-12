@@ -68,8 +68,7 @@ namespace MSBuild.ExtensionPack
         /// <returns>int</returns>
         public int Execute()
         {
-            Process proc = new Process();
-            try
+            using (Process proc = new Process())
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(this.Executable, this.Arguments)
                 {
@@ -101,9 +100,7 @@ namespace MSBuild.ExtensionPack
 
                 // now we can read all the output.
                 this.StandardOutput = stdOut.ToString();
-            }
-            finally
-            {
+
                 // get the exit code and release the process handle
                 if (!proc.HasExited)
                 {
