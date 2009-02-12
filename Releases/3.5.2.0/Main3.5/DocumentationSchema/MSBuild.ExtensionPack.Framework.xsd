@@ -752,6 +752,7 @@
                     <xs:attribute name="UseClientRegionalSettings"/>
                     <xs:attribute name="CommandLineQuery"/>
                     <xs:attribute name="EchoInput"/>
+                    <xs:attribute name="SeverityLevel"/>
                     <xs:attribute name="EnableQuotedIdentifiers"/>
                     <xs:attribute name="QueryTimeout"/>
                     <xs:attribute name="Variables"/>
