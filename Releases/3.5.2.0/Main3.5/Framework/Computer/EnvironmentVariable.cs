@@ -82,7 +82,7 @@ namespace MSBuild.ExtensionPack.Computer
         [Required]
         [TaskAction(GetTaskAction, true)]
         [TaskAction(SetTaskAction, true)]
-        public string Variable { set; get; }
+        public string Variable { get; set; }
 
         /// <summary>
         /// Machine, Process or User. Defaults to Process

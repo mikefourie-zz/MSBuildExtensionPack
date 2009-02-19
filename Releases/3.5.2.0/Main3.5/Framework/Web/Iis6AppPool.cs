@@ -274,20 +274,22 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             using (DirectoryEntry appPoolsEntry = new DirectoryEntry(this.AppPoolsPath))
-            using (DirectoryEntry appPoolEntry = appPoolsEntry.Children.Add(this.Name, "IIsApplicationPool"))
             {
-                if (string.IsNullOrEmpty(this.Properties) == false)
+                using (DirectoryEntry appPoolEntry = appPoolsEntry.Children.Add(this.Name, "IIsApplicationPool"))
                 {
-                    string[] propList = this.Properties.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string s in propList)
+                    if (string.IsNullOrEmpty(this.Properties) == false)
                     {
-                        string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                        string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-                        this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
-                    }
+                        string[] propList = this.Properties.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    appPoolEntry.CommitChanges();
+                        foreach (string s in propList)
+                        {
+                            string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                            string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
+                            this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
+                        }
+
+                        appPoolEntry.CommitChanges();
+                    }
                 }
             }
         }

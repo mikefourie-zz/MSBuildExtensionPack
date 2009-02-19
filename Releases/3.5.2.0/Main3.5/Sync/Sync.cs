@@ -229,19 +229,21 @@ namespace MSBuild.ExtensionPack.FileSystem
         private void SyncFiles(Guid sourceSyncId, Guid destinationSyncId, FileSyncScopeFilter filter)
         {
             using (FileSyncProvider sourceProvider = new FileSyncProvider(sourceSyncId, this.Source.GetMetadata("FullPath"), filter, this.syncOptions))
-            using (FileSyncProvider destinationProvider = new FileSyncProvider(destinationSyncId, this.Destination.GetMetadata("FullPath"), filter, this.syncOptions))
             {
-                if (this.ShowOutput)
+                using (FileSyncProvider destinationProvider = new FileSyncProvider(destinationSyncId, this.Destination.GetMetadata("FullPath"), filter, this.syncOptions))
                 {
-                    // Hook up some events so the user can see what is happening
-                    destinationProvider.AppliedChange += this.OnAppliedChange;
-                    destinationProvider.SkippedChange += this.OnSkippedChange;
-                    sourceProvider.AppliedChange += this.OnAppliedChange;
-                    sourceProvider.SkippedChange += this.OnSkippedChange;
-                }
+                    if (this.ShowOutput)
+                    {
+                        // Hook up some events so the user can see what is happening
+                        destinationProvider.AppliedChange += this.OnAppliedChange;
+                        destinationProvider.SkippedChange += this.OnSkippedChange;
+                        sourceProvider.AppliedChange += this.OnAppliedChange;
+                        sourceProvider.SkippedChange += this.OnSkippedChange;
+                    }
 
-                SyncOrchestrator agent = new SyncOrchestrator { LocalProvider = sourceProvider, RemoteProvider = destinationProvider, Direction = this.direction };
-                agent.Synchronize();
+                    SyncOrchestrator agent = new SyncOrchestrator { LocalProvider = sourceProvider, RemoteProvider = destinationProvider, Direction = this.direction };
+                    agent.Synchronize();
+                }
             }
         }
  

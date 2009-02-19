@@ -90,7 +90,7 @@ namespace MSBuild.ExtensionPack.Compression
         /// Sets the files to Compress
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
-        public ITaskItem[] CompressFiles { set; get; }
+        public ITaskItem[] CompressFiles { get; set; }
 
         /// <summary>
         /// Sets the Path to Zip.
