@@ -307,6 +307,11 @@ namespace MSBuild.ExtensionPack.Framework
         public string AssemblyRevisionType { get; set; }
 
         /// <summary>
+        /// Set to true to skip setting version information. Default is false.
+        /// </summary>
+        public bool SkipVersioning { get; set; }
+
+        /// <summary>
         /// The format string to apply when converting the build number to a text string.
         /// </summary>
         /// <remarks>
@@ -911,17 +916,19 @@ namespace MSBuild.ExtensionPack.Framework
                 }
 
                 this.Log.LogMessage(MessageImportance.Low, "Updating assembly info for {0}", item.ItemSpec);
+                if (!this.SkipVersioning)
+                {
+                    Version versionToUpdate = new Version(assemblyInfo["AssemblyVersion"]);
+                    this.UpdateAssemblyVersion(versionToUpdate, this.assemblyVersionSettings);
+                    assemblyInfo["AssemblyVersion"] = versionToUpdate.ToString();
 
-                Version versionToUpdate = new Version(assemblyInfo["AssemblyVersion"]);
-                this.UpdateAssemblyVersion(versionToUpdate, this.assemblyVersionSettings);
-                assemblyInfo["AssemblyVersion"] = versionToUpdate.ToString();
-                
-                UpdateMaxVersion(ref this.maxAssemblyVersion, assemblyInfo["AssemblyVersion"]);
+                    UpdateMaxVersion(ref this.maxAssemblyVersion, assemblyInfo["AssemblyVersion"]);
 
-                versionToUpdate = new Version(assemblyInfo["AssemblyFileVersion"]);
-                this.UpdateAssemblyVersion(versionToUpdate, this.assemblyFileVersionSettings);
-                assemblyInfo["AssemblyFileVersion"] = versionToUpdate.ToString();
-                UpdateMaxVersion(ref this.maxAssemblyFileVersion, assemblyInfo["AssemblyFileVersion"]);
+                    versionToUpdate = new Version(assemblyInfo["AssemblyFileVersion"]);
+                    this.UpdateAssemblyVersion(versionToUpdate, this.assemblyFileVersionSettings);
+                    assemblyInfo["AssemblyFileVersion"] = versionToUpdate.ToString();
+                    UpdateMaxVersion(ref this.maxAssemblyFileVersion, assemblyInfo["AssemblyFileVersion"]);
+                }
 
                 this.UpdateProperty(assemblyInfo, "AssemblyTitle");
                 this.UpdateProperty(assemblyInfo, "AssemblyDescription");

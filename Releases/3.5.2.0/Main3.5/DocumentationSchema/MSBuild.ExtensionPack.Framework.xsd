@@ -1138,6 +1138,7 @@
                     <xs:attribute name="AssemblyKeyName"/>
                     <xs:attribute name="ComVisible"/>
                     <xs:attribute name="AssemblyInfoFiles" use="required" />
+                    <xs:attribute name="SkipVersioning"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
