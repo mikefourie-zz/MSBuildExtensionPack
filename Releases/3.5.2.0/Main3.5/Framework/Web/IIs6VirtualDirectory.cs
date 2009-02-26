@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Propertied)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Properties)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -41,6 +41,7 @@ namespace MSBuild.ExtensionPack.Web
         private bool requireApplication = true;
         private string appPool = "DefaultAppPool";
         private string name = "ROOT";
+        private string parent = "/ROOT";
 
         [DropdownValue(CreateTaskAction)]
         public override string TaskAction
@@ -50,10 +51,14 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Sets the Parent
+        /// Sets the Parent. Defaults to /ROOT
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
-        public string Parent { get; set; }
+        public string Parent
+        {
+            get { return this.parent; }
+            set { this.parent = value; }
+        }
 
         /// <summary>
         /// Sets whether an Application is required. Defaults to true.
