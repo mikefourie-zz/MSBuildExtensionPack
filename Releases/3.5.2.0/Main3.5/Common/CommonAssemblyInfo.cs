@@ -13,8 +13,8 @@ using System.Security.Permissions;
 [assembly:AssemblyCompany("http://www.MSBuildExtensionPack.com")]
 [assembly:AssemblyCopyright("Copyright © 2008 http://www.MSBuildExtensionPack.com")]
 [assembly:AssemblyTrademark("Mike Fourie")]
-[assembly:NeutralResourcesLanguage("en-GB")]
-[assembly:AssemblyCulture("en-GB")]
+[assembly:NeutralResourcesLanguage("")]
+[assembly:AssemblyCulture("")]
 [assembly:AssemblyProduct("MSBuild Extension Pack")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
