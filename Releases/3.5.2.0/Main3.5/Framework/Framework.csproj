@@ -2,7 +2,7 @@
   <PropertyGroup>
     <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1C780E39-26D5-4E6F-9533-91D867C1136C}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -166,6 +166,7 @@
     </Compile>
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="FileSystem\Share.cs" />
+    <Compile Include="Framework\Metadata.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfoWrapper.cs" />
     <Compile Include="Framework\AssemblyInfo\Version.cs" />
@@ -342,6 +343,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="XmlSamples\Metadata.proj" />
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
     <EmbeddedResource Include="UI\PromptForm.resx">
