@@ -5,7 +5,7 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <PropertyGroup>
-        <Start>1 Jan 2000</Start>
+        <Start>1 Jan 2009</Start>
     </PropertyGroup>
     <Target Name="Default">
         <!-- Get the elapsed days since the start date -->

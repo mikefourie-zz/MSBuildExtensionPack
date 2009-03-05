@@ -517,6 +517,23 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Framework.Metadata" substitutionGroup="msb:Task">
+      <xs:complexType>
+        <xs:complexContent>
+          <xs:extension base="msb:TaskType">
+            <xs:attribute name="TaskAction" use="required">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Add"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Items"/>
+            <xs:attribute name="NewMetadata"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Framework.MsBuildHelper" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>

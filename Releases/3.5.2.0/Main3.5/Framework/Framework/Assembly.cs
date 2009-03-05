@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         /// <summary>
         /// Sets the name of the Assembly
-        /// </summary>/
+        /// </summary>
         [Required]
         [TaskAction(GetInfoTaskAction, true)]
         [TaskAction(GetMethodInfoTaskAction, true)]
