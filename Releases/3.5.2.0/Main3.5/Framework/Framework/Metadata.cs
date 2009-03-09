@@ -38,7 +38,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// ]]></code>
     /// </example>
     [HelpUrl("TODO")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming","CA1724")]
     public class Metadata : BaseTask
     {
         private const string AddTaskAction = "Add";

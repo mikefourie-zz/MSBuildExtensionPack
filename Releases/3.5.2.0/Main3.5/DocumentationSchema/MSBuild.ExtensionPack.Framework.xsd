@@ -1076,6 +1076,7 @@
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="Create"/>
+                                <xs:enumeration value="Delete"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
