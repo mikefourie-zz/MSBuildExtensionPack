@@ -32,7 +32,7 @@ namespace MSBuild.ExtensionPack.Tfs
     ///     </PropertyGroup>
     ///     <Target Name="AfterCompileSolution">
     ///         <!-- Use the DevEnv task to build our setup project. -->
-    ///         <DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build" Version="9" />
+    ///         <MSBuild.ExtensionPack.Tfs.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build" Version="9" />
     ///         <!-- Copy all compilation outputs for the solution AND the setup project to the Team Build out dir so that they are copied to the drop location, can be found by unit tests, etc. -->
     ///         <ItemGroup>
     ///             <SolutionOutputs Condition=" '%(CompilationOutputs.Solution)' == '$(Solution)' " Include="%(RootDir)%(Directory)**\*.*" />
