@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// <summary>
     /// Build non-MSBuild projects in Team Build.<para/>
     /// This task is based on the DevEnv task written by Aaron Hallberg (http://blogs.msdn.com/aaronhallberg/archive/2007/07/12/team-build-devenv-task.aspx). It is used here with permission.<para/>
-    /// <para><b>Required: </b>TeamFoundationServerUrl, BuildUri, Solution or Project, SolutionPlatform, SolutionConfiguration, Target <b>Optional: </b>AdditionalCommandLineSwitches, ProjectConfiguration, OutputFile, Version</para>
+    /// <para><b>Required: </b>TeamFoundationServerUrl, BuildUri, Solution or Project, SolutionConfiguration, Target <b>Optional: </b>AdditionalCommandLineSwitches, ProjectConfiguration, OutputFile, Version, SolutionPlatform</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -81,7 +81,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// The solution platform to be Built, Rebuilt, Cleaned, or Deployed. For example "Any CPU".
         /// </summary>
-        [Required]
         public string SolutionPlatform { get; set; }
 
         /// <summary>
