@@ -91,4 +91,5 @@
     
     <!-- ============== Tfs ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.DevEnv"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.TeamBuild"/>
 </Project>

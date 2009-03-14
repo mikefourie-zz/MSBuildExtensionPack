@@ -22,4 +22,25 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Tfs.TeamBuild" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="GetLatest"/>
+                                <xs:enumeration value="Queue"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="BuildDefinitionName"/>
+                    <xs:attribute name="TeamFoundationServerUrl" use="required"/>
+                    <xs:attribute name="TeamProject" use="required"/>
+                    <xs:attribute name="Status"/>
+                    <xs:attribute name="Version"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
