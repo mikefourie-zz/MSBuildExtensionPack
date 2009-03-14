@@ -45,7 +45,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";

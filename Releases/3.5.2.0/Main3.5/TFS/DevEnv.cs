@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
     public class DevEnv : ToolTask
     {
         private IBuildDetail build;

@@ -66,7 +66,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
         private const string ParseRegexPatternExtract = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
