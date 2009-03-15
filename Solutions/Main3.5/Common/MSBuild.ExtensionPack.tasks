@@ -9,6 +9,7 @@
     <!-- ============== Framework ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.FxCop"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Communication.Email"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Communication.Twitter"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Compression.Cab"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.ComponentServices"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.EnvironmentVariable"/>
@@ -28,6 +29,7 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.DateAndTime"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Gac"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Guid"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Metadata"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.MSBuildHelper"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Signing"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.TextString"/>
@@ -50,7 +52,6 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Web.Iis6VirtualDirectory"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Web.Iis6Website"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Xml.XmlTask"/>
-
     
     <!-- ============== BizTalk ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkApplication"/>
@@ -90,4 +91,5 @@
     
     <!-- ============== Tfs ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.DevEnv"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.TeamBuild"/>
 </Project>

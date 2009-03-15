@@ -15,6 +15,7 @@
                                 <xs:enumeration value="GetInfo"/>
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Modify"/>
+                                <xs:enumeration value="Recycle"/>
                                 <xs:enumeration value="SetIdentity"/>
                                 <xs:enumeration value="SetPipelineMode"/>
                                 <xs:enumeration value="Start"/>

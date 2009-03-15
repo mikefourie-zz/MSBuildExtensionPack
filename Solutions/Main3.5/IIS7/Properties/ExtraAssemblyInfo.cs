@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("MSBuildIIS7")]
+[assembly: AssemblyTitle("MSBuild.ExtensionPack.Iis7")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: CLSCompliant(true)]

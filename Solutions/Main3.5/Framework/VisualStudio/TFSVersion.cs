@@ -6,15 +6,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b> PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter <b>Output: </b>Version)</para>
+    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b>PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter, Build, Revision, VersionTemplateFormat, CombineBuildAndRevision<b>Output: </b>Version, Major, Minor, Build, Revision)</para>
     /// <para><b>Please Note:</b> The output of GetVersion should not be used to change the $(BuildNumber). For guidance, see: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!404.entry</para>
-    /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion</para>
+    /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion, AssemblyVersion, SetAssemblyFileVersion, ForceSetVersion</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -41,6 +42,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///         <Message Text="Date Version is $(NewVersion)"/>
     ///         <!-- Set the version in a collection of files -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)"/>
+    ///         <!-- Set the version in a collection of files, forcing AssemblyFileVersion to be inserted even if it was not present in the affected file -->
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="$(NewVersion)" ForceSetVersion="true"/>
     ///         <!-- Get a version number based on the elapsed days since a given date and use a comma as the delimiter -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="GetVersion" Delimiter="," BuildName="YOURBUILD" TfsBuildNumber="YOURBUILD_20080703.1" VersionFormat="Elapsed" StartDate="17 Nov 1976" PaddingCount="4" PaddingDigit="1" Major="3" Minor="5">
     ///             <Output TaskParameter="Version" PropertyName="NewcppVersion" />
@@ -50,12 +53,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/591882fc-0534-dc0b-fe48-c2e7ec8608e0.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/591882fc-0534-dc0b-fe48-c2e7ec8608e0.htm")]
     public class TfsVersion : BaseTask
     {
         private const string GetVersionTaskAction = "GetVersion";
         private const string SetVersionTaskAction = "SetVersion";
-
+        private const string AppendAssemblyVersionFormat = "\n[assembly: System.Reflection.AssemblyVersion(\"{0}\")]";
+        private const string AppendAssemblyFileVersionFormat = "\n[assembly: System.Reflection.AssemblyFileVersion(\"{0}\")]";
+        private bool setAssemblyFileVersion = true;
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
@@ -74,6 +79,23 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         [TaskAction(SetVersionTaskAction, false)]
         public bool SetAssemblyVersion { get; set; }
+
+        /// <summary>
+        /// Set to True to set the AssemblyFileVersion when calling SetVersion. Default is true.
+        /// </summary>
+        [TaskAction(SetVersionTaskAction, false)]
+        public bool SetAssemblyFileVersion
+        {
+            get { return this.setAssemblyFileVersion; }
+            set { this.setAssemblyFileVersion = value; }
+        }
+
+        /// <summary>
+        /// Set to true to force SetVersion action to update files that do not have AssemblyVersion | AssemblyFileVersion
+        /// present.  Default is false.  ForceSetVersion does not affect AssemblyVersion when SetAssemblyVersion is false.
+        /// </summary>
+        [TaskAction(SetVersionTaskAction, false)]
+        public bool ForceSetVersion { get; set; }
 
         /// <summary>
         /// Sets the file encoding. Default is UTF8
@@ -100,6 +122,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(GetVersionTaskAction, false)]
         [TaskAction(SetVersionTaskAction, true)]
         public string Version { get; set; }
+
+        /// <summary>
+        /// Sets the AssemblyVersion. Defaults to Version if not set.
+        /// </summary>
+        [TaskAction(SetVersionTaskAction, false)]
+        public string AssemblyVersion { get; set; }
 
         /// <summary>
         /// Sets the number of padding digits to use, e.g. 4
@@ -140,14 +168,36 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the minor version
         /// </summary>
+        [Output]
         [TaskAction(GetVersionTaskAction, true)]
-        public int Minor { get; set; }
+        public string Minor { get; set; }
 
         /// <summary>
         /// Sets the major version
         /// </summary>
+        [Output]
         [TaskAction(GetVersionTaskAction, true)]
-        public int Major { get; set; }
+        public string Major { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the Build version
+        /// </summary>
+        [Output]
+        [TaskAction(GetVersionTaskAction, false)]
+        public string Build { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the Revision version
+        /// </summary>
+        [Output]
+        [TaskAction(GetVersionTaskAction, false)]
+        public string Revision { get; set; }
+
+        /// <summary>
+        /// Sets whether to make the revision a combination of the Build and Revision.
+        /// </summary>
+        [TaskAction(GetVersionTaskAction, false)]
+        public bool CombineBuildAndRevision { get; set; }
 
         /// <summary>
         /// Sets the Delimiter to use in the version number. Default is .
@@ -158,6 +208,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
             get { return this.delimiter; }
             set { this.delimiter = value; }
         }
+
+        /// <summary>
+        /// Specify the format of the build number. A format for each part must be specified or left blank, e.g. "00.000.00.000", "..0000.0"
+        /// </summary>
+        [TaskAction(GetVersionTaskAction, false)]
+        public string VersionTemplateFormat { get; set; }
 
         protected override void InternalExecute()
         {
@@ -204,18 +260,75 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string buildstring = this.TfsBuildNumber.Replace(this.BuildName + "_", string.Empty);
             string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
+
+            if (string.IsNullOrEmpty(this.Revision))
+            {
+                if (this.CombineBuildAndRevision)
+                {
+                    switch (this.VersionFormat.ToUpperInvariant())
+                    {
+                        case "ELAPSED":
+                            TimeSpan elapsed = DateTime.Today - Convert.ToDateTime(this.StartDate);
+                            this.Revision = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
+                            break;
+                        case "DATETIME":
+                            this.Revision = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
+                            break;
+                    }
+                }
+                else
+                {
+                    this.Revision = buildParts[1];
+                }
+            }
+
             switch (this.VersionFormat.ToUpperInvariant())
             {
                 case "ELAPSED":
                     TimeSpan elapsed = DateTime.Today - Convert.ToDateTime(this.StartDate);
-                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1], this.delimiter);
+                    if (string.IsNullOrEmpty(this.Build))
+                    {
+                        this.Build = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
+                    }
+
+                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
                     break;
                 case "DATETIME":
-                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit), buildParts[1], this.delimiter);
+                    if (string.IsNullOrEmpty(this.Build))
+                    {
+                        this.Build = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
+                    }
+
+                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
                     break;
                 default:
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
                     return;
+            }
+
+            // Check if format is provided
+            if (!string.IsNullOrEmpty(this.VersionTemplateFormat))
+            {
+                // get the current version number parts
+                int[] buildparts = this.Version.Split(char.Parse(this.delimiter)).Select(s => int.Parse(s, CultureInfo.InvariantCulture)).ToArray();
+
+                // get the format parts
+                string[] formatparts = this.VersionTemplateFormat.Split(char.Parse(this.delimiter));
+
+                // format each part
+                string[] newparts = new string[4];
+                for (int i = 0; i <= 3; i++)
+                {
+                    newparts[i] = buildparts[i].ToString(formatparts[i], CultureInfo.InvariantCulture);
+                }
+
+                this.Major = newparts[0];
+                this.Minor = newparts[1];
+                this.Build = newparts[2];
+                this.Revision = newparts[3];
+
+                // reset the version to the required format
+                this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", newparts[0], newparts[1], newparts[2], newparts[3], this.delimiter);
             }
         }
 
@@ -237,6 +350,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
             {
                 Log.LogError("No Files specified. Pass an Item Collection of files to the Files property.");
                 return;
+            }
+
+            if (string.IsNullOrEmpty(this.AssemblyVersion))
+            {
+                this.AssemblyVersion = this.Version;
             }
 
             // Load the regex to use
@@ -272,9 +390,22 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 // Parse the entire file.
                 string newFile = this.regexExpression.Replace(entireFile, @"AssemblyFileVersion(""" + this.Version + @""")");
 
+                if (this.SetAssemblyFileVersion)
+                {
+                    if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        newFile = newFile.AppendFormat(AppendAssemblyFileVersionFormat, this.Version);
+                    }
+                }
+
                 if (this.SetAssemblyVersion)
                 {
-                    newFile = this.regexAssemblyVersion.Replace(newFile, @"AssemblyVersion(""" + this.Version + @""")");
+                    string originalFile = newFile;
+                    newFile = this.regexAssemblyVersion.Replace(newFile, @"AssemblyVersion(""" + this.AssemblyVersion + @""")");
+                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        newFile = newFile.AppendFormat(AppendAssemblyVersionFormat, this.AssemblyVersion);
+                    }
                 }
 
                 // Write out the new contents.

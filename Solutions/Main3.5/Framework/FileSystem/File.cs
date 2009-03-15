@@ -14,9 +14,11 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>AddAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
     /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
+    /// <para><i>RemoveAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
@@ -83,7 +85,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
         private const string CountLinesTaskAction = "CountLines";
@@ -91,6 +93,9 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string FilterByContentTaskAction = "FilterByContent";
         private const string ReplaceTaskAction = "Replace";
         private const string SetAttributesTaskAction = "SetAttributes";
+        private const string AddAttributesTaskAction = "AddAttributes";
+        private const string RemoveAttributesTaskAction = "RemoveAttributes";
+
         private Encoding fileEncoding = Encoding.UTF8;
         private string replacement = string.Empty;
         private Regex parseRegex;
@@ -98,9 +103,11 @@ namespace MSBuild.ExtensionPack.FileSystem
         private List<ITaskItem> excludedFiles;
         private List<ITaskItem> includedFiles;
 
+        [DropdownValue(AddAttributesTaskAction)]
         [DropdownValue(CountLinesTaskAction)]
         [DropdownValue(GetChecksumTaskAction)]
         [DropdownValue(FilterByContentTaskAction)]
+        [DropdownValue(RemoveAttributesTaskAction)]
         [DropdownValue(ReplaceTaskAction)]
         [DropdownValue(SetAttributesTaskAction)]
         public override string TaskAction
@@ -149,10 +156,12 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
 
         /// <summary>
-        /// An ItemList of files to process. If calling SetAttributes, include the attributes in an Attributes metadata tag, separated by a semicolon.
+        /// An ItemList of files to process. If calling SetAttributes, RemoveAttributes or AddAttributes, include the attributes in an Attributes metadata tag, separated by a semicolon.
         /// </summary>
         [TaskAction(CountLinesTaskAction, true)]
         [TaskAction(SetAttributesTaskAction, true)]
+        [TaskAction(AddAttributesTaskAction, true)]
+        [TaskAction(RemoveAttributesTaskAction, true)]
         [TaskAction(ReplaceTaskAction, false)]
         [TaskAction(FilterByContentTaskAction, true)]
         public ITaskItem[] Files { get; set; }
@@ -270,19 +279,21 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             switch (this.TaskAction)
             {
-                case "CountLines":
+                case CountLinesTaskAction:
                     this.CountLines();
                     break;
-                case "FilterByContent":
+                case FilterByContentTaskAction:
                     this.FilterByContent();
                     break;
-                case "GetChecksum":
+                case GetChecksumTaskAction:
                     this.GetChecksum();
                     break;
-                case "Replace":
+                case ReplaceTaskAction:
                     this.Replace();
                     break;
-                case "SetAttributes":
+                case SetAttributesTaskAction:
+                case AddAttributesTaskAction:
+                case RemoveAttributesTaskAction:
                     this.SetAttributes();
                     break;
                 default:
@@ -388,10 +399,34 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            this.LogTaskMessage("Setting file attributes");
-            foreach (ITaskItem f in this.Files)
+            switch (this.TaskAction)
             {
-                FileInfo afile = new FileInfo(f.ItemSpec) { Attributes = SetAttributes(f.GetMetadata("Attributes").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) };
+                case SetAttributesTaskAction:
+                    this.LogTaskMessage("Setting file attributes");
+                    foreach (ITaskItem f in this.Files)
+                    {
+                        FileInfo afile = new FileInfo(f.ItemSpec) { Attributes = SetAttributes(f.GetMetadata("Attributes").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) };
+                    }
+
+                    break;
+                case AddAttributesTaskAction:
+                    this.LogTaskMessage("Adding file attributes");
+                    foreach (ITaskItem f in this.Files)
+                    {
+                        FileInfo file = new FileInfo(f.ItemSpec);
+                        file.Attributes = file.Attributes | SetAttributes(f.GetMetadata("Attributes").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+                    }
+
+                    break;
+                case RemoveAttributesTaskAction:
+                    this.LogTaskMessage("Removing file attributes");
+                    foreach (ITaskItem f in this.Files)
+                    {
+                        FileInfo file = new FileInfo(f.ItemSpec);
+                        file.Attributes = file.Attributes & ~SetAttributes(f.GetMetadata("Attributes").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+                    }
+
+                    break;
             }
         }
 

@@ -39,7 +39,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
     public class Sync : BaseTask
     {
         private const string SyncFoldersTaskAction = "SyncFolders";
@@ -229,19 +229,21 @@ namespace MSBuild.ExtensionPack.FileSystem
         private void SyncFiles(Guid sourceSyncId, Guid destinationSyncId, FileSyncScopeFilter filter)
         {
             using (FileSyncProvider sourceProvider = new FileSyncProvider(sourceSyncId, this.Source.GetMetadata("FullPath"), filter, this.syncOptions))
-            using (FileSyncProvider destinationProvider = new FileSyncProvider(destinationSyncId, this.Destination.GetMetadata("FullPath"), filter, this.syncOptions))
             {
-                if (this.ShowOutput)
+                using (FileSyncProvider destinationProvider = new FileSyncProvider(destinationSyncId, this.Destination.GetMetadata("FullPath"), filter, this.syncOptions))
                 {
-                    // Hook up some events so the user can see what is happening
-                    destinationProvider.AppliedChange += this.OnAppliedChange;
-                    destinationProvider.SkippedChange += this.OnSkippedChange;
-                    sourceProvider.AppliedChange += this.OnAppliedChange;
-                    sourceProvider.SkippedChange += this.OnSkippedChange;
-                }
+                    if (this.ShowOutput)
+                    {
+                        // Hook up some events so the user can see what is happening
+                        destinationProvider.AppliedChange += this.OnAppliedChange;
+                        destinationProvider.SkippedChange += this.OnSkippedChange;
+                        sourceProvider.AppliedChange += this.OnAppliedChange;
+                        sourceProvider.SkippedChange += this.OnSkippedChange;
+                    }
 
-                SyncOrchestrator agent = new SyncOrchestrator { LocalProvider = sourceProvider, RemoteProvider = destinationProvider, Direction = this.direction };
-                agent.Synchronize();
+                    SyncOrchestrator agent = new SyncOrchestrator { LocalProvider = sourceProvider, RemoteProvider = destinationProvider, Direction = this.direction };
+                    agent.Synchronize();
+                }
             }
         }
  

@@ -15,6 +15,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output: </b>Exists)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>Modify</i> (<b>Required: </b> Name, Properties)</para>
+    /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -43,7 +44,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
     public class Iis6AppPool : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -52,6 +53,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string ModifyTaskAction = "Modify";
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
+        private const string RecycleTaskAction = "Recycle";
         
         private string properties;
 
@@ -59,6 +61,7 @@ namespace MSBuild.ExtensionPack.Web
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(ModifyTaskAction)]
+        [DropdownValue(RecycleTaskAction)]
         [DropdownValue(StartTaskAction)]
         [DropdownValue(StopTaskAction)]
         public override string TaskAction
@@ -86,6 +89,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(ModifyTaskAction, true)]
+        [TaskAction(RecycleTaskAction, true)]
         [TaskAction(StartTaskAction, true)]
         [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
@@ -114,15 +118,16 @@ namespace MSBuild.ExtensionPack.Web
         {
             switch (this.TaskAction)
             {
-                case "Create":
+                case CreateTaskAction:
                     this.Create();
                     break;
-                case "Modify":
+                case ModifyTaskAction:
                     this.Modify();
                     break;
-                case "Start":
-                case "Delete":
-                case "Stop":
+                case StartTaskAction:
+                case DeleteTaskAction:
+                case StopTaskAction:
+                case RecycleTaskAction:
                     this.ControlAppPool(this.TaskAction);
                     break;
                 case "CheckExists":
@@ -240,18 +245,22 @@ namespace MSBuild.ExtensionPack.Web
                 {
                     switch (appPoolAction)
                     {
-                        case "Delete":
+                        case DeleteTaskAction:
                             using (DirectoryEntry appPoolsEntry = this.LoadAppPools())
                             {
                                 appPoolsEntry.Invoke("Delete", "IIsApplicationPool", appPoolEntry.Name);
                             }
 
                             break;
-                        case "Stop":
+                        case StopTaskAction:
                             appPoolEntry.Invoke("Stop");
                             break;
-                        case "Start":
+                        case StartTaskAction:
                             appPoolEntry.Invoke("Start");
+                            break;
+                        case RecycleTaskAction:
+                            appPoolEntry.Invoke("Start");
+                            appPoolEntry.Invoke("Recycle", null);
                             break;
                     }
                 }
@@ -274,20 +283,22 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             using (DirectoryEntry appPoolsEntry = new DirectoryEntry(this.AppPoolsPath))
-            using (DirectoryEntry appPoolEntry = appPoolsEntry.Children.Add(this.Name, "IIsApplicationPool"))
             {
-                if (string.IsNullOrEmpty(this.Properties) == false)
+                using (DirectoryEntry appPoolEntry = appPoolsEntry.Children.Add(this.Name, "IIsApplicationPool"))
                 {
-                    string[] propList = this.Properties.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string s in propList)
+                    if (string.IsNullOrEmpty(this.Properties) == false)
                     {
-                        string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                        string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
-                        this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
-                    }
+                        string[] propList = this.Properties.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    appPoolEntry.CommitChanges();
+                        foreach (string s in propList)
+                        {
+                            string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                            string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
+                            this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
+                        }
+
+                        appPoolEntry.CommitChanges();
+                    }
                 }
             }
         }

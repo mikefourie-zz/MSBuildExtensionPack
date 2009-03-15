@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// <summary>
     /// Build non-MSBuild projects in Team Build.<para/>
     /// This task is based on the DevEnv task written by Aaron Hallberg (http://blogs.msdn.com/aaronhallberg/archive/2007/07/12/team-build-devenv-task.aspx). It is used here with permission.<para/>
-    /// <para><b>Required: </b>TeamFoundationServerUrl, BuildUri, Solution or Project, SolutionPlatform, SolutionConfiguration, Target <b>Optional: </b>AdditionalCommandLineSwitches, ProjectConfiguration, OutputFile, Version</para>
+    /// <para><b>Required: </b>TeamFoundationServerUrl, BuildUri, Solution or Project, SolutionConfiguration, Target <b>Optional: </b>AdditionalCommandLineSwitches, ProjectConfiguration, OutputFile, Version, SolutionPlatform</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -32,7 +32,7 @@ namespace MSBuild.ExtensionPack.Tfs
     ///     </PropertyGroup>
     ///     <Target Name="AfterCompileSolution">
     ///         <!-- Use the DevEnv task to build our setup project. -->
-    ///         <DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build" Version="9" />
+    ///         <MSBuild.ExtensionPack.Tfs.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build" Version="9" />
     ///         <!-- Copy all compilation outputs for the solution AND the setup project to the Team Build out dir so that they are copied to the drop location, can be found by unit tests, etc. -->
     ///         <ItemGroup>
     ///             <SolutionOutputs Condition=" '%(CompilationOutputs.Solution)' == '$(Solution)' " Include="%(RootDir)%(Directory)**\*.*" />
@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
     public class DevEnv : ToolTask
     {
         private IBuildDetail build;
@@ -81,7 +81,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// The solution platform to be Built, Rebuilt, Cleaned, or Deployed. For example "Any CPU".
         /// </summary>
-        [Required]
         public string SolutionPlatform { get; set; }
 
         /// <summary>

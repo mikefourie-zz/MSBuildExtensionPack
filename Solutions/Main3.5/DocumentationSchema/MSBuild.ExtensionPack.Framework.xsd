@@ -56,6 +56,23 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Communication.Twitter" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Tweet"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Message" type="msb:non_empty_string" use="required"/>
+                    <xs:attribute name="TwitterUrl" type="msb:non_empty_string" use="required"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Compression.Cab" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
@@ -332,11 +349,13 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="AddAttributes"/>
                                 <xs:enumeration value="CountLines"/>
                                 <xs:enumeration value="GetChecksum"/>
                                 <xs:enumeration value="FilterByContent"/>
                                 <xs:enumeration value="Replace"/>
                                 <xs:enumeration value="SetAttributes"/>
+                                <xs:enumeration value="RemoveAttributes"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -443,6 +462,8 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="CheckBetween"/>
+                                <xs:enumeration value="CheckLater"/>
                                 <xs:enumeration value="Get"/>
                                 <xs:enumeration value="GetElapsed"/>
                             </xs:restriction>
@@ -450,7 +471,7 @@
                     </xs:attribute>
                     <xs:attribute name="Start"/>
                     <xs:attribute name="End"/>
-                    <xs:attribute name="Format" type="msb:non_empty_string" use="required"/>
+                    <xs:attribute name="Format"/>
                     <xs:attribute name="Result"/>
                 </xs:extension>
             </xs:complexContent>
@@ -495,6 +516,23 @@
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
+    </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Framework.Metadata" substitutionGroup="msb:Task">
+      <xs:complexType>
+        <xs:complexContent>
+          <xs:extension base="msb:TaskType">
+            <xs:attribute name="TaskAction" use="required">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Add"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Items"/>
+            <xs:attribute name="NewMetadata"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
     </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Framework.MsBuildHelper" substitutionGroup="msb:Task">
         <xs:complexType>
@@ -663,6 +701,11 @@
                                 <xs:enumeration value="Evaluate"/>
                                 <xs:enumeration value="Multiply"/>
                                 <xs:enumeration value="Subtract"/>
+                                <xs:enumeration value="And"/>
+                                <xs:enumeration value="Or"/>
+                                <xs:enumeration value="Modulus"/>
+                                <xs:enumeration value="LeftShift"/>
+                                <xs:enumeration value="RightShift"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -726,6 +769,7 @@
                     <xs:attribute name="UseClientRegionalSettings"/>
                     <xs:attribute name="CommandLineQuery"/>
                     <xs:attribute name="EchoInput"/>
+                    <xs:attribute name="SeverityLevel"/>
                     <xs:attribute name="EnableQuotedIdentifiers"/>
                     <xs:attribute name="QueryTimeout"/>
                     <xs:attribute name="Variables"/>
@@ -928,6 +972,7 @@
                     <xs:attribute name="Minor"/>
                     <xs:attribute name="Major"/>
                     <xs:attribute name="Delimiter"/>
+                    <xs:attribute name="ForceSetVersion"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -960,6 +1005,7 @@
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Delete"/>
                                 <xs:enumeration value="Modify"/>
+                                <xs:enumeration value="Recycle"/>
                                 <xs:enumeration value="Start"/>
                                 <xs:enumeration value="Stop"/>
                             </xs:restriction>
@@ -1030,6 +1076,7 @@
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="Create"/>
+                                <xs:enumeration value="Delete"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -1110,6 +1157,7 @@
                     <xs:attribute name="AssemblyKeyName"/>
                     <xs:attribute name="ComVisible"/>
                     <xs:attribute name="AssemblyInfoFiles" use="required" />
+                    <xs:attribute name="SkipVersioning"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

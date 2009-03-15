@@ -12,7 +12,8 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Propertied)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Properties)</para>
+    /// <para><i>Delete</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -25,15 +26,20 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
-    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" AppPool="AnAppPool" Properties="Path=C:\Demo1"/>
+    ///         <Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
+    ///         <!-- Create another IIsWebVirtualDir -->
+    ///         <Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
+    ///         <!-- Delete the IIsWebVirtualDir-->
+    ///         <Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
         private const string CreateTaskAction = "Create";
+        private const string DeleteTaskAction = "Delete";
         
         private DirectoryEntry websiteEntry;
         private string properties;
@@ -41,8 +47,10 @@ namespace MSBuild.ExtensionPack.Web
         private bool requireApplication = true;
         private string appPool = "DefaultAppPool";
         private string name = "ROOT";
+        private string parent = "/ROOT";
 
         [DropdownValue(CreateTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -50,10 +58,15 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Sets the Parent
+        /// Sets the Parent. Defaults to /ROOT
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
-        public string Parent { get; set; }
+        [TaskAction(DeleteTaskAction, false)]
+        public string Parent
+        {
+            get { return this.parent; }
+            set { this.parent = value; }
+        }
 
         /// <summary>
         /// Sets whether an Application is required. Defaults to true.
@@ -99,6 +112,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the Virtual Directory. Defaults to 'ROOT'
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
         public string Name
         {
             get { return this.name; }
@@ -110,6 +124,7 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         [Required]
         [TaskAction(CreateTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
         public string Website { get; set; }
 
         internal string IisPath
@@ -140,8 +155,11 @@ namespace MSBuild.ExtensionPack.Web
         {
             switch (this.TaskAction)
             {
-                case "Create":
+                case CreateTaskAction:
                     this.Create();
+                    break;
+                case DeleteTaskAction:
+                    this.Delete();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -247,6 +265,30 @@ namespace MSBuild.ExtensionPack.Web
                     webService.Dispose();
                 }
             }
+        }
+
+        private void Delete()
+        {
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Deleting Virtual Directory: {0} under {1}", this.Name, this.Website));
+
+            // Locate the website.
+            this.websiteEntry = this.LoadWebsite(this.Website);
+            if (this.websiteEntry == null)
+            {
+                throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Website));
+            }
+
+            if (this.Name != "ROOT")
+            {
+                string parentPath = string.Format(CultureInfo.InvariantCulture, "{0}{1}", this.websiteEntry.Path, this.Parent);
+                this.websiteEntry = new DirectoryEntry(parentPath);
+                if (this.websiteEntry == null)
+                {
+                    throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Virtual Directory not found: {0} under {1}", this.Name, this.Website));
+                }
+            }
+
+            this.websiteEntry.Invoke("Delete", new[] { "IIsWebVirtualDir", this.Name });
         }
 
         private void Create()

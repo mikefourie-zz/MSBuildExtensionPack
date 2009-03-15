@@ -16,6 +16,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name)</para>
     /// <para><i>Modify</i> (<b>Required: </b> Name <b>Optional: </b>Force, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes)</para>
+    /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>SetIdentity</i> (<b>Optional: </b>IdentityType, PoolIdentity, IdentityPassword)</para>
     /// <para><i>SetPipelineMode</i> (<b>Optional: </b>  PipelineMode)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
@@ -46,7 +47,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
     public class Iis7AppPool : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -58,6 +59,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string SetPipelineModeTaskAction = "SetPipelineMode";
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
+        private const string RecycleTaskAction = "Recycle";
         private ServerManager iisServerManager;
         private bool autoStart = true;
         private ManagedPipelineMode managedPM = ManagedPipelineMode.Integrated;
@@ -72,6 +74,7 @@ namespace MSBuild.ExtensionPack.Web
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(GetInfoTaskAction)]
         [DropdownValue(ModifyTaskAction)]
+        [DropdownValue(RecycleTaskAction)]
         [DropdownValue(SetIdentityTaskAction)]
         [DropdownValue(SetPipelineModeTaskAction)]
         [DropdownValue(StartTaskAction)]
@@ -208,6 +211,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(GetInfoTaskAction, true)]
         [TaskAction(ModifyTaskAction, true)]
+        [TaskAction(RecycleTaskAction, true)]
         [TaskAction(StartTaskAction, true)]
         [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
@@ -243,29 +247,30 @@ namespace MSBuild.ExtensionPack.Web
 
                 switch (this.TaskAction)
                 {
-                    case "Create":
+                    case CreateTaskAction:
                         this.Create();
                         break;
-                    case "GetInfo":
+                    case GetInfoTaskAction:
                         this.GetInfo();
                         break;
-                    case "Modify":
+                    case ModifyTaskAction:
                         this.Modify();
                         break;
-                    case "Delete":
+                    case DeleteTaskAction:
                         this.Delete();
                         break;
-                    case "CheckExists":
+                    case CheckExistsTaskAction:
                         this.CheckExists();
                         break;
-                    case "SetIdentity":
+                    case SetIdentityTaskAction:
                         this.SetIdentity();
                         break;
-                    case "SetPipelineMode":
+                    case SetPipelineModeTaskAction:
                         this.SetPipelineMode();
                         break;
-                    case "Start":
-                    case "Stop":
+                    case StartTaskAction:
+                    case StopTaskAction:
+                    case RecycleTaskAction:
                         this.ControlAppPool();
                         break;
                     default:
@@ -374,13 +379,19 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "{0} ApplicationPool: {1} on: {2}", this.TaskAction, this.Name, this.MachineName));
+
             switch (this.TaskAction)
             {
-                case "Start":
+                case StartTaskAction:
                     this.pool.Start();
                     break;
-                case "Stop":
+                case StopTaskAction:
                     this.pool.Stop();
+                    break;
+                case RecycleTaskAction:
+                    this.pool.Start();
+                    this.pool.Recycle();
                     break;
             }
         }

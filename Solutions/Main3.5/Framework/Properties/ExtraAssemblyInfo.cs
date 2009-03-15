@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("MSBuildFramework")]
+[assembly: AssemblyTitle("MSBuild.ExtensionPack")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: CLSCompliant(true)]

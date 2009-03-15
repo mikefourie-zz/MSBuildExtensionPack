@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("MSBuildStyleCop")]
+[assembly: AssemblyTitle("MSBuild.ExtensionPack.StyleCop")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: CLSCompliant(true)]

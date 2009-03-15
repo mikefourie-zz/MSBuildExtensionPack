@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// Wraps the SQL Server command line executable SqlCmd.exe.
     /// <para />
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: </b>CommandLineQuery or InputFiles  <b>Optional: </b>Database, DedicatedAdminConnection, DisableVariableSubstitution, EchoInput, EnableQuotedIdentifiers, Headers, LoginTimeout, LogOn, NewPassword, OutputFile, Password, QueryTimeout, RedirectStandardError, Server, SqlCmdPath, UnicodeOutput, UseClientRegionalSettings, Variables, Workstation)</para>
+    /// <para><i>Execute</i> (<b>Required: </b>CommandLineQuery or InputFiles  <b>Optional: </b>Database, DedicatedAdminConnection, DisableVariableSubstitution, EchoInput, EnableQuotedIdentifiers, Headers, LoginTimeout, LogOn, NewPassword, OutputFile, Password, QueryTimeout, RedirectStandardError, Server, SeverityLevel, SqlCmdPath, UnicodeOutput, UseClientRegionalSettings, Variables, Workstation)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -45,7 +45,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
@@ -254,6 +254,12 @@ namespace MSBuild.ExtensionPack.SqlServer
         public bool EnableQuotedIdentifiers { get; set; }
 
         /// <summary>
+        /// Controls the severity level that is used to set the ERRORLEVEL variable. If the ERRORLEVEL reported is >= SeverityLevel then the task will log an error. 
+        /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
+        public int SeverityLevel { get; set; }
+
+        /// <summary>
         /// <para>Gets or sets the number of seconds before a command (or SQL statement) times out. This option sets the <see cref="SqlCmd"/>
         /// scripting variable <i>SQLCMDSTATTIMEOUT</i>. If a <i>time_out</i> value is not specified, the command does not time out. The 
         /// query <i>time_out</i> must be a number between 1 and 65535. If the value supplied is not numeric or does not fall into that range,
@@ -422,6 +428,12 @@ namespace MSBuild.ExtensionPack.SqlServer
                 sb.Append(" -u ");
             }
 
+            // SeverityLevel
+            if (this.SeverityLevel > 0)
+            {
+                sb.Append(" -V " + this.SeverityLevel);
+            }
+
             // Redirect Standard Error
             if (this.RedirectStandardError)
             {
@@ -452,7 +464,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Echo Input
             if (this.EchoInput)
             {
-                sb.Append(" - e ");
+                sb.Append(" -e ");
             }
 
             // Enabled Quoted Identifiers
@@ -507,6 +519,12 @@ namespace MSBuild.ExtensionPack.SqlServer
 
             // Write out any errors
             this.SwitchReturnValue(returnValue, sqlCmdWrapper.StandardError.Trim());
+
+            if (this.SeverityLevel >= 0 && returnValue >= this.SeverityLevel)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SeverityLevel: {0} has been met or exceeded: {1}", this.SeverityLevel, returnValue));
+                return;
+            }
         }
 
         private void SqlExecute()

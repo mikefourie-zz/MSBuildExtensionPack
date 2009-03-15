@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("MSBuildTFS")]
+[assembly: AssemblyTitle("MSBuild.ExtensionPack.Tfs")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: CLSCompliant(true)]

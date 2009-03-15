@@ -123,3 +123,8 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Analyse", Scope = "member", Target = "MSBuild.ExtensionPack.CodeQuality.FxCop.#AnalyseTaskAction")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Checkin", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.SourceSafe.#CheckinTaskAction")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Decloak", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.SourceSafe.#DecloakTaskAction")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "bool", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.DateAndTime.#BoolResult")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "MSBuild.ExtensionPack.Communication.Twitter.#TwitterUrl")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "MSBuild.ExtensionPack.Loggers")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Scope = "type", Target = "MSBuild.ExtensionPack.Framework.Metadata")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis6VirtualDirectory.#Delete()")]

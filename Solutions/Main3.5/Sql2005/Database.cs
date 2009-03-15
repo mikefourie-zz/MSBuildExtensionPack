@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/2b1ebce5-3d34-c41b-5fcf-a942f14c9b51.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/2b1ebce5-3d34-c41b-5fcf-a942f14c9b51.htm")]
     public class Database : BaseTask
     {
         private const string BackupTaskAction = "Backup";
@@ -270,7 +270,7 @@ namespace MSBuild.ExtensionPack.Sql2005
         /// </summary>
         protected override void InternalExecute()
         {
-            if (string.IsNullOrEmpty(this.UserName) || string.IsNullOrEmpty(this.UserPassword))
+            if (string.IsNullOrEmpty(this.UserName))
             {
                 this.LogTaskMessage(MessageImportance.Low, "Using a Trusted Connection");
                 this.trustedConnection = true;

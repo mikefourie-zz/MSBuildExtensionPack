@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
     public class EnvironmentVariable : BaseTask
     {
         private const string GetTaskAction = "Get";
@@ -69,7 +69,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Gets the value. May be a string array.
+        /// Gets or sets the value. May be a string array. If Value is not passed or empty for Set, the environment variable is deleted.
         /// </summary>
         [Output]
         [TaskAction(GetTaskAction, false)]
@@ -77,12 +77,12 @@ namespace MSBuild.ExtensionPack.Computer
         public string[] Value { get; set; }
 
         /// <summary>
-        /// The name of the Environment Variable
+        /// The name of the Environment Variable to get or set.
         /// </summary>
         [Required]
         [TaskAction(GetTaskAction, true)]
         [TaskAction(SetTaskAction, true)]
-        public string Variable { set; get; }
+        public string Variable { get; set; }
 
         /// <summary>
         /// Machine, Process or User. Defaults to Process
@@ -115,10 +115,10 @@ namespace MSBuild.ExtensionPack.Computer
         {
             switch (this.TaskAction)
             {
-                case "Get":
+                case GetTaskAction:
                     this.Get();
                     break;
-                case "Set":
+                case SetTaskAction:
                     this.Set();
                     break;
                 default:
@@ -132,8 +132,16 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void Set()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
-            Environment.SetEnvironmentVariable(this.Variable, this.Value[0], this.target);
+            if (this.Value == null)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, string.Empty));
+                Environment.SetEnvironmentVariable(this.Variable, string.Empty, this.target);
+            }
+            else
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
+                Environment.SetEnvironmentVariable(this.Variable, this.Value[0], this.target);
+            }
         }
 
         /// <summary>

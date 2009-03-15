@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("Sql2008")]
+[assembly: AssemblyTitle("MSBuild.ExtensionPack.Sql2008")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: CLSCompliant(true)]

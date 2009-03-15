@@ -11,11 +11,16 @@ namespace MSBuild.ExtensionPack.Science
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>And</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>Or</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
     /// <para><i>Compare</i> (<b>Required: </b> P1, P2, Comparison <b>Output: </b>LogicalResult)</para>
     /// <para><i>Divide</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
     /// <para><i>Evaluate</i> (<b>Required: </b> Expression <b>Output: </b>Result)</para>
     /// <para><i>Multiply</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>Modulus</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
     /// <para><i>Subtract</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>LeftShift</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
+    /// <para><i>RightShift</i> (<b>Required: </b> Numbers <b>Output: </b>Result)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -81,7 +86,7 @@ namespace MSBuild.ExtensionPack.Science
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
     public class Maths : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -90,6 +95,11 @@ namespace MSBuild.ExtensionPack.Science
         private const string EvaluateTaskAction = "Evaluate";
         private const string MultiplyTaskAction = "Multiply";
         private const string SubtractTaskAction = "Subtract";
+        private const string OrTaskAction = "Or";
+        private const string AndTaskAction = "And";
+        private const string ModulusTaskAction = "Modulus";
+        private const string LeftShiftTaskAction = "LeftShift";
+        private const string RightShiftTaskAction = "RightShift";
 
         private float[] numbers;
         private float total;
@@ -100,6 +110,11 @@ namespace MSBuild.ExtensionPack.Science
         [DropdownValue(EvaluateTaskAction)]
         [DropdownValue(MultiplyTaskAction)]
         [DropdownValue(SubtractTaskAction)]
+        [DropdownValue(AndTaskAction)]
+        [DropdownValue(OrTaskAction)]
+        [DropdownValue(ModulusTaskAction)]
+        [DropdownValue(LeftShiftTaskAction)]
+        [DropdownValue(RightShiftTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -152,6 +167,11 @@ namespace MSBuild.ExtensionPack.Science
         [TaskAction(EvaluateTaskAction, false)]
         [TaskAction(MultiplyTaskAction, false)]
         [TaskAction(SubtractTaskAction, false)]
+        [TaskAction(AndTaskAction, false)]
+        [TaskAction(OrTaskAction, false)]
+        [TaskAction(ModulusTaskAction, false)]
+        [TaskAction(RightShiftTaskAction, false)]
+        [TaskAction(LeftShiftTaskAction, false)]
         public float Result { get; set; }
 
         /// <summary>
@@ -183,37 +203,37 @@ namespace MSBuild.ExtensionPack.Science
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} numbers", this.TaskAction));
             switch (this.TaskAction)
             {
-                case "Add":
+                case AddTaskAction:
                     this.Add();
                     break;
-                case "Subtract":
+                case SubtractTaskAction:
                     this.Subtract();
                     break;
-                case "Multiply":
+                case MultiplyTaskAction:
                     this.Multiply();
                     break;
-                case "Divide":
+                case DivideTaskAction:
                     this.Divide();
                     break;
-                case "Evaluate":
+                case EvaluateTaskAction:
                     this.Evaluate();
                     break;
-                case "Compare":
+                case CompareTaskAction:
                     this.Compare();
                     break;
-                case "Modulus":
+                case ModulusTaskAction:
                     this.Modulus();
                     break;
-                case "And":
+                case AndTaskAction:
                     this.And();
                     break;
-                case "Or":
+                case OrTaskAction:
                     this.Or();
                     break;
-                case "LeftShift":
+                case LeftShiftTaskAction:
                     this.LeftShift();
                     break;
-                case "RightShift":
+                case RightShiftTaskAction:
                     this.RightShift();
                     break;
                 default:

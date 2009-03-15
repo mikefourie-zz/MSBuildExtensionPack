@@ -40,7 +40,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.1.0/html/fb52629e-5d11-7fcc-7f9d-c0846c0e508e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/fb52629e-5d11-7fcc-7f9d-c0846c0e508e.htm")]
     public class Server : BaseTask
     {
         private const string GetConnectionCountTaskAction = "GetConnectionCount";
@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Sql2005
         /// </summary>
         protected override void InternalExecute()
         {
-            if (string.IsNullOrEmpty(this.UserName) || string.IsNullOrEmpty(this.UserPassword))
+            if (string.IsNullOrEmpty(this.UserName))
             {
                 this.LogTaskMessage(MessageImportance.Low, "Using a Trusted Connection");
                 this.trustedConnection = true;

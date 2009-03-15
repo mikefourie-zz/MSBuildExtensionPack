@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("MSBuildBizTalk")]
+[assembly: AssemblyTitle("MSBuild.ExtensionPack.BizTalk")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: CLSCompliant(true)]
