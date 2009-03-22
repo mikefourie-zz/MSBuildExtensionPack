@@ -305,10 +305,6 @@ namespace MSBuild.ExtensionPack.Web
                     webService.Invoke("Delete", args);
                 }
             }
-            else
-            {
-                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Name));
-            }
         }
 
         private void ControlWebsite()
