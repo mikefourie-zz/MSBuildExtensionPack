@@ -168,7 +168,14 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Run(string args)
         {
-            Process proc = new Process { StartInfo = { FileName = Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
+            string fileName = this.ToolPath != null ? Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName) : ToolName;
+            if (!System.IO.File.Exists(fileName))
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "sn.exe not found: {0}", fileName));
+                return;
+            }
+            
+            Process proc = new Process { StartInfo = { FileName = fileName, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
             proc.StartInfo.Arguments = args;
             this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
             proc.Start();
