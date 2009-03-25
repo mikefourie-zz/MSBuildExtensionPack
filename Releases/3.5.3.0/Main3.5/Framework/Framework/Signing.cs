@@ -142,6 +142,12 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
+            if (this.Assemblies == null)
+            {
+                this.Log.LogError("Assemblies not supplied");
+                return;
+            }
+
             foreach (ITaskItem assembly in this.Assemblies)
             {
                 FileInfo fi = new FileInfo(assembly.ItemSpec);
