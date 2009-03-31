@@ -245,11 +245,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// </summary>
         protected override void InternalExecute()
         {
-            if (!this.TargetingLocalMachine())
-            {
-                return;
-            }
-
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
             this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database) };
 
