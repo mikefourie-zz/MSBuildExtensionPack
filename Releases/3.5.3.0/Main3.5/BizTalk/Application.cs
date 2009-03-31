@@ -335,12 +335,24 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void CheckApplicationExists()
         {
+            if (string.IsNullOrEmpty(this.Application))
+            {
+                this.Log.LogError("Application is required");
+                return;
+            }
+
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", this.Application));
             this.Exists = this.CheckExists(this.Application);
         }
 
         private void Create()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application: {0}", appl.ItemSpec));
@@ -372,6 +384,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Delete()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 this.DeleteApplication(appl);
@@ -403,6 +421,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void StopApplication()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 if (!this.CheckExists(appl.ItemSpec))
@@ -446,6 +470,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void StartApplication()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Manage Application: {0}. Action: {1}", appl.ItemSpec, this.TaskAction));

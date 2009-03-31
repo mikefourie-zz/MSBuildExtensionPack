@@ -346,6 +346,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
+            
+            // If the TargetPath has multiple folders, then we need to create the parent
+            DirectoryInfo f = new DirectoryInfo(this.TargetPath);
+            string parentPath = this.TargetPath.Replace(@"\" + f.Name, string.Empty);
+            if (!Directory.Exists(parentPath))
+            {
+                Directory.CreateDirectory(parentPath);
+            }
+
             Directory.Move(this.Path, this.TargetPath);
         }
     }
