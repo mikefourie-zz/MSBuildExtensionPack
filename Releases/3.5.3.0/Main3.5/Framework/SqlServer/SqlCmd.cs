@@ -520,7 +520,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Write out any errors
             this.SwitchReturnValue(returnValue, sqlCmdWrapper.StandardError.Trim());
 
-            if (this.SeverityLevel >= 0 && returnValue >= this.SeverityLevel)
+            if (this.SeverityLevel > 0 && returnValue >= this.SeverityLevel)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SeverityLevel: {0} has been met or exceeded: {1}", this.SeverityLevel, returnValue));
                 return;
