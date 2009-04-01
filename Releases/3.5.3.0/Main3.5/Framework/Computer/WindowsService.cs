@@ -144,7 +144,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         protected override void InternalExecute()
         {
-            if (this.ServiceDoesExist() == false && this.TaskAction != "Install" && this.TaskAction != "CheckExists")
+            if (this.ServiceDoesExist() == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceName));
                 return;
@@ -294,6 +294,12 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Uninstall()
         {
+            if (!this.ServiceDoesExist())
+            {
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceName));
+                return;
+            }
+
             // check to see if the exe path has been provided
             if (this.ServicePath == null)
             {
