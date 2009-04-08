@@ -15,6 +15,11 @@
             <Col3 Include="bye"/>
             <DuplicateFiles Include="C:\Demo\**\*"/>
         </ItemGroup>
+        <!-- Convert an Item Collection into a string -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="ItemColToString" InputItems1="@(Col1)" Separator=" - ">
+            <Output TaskParameter="OutString" PropertyName="out"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="OutString: $(out)"/>
         <!-- Escape a string with special MSBuild characters -->
         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Escape" InString="hello how;are *you">
             <Output TaskParameter="OutString" PropertyName="out"/>

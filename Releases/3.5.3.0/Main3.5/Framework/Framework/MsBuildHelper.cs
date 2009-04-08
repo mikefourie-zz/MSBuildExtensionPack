@@ -1,5 +1,6 @@
 //-----------------------------------------------------------------------
 // <copyright file="MsBuildHelper.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// Task Contributors: Hamid Shahid
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
@@ -8,6 +9,7 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Text;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
@@ -20,6 +22,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>GetItem</i> (<b>Required: </b> InputItems1, Position<b>Output: </b> OutputItems)</para>
     /// <para><i>GetItemCount</i> (<b>Required: </b> InputItems1 <b>Output: </b> ItemCount)</para>
     /// <para><i>GetLastItem</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
+    /// <para><i>ItemColToString</i> (<b>Required: </b> InputItems1 <b>Optional: </b>Separator <b>Output: </b>OutputString)</para>
     /// <para><i>RemoveDuplicateFiles</i> (<b>Required: </b> InputItems1 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>Sort</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
     /// <para><i>StringToItemCol</i> (<b>Required: </b> ItemString, Separator <b>Output: </b> OutputItems, ItemCount)</para>
@@ -44,6 +47,11 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Col3 Include="bye"/>
     ///             <DuplicateFiles Include="C:\Demo\**\*"/>
     ///         </ItemGroup>
+    ///         <!-- Convert an Item Collection into a string -->
+    ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="ItemColToString" InputItems1="@(Col1)" Separator=" - ">
+    ///             <Output TaskParameter="OutString" PropertyName="out"/>
+    ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+    ///         <Message Text="OutString: $(out)"/>
     ///         <!-- Escape a string with special MSBuild characters -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Escape" InString="hello how;are *you">
     ///             <Output TaskParameter="OutString" PropertyName="out"/>
@@ -107,6 +115,7 @@ namespace MSBuild.ExtensionPack.Framework
         private const string RemoveDuplicateFilesTaskAction = "RemoveDuplicateFiles";
         private const string SortTaskAction = "Sort";
         private const string StringToItemColTaskAction = "StringToItemCol";
+        private const string ItemColToStringTaskAction = "ItemColToString";
         
         private List<ITaskItem> inputItems1;
         private List<ITaskItem> inputItems2;
@@ -119,6 +128,7 @@ namespace MSBuild.ExtensionPack.Framework
         [DropdownValue(GetItemTaskAction)]
         [DropdownValue(GetItemCountTaskAction)]
         [DropdownValue(GetLastItemTaskAction)]
+        [DropdownValue(ItemColToStringTaskAction)]
         [DropdownValue(RemoveDuplicateFilesTaskAction)]
         [DropdownValue(SortTaskAction)]
         [DropdownValue(StringToItemColTaskAction)]
@@ -150,6 +160,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets the separator to use to split the ItemString when calling StringToItemCol
         /// </summary>
+        [TaskAction(ItemColToStringTaskAction, false)]
         [TaskAction(StringToItemColTaskAction, true)]
         public string Separator { get; set; }
 
@@ -172,6 +183,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(GetItemTaskAction, true)]
         [TaskAction(GetItemCountTaskAction, true)]
         [TaskAction(GetLastItemTaskAction, true)]
+        [TaskAction(ItemColToStringTaskAction, true)]
         [TaskAction(RemoveDuplicateFilesTaskAction, true)]
         [TaskAction(SortTaskAction, true)]
         public ITaskItem[] InputItems1
@@ -199,6 +211,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(GetDistinctItemsTaskAction, false)]
         [TaskAction(GetItemTaskAction, false)]
         [TaskAction(GetLastItemTaskAction, false)]
+        [TaskAction(ItemColToStringTaskAction, false)]
         [TaskAction(RemoveDuplicateFilesTaskAction, false)]
         [TaskAction(SortTaskAction, true)]
         [TaskAction(StringToItemColTaskAction, false)]
@@ -257,6 +270,9 @@ namespace MSBuild.ExtensionPack.Framework
                     break;
                 case "StringToItemCol":
                     this.StringToItemCol();
+                    break;
+                case ItemColToStringTaskAction:
+                    this.ItemColToString();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -433,7 +449,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void StringToItemCol()
         {
-            this.LogTaskMessage("Converting String To Item Collection");
+            this.LogTaskMessage("Converting String to Item Collection");
 
             if (string.IsNullOrEmpty(this.ItemString))
             {
@@ -456,6 +472,29 @@ namespace MSBuild.ExtensionPack.Framework
             }
 
             this.ItemCount = this.outputItems.Count;
+        }
+
+        private void ItemColToString()
+        {
+            this.LogTaskMessage("Converting Item Collection to String");
+            if (this.inputItems1 == null)
+            {
+                Log.LogError("InputItems1 is required");
+                return;
+            }
+            
+            if (string.IsNullOrEmpty(this.Separator))
+            {
+                this.Separator = string.Empty;
+            }
+
+            StringBuilder stringToReturn = new StringBuilder();
+            for (int index = 0; index < this.inputItems1.Count; index++)
+            {
+                stringToReturn.AppendFormat("{0}{1}", this.inputItems1[index].ItemSpec, this.Separator);
+            }
+
+            this.OutString = stringToReturn.ToString().Substring(0, stringToReturn.Length - this.Separator.Length);
         }
 
         private void RemoveDuplicateFiles()
