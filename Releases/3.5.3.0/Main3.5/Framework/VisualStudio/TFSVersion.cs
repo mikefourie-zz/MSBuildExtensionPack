@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b>PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter, Build, Revision, VersionTemplateFormat, CombineBuildAndRevision<b>Output: </b>Version, Major, Minor, Build, Revision)</para>
+    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b>PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter, Build, Revision, VersionTemplateFormat, CombineBuildAndRevision, UseUtcDate<b>Output: </b>Version, Major, Minor, Build, Revision)</para>
     /// <para><b>Please Note:</b> The output of GetVersion should not be used to change the $(BuildNumber). For guidance, see: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!404.entry</para>
     /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion, AssemblyVersion, SetAssemblyFileVersion, ForceSetVersion</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -80,6 +80,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(SetVersionTaskAction, false)]
         public bool SetAssemblyVersion { get; set; }
 
+        /// <summary>
+        /// Set to True to get the elapsed calculation using UTC Date Time. Default is false
+        /// </summary>
+        [TaskAction(GetVersionTaskAction, false)]
+        public bool UseUtcDate { get; set; }
+        
         /// <summary>
         /// Set to True to set the AssemblyFileVersion when calling SetVersion. Default is true.
         /// </summary>
@@ -261,6 +267,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
 
+            DateTime baseTimeToUse = DateTime.Now;
+            if (this.UseUtcDate)
+            {
+                baseTimeToUse = DateTime.UtcNow;
+            }
+
             if (string.IsNullOrEmpty(this.Revision))
             {
                 if (this.CombineBuildAndRevision)
@@ -268,7 +280,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     switch (this.VersionFormat.ToUpperInvariant())
                     {
                         case "ELAPSED":
-                            TimeSpan elapsed = DateTime.Today - Convert.ToDateTime(this.StartDate);
+                            TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.StartDate);
                             this.Revision = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
                             break;
                         case "DATETIME":
@@ -285,7 +297,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             switch (this.VersionFormat.ToUpperInvariant())
             {
                 case "ELAPSED":
-                    TimeSpan elapsed = DateTime.Today - Convert.ToDateTime(this.StartDate);
+                    TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.StartDate);
                     if (string.IsNullOrEmpty(this.Build))
                     {
                         this.Build = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
