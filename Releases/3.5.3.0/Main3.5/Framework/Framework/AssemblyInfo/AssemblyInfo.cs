@@ -107,6 +107,23 @@ namespace MSBuild.ExtensionPack.Framework
     /// </remarks>
     /// <seealso cref="AssemblyMajorVersion"/>
     /// <seealso cref="AssemblyMinorVersion"/>
+    /// <example>
+    /// <code lang="xml"><![CDATA[
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <ItemGroup>
+    ///             <AssemblyInfoFiles Include="C:\AssemblyInfo.cs"/>
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyConfiguration="DEBUG" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+    ///     </Target>
+    /// </Project>
+    /// ]]></code>    
+    /// </example>
     [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {

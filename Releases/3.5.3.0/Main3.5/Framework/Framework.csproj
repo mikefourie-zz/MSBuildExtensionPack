@@ -2,7 +2,7 @@
   <PropertyGroup>
     <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1C780E39-26D5-4E6F-9533-91D867C1136C}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -294,7 +294,7 @@
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
-    <None Include="XmlSamples\SqlServer.proj" />
+    <None Include="XmlSamples\SqlCmd.proj" />
     <None Include="XmlSamples\Xml.proj" />
     <None Include="XmlSamples\Iis6ServiceExtensionFile.proj" />
     <None Include="XmlSamples\Iis6VirtualDirectory.proj" />
@@ -343,6 +343,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\Metadata.proj" />
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
