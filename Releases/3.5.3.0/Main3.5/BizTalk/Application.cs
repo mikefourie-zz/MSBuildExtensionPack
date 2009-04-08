@@ -431,7 +431,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             {
                 if (!this.CheckExists(appl.ItemSpec))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
                     return;
                 }
 
