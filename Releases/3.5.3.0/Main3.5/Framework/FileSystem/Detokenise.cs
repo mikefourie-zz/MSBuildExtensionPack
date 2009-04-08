@@ -69,6 +69,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
+        private const string AnalyseTaskAction = "Analyse";
+        private const string DetokeniseTaskAction = "Detokenise";
         private const string ParseRegexPatternExtract = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
         private string tokenPattern = @"\$\([0-9a-zA-Z-._]+\)";
         private Project project;
@@ -85,14 +87,26 @@ namespace MSBuild.ExtensionPack.FileSystem
         // this bool is used to track whether the file needs to be re-written.
         private bool tokenMatched;
 
+        [DropdownValue(AnalyseTaskAction)]
+        [DropdownValue(DetokeniseTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Set to true for files being processed to be output to the console.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public bool DisplayFiles { get; set; }
 
         /// <summary>
         /// Specifies the format of the token to look for. The default patterns is $(token)
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public string TokenPattern
         {
             get { return this.tokenPattern; }
@@ -102,40 +116,61 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets the replacement values.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public ITaskItem[] ReplacementValues { get; set; }
+
+        /// <summary>
+        /// Sets the MSBuidl file to load for token matching. Defaults to BuildEngine.ProjectFileOfTaskNode
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
+        public ITaskItem ProjectFile { get; set; }
 
         /// <summary>
         /// If this is set to true, then the file is re-written, even if no tokens are matched.
         /// this may be used in the case when the user wants to ensure all file are written
         /// with the same encoding.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public bool ForceWrite { get; set; }
 
         /// <summary>
         /// Sets the TargetPath.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public string TargetPath { get; set; }
 
         /// <summary>
         /// Sets the TargetFiles.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public ITaskItem[] TargetFiles { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding. If TargetFiles is specified, individual encodings can be specified by providing an Encoding metadata value.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Gets the files processed count. [Output]
         /// </summary>
         [Output]
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public int FilesProcessed { get; set; }
 
         /// <summary>
         /// Gets the files detokenised count. [Output]
         /// </summary>
         [Output]
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public int FilesDetokenised { get; set; }
 
         /// <summary>
@@ -205,7 +240,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                     // Read the project file to get the tokens
                     this.project = new Project();
-                    string projectFile = this.BuildEngine.ProjectFileOfTaskNode;
+                    string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
                     this.project.Load(projectFile);
                 }
