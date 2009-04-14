@@ -207,6 +207,8 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="GetInternalIP"/>
+                                <xs:enumeration value="GetRemoteIP"/>
                                 <xs:enumeration value="Ping"/>
                             </xs:restriction>
                         </xs:simpleType>
@@ -353,6 +355,7 @@
                                 <xs:enumeration value="AddAttributes"/>
                                 <xs:enumeration value="CountLines"/>
                                 <xs:enumeration value="GetChecksum"/>
+                                <xs:enumeration value="GetTempFileName"/>
                                 <xs:enumeration value="FilterByContent"/>
                                 <xs:enumeration value="Replace"/>
                                 <xs:enumeration value="SetAttributes"/>
