@@ -165,6 +165,7 @@
       <Link>StringExtension.cs</Link>
     </Compile>
     <Compile Include="Communication\Twitter.cs" />
+    <Compile Include="Web\HttpWebRequest.cs" />
     <Compile Include="FileSystem\Share.cs" />
     <Compile Include="Framework\Metadata.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
@@ -344,6 +345,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="XmlSamples\AssemblyInfo.proj" />
+    <None Include="XmlSamples\HttpWebRequest.proj" />
     <None Include="XmlSamples\Metadata.proj" />
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
