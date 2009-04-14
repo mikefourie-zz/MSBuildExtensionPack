@@ -330,14 +330,15 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="DisplayFiles"/>
-                    <xs:attribute name="TokenPattern"/>
-                    <xs:attribute name="ReplacementValues"/>
-                    <xs:attribute name="ForceWrite"/>
-                    <xs:attribute name="TargetPath"/>
-                    <xs:attribute name="TargetFiles"/>
-                    <xs:attribute name="TextEncoding"/>
-                    <xs:attribute name="FilesProcessed"/>
                     <xs:attribute name="FilesDetokenised"/>
+                    <xs:attribute name="FilesProcessed"/>
+                    <xs:attribute name="ForceWrite"/>
+                    <xs:attribute name="ProjectFile"/>
+                    <xs:attribute name="ReplacementValues"/>
+                    <xs:attribute name="TargetFiles"/>
+                    <xs:attribute name="TargetPath"/>
+                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TokenPattern"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -548,6 +549,7 @@
                                 <xs:enumeration value="GetItem"/>
                                 <xs:enumeration value="GetItemCount"/>
                                 <xs:enumeration value="GetLastItem"/>
+                                <xs:enumeration value="ItemColToString"/>
                                 <xs:enumeration value="RemoveDuplicateFiles"/>
                                 <xs:enumeration value="Sort"/>
                                 <xs:enumeration value="StringToItemCol"/>
@@ -958,21 +960,22 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
-                    <xs:attribute name="SetAssemblyVersion"/>
-                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="BuildName"/>
+                    <xs:attribute name="DateFormat"/>
+                    <xs:attribute name="Delimiter"/>
                     <xs:attribute name="Files"/>
-                    <xs:attribute name="TfsBuildNumber"/>
-                    <xs:attribute name="Version"/>
+                    <xs:attribute name="ForceSetVersion"/>
+                    <xs:attribute name="Major"/>
+                    <xs:attribute name="Minor"/>
                     <xs:attribute name="PaddingCount"/>
                     <xs:attribute name="PaddingDigit"/>
+                    <xs:attribute name="SetAssemblyVersion"/>
                     <xs:attribute name="StartDate"/>
-                    <xs:attribute name="DateFormat"/>
-                    <xs:attribute name="BuildName"/>
+                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TfsBuildNumber"/>
+                    <xs:attribute name="UseUtcDate"/>
+                    <xs:attribute name="Version"/>
                     <xs:attribute name="VersionFormat"/>
-                    <xs:attribute name="Minor"/>
-                    <xs:attribute name="Major"/>
-                    <xs:attribute name="Delimiter"/>
-                    <xs:attribute name="ForceSetVersion"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
