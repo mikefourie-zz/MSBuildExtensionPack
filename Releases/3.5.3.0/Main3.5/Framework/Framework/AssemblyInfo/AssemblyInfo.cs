@@ -924,6 +924,12 @@ namespace MSBuild.ExtensionPack.Framework
 
             foreach (ITaskItem item in this.AssemblyInfoFiles)
             {
+                if (!File.Exists(item.ItemSpec))
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentUICulture, "File not found: {0}", item.ItemSpec));
+                    return false;
+                }
+
                 AssemblyInfoWrapper assemblyInfo = new AssemblyInfoWrapper(item.ItemSpec);
 
                 // Validate that stub file entries exist for any of the properties we've been asked to set.
@@ -974,7 +980,26 @@ namespace MSBuild.ExtensionPack.Framework
                         writer.Close();
                     }
 
+                    bool changedAttribute = false;
+
+                    // First make sure the file is writable.
+                    FileAttributes fileAttributes = File.GetAttributes(item.ItemSpec);
+
+                    // If readonly attribute is set, reset it.
+                    if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    {
+                        Log.LogMessage(MessageImportance.Low, "Making file writable");
+                        File.SetAttributes(item.ItemSpec, fileAttributes ^ FileAttributes.ReadOnly);
+                        changedAttribute = true;
+                    }
+
                     File.Copy(writerInfo.FullName, item.ItemSpec, true);
+
+                    if (changedAttribute)
+                    {
+                        Log.LogMessage(MessageImportance.Low, "Making file readonly");
+                        File.SetAttributes(item.ItemSpec, FileAttributes.ReadOnly);
+                    }
                 }
                 finally
                 {
