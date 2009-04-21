@@ -10,7 +10,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional:</b> Force, Properties)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional:</b> Force, Properties, Identifier <b>OutPut: </b>Identifier)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output: </b>Exists)</para>
     /// <para><i>Continue</i> (<b>Required: </b> Name)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
@@ -117,6 +117,13 @@ namespace MSBuild.ExtensionPack.Web
             get { return this.sleep; }
             set { this.sleep = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the Identifier for the website. If specified for Create and the Identifier already exists, an error is logged.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [Output]
+        public int Identifier { get; set; }
 
         /// <summary>
         /// Gets whether the website exists.
@@ -242,29 +249,46 @@ namespace MSBuild.ExtensionPack.Web
                     }
                 }
 
-                bool foundSlot = false;
-                int websiteIdentifier = 1;
-                do
+                if (this.Identifier > 0)
                 {
                     try
                     {
-                        this.websiteEntry = (DirectoryEntry)webserviceEntry.Invoke("Create", "IIsWebServer", websiteIdentifier);
+                        this.websiteEntry = (DirectoryEntry)webserviceEntry.Invoke("Create", "IIsWebServer", this.Identifier);
                         this.websiteEntry.CommitChanges();
                         webserviceEntry.CommitChanges();
-                        foundSlot = true;
                     }
                     catch
                     {
-                        if (websiteIdentifier > 1000)
-                        {
-                            Log.LogError(string.Format(CultureInfo.CurrentUICulture, "websiteIdentifier > 1000. Aborting: {0}", this.Name));
-                            return;
-                        }
-
-                        ++websiteIdentifier;
+                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "WebsiteIdentifier {0} already exists. Aborting: {1}", this.Identifier, this.Name));
+                        return;
                     }
                 }
-                while (foundSlot == false);
+                else
+                {
+                    bool foundSlot = false;
+                    this.Identifier = 1;
+                    do
+                    {
+                        try
+                        {
+                            this.websiteEntry = (DirectoryEntry)webserviceEntry.Invoke("Create", "IIsWebServer", this.Identifier);
+                            this.websiteEntry.CommitChanges();
+                            webserviceEntry.CommitChanges();
+                            foundSlot = true;
+                        }
+                        catch
+                        {
+                            if (this.Identifier > 1000)
+                            {
+                                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "websiteIdentifier > 1000. Aborting: {0}", this.Name));
+                                return;
+                            }
+
+                            ++this.Identifier;
+                        }
+                    }
+                    while (foundSlot == false);
+                }
 
                 using (DirectoryEntry vdirEntry = (DirectoryEntry)this.websiteEntry.Invoke("Create", "IIsWebVirtualDir", "ROOT"))
                 {

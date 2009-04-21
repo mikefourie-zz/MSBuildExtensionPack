@@ -1075,6 +1075,7 @@
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Continue"/>
                                 <xs:enumeration value="Delete"/>
+                                <xs:enumeration value="Identifier"/>
                                 <xs:enumeration value="Start"/>
                                 <xs:enumeration value="Stop"/>
                                 <xs:enumeration value="Pause"/>
