@@ -425,6 +425,11 @@ namespace MSBuild.ExtensionPack.Tfs
             }
             else if (this.ErrorRegex.IsMatch(singleLine))
             {
+                if (singleLine.Contains("errorreport"))
+                {
+                    return;
+                }
+
                 // Detect errors and warnings and update the compilation summaries.
                 if (this.CompilationSummary != null)
                 {
