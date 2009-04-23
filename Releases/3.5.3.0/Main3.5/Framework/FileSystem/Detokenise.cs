@@ -15,8 +15,8 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, Encoding ,ForceWrite, ReplacementValues, TokenPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Replace</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, Encoding ,ForceWrite, ReplacementValues, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, TokenPattern <b>Output: </b>FilesProcessed)</para>
+    /// <para><i>Replace</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
