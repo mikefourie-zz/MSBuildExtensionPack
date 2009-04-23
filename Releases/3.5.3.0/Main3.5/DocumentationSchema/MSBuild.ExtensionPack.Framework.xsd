@@ -140,6 +140,7 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="Backup"/>
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Clear"/>
                                 <xs:enumeration value="Create"/>
@@ -996,6 +997,7 @@
                     </xs:attribute>
                     <xs:attribute name="VB6Path"/>
                     <xs:attribute name="Projects" use="required"/>
+                    <xs:attribute name="StopOnError"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

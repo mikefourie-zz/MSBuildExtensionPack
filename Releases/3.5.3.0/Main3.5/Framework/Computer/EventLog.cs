@@ -5,10 +5,13 @@ namespace MSBuild.ExtensionPack.Computer
 {
     using System.Diagnostics;
     using System.Globalization;
+    using System.IO;
+    using System.Management;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>Backup</i> (<b>Required: </b> LogName, BackupPath <b>Optional: </b>MachineName)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>LogName <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
     /// <para><i>Clear</i> (<b>Required: </b> LogName <b>Optional: </b>MachineName)</para>
     /// <para><i>Create</i> (<b>Required: </b>LogName <b>Optional: </b>MaxSize, Retention, MachineName)</para>
@@ -25,6 +28,8 @@ namespace MSBuild.ExtensionPack.Computer
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
+    ///         <!-- Backup an eventlog -->
+    ///         <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Backup" LogName="Security" BackupPath="C:\Securitybackup.evt"/>
     ///         <!-- Delete an eventlog -->
     ///         <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Delete" LogName="DemoEventLog"/>
     ///         <!-- Check whether an eventlog exists -->
@@ -53,12 +58,14 @@ namespace MSBuild.ExtensionPack.Computer
     [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/13fd881e-bc34-d8a6-8f2c-9f086044c17a.htm")]
     public class EventLog : BaseTask
     {
+        private const string BackupTaskAction = "Backup";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string ClearTaskAction = "Clear";
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
         private const string ModifyTaskAction = "Modify";
 
+        [DropdownValue(BackupTaskAction)]
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(ClearTaskAction)]
         [DropdownValue(CreateTaskAction)]
@@ -88,6 +95,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the name of the Event Log
         /// </summary>
         [Required]
+        [TaskAction(BackupTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(ClearTaskAction, true)]
         [TaskAction(CreateTaskAction, true)]
@@ -112,6 +120,12 @@ namespace MSBuild.ExtensionPack.Computer
             get { return base.MachineName; }
             set { base.MachineName = value; }
         }
+
+        /// <summary>
+        /// Sets the Backup Path
+        /// </summary>
+        [TaskAction(BackupTaskAction, true)]
+        public string BackupPath { get; set; }
         
         /// <summary>
         /// Performs the action of this task.
@@ -120,19 +134,22 @@ namespace MSBuild.ExtensionPack.Computer
         {
             switch (this.TaskAction)
             {
-                case "Create":
+                case BackupTaskAction:
+                    this.Backup();
+                    break;
+                case CreateTaskAction:
                     this.Create();
                     break;
-                case "CheckExists":
+                case CheckExistsTaskAction:
                     this.CheckExists();
                     break;
-                case "Delete":
+                case DeleteTaskAction:
                     this.Delete();
                     break;
-                case "Clear":
+                case ClearTaskAction:
                     this.Clear();
                     break;
-                case "Modify":
+                case ModifyTaskAction:
                     this.Modify();
                     break;
                 default:
@@ -226,6 +243,66 @@ namespace MSBuild.ExtensionPack.Computer
             else
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid LogName Supplied: {0}", this.LogName));
+            }
+        }
+
+        private void Backup()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Backup EventLog: {0}", this.LogName));
+
+            // check the backup path.
+            if (string.IsNullOrEmpty(this.BackupPath))
+            {
+                this.Log.LogError("Invalid BackupPath Supplied");
+                return;
+            }
+
+            // check if the eventlog exists
+            if (System.Diagnostics.EventLog.SourceExists(this.LogName))
+            {
+                // check if the file to backup to exists
+                if (System.IO.File.Exists(this.BackupPath))
+                {
+                    // First make sure the file is writable.
+                    FileAttributes fileAttributes = System.IO.File.GetAttributes(this.BackupPath);
+
+                    // If readonly attribute is set, reset it.
+                    if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    {
+                        // make it readable.
+                        System.IO.File.SetAttributes(this.BackupPath, fileAttributes ^ FileAttributes.ReadOnly);
+
+                        // delete it
+                        System.IO.File.Delete(this.BackupPath);
+                    }
+                }
+
+                ConnectionOptions options = new ConnectionOptions
+                {
+                    Username = this.UserName,
+                    Password = this.UserPassword,
+                    Authority = this.Authority,
+                    EnablePrivileges = true
+                };
+
+                // set the scope
+                this.GetManagementScope(@"\root\cimv2", options);
+
+                // set the query
+                SelectQuery query = new SelectQuery("Select * from Win32_NTEventLogFile where LogFileName='" + this.LogName + "'");
+
+                // configure the searcher and execute a get
+                ManagementObjectSearcher search = new ManagementObjectSearcher(this.Scope, query);
+                foreach (ManagementObject obj in search.Get())
+                {
+                    object[] path = { this.BackupPath };
+                    obj.InvokeMethod("BackupEventLog", path);
+                }
+            }
+            else
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Invalid LogName Supplied: {0}", this.LogName));
+                return;
             }
         }
     }

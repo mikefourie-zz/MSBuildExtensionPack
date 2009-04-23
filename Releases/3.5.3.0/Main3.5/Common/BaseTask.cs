@@ -146,6 +146,19 @@ namespace MSBuild.ExtensionPack
             }
         }
 
+        internal void GetManagementScope(string wmiNamespace, ConnectionOptions options)
+        {
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "ManagementScope Set: {0}", "\\\\" + this.MachineName + wmiNamespace));
+            if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace, options);
+            }
+            else
+            {
+                this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace, options);
+            }
+        }
+
         /// <summary>
         /// This is the main InternalExecute method that all tasks should implement
         /// </summary>

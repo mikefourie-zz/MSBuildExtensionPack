@@ -131,3 +131,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "MSBuild.ExtensionPack.Web.HttpWebRequest.#Url")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Analyse", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.Detokenise.#AnalyseTaskAction")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Detokenise", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.Detokenise.#DetokeniseTaskAction")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.VB6.#BuildProject(Microsoft.Build.Framework.ITaskItem)")]
