@@ -283,7 +283,16 @@ namespace MSBuild.ExtensionPack.Tfs
                 this.UpdateProjectBuildStep();
 
                 // Save the configuration summary (errors and warnings, etc.)
-                this.ConfigurationSummary.Save();
+                // 25 April 09: If the task is called twice in a build it throws a null ref exception. Adding this temporary workaround.
+                // http://social.msdn.microsoft.com/Forums/en-US/tfsbuild/thread/4438059e-078d-4aa8-91d5-447de5756629/
+                try
+                {
+                    this.ConfigurationSummary.Save();
+                }
+                catch
+                {
+                    // we intentionally do nothing.
+                }
 
                 // Update compilation status if any errors were encountered.
                 if (this.errorEncountered)
@@ -459,9 +468,7 @@ namespace MSBuild.ExtensionPack.Tfs
             {
                 if (this.CompilationSummary != null)
                 {
-                    this.ProjectBuildStep.Status = this.CompilationSummary.CompilationErrors + this.CompilationSummary.StaticAnalysisErrors == 0 ?
-                                                                                                                                                     BuildStepStatus.Succeeded :
-                                                                                                                                                                                   BuildStepStatus.Failed;
+                    this.ProjectBuildStep.Status = this.CompilationSummary.CompilationErrors + this.CompilationSummary.StaticAnalysisErrors == 0 ? BuildStepStatus.Succeeded : BuildStepStatus.Failed;
                 }
                 else
                 {
