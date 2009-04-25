@@ -1,0 +1,16 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+    <Target Name="Default">
+      <Message Text="PATH : $(TPath)"/>
+        <!-- Create a Host -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Create" HostName="MSBEPTESTHOST" Tracking="true" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false"/>
+        <!-- Update a Host -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Update" HostName="MSBEPTESTHOST" Tracking="false" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false"/>
+        <!-- Delete a Host -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Delete" HostName="MSBEPTESTHOST"/>   
+    </Target>
+</Project>
