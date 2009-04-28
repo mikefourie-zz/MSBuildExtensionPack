@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Computer
     using System;
     using System.Globalization;
     using System.Management;
+    using System.Text;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -69,7 +70,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Gets or sets the value. May be a string array. If Value is not passed or empty for Set, the environment variable is deleted.
+        /// Gets or sets the value. May be a string array for Get. If Value is not passed or empty for Set, the environment variable is deleted.
         /// </summary>
         [Output]
         [TaskAction(GetTaskAction, false)]
@@ -139,8 +140,16 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, this.Value[0]));
-                Environment.SetEnvironmentVariable(this.Variable, this.Value[0], this.target);
+                StringBuilder s = new StringBuilder(this.Value.Length);
+                foreach (string val in this.Value)
+                {
+                    s.Append(val + ";");
+                }
+
+                string newValue = s.ToString();
+                newValue = newValue.Remove(newValue.Length - 1, 1);
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Environment Variable: \"{0}\" for target \"{1}\" to \"{2}\".", this.Variable, this.target, newValue));
+                Environment.SetEnvironmentVariable(this.Variable, newValue, this.target);
             }
         }
 
