@@ -478,6 +478,7 @@
                     <xs:attribute name="End"/>
                     <xs:attribute name="Format"/>
                     <xs:attribute name="Result"/>
+                    <xs:attribute name="UseUtc"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1183,6 +1184,7 @@
                     <xs:attribute name="ComVisible"/>
                     <xs:attribute name="AssemblyInfoFiles" use="required" />
                     <xs:attribute name="SkipVersioning"/>
+                    <xs:attribute name="UseUtc"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

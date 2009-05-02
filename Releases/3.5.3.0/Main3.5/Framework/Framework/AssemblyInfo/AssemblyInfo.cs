@@ -897,6 +897,11 @@ namespace MSBuild.ExtensionPack.Framework
         public ITaskItem[] AssemblyInfoFiles { get; set; }
 
         /// <summary>
+        /// Set to true to use UTC Date / Time in calculations. Default is false.
+        /// </summary>
+        public bool UseUtc { get; set; }
+
+        /// <summary>
         /// Executes the AssemblyInfo task.
         /// </summary>
         /// <returns>True if the task was run sucecssfully. False if the task failed.</returns>
@@ -1114,7 +1119,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber.ToString(format, CultureInfo.InvariantCulture));
                     return newVersionNumber.ToString(format, CultureInfo.InvariantCulture);
                 case IncrementMethod.DateString:
-                    string newVersionNumber1 = DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
+                    string newVersionNumber1 = this.UseUtc ? DateTime.UtcNow.ToString(format, CultureInfo.InvariantCulture) : DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
                     this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber1);
                     return newVersionNumber1;
                 default:

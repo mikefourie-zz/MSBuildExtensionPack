@@ -29,10 +29,15 @@
         </MSBuild.ExtensionPack.Framework.DateAndTime>
         <Message Text="Total Elapsed Time Since $(Start): $(DTResult)"/>
         <!-- Get the time in the specified format -->
-        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy">
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss">
             <Output TaskParameter="Result" PropertyName="DTResult"/>
         </MSBuild.ExtensionPack.Framework.DateAndTime>
         <Message Text="Date / Time: $(DTResult)"/>
+        <!-- Get the UTC time in the specified format -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss" UseUtc="true">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="UTC Date / Time: $(DTResult)"/>
         <!-- Check if its later than a given time -->
         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckLater" Start="14:10">
             <Output TaskParameter="BoolResult" PropertyName="DTResult"/>

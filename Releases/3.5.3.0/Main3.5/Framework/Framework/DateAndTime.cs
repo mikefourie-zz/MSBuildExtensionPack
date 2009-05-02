@@ -9,10 +9,10 @@ namespace MSBuild.ExtensionPack.Framework
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CheckBetween</i> (<b>Required: </b>Start, End <b>Output: </b> BoolResult)</para>
-    /// <para><i>CheckLater</i> (<b>Required: </b>Start <b>Output: </b> BoolResult)</para>
-    /// <para><i>Get</i> (<b>Required: </b>Format <b>Output: </b> Result)</para>
-    /// <para><i>GetElapsed</i> (<b>Required: </b>Format, Start <b>Optional: </b>End <b>Output: </b> Result)</para>
+    /// <para><i>CheckBetween</i> (<b>Required: </b>Start, End <b>Optional:</b> UseUtc <b>Output: </b> BoolResult)</para>
+    /// <para><i>CheckLater</i> (<b>Required: </b>Start <b>Optional:</b> UseUtc <b>Output: </b> BoolResult)</para>
+    /// <para><i>Get</i> (<b>Required: </b>Format <b>Optional:</b> UseUtc <b>Output: </b> Result)</para>
+    /// <para><i>GetElapsed</i> (<b>Required: </b>Format, Start <b>Optional: </b>End, UseUtc <b>Output: </b> Result)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -24,7 +24,7 @@ namespace MSBuild.ExtensionPack.Framework
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <PropertyGroup>
-    ///         <Start>1 Jan 2000</Start>
+    ///         <Start>1 Jan 2009</Start>
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <!-- Get the elapsed days since the start date -->
@@ -48,10 +48,15 @@ namespace MSBuild.ExtensionPack.Framework
     ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
     ///         <Message Text="Total Elapsed Time Since $(Start): $(DTResult)"/>
     ///         <!-- Get the time in the specified format -->
-    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy">
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss">
     ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
     ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
     ///         <Message Text="Date / Time: $(DTResult)"/>
+    ///         <!-- Get the UTC time in the specified format -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss" UseUtc="true">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="UTC Date / Time: $(DTResult)"/>
     ///         <!-- Check if its later than a given time -->
     ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckLater" Start="14:10">
     ///             <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
@@ -122,6 +127,15 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(CheckLaterTaskAction, false)]
         public bool BoolResult { get; set; }
 
+        /// <summary>
+        /// Set to true to use UTC Date / Time for the TaskAction. Default is false.
+        /// </summary>
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(CheckBetweenTaskAction, false)]
+        [TaskAction(CheckLaterTaskAction, false)]
+        [TaskAction(GetElapsedTaskAction, false)]
+        public bool UseUtc { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -157,8 +171,16 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is later than: {1}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
-            this.BoolResult = DateTime.Now > this.Start;
+            if (this.UseUtc)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is later than: {1}", DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
+                this.BoolResult = DateTime.UtcNow > this.Start;
+            }
+            else
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is later than: {1}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
+                this.BoolResult = DateTime.Now > this.Start;
+            }
         }
 
         private void CheckBetween()
@@ -175,8 +197,16 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is between: {1} and: {2}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.End.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
-            this.BoolResult = DateTime.Now > this.Start && DateTime.Now < this.End;
+            if (this.UseUtc)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is between: {1} and: {2}", DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.End.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
+                this.BoolResult = DateTime.UtcNow > this.Start && DateTime.UtcNow < this.End;
+            }
+            else
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if: {0} is between: {1} and: {2}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.Start.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture), this.End.ToString("dd MMM yyyy HH:mm:ss", CultureInfo.CurrentCulture)));
+                this.BoolResult = DateTime.Now > this.Start && DateTime.Now < this.End;
+            }
         }
 
         private void GetElapsed()
@@ -189,7 +219,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.End == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
-                this.End = DateTime.Now;
+                this.End = this.UseUtc ? DateTime.UtcNow : DateTime.Now;
             }
             
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Elapsed: {0}", this.Format));
@@ -224,7 +254,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void GetDate()
         {
             this.LogTaskMessage("Getting Date / Time");
-            this.Result = DateTime.Now.ToString(this.Format, CultureInfo.CurrentCulture);
+            this.Result = this.UseUtc ? DateTime.UtcNow.ToString(this.Format, CultureInfo.CurrentCulture) : DateTime.Now.ToString(this.Format, CultureInfo.CurrentCulture);
         }
     }
 }
