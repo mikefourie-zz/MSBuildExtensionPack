@@ -80,9 +80,9 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
                 proc = System.Diagnostics.Process.Start(startInfo);
                 if (proc != null)
                 {
-                    proc.WaitForExit(Int32.MaxValue);
                     this.StandardOutput = proc.StandardOutput.ReadToEnd();
-                    this.StandardError = proc.StandardError.ReadToEnd();
+                    proc.WaitForExit(Int32.MaxValue);
+                    this.StandardError = proc.ExitCode != 0 ? proc.StandardError.ReadToEnd() : string.Empty;
                 }
             }
             finally
