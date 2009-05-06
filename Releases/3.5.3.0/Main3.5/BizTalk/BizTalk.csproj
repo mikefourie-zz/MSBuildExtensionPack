@@ -82,6 +82,9 @@
       <Link>GacNativeMethods.cs</Link>
     </Compile>
     <Compile Include="Application.cs" />
+    <Compile Include="Assembly.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="BizTalkHelper.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Host.cs" />
@@ -92,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="XmlSamples\BTApplication.proj" />
+    <None Include="XmlSamples\BTAssembly.proj" />
     <None Include="XmlSamples\BTHost.proj" />
     <None Include="XmlSamples\BTHostInstance.proj" />
     <None Include="XmlSamples\BTSendHandler.proj" />
