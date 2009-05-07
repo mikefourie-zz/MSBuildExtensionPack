@@ -685,12 +685,14 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             // First make sure the file is writable.
             FileAttributes fileAttributes = System.IO.File.GetAttributes(parseFile);
+            bool changedAttribute = false;
 
             // If readonly attribute is set, reset it.
             if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
                 System.IO.File.SetAttributes(parseFile, fileAttributes ^ FileAttributes.ReadOnly);
+                changedAttribute = true;
             }
 
             // Set TextEncoding if it was specified.
@@ -711,6 +713,12 @@ namespace MSBuild.ExtensionPack.FileSystem
             using (StreamWriter streamWriter = new StreamWriter(parseFile, false, this.fileEncoding))
             {
                 streamWriter.Write(newFile);
+            }
+
+            if (changedAttribute)
+            {
+                this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
+                System.IO.File.SetAttributes(parseFile, FileAttributes.ReadOnly);
             }
         }
     }

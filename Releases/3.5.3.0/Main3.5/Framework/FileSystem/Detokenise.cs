@@ -392,12 +392,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             if (this.tokenMatched || this.ForceWrite)
             {
                 // First make sure the file is writable.
+                bool changedAttribute = false;
                 FileAttributes fileAttributes = System.IO.File.GetAttributes(file);
 
                 // If readonly attribute is set, reset it.
                 if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
+                    this.LogTaskMessage(MessageImportance.Low, "Making file writable");
                     System.IO.File.SetAttributes(file, fileAttributes ^ FileAttributes.ReadOnly);
+                    changedAttribute = true;
                 }
 
                 if (!this.analyseOnly)
@@ -412,6 +415,12 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                         streamWriter.Write(newFile);
                         this.FilesDetokenised++;
+                    }
+
+                    if (changedAttribute)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
+                        System.IO.File.SetAttributes(file, FileAttributes.ReadOnly);
                     }
                 }
             }
