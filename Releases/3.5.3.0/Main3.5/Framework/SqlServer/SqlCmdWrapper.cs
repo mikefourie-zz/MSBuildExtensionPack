@@ -10,6 +10,8 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
     internal sealed class SqlCmdWrapper
     {
         private readonly NameValueCollection environmentVars = new NameValueCollection();
+        private readonly System.Text.StringBuilder stdOut = new System.Text.StringBuilder();
+        private readonly System.Text.StringBuilder stdError = new System.Text.StringBuilder();
 
         internal SqlCmdWrapper(string executable, string arguments, string workingDirectory)
         {
@@ -21,12 +23,18 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         /// <summary>
         /// Gets the standard output.
         /// </summary>
-        internal string StandardOutput { get; set; }
-
+        internal string StandardOutput
+        {
+            get { return this.stdOut.ToString(); }
+        }
+        
         /// <summary>
         /// Gets the standard error.
         /// </summary>
-        internal string StandardError { get; set; }
+        internal string StandardError 
+        {
+            get { return this.stdError.ToString(); } 
+        }
 
         /// <summary>
         /// Gets the exit code.
@@ -59,8 +67,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         /// <returns>int</returns>
         public int Execute()
         {
-            Process proc = null;
-
+            Process sqlCmdProcess = new Process();
             try
             {
                 var startInfo = new ProcessStartInfo(this.Executable, this.Arguments)
@@ -77,36 +84,59 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
                     startInfo.EnvironmentVariables[key] = this.EnvironmentVariables[key];
                 }
 
-                proc = System.Diagnostics.Process.Start(startInfo);
-                if (proc != null)
-                {
-                    this.StandardOutput = proc.StandardOutput.ReadToEnd();
-                    proc.WaitForExit(Int32.MaxValue);
-                    this.StandardError = proc.ExitCode != 0 ? proc.StandardError.ReadToEnd() : string.Empty;
-                }
+                sqlCmdProcess.StartInfo = startInfo;
+
+                // Set our event handlers to asynchronously read the output and errors. If
+                // we use synchronous calls we may deadlock when the StandardOut/Error buffer
+                // gets filled (only 4k size) and the called app blocks until the buffer
+                // is flushed.  This stops the buffers from getting full and blocking.
+                sqlCmdProcess.OutputDataReceived += this.StandardOutHandler;
+                sqlCmdProcess.ErrorDataReceived += this.StandardErrorHandler;
+
+                sqlCmdProcess.Start();
+                sqlCmdProcess.BeginOutputReadLine();
+                sqlCmdProcess.BeginErrorReadLine();
+                sqlCmdProcess.WaitForExit(Int32.MaxValue);
             }
             finally
             {
                 // get the exit code and release the process handle
-                if (proc != null)
+                if (!sqlCmdProcess.HasExited)
                 {
-                    if (!proc.HasExited)
+                    // not exited yet within our timeout so kill the process
+                    sqlCmdProcess.Kill();
+
+                    while (!sqlCmdProcess.HasExited)
                     {
-                        // not exited yet within our timeout so kill the process
-                        proc.Kill();
-
-                        while (!proc.HasExited)
-                        {
-                            System.Threading.Thread.Sleep(50);
-                        }
+                        System.Threading.Thread.Sleep(50);
                     }
-
-                    this.ExitCode = proc.ExitCode;
-                    proc.Close();
                 }
+
+                this.ExitCode = sqlCmdProcess.ExitCode;
+                sqlCmdProcess.Close();
             }
 
             return this.ExitCode;
+        }
+
+        private void StandardErrorHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
+        {
+            // Collect the error output.
+            if (!String.IsNullOrEmpty(lineReceived.Data))
+            {
+                // Add the text to the collected errors.
+                this.stdError.AppendLine(lineReceived.Data);
+            }
+        }
+
+        private void StandardOutHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
+        {
+            // Collect the command output.
+            if (!String.IsNullOrEmpty(lineReceived.Data))
+            {
+                // Add the text to the collected output.
+                this.stdOut.AppendLine(lineReceived.Data);
+            }
         }
     }
 }
