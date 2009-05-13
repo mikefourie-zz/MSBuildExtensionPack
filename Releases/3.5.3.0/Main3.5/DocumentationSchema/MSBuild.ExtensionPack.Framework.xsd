@@ -523,7 +523,26 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    <xs:element name="MSBuild.ExtensionPack.Framework.Metadata" substitutionGroup="msb:Task">
+    <xs:element name="MSBuild.ExtensionPack.Framework.FindUnder" substitutionGroup="msb:Task">
+      <xs:complexType>
+        <xs:complexContent>
+          <xs:extension base="msb:TaskType">
+            <xs:attribute name="TaskAction" use="required">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="FindFiles"/>
+                  <xs:enumeration value="FindDirectories"/>
+                  <xs:enumeration value="FindFilesAndDirectories"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Path"/>
+            <xs:attribute name="SearchPattern"/>
+          </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MSBuild.ExtensionPack.Framework.Metadata" substitutionGroup="msb:Task">
       <xs:complexType>
         <xs:complexContent>
           <xs:extension base="msb:TaskType">
