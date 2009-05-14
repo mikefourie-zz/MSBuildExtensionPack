@@ -83,9 +83,23 @@ namespace MSBuild.ExtensionPack
         /// <returns>bool</returns>
         internal bool TargetingLocalMachine()
         {
+            return this.TargetingLocalMachine(false);
+        }
+
+        /// <summary>
+        /// Determines whether the task is targeting the local machine
+        /// </summary>
+        /// <param name="canExecuteRemotely">True if the current TaskAction can run against a remote machine</param>
+        /// <returns>bool</returns>
+        internal bool TargetingLocalMachine(bool canExecuteRemotely)
+        {
             if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "This task does not support remote execution. Please remove the MachineName: {0}", this.MachineName));
+                if (!canExecuteRemotely)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "This task does not support remote execution. Please remove the MachineName: {0}", this.MachineName));
+                }
+
                 return false;
             }
 
