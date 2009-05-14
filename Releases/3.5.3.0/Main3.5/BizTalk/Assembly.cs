@@ -206,7 +206,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             Reflection.Assembly assembly = Reflection.Assembly.LoadFile(assemblyPath);
 
             return new BizTalkResource
-                       {
+            {
                 FullName = assembly.FullName,
                 Properties = GetResourceProperties(assemblyPath),
                 Dependencies = assembly.GetReferencedAssemblies().Select(a => a.FullName).ToList(),
@@ -217,7 +217,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         }
 
         private void Add()
-        {       
+        {
             using (Deployment.Group btsGroup = new Deployment.Group())
             {
                 try
@@ -228,9 +228,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     btsApplication.Log += this.DeploymentLog;
                     btsApplication.UILevel = 1;
 
-                    // resources with dependencies must be added last
                     this.SortResources();
-
                     if (this.Gac)
                     {
                         // gac asssemblies
@@ -249,24 +247,27 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Remove()
         {
-            using (Deployment.Group btsGroup = new Deployment.Group())
-            {
-                try
-                {
-                    btsGroup.DBName = this.Database;
-                    btsGroup.DBServer = this.DatabaseServer;
-                    Deployment.Application btsApplication = btsGroup.Applications[this.Application];
-                    btsApplication.Log += this.DeploymentLog;
-                    btsApplication.UILevel = 2;
+            // resources with dependencies must be removed first
+            this.SortResources();
 
-                    // resources with dependencies must be removed first
-                    this.SortResources();
-                    this.Resources.ForEach(r => btsApplication.RemoveResource(BizTalkAssemblyResourceType, r.FullName));
-                }
-                catch
+            foreach (BizTalkResource r in this.resources)
+            {
+                using (Deployment.Group btsGroup = new Deployment.Group())
                 {
-                    btsGroup.Abort();
-                    throw;
+                    try
+                    {
+                        btsGroup.DBName = this.Database;
+                        btsGroup.DBServer = this.DatabaseServer;
+                        Deployment.Application btsApplication = btsGroup.Applications[this.Application];
+                        btsApplication.Log += this.DeploymentLog;
+                        btsApplication.UILevel = 2;
+                        btsApplication.RemoveResource(String.Empty, r.FullName);
+                    }
+                    catch
+                    {
+                        btsGroup.Abort();
+                        throw;
+                    }
                 }
             }
         }
@@ -350,7 +351,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             if (!System.IO.File.Exists(resource.SourcePath))
             {
-                throw new Exception(string.Format(CultureInfo.CurrentCulture, "The AssemblyPath was not found: {0}", resource.SourcePath));                
+                throw new Exception(string.Format(CultureInfo.CurrentCulture, "The AssemblyPath was not found: {0}", resource.SourcePath));
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "GAC Assembly: {0} on: {1}", resource.DeploymentPath, this.MachineName));
@@ -401,27 +402,40 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void SortResources()
         {
-            foreach (var resource in this.Resources)
+            this.Resources.ForEach(r => r.IsProcessed = false);
+            int order = 0;
+            foreach (BizTalkResource r in this.Resources)
             {
-                foreach (var parentName in resource.Dependencies)
+                if (!r.IsProcessed)
                 {
-                    string name = parentName;
-                    var parentResource = this.Resources.Find(r => r.FullName == name);
-                    if (parentResource == null)
-                    {
-                        continue;
-                    }
-
-                    if (parentResource.Order > resource.Order)
-                    {
-                        int resourceOrder = resource.Order;
-                        resource.Order = parentResource.Order;
-                        parentResource.Order = resourceOrder;
-                    }
+                    order = this.SortResourcesExecute(r, order);
                 }
             }
 
             this.Resources = this.TaskAction == AddTaskAction ? this.Resources.OrderBy(r => r.Order).ToList() : this.Resources.OrderByDescending(r => r.Order).ToList();
+        }
+
+        private int SortResourcesExecute(BizTalkResource root, int order)
+        {
+            foreach (string resourceName in root.Dependencies)
+            {
+                string name = resourceName;
+                BizTalkResource dependency = this.Resources.Find(r => r.FullName == name);
+
+                if (dependency == null)
+                {
+                    continue;
+                }
+
+                if (!dependency.IsProcessed)
+                {
+                    order = this.SortResourcesExecute(dependency, order);
+                }
+            }
+
+            root.IsProcessed = true;
+            root.Order = order;
+            return ++order;
         }
 
         private void ParseAssemblyList()
@@ -453,6 +467,8 @@ namespace MSBuild.ExtensionPack.BizTalk
             public string SourcePath { get; set; }
 
             public string DeploymentPath { get; set; }
+
+            public bool IsProcessed { get; set; }
         }
     }
 }
