@@ -165,7 +165,7 @@
       <Link>StringExtension.cs</Link>
     </Compile>
     <Compile Include="Communication\Twitter.cs" />
-    <Compile Include="Framework\FindUnder.cs" />
+    <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="Web\HttpWebRequest.cs" />
     <Compile Include="FileSystem\Share.cs" />
     <Compile Include="Framework\Metadata.cs" />
