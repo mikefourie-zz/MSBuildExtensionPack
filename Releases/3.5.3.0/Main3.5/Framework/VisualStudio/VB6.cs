@@ -39,6 +39,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     public class VB6 : BaseTask
     {
         private const string BuildTaskAction = "Build";
+        private const char Separator = ';';
 
         [DropdownValue(BuildTaskAction)]
         public override string TaskAction
@@ -81,7 +82,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
                     return;
                 }
-                
+
                 if (File.Exists(programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"))
                 {
                     this.VB6Path = programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe";
@@ -130,6 +131,41 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             using (Process proc = new Process())
             {
+                // start changing properties
+                if (!string.IsNullOrEmpty(project.GetMetadata("ChgPropVBP")))
+                {
+                    this.LogTaskMessage("START - Changing Properties VBP");
+
+                    VBPProject projectVBP = new VBPProject(project.ItemSpec);
+                    if (projectVBP.Load())
+                    {
+                        string[] linesProperty = project.GetMetadata("ChgPropVBP").Split(Separator);
+                        string[] keyProperty = new string[linesProperty.Length];
+                        string[] valueProperty = new string[linesProperty.Length];
+                        int index;
+
+                        for (index = 0; index <= linesProperty.Length - 1; index++)
+                        {
+                            if (linesProperty[index].IndexOf("=") != -1)
+                            {
+                                keyProperty[index] = linesProperty[index].Substring(0, linesProperty[index].IndexOf("="));
+                                valueProperty[index] = linesProperty[index].Substring(linesProperty[index].IndexOf("=") + 1);
+                            }
+
+                            if (!string.IsNullOrEmpty(keyProperty[index]) && !string.IsNullOrEmpty(valueProperty[index]))
+                            {
+                                this.LogTaskMessage(keyProperty[index] + " -> New value: " + valueProperty[index]);
+                                projectVBP.SetProjectProperty(keyProperty[index], valueProperty[index], false);
+                            }
+                        }
+
+                        projectVBP.Save();
+                    }
+
+                    this.LogTaskMessage("END - Changing Properties VBP");
+                }
+
+                // end changing properties
                 proc.StartInfo.FileName = this.VB6Path;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
