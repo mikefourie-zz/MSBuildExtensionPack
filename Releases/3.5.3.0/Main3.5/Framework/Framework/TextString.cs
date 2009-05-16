@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Framework
     using System;
     using System.Globalization;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -17,6 +18,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>PadRight</i> (<b>Required: </b> OldString, String1 (1 char) <b> Optional: </b>Count <b>Output: </b> NewString)</para>
     /// <para><i>Remove</i> (<b>Required: </b> OldString, StartIndex <b> Optional: </b>Count <b> Output: </b> NewString)</para>
     /// <para><i>Replace</i> (<b>Required: </b> OldString, OldValue, NewValue <b> Output: </b> NewString)</para>
+    /// <para><i>Split</i> (<b>Required: </b> String1, String2 <b>Output: </b>Strings)</para>
     /// <para><i>StartsWith</i> (<b>Required: </b> String1, String2<b> Optional: </b> IgnoreCase <b>Output: </b>Result)</para>
     /// <para><i>ToLower</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>ToUpper</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
@@ -32,6 +34,16 @@ namespace MSBuild.ExtensionPack.Framework
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
+    ///         <!-- Split a string -->
+    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";">
+    ///             <Output ItemName="out" TaskParameter="Strings"/>
+    ///         </MSBuild.ExtensionPack.Framework.TextString>
+    ///         <Message Text="The Result: %(Out.Identity)"/>
+    ///         <!-- Split another string -->
+    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="HelloMIKEhowMIKEareMIKeyou" String2="MIKE">
+    ///             <Output ItemName="out" TaskParameter="Strings"/>
+    ///         </MSBuild.ExtensionPack.Framework.TextString>
+    ///         <Message Text="The Result: %(Out.Identity)"/>
     ///         <!-- Uppercase a string -->
     ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="ToUpper" OldString="helLo">
     ///             <Output PropertyName="out" TaskParameter="NewString"/>
@@ -107,6 +119,7 @@ namespace MSBuild.ExtensionPack.Framework
         private const string PadRightTaskAction = "PadRight";
         private const string RemoveTaskAction = "Remove";
         private const string ReplaceTaskAction = "Replace";
+        private const string SplitTaskAction = "Split";
         private const string StartsWithTaskAction = "StartsWith";
         private const string ToLowerTaskAction = "ToLower";
         private const string ToUpperTaskAction = "ToUpper";
@@ -123,6 +136,7 @@ namespace MSBuild.ExtensionPack.Framework
         [DropdownValue(PadRightTaskAction)]
         [DropdownValue(RemoveTaskAction)]
         [DropdownValue(ReplaceTaskAction)]
+        [DropdownValue(SplitTaskAction)]
         [DropdownValue(StartsWithTaskAction)]
         [DropdownValue(ToLowerTaskAction)]
         [DropdownValue(ToUpperTaskAction)]
@@ -165,6 +179,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(InsertTaskAction, true)]
         [TaskAction(PadLeftTaskAction, true)]
         [TaskAction(PadRightTaskAction, true)]
+        [TaskAction(SplitTaskAction, true)]
         [TaskAction(StartsWithTaskAction, true)]
         public string String1 { get; set; }
 
@@ -173,6 +188,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [TaskAction(CompareTaskAction, true)]
         [TaskAction(EndsWithTaskAction, true)]
+        [TaskAction(SplitTaskAction, true)]
         [TaskAction(StartsWithTaskAction, true)]
         public string String2 { get; set; }
 
@@ -236,6 +252,9 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(ReplaceTaskAction, true)]
         public string NewValue { get; set; }
 
+        [Output]
+        public ITaskItem[] Strings { get; set; }
+
         /// <summary>
         /// This is the main execute method that all tasks should implement
         /// </summary>
@@ -255,6 +274,9 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 case "Compare":
                     this.Compare();
+                    break;
+                case "Split":
+                    this.SplitString();
                     break;
                 case "EndsWith":
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether: {0} ends with: {1}", this.String1, this.String2));
@@ -303,6 +325,33 @@ namespace MSBuild.ExtensionPack.Framework
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void SplitString()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Splitting String: {0} with {1}", this.String1, this.String2));
+
+            if (string.IsNullOrEmpty(this.String1))
+            {
+                this.Log.LogError("String1 is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.String2))
+            {
+                this.Log.LogError("String2 is required");
+                return;
+            }
+
+            string[] arr = this.String1.Split(new[] { this.String2 }, StringSplitOptions.RemoveEmptyEntries);
+            this.Strings = new TaskItem[arr.Length];
+            int i = 0;
+            foreach (string s in arr)
+            {
+                ITaskItem appl = new TaskItem(s);
+                this.Strings[i] = appl;
+                i++;
             }
         }
 
