@@ -16,11 +16,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// Global
         /// </summary>
         Global = 0x00000002,
-
-        /// <summary>
-        /// DomainLocal
-        /// </summary>
-        DomainLocal = 0x00000004,
         
         /// <summary>
         /// Local
@@ -38,6 +33,8 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>AddUser</i> (<b>Required: </b> User <b>Optional: </b>Domain, FullName, Description, Password, PasswordExpired, PasswordNeverExpires)</para>
     /// <para><i>AddGroup</i> (<b>Required: </b> Group <b>Optional: </b>Domain, Description, GroupType)</para>
     /// <para><i>AddUserToGroup</i> (<b>Required: </b> User, Group)</para>
+    /// <para><i>CheckUserExists</i> (<b>Required: </b> User <b>Output:</b> Exists)</para>
+    /// <para><i>CheckGroupExists</i> (<b>Required: </b> Group <b>Output:</b> Exists)</para>
     /// <para><i>DeleteUser</i> (<b>Required: </b> User)</para>
     /// <para><i>DeleteGroup</i> (<b>Required: </b> Group)</para>
     /// <para><i>DeleteUserFromGroup</i> (<b>Required: </b> User, Group)</para>
@@ -52,28 +49,48 @@ namespace MSBuild.ExtensionPack.Computer
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
+    ///         <!-- Check a user Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
     ///         <!-- Add local Users -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJulie1" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJulie2" Description="Elgnt" PasswordNeverExpires="true"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS2" Description="Elgnt" PasswordNeverExpires="true"/>
+    ///         <!-- Check a user Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
+    ///         <!-- Check a Group Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
     ///         <!-- Add local Groups -->
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
+    ///         <!-- Check a Group Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
     ///         <!-- Add the users to the Groups -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJulie1;JudgeJulie2" Group="NewGroup1;NewGroup2"/>       
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJS1;JudgeJS2" Group="NewGroup1;NewGroup2"/>       
     ///         <!-- Delete Users from Groups -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJulie1" Group="NewGroup1;NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJS1" Group="NewGroup1;NewGroup2"/>
     ///         <!-- Delete local Users -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUser" User="JudgeJulie1;JudgeJulie2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUser" User="JudgeJS1;JudgeJS2"/>
     ///         <!-- Delete local Groups -->
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteGroup" Group="NewGroup1;NewGroup2"/>
     ///         <!-- Add a remote User -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJulie1" MachineName="D420-7" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" MachineName="D420-7" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
     ///         <!-- Add a remote Group -->
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="RemoteGroup1" MachineName="D420-7" Description="na"/>
-    ///         <!-- Add a domain User -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" Name="Judge Julie" Domain="MyDomain" Description="Elgnt" PasswordNeverExpires="true"/>
-    ///         <!-- Add a domain Group -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Domain="MyDomain" Description="Elgnt"/>
+    ///         <!-- Add a Domain User -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Domain="mydomain" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    ///         <!-- Add a Domain Group -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="DomainGroup1" Domain="mydomain" Description="na"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -84,6 +101,8 @@ namespace MSBuild.ExtensionPack.Computer
         private const string AddUserTaskAction = "AddUser";
         private const string AddGroupTaskAction = "AddGroup";
         private const string AddUserToGroupTaskAction = "AddUserToGroup";
+        private const string CheckUserExistsTaskAction = "CheckUserExists";
+        private const string CheckGroupExistsTaskAction = "CheckGroupExists";
         private const string DeleteUserTaskAction = "DeleteUser";
         private const string DeleteGroupTaskAction = "DeleteGroup";
         private const string DeleteUserFromGroupTaskAction = "DeleteUserFromGroup";
@@ -96,6 +115,8 @@ namespace MSBuild.ExtensionPack.Computer
         [DropdownValue(AddUserTaskAction)]
         [DropdownValue(AddGroupTaskAction)]
         [DropdownValue(AddUserToGroupTaskAction)]
+        [DropdownValue(CheckUserExistsTaskAction)]
+        [DropdownValue(CheckGroupExistsTaskAction)]
         [DropdownValue(DeleteUserTaskAction)]
         [DropdownValue(DeleteGroupTaskAction)]
         [DropdownValue(DeleteUserFromGroupTaskAction)]
@@ -106,8 +127,12 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         [TaskAction(AddUserTaskAction, false)]
+        [TaskAction(AddGroupTaskAction, false)]
         [TaskAction(AddUserToGroupTaskAction, false)]
+        [TaskAction(CheckUserExistsTaskAction, false)]
+        [TaskAction(CheckGroupExistsTaskAction, false)]
         [TaskAction(DeleteUserTaskAction, false)]
+        [TaskAction(DeleteGroupTaskAction, false)]
         [TaskAction(DeleteUserFromGroupTaskAction, false)]
         public override string MachineName
         {
@@ -180,7 +205,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Sets the GroupType. For non domains the default is Local. For Domains the default is Global. Supports Global, DomainLocal, Local, Universal
+        /// Sets the GroupType. For non domains the default is Local. For Domains the default is Global. Supports Global, Local, Universal
         /// </summary>
         [TaskAction(AddGroupTaskAction, false)]
         public string GroupType
@@ -188,6 +213,12 @@ namespace MSBuild.ExtensionPack.Computer
             get { return this.groupType.ToString(); }
             set { this.groupType = (ADGroupType)Enum.Parse(typeof(ADGroupType), value); }
         }
+
+        /// <summary>
+        /// Gets whether the User or Group exists
+        /// </summary>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -236,6 +267,13 @@ namespace MSBuild.ExtensionPack.Computer
                     case DeleteUserFromGroupTaskAction:
                         this.DeleteUserFromGroup();
                         break;
+                    case CheckUserExistsTaskAction:
+                        this.CheckExists("User");
+                        break;
+                    case CheckGroupExistsTaskAction:
+                        this.CheckExists("group");
+                        break;
+
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
@@ -248,10 +286,12 @@ namespace MSBuild.ExtensionPack.Computer
             object groups = entity.Invoke("Groups");
             foreach (object group in (IEnumerable)groups)
             {
-                DirectoryEntry groupEntry = new DirectoryEntry(group);
-                if (groupEntry.Name == name)
+                using (DirectoryEntry groupEntry = new DirectoryEntry(group))
                 {
-                    return true;
+                    if (groupEntry.Name == name)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -279,6 +319,21 @@ namespace MSBuild.ExtensionPack.Computer
             catch
             {
                 // ignore exceptions on invoke
+            }
+        }
+
+        private void CheckExists(string type)
+        {
+            try
+            {
+                using (DirectoryEntry entity = this.activeDirEntry.Children.Find(this.User[0].ItemSpec, type))
+                {
+                    this.Exists = true;
+                }
+            }
+            catch
+            {
+                this.Exists = false;
             }
         }
 

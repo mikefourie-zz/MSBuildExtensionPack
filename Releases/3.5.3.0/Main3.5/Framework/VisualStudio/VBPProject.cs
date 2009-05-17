@@ -1,12 +1,11 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="VBPProject.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-using System.Globalization;
-
 namespace MSBuild.ExtensionPack.VisualStudio
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Text;
 
