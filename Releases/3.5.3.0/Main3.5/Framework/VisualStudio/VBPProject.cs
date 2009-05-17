@@ -1,6 +1,8 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="VBPProject.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
+using System.Globalization;
+
 namespace MSBuild.ExtensionPack.VisualStudio
 {
     using System;
@@ -31,9 +33,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             set
             {
-                if (File.Exists(value) == false)
+                if (!File.Exists(value))
                 {
-                    throw new Exception("Project file name does not valid");
+                    throw new Exception("Project file name does not exist");
                 }
 
                 this.projectFile = value;
@@ -125,9 +127,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             for (index = 0; index <= this.Lines.Count - 1; index++)
             {
-                string buffer = this.Lines[index].ToUpper();
+                string buffer = this.Lines[index].ToUpper(CultureInfo.InvariantCulture);
 
-                if (buffer.StartsWith(name.ToUpper() + "="))
+                if (buffer.StartsWith(name.ToUpper(CultureInfo.InvariantCulture) + "=", StringComparison.OrdinalIgnoreCase))
                 {
                     this.Lines[index] = this.Lines[index].Substring(0, (name + "=").Length) + value;
                     return true;
@@ -147,9 +149,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             foreach (string line in this.Lines)
             {
-                string buffer = line.ToUpper();
+                string buffer = line.ToUpper(CultureInfo.InvariantCulture);
 
-                if (buffer.StartsWith(name.ToUpper() + "="))
+                if (buffer.StartsWith(name.ToUpper(CultureInfo.InvariantCulture) + "=", StringComparison.OrdinalIgnoreCase))
                 {
                     value = line.Substring(1 + (name + "=").Length);
                     return true;

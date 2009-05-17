@@ -102,6 +102,35 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Computer.ActiveDirectory" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="AddUser"/>
+                                <xs:enumeration value="AddGroup"/>
+                                <xs:enumeration value="AddUserToGroup"/>
+                                <xs:enumeration value="DeleteUser"/>
+                                <xs:enumeration value="DeleteGroup"/>
+                                <xs:enumeration value="DeleteUserFromGroup"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="User"/>
+                    <xs:attribute name="Group"/>
+                    <xs:attribute name="FullName"/>
+                    <xs:attribute name="Description"/>
+                    <xs:attribute name="Password"/>
+                    <xs:attribute name="PasswordExpired"/>
+                    <xs:attribute name="PasswordNeverExpires"/>
+                    <xs:attribute name="Domain"/>
+                    <xs:attribute name="GroupType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Computer.ComponentServices" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>

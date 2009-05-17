@@ -1,0 +1,27 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Add local Users -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJulie1" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJulie2" Description="Elgnt" PasswordNeverExpires="true"/>
+        <!-- Add local Groups -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
+        <!-- Add the users to the Groups -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJulie1;JudgeJulie2" Group="NewGroup1;NewGroup2"/>       
+        <!-- Delete Users from Groups -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJulie1" Group="NewGroup1;NewGroup2"/>
+        <!-- Delete local Users -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUser" User="JudgeJulie1;JudgeJulie2"/>
+        <!-- Delete local Groups -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteGroup" Group="NewGroup1;NewGroup2"/>
+        <!-- Add a remote User -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJulie1" MachineName="D420-7" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+        <!-- Add a remote Group -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="RemoteGroup1" MachineName="D420-7" Description="na"/>
+    </Target>
+</Project>

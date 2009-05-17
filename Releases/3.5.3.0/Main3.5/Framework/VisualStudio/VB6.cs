@@ -146,10 +146,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                         for (index = 0; index <= linesProperty.Length - 1; index++)
                         {
-                            if (linesProperty[index].IndexOf("=") != -1)
+                            if (linesProperty[index].IndexOf("=", StringComparison.OrdinalIgnoreCase) != -1)
                             {
-                                keyProperty[index] = linesProperty[index].Substring(0, linesProperty[index].IndexOf("="));
-                                valueProperty[index] = linesProperty[index].Substring(linesProperty[index].IndexOf("=") + 1);
+                                keyProperty[index] = linesProperty[index].Substring(0, linesProperty[index].IndexOf("=", StringComparison.OrdinalIgnoreCase));
+                                valueProperty[index] = linesProperty[index].Substring(linesProperty[index].IndexOf("=", StringComparison.OrdinalIgnoreCase) + 1);
                             }
 
                             if (!string.IsNullOrEmpty(keyProperty[index]) && !string.IsNullOrEmpty(valueProperty[index]))
