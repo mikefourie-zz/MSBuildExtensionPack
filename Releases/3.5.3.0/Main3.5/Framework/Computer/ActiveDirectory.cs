@@ -226,6 +226,11 @@ namespace MSBuild.ExtensionPack.Computer
         protected override void InternalExecute()
         {
             string path;
+            if (string.Compare(this.Domain, this.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                this.Domain = string.Empty;    
+            }
+
             if (string.IsNullOrEmpty(this.Domain))
             {
                 // Connect to a computer
@@ -339,6 +344,18 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void DeleteUserFromGroup()
         {
+            if (this.User == null)
+            {
+                Log.LogError("User is required");
+                return;
+            }
+
+            if (this.Group == null)
+            {
+                Log.LogError("Group is required");
+                return;
+            }
+
             foreach (ITaskItem u in this.User)
             {
                 foreach (ITaskItem g in this.Group)
@@ -376,6 +393,18 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void AddUserToGroup()
         {
+            if (this.User == null)
+            {
+                Log.LogError("User is required");
+                return;
+            }
+
+            if (this.Group == null)
+            {
+                Log.LogError("Group is required");
+                return;
+            }
+
             foreach (ITaskItem u in this.User)
             {
                 foreach (ITaskItem g in this.Group)
@@ -432,6 +461,12 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void AddGroup()
         {
+            if (this.Group == null)
+            {
+                Log.LogError("Group is required");
+                return;
+            }
+
             DirectoryEntry group;
             try
             {
@@ -453,6 +488,12 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void AddUser()
         {
+            if (this.User == null)
+            {
+                Log.LogError("User is required");
+                return;
+            }
+
             DirectoryEntry user;
             try
             {
