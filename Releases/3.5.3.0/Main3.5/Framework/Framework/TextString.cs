@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>PadRight</i> (<b>Required: </b> OldString, String1 (1 char) <b> Optional: </b>Count <b>Output: </b> NewString)</para>
     /// <para><i>Remove</i> (<b>Required: </b> OldString, StartIndex <b> Optional: </b>Count <b> Output: </b> NewString)</para>
     /// <para><i>Replace</i> (<b>Required: </b> OldString, OldValue, NewValue <b> Output: </b> NewString)</para>
-    /// <para><i>Split</i> (<b>Required: </b> String1, String2 <b>Output: </b>Strings)</para>
+    /// <para><i>Split</i> (<b>Required: </b> String1, String2 <b> Optional: </b> StartIndex <b>Output: </b>Strings, NewString)</para>
     /// <para><i>StartsWith</i> (<b>Required: </b> String1, String2<b> Optional: </b> IgnoreCase <b>Output: </b>Result)</para>
     /// <para><i>ToLower</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>ToUpper</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
@@ -39,6 +39,11 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output ItemName="out" TaskParameter="Strings"/>
     ///         </MSBuild.ExtensionPack.Framework.TextString>
     ///         <Message Text="The Result: %(Out.Identity)"/>
+    ///         <!-- Split a string and extract 1st item into NewString -->
+    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";" StartIndex="1">
+    ///             <Output PropertyName="out" TaskParameter="NewString"/>
+    ///         </MSBuild.ExtensionPack.Framework.TextString>
+    ///         <Message Text="The Result: $(Result)"/>
     ///         <!-- Split another string -->
     ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="HelloMIKEhowMIKEareMIKeyou" String2="MIKE">
     ///             <Output ItemName="out" TaskParameter="Strings"/>
@@ -152,6 +157,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [TaskAction(InsertTaskAction, true)]
         [TaskAction(RemoveTaskAction, true)]
+        [TaskAction(SplitTaskAction, false)]
         public int StartIndex { get; set; }
 
         /// <summary>
@@ -235,6 +241,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(PadRightTaskAction, false)]
         [TaskAction(RemoveTaskAction, false)]
         [TaskAction(ReplaceTaskAction, false)]
+        [TaskAction(SplitTaskAction, false)]
         [TaskAction(ToLowerTaskAction, false)]
         [TaskAction(ToUpperTaskAction, false)]
         [TaskAction(TrimTaskAction, false)]
@@ -352,6 +359,11 @@ namespace MSBuild.ExtensionPack.Framework
                 ITaskItem appl = new TaskItem(s);
                 this.Strings[i] = appl;
                 i++;
+            }
+
+            if (arr.Length > this.StartIndex && this.StartIndex >= 0)
+            {
+                this.NewString = arr[this.StartIndex];
             }
         }
 
