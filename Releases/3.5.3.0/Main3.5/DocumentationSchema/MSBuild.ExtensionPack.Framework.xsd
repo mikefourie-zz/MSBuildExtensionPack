@@ -361,12 +361,14 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
+                    <xs:attribute name="CommandLineValues"/>
                     <xs:attribute name="DisplayFiles"/>
                     <xs:attribute name="FilesDetokenised"/>
                     <xs:attribute name="FilesProcessed"/>
                     <xs:attribute name="ForceWrite"/>
                     <xs:attribute name="ProjectFile"/>
                     <xs:attribute name="ReplacementValues"/>
+                    <xs:attribute name="Separator"/>
                     <xs:attribute name="TargetFiles"/>
                     <xs:attribute name="TargetPath"/>
                     <xs:attribute name="TextEncoding"/>
