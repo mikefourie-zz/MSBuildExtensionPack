@@ -420,9 +420,23 @@ namespace MSBuild.ExtensionPack.Computer
                         return;
                     }
 
-                    if (!IsMember(user, g.ItemSpec))
+                    DirectoryEntry groupDir;
+                    DirectoryEntry grp;
+                    if (this.groupType == ADGroupType.Local)
                     {
-                        DirectoryEntry grp;
+                        groupDir = new DirectoryEntry("WinNT://" + this.MachineName + ",computer");
+                        try
+                        {
+                            grp = groupDir.Children.Find(g.ItemSpec, "group");
+                        }
+                        catch
+                        {
+                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                            return;
+                        }
+                    }
+                    else
+                    {
                         try
                         {
                             grp = this.activeDirEntry.Children.Find(g.ItemSpec, "group");
@@ -432,9 +446,16 @@ namespace MSBuild.ExtensionPack.Computer
                             Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
                             return;
                         }
+                    }
 
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding User: {0} to {1}", u.ItemSpec, g.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding User: {0} to {1}", u.ItemSpec, g.ItemSpec));
+                    try
+                    {
                         grp.Invoke("Add", new object[] { user.Path });
+                    }
+                    catch
+                    {
+                        // ignore exceptions on invoke
                     }
                 }
             }
