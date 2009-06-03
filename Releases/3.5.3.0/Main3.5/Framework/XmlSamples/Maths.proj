@@ -55,5 +55,47 @@
             <Output PropertyName="RResult" TaskParameter="LogicalResult"/>
         </MSBuild.ExtensionPack.Science.Maths>
         <Message Text="Compare: $(RResult)"/>
+        <CallTarget Targets="Default2"/>
+    </Target>
+    <!-- Factorial calculation provided by Stephen Cleary -->
+    <Target Name="Default2">
+        <PropertyGroup>
+            <Input>8</Input>
+        </PropertyGroup>
+        <!-- Argument error checking -->
+        <MSBuild.ExtensionPack.Science.Maths TaskAction="Compare" P1="$(Input)" P2="1" Comparison="LessThan">
+            <Output TaskParameter="LogicalResult" PropertyName="InputCheck"/>
+        </MSBuild.ExtensionPack.Science.Maths>
+        <Error Condition="'$(InputCheck)' != 'False'" Text="Input cannot be less than 1."/>
+        <!-- Invoke the Factorial target with the current Input property -->
+        <MSBuild Projects="$(MSBuildProjectFile)" Targets="Factorial" Properties="Input=$(Input)">
+            <Output TaskParameter="TargetOutputs" ItemName="FactorialResult"/>
+        </MSBuild>
+        <!-- Display the result -->
+        <Message Importance="high" Text="Result: @(FactorialResult)"/>
+    </Target>
+    <!-- The Factorial target uses FactorialCore to do the calculation, storing the result in FactorialResult -->
+    <Target Name="Factorial" DependsOnTargets="FactorialCore" Outputs="$(FactorialResult)"/>
+    <Target Name="FactorialCore">
+        <!-- If the input is 1, then the factorial is 1 -->
+        <PropertyGroup Condition="'$(Input)' == '1'">
+            <FactorialResult>1</FactorialResult>
+        </PropertyGroup>
+        <!-- If we don't know the result yet (i.e. the input is not 1) then calculate the factorial -->
+        <CallTarget Condition="'$(FactorialResult)' == ''" Targets="CalculateFactorial"/>
+    </Target>
+    <Target Name="CalculateFactorial">
+        <!-- Subtract 1 from $(Input) -->
+        <MSBuild.ExtensionPack.Science.Maths TaskAction="Subtract" Numbers="$(Input);1">
+            <Output TaskParameter="Result" PropertyName="InputMinus1"/>
+        </MSBuild.ExtensionPack.Science.Maths>
+        <!-- Determine the factorial of $(Input) - 1 -->
+        <MSBuild Projects="$(MSBuildProjectFile)" Targets="Factorial" Properties="Input=$(InputMinus1)">
+            <Output TaskParameter="TargetOutputs" ItemName="SubResult"/>
+        </MSBuild>
+        <!-- Multiply !($(Input) - 1) by $(Input) to get the result-->
+        <MSBuild.ExtensionPack.Science.Maths TaskAction="Multiply" Numbers="@(SubResult);$(Input)">
+            <Output TaskParameter="Result" PropertyName="FactorialResult"/>
+        </MSBuild.ExtensionPack.Science.Maths>
     </Target>
 </Project>
