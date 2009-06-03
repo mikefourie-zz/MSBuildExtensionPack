@@ -124,7 +124,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {
         private AssemblyVersionSettings assemblyFileVersionSettings;

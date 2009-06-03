@@ -357,7 +357,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
     public class WindowsService : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";

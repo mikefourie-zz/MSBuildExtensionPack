@@ -102,7 +102,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/d73eca07-8b36-919e-cbb6-ea1c17667dfe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/d73eca07-8b36-919e-cbb6-ea1c17667dfe.htm")]
     public class MSBuildHelper : BaseTask
     {
         private const string EscapeTaskAction = "Escape";

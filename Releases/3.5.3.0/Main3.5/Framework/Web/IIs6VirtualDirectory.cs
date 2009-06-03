@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
         private const string CreateTaskAction = "Create";

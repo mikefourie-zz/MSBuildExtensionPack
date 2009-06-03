@@ -92,7 +92,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
         private const string CountLinesTaskAction = "CountLines";
