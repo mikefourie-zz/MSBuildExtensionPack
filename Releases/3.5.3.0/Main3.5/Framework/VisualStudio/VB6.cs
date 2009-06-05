@@ -8,11 +8,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System.Globalization;
     using System.IO;
     using Microsoft.Build.Framework;
+    using MSBuild.ExtensionPack.VisualStudio.Extended;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Build</i> (<b>Required: </b> Projects <b>Optional: </b>VB6Path, StopOnError)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
+    /// <para/>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -25,6 +27,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///   <ItemGroup>
     ///     <ProjectsToBuild Include="C:\MyVB6Project.vbp">
     ///       <OutDir>c:\output</OutDir>
+    ///       <!-- Note the special use of ChgPropVBP metadata to change project properties at Build Time -->
+    ///       <ChgPropVBP>RevisionVer=4;CompatibleMode="0"</ChgPropVBP>
     ///     </ProjectsToBuild>
     ///     <ProjectsToBuild Include="C:\MyVB6Project2.vbp"/>
     ///   </ItemGroup>
