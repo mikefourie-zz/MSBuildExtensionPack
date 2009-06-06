@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -66,5 +66,32 @@
             <Output TaskParameter="OutputItems" ItemName="NewCol11"/>
         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
         <Message Text="String Item Collection contains: %(NewCol11.Identity)"/>
+    </Target>
+    <Target Name="UpdateMetadata">
+        <!-- This sample uses the UpdateMetadata TaskAction to update existing meatadata using that from another item -->
+        <ItemGroup>
+            <SolutionToBuild Include="$(BuildProjectFolderPath)\ChangeThisOne.sln">
+                <Meta1>OriginalValue</Meta1>
+            </SolutionToBuild>
+            <SolutionToBuild Include="$(BuildProjectFolderPath)\ChangeThisToo.sln">
+                <Meta1>OriginalValue</Meta1>
+                <Meta2>Mike</Meta2>
+            </SolutionToBuild>
+        </ItemGroup>
+        <Message Text="Before = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)" />
+        <ItemGroup>
+            <ItemsToChange Include="@(SolutionToBuild)">
+                <Meta1>ChangedValue</Meta1>
+                <Meta2>Dave</Meta2>
+            </ItemsToChange>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="UpdateMetadata" InputItems1="@(SolutionToBuild)" InputItems2="@(ItemsToChange)">
+            <Output TaskParameter="OutputItems" ItemName="SolutionToBuildTemp" />
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper >
+        <ItemGroup>
+            <SolutionToBuild Remove="@(SolutionToBuild)"/>
+            <SolutionToBuild Include="@(SolutionToBuildTemp)"/>
+        </ItemGroup>
+        <Message Text="After  = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)"/>
     </Target>
 </Project>

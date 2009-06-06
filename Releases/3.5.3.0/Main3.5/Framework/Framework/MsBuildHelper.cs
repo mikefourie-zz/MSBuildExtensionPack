@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------
 // <copyright file="MsBuildHelper.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-// Task Contributors: Hamid Shahid
+// Task Contributors: Hamid Shahid, Stephen Schaff
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
@@ -26,11 +26,12 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>RemoveDuplicateFiles</i> (<b>Required: </b> InputItems1 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>Sort</i> (<b>Required: </b> InputItems1<b>Output: </b> OutputItems)</para>
     /// <para><i>StringToItemCol</i> (<b>Required: </b> ItemString, Separator <b>Output: </b> OutputItems, ItemCount)</para>
+    /// <para><i>UpdateMetadata</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -99,6 +100,33 @@ namespace MSBuild.ExtensionPack.Framework
     ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
     ///         <Message Text="String Item Collection contains: %(NewCol11.Identity)"/>
     ///     </Target>
+    ///     <Target Name="UpdateMetadata">
+    ///         <!-- This sample uses the UpdateMetadata TaskAction to update existing meatadata using that from another item -->
+    ///         <ItemGroup>
+    ///             <SolutionToBuild Include="$(BuildProjectFolderPath)\ChangeThisOne.sln">
+    ///                 <Meta1>OriginalValue</Meta1>
+    ///             </SolutionToBuild>
+    ///             <SolutionToBuild Include="$(BuildProjectFolderPath)\ChangeThisToo.sln">
+    ///                 <Meta1>OriginalValue</Meta1>
+    ///                 <Meta2>Mike</Meta2>
+    ///             </SolutionToBuild>
+    ///         </ItemGroup>
+    ///         <Message Text="Before = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)" />
+    ///         <ItemGroup>
+    ///             <ItemsToChange Include="@(SolutionToBuild)">
+    ///                 <Meta1>ChangedValue</Meta1>
+    ///                 <Meta2>Dave</Meta2>
+    ///             </ItemsToChange>
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="UpdateMetadata" InputItems1="@(SolutionToBuild)" InputItems2="@(ItemsToChange)">
+    ///             <Output TaskParameter="OutputItems" ItemName="SolutionToBuildTemp" />
+    ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper >
+    ///         <ItemGroup>
+    ///             <SolutionToBuild Remove="@(SolutionToBuild)"/>
+    ///             <SolutionToBuild Include="@(SolutionToBuildTemp)"/>
+    ///         </ItemGroup>
+    ///         <Message Text="After  = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)"/>
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -116,6 +144,7 @@ namespace MSBuild.ExtensionPack.Framework
         private const string SortTaskAction = "Sort";
         private const string StringToItemColTaskAction = "StringToItemCol";
         private const string ItemColToStringTaskAction = "ItemColToString";
+        private const string UpdateMetadataTaskAction = "UpdateMetadata";
         
         private List<ITaskItem> inputItems1;
         private List<ITaskItem> inputItems2;
@@ -132,6 +161,7 @@ namespace MSBuild.ExtensionPack.Framework
         [DropdownValue(RemoveDuplicateFilesTaskAction)]
         [DropdownValue(SortTaskAction)]
         [DropdownValue(StringToItemColTaskAction)]
+        [DropdownValue(UpdateMetadataTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -158,7 +188,7 @@ namespace MSBuild.ExtensionPack.Framework
         public string ItemString { get; set; }
 
         /// <summary>
-        /// Sets the separator to use to split the ItemString when calling StringToItemCol
+        /// Sets the separator to use for splitting the ItemString when calling StringToItemCol
         /// </summary>
         [TaskAction(ItemColToStringTaskAction, false)]
         [TaskAction(StringToItemColTaskAction, true)]
@@ -186,6 +216,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(ItemColToStringTaskAction, true)]
         [TaskAction(RemoveDuplicateFilesTaskAction, true)]
         [TaskAction(SortTaskAction, true)]
+        [TaskAction(UpdateMetadataTaskAction, true)]
         public ITaskItem[] InputItems1
         {
             get { return this.inputItems1.ToArray(); }
@@ -197,6 +228,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [TaskAction(GetCommonItemsTaskAction, true)]
         [TaskAction(GetDistinctItemsTaskAction, true)]
+        [TaskAction(UpdateMetadataTaskAction, true)]
         public ITaskItem[] InputItems2
         {
             get { return this.inputItems2.ToArray(); }
@@ -274,9 +306,59 @@ namespace MSBuild.ExtensionPack.Framework
                 case ItemColToStringTaskAction:
                     this.ItemColToString();
                     break;
+                case UpdateMetadataTaskAction:
+                    this.UpdateMetadata();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void UpdateMetadata()
+        {
+            // We need to filter out reserved metadata as it can't be updated
+            List<string> reservedMetadata = new List<string> { "FullPath", "RootDir", "Filename", "Extension", "RelativeDir", "Directory", "RecursiveDir", "Identity", "ModifiedTime", "CreatedTime", "AccessedTime" };
+
+            // Validate input
+            if ((this.InputItems1 == null) || (this.InputItems2 == null))
+            {
+                this.Log.LogError("InputItems1 and InputItems2 are mandatory", null);
+                return;
+            }
+
+            this.LogTaskMessage("Updating Metadata");
+            int sourceIndex = 0;
+            foreach (ITaskItem sourceItem in this.InputItems1)
+            {
+                // Fill the new list with the source one
+                this.OutputItems = this.InputItems1;
+                foreach (ITaskItem itemToModify in this.InputItems2)
+                {
+                    // See if this is a match.  If it is then change the metadata in the new list
+                    if (sourceItem.ToString() == itemToModify.ToString())
+                    {
+                        foreach (var s in sourceItem.MetadataNames)
+                        {
+                            if (reservedMetadata.Contains(s.ToString()))
+                            {
+                                break;
+                            }
+
+                            foreach (var x in itemToModify.MetadataNames)
+                            {
+                                if (s == x)
+                                {
+                                    this.LogTaskMessage(string.Format(CultureInfo.InstalledUICulture, "Updating {0}.{1} to {2}", this.OutputItems[sourceIndex], s, itemToModify.GetMetadata(s.ToString())));
+                                    this.OutputItems[sourceIndex].SetMetadata(s.ToString(), itemToModify.GetMetadata(s.ToString()));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                sourceIndex += 1;
             }
         }
 
