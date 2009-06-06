@@ -609,6 +609,7 @@
                                 <xs:enumeration value="RemoveDuplicateFiles"/>
                                 <xs:enumeration value="Sort"/>
                                 <xs:enumeration value="StringToItemCol"/>
+                                <xs:enumeration value="UpdateMetadata"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
