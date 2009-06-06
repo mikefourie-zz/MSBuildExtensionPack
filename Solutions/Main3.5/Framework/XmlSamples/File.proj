@@ -17,6 +17,11 @@
         <MyFiles Include="C:\demo\**\*.csproj"/>
     </ItemGroup>
     <Target Name="Default">
+        <!-- Get a temp file -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
+            <Output TaskParameter="Path" PropertyName="TempPath"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="TempPath: $(TempPath)"/>
         <!-- Filter a collection of files based on their content -->
         <Message Text="MyProjects %(MyFiles.Identity)"/>
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">

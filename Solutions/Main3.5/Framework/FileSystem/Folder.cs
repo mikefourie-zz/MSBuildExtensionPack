@@ -55,7 +55,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
         private const string AddSecurityTaskAction = "CountLines";
@@ -346,6 +346,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
+            
+            // If the TargetPath has multiple folders, then we need to create the parent
+            DirectoryInfo f = new DirectoryInfo(this.TargetPath);
+            string parentPath = this.TargetPath.Replace(@"\" + f.Name, string.Empty);
+            if (!Directory.Exists(parentPath))
+            {
+                Directory.CreateDirectory(parentPath);
+            }
+
             Directory.Move(this.Path, this.TargetPath);
         }
     }

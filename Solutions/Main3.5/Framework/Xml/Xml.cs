@@ -75,17 +75,17 @@ namespace MSBuild.ExtensionPack.Xml
     ///         </MSBuild.ExtensionPack.Xml.XmlTask>
     ///         <Message Text="Valid File: $(Validated)"/>
     ///         <!-- Transform an Xml file with an Xslt file -->
-    ///         <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="TransForm" XmlFile="C:\Demo1\XmlForTransform.xml" XslTransformFile="C:\Demo1\Transform.xslt">
+    ///         <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Transform" XmlFile="C:\Demo1\XmlForTransform.xml" XslTransformFile="C:\Demo1\Transform.xslt">
     ///             <Output PropertyName="Out" TaskParameter="Output"/>
     ///         </MSBuild.ExtensionPack.Xml.XmlTask>
     ///         <Message Text="Transformed Xml: $(Out)"/>
     ///         <!-- Transfrom a piece of Xml with an Xslt file -->
-    ///         <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="TransForm" Xml="$(MyXml)" XslTransformFile="C:\Demo1\Transform.xslt">
+    ///         <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Transform" Xml="$(MyXml)" XslTransformFile="C:\Demo1\Transform.xslt">
     ///             <Output PropertyName="Out" TaskParameter="Output"/>
     ///         </MSBuild.ExtensionPack.Xml.XmlTask>
     ///         <Message Text="Transformed Xml: $(Out)"/>
     ///         <!-- Transfrom a piece of Xml with a piece of Xslt and write it out to a file with indented formatting -->
-    ///         <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="TransForm" Xml="$(MyXml)" XslTransform="$(MyXsl)" OutputFile="C:\newxml.xml" Indent="true">
+    ///         <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Transform" Xml="$(MyXml)" XslTransform="$(MyXsl)" OutputFile="C:\newxml.xml" Indent="true">
     ///             <Output PropertyName="Out" TaskParameter="Output"/>
     ///         </MSBuild.ExtensionPack.Xml.XmlTask>
     ///         <Message Text="Transformed Xml: $(Out)"/>
@@ -93,7 +93,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
         private const string TransformTaskAction = "Transform";
@@ -219,12 +219,12 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            switch (this.TaskAction)
+            switch (this.TaskAction.ToUpperInvariant())
             {
-                case "TransForm":
+                case "TRANSFORM":
                     this.Transform();
                     break;
-                case "Validate":
+                case "VALIDATE":
                     this.Validate();
                     break;
                 default:

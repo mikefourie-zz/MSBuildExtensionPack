@@ -67,7 +67,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
     public class TeamBuild : BaseTask
     {
         private const string GetLatestTaskAction = "GetLatest";

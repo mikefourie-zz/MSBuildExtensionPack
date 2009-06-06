@@ -79,7 +79,7 @@
     <Content Include="AssemblyReferences\Microsoft.TeamFoundation.Build.Client.dll" />
     <Content Include="AssemblyReferences\Microsoft.TeamFoundation.Client.dll" />
     <None Include="XmlSamples\TeamBuild.proj" />
-    <Content Include="XmlSamples\DevEnv.xml" />
+    <None Include="XmlSamples\DevEnv.proj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
     public class DevEnv : ToolTask
     {
         private IBuildDetail build;
@@ -283,7 +283,16 @@ namespace MSBuild.ExtensionPack.Tfs
                 this.UpdateProjectBuildStep();
 
                 // Save the configuration summary (errors and warnings, etc.)
-                this.ConfigurationSummary.Save();
+                // 25 April 09: If the task is called twice in a build it throws a null ref exception. Adding this temporary workaround.
+                // http://social.msdn.microsoft.com/Forums/en-US/tfsbuild/thread/4438059e-078d-4aa8-91d5-447de5756629/
+                try
+                {
+                    this.ConfigurationSummary.Save();
+                }
+                catch
+                {
+                    // we intentionally do nothing.
+                }
 
                 // Update compilation status if any errors were encountered.
                 if (this.errorEncountered)
@@ -425,6 +434,11 @@ namespace MSBuild.ExtensionPack.Tfs
             }
             else if (this.ErrorRegex.IsMatch(singleLine))
             {
+                if (singleLine.Contains("errorreport"))
+                {
+                    return;
+                }
+
                 // Detect errors and warnings and update the compilation summaries.
                 if (this.CompilationSummary != null)
                 {
@@ -454,9 +468,7 @@ namespace MSBuild.ExtensionPack.Tfs
             {
                 if (this.CompilationSummary != null)
                 {
-                    this.ProjectBuildStep.Status = this.CompilationSummary.CompilationErrors + this.CompilationSummary.StaticAnalysisErrors == 0 ?
-                                                                                                                                                     BuildStepStatus.Succeeded :
-                                                                                                                                                                                   BuildStepStatus.Failed;
+                    this.ProjectBuildStep.Status = this.CompilationSummary.CompilationErrors + this.CompilationSummary.StaticAnalysisErrors == 0 ? BuildStepStatus.Succeeded : BuildStepStatus.Failed;
                 }
                 else
                 {

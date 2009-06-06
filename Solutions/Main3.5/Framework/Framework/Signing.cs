@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
     public class Signing : BaseTask
     {
         private const string CAddSkipVerificationTaskAction = "AddSkipVerification";
@@ -142,6 +142,12 @@ namespace MSBuild.ExtensionPack.Framework
                 return;
             }
 
+            if (this.Assemblies == null)
+            {
+                this.Log.LogError("Assemblies not supplied");
+                return;
+            }
+
             foreach (ITaskItem assembly in this.Assemblies)
             {
                 FileInfo fi = new FileInfo(assembly.ItemSpec);
@@ -168,7 +174,14 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Run(string args)
         {
-            Process proc = new Process { StartInfo = { FileName = Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName), UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
+            string fileName = this.ToolPath != null ? Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName) : ToolName;
+            if (!System.IO.File.Exists(fileName))
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "sn.exe not found: {0}", fileName));
+                return;
+            }
+            
+            Process proc = new Process { StartInfo = { FileName = fileName, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
             proc.StartInfo.Arguments = args;
             this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
             proc.Start();

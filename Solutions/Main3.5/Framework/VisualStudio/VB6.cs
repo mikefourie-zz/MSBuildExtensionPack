@@ -8,11 +8,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System.Globalization;
     using System.IO;
     using Microsoft.Build.Framework;
+    using MSBuild.ExtensionPack.VisualStudio.Extended;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Build</i> (<b>Required: </b> Projects <b>Optional: </b>VB6Path)</para>
+    /// <para><i>Build</i> (<b>Required: </b> Projects <b>Optional: </b>VB6Path, StopOnError)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
+    /// <para/>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -25,6 +27,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///   <ItemGroup>
     ///     <ProjectsToBuild Include="C:\MyVB6Project.vbp">
     ///       <OutDir>c:\output</OutDir>
+    ///       <!-- Note the special use of ChgPropVBP metadata to change project properties at Build Time -->
+    ///       <ChgPropVBP>RevisionVer=4;CompatibleMode="0"</ChgPropVBP>
     ///     </ProjectsToBuild>
     ///     <ProjectsToBuild Include="C:\MyVB6Project2.vbp"/>
     ///   </ItemGroup>
@@ -35,10 +39,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
     public class VB6 : BaseTask
     {
-        private const string BuildTaskAction = "Build";      
+        private const string BuildTaskAction = "Build";
+        private const char Separator = ';';
 
         [DropdownValue(BuildTaskAction)]
         public override string TaskAction
@@ -52,6 +57,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         [TaskAction(BuildTaskAction, false)]
         public string VB6Path { get; set; }
+
+        /// <summary>
+        /// Set to true to stop processing when a project in the Projects collection fails to compile. Default is false.
+        /// </summary>
+        [TaskAction(BuildTaskAction, false)]
+        public bool StopOnError { get; set; }
 
         /// <summary>
         /// Sets the projects. Use an 'OutDir' metadata item to specify the output directory. The OutDir will be created if it does not exist.
@@ -75,7 +86,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
                     return;
                 }
-                
+
                 if (File.Exists(programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"))
                 {
                     this.VB6Path = programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe";
@@ -109,17 +120,56 @@ namespace MSBuild.ExtensionPack.VisualStudio
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Building Projects Collection: {0} projects", this.Projects.Length));
             foreach (ITaskItem project in this.Projects)
             {
-                this.BuildProject(project);
+                if (!this.BuildProject(project) && this.StopOnError)
+                {
+                    this.LogTaskMessage("BuildVB6 Task Execution Failed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "] Stopped by StopOnError set on true");
+                    return;
+                }
             }
 
             this.LogTaskMessage("BuildVB6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
             return;
         }
 
-        private void BuildProject(ITaskItem project)
+        private bool BuildProject(ITaskItem project)
         {
             using (Process proc = new Process())
             {
+                // start changing properties
+                if (!string.IsNullOrEmpty(project.GetMetadata("ChgPropVBP")))
+                {
+                    this.LogTaskMessage("START - Changing Properties VBP");
+
+                    VBPProject projectVBP = new VBPProject(project.ItemSpec);
+                    if (projectVBP.Load())
+                    {
+                        string[] linesProperty = project.GetMetadata("ChgPropVBP").Split(Separator);
+                        string[] keyProperty = new string[linesProperty.Length];
+                        string[] valueProperty = new string[linesProperty.Length];
+                        int index;
+
+                        for (index = 0; index <= linesProperty.Length - 1; index++)
+                        {
+                            if (linesProperty[index].IndexOf("=", StringComparison.OrdinalIgnoreCase) != -1)
+                            {
+                                keyProperty[index] = linesProperty[index].Substring(0, linesProperty[index].IndexOf("=", StringComparison.OrdinalIgnoreCase));
+                                valueProperty[index] = linesProperty[index].Substring(linesProperty[index].IndexOf("=", StringComparison.OrdinalIgnoreCase) + 1);
+                            }
+
+                            if (!string.IsNullOrEmpty(keyProperty[index]) && !string.IsNullOrEmpty(valueProperty[index]))
+                            {
+                                this.LogTaskMessage(keyProperty[index] + " -> New value: " + valueProperty[index]);
+                                projectVBP.SetProjectProperty(keyProperty[index], valueProperty[index], false);
+                            }
+                        }
+
+                        projectVBP.Save();
+                    }
+
+                    this.LogTaskMessage("END - Changing Properties VBP");
+                }
+
+                // end changing properties
                 proc.StartInfo.FileName = this.VB6Path;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
@@ -140,7 +190,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 // start the process
                 this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+
                 proc.Start();
+
                 string outputStream = proc.StandardOutput.ReadToEnd();
                 if (outputStream.Length > 0)
                 {
@@ -157,8 +209,24 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 if (proc.ExitCode != 0)
                 {
                     Log.LogError("Non-zero exit code from VB6.exe: " + proc.ExitCode);
-                    return;
+                    try
+                    {
+                        using (FileStream myStreamFile = new FileStream(project.ItemSpec + ".log", FileMode.Open))
+                        using (System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile))
+                        {
+                            string myBuffer = myStream.ReadToEnd();
+                            Log.LogError(myBuffer);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to open log file: '{0}'. Exception: {1}", project.ItemSpec + ".log", ex.Message));
+                    }
+
+                    return false;
                 }
+
+                return true;
             }
         }
     }

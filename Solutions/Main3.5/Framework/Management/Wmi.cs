@@ -59,11 +59,22 @@ namespace MSBuild.ExtensionPack.Management
     ///             <Output TaskParameter="Info" ItemName="Info2"/>
     ///         </MSBuild.ExtensionPack.Management.Wmi>
     ///         <Message Text="WMI Info for %(Info2.Identity): BIOSVersion=%(Info2.BIOSVersion), CurrentLanguage=%(Info2.CurrentLanguage), Manufacturer=%(Info2.Manufacturer), SerialNumber=%(Info2.SerialNumber)"/>
+    ///         <!-- Let's stop Paint.net -->
+    ///         <ItemGroup>
+    ///             <WmiProps2 Include="Name"/>
+    ///             <WmiProps2 Include="ProcessID"/>
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Query" Class="Win32_Process WHERE Name='paintdotnet.exe'" Namespace="\root\CIMV2" Properties="@(WmiProps2)" MachineName="192.168.0.6">
+    ///             <Output TaskParameter="Info" ItemName="Info"/>
+    ///         </MSBuild.ExtensionPack.Management.Wmi>
+    ///         <Message Text="WMI Info for Win32_Processes: Name: %(Info.Name), ProcessID: %(Info.ProcessID)"/>
+    ///         <Message Text="Stopping Paint.NET" Condition="%(Info.ProcessID) != ''"/>
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Process" Method="Terminate" Namespace="\root\CIMV2" Instance="Handle=%(Info.ProcessID)" MachineName="192.168.0.6" Condition="%(Info.ProcessID) != ''"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
     public class Wmi : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";

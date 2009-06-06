@@ -5,6 +5,8 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
+        <!-- Backup an eventlog -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Backup" LogName="Security" BackupPath="C:\Securitybackup.evt"/>
         <!-- Delete an eventlog -->
         <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Delete" LogName="DemoEventLog"/>
         <!-- Check whether an eventlog exists -->

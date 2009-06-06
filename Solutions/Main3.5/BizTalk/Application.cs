@@ -73,7 +73,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";
@@ -245,11 +245,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// </summary>
         protected override void InternalExecute()
         {
-            if (!this.TargetingLocalMachine())
-            {
-                return;
-            }
-
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
             this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database) };
 
@@ -340,12 +335,24 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void CheckApplicationExists()
         {
+            if (string.IsNullOrEmpty(this.Application))
+            {
+                this.Log.LogError("Application is required");
+                return;
+            }
+
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", this.Application));
             this.Exists = this.CheckExists(this.Application);
         }
 
         private void Create()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application: {0}", appl.ItemSpec));
@@ -377,6 +384,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Delete()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 this.DeleteApplication(appl);
@@ -408,11 +421,17 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void StopApplication()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 if (!this.CheckExists(appl.ItemSpec))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
                     return;
                 }
 
@@ -451,6 +470,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void StartApplication()
         {
+            if (this.Applications == null)
+            {
+                this.Log.LogError("Applications is required");
+                return;
+            }
+
             foreach (ITaskItem appl in this.Applications)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Manage Application: {0}. Action: {1}", appl.ItemSpec, this.TaskAction));

@@ -5,6 +5,16 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
+        <!-- Split a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";">
+            <Output ItemName="out" TaskParameter="Strings"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: %(Out.Identity)"/>
+        <!-- Split another string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="HelloMIKEhowMIKEareMIKeyou" String2="MIKE">
+            <Output ItemName="out" TaskParameter="Strings"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: %(Out.Identity)"/>
         <!-- Uppercase a string -->
         <MSBuild.ExtensionPack.Framework.TextString TaskAction="ToUpper" OldString="helLo">
             <Output PropertyName="out" TaskParameter="NewString"/>

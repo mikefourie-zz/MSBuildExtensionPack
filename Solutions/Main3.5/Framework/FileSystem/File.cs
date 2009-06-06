@@ -1,5 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="File.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// Parts of this task are based on code from (http://sedodream.codeplex.com). It is used here with permission.
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
 {
@@ -17,6 +18,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>AddAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
+    /// <para><i>GetTempFileName</i> (<b>Output: </b>Path)</para>
     /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
     /// <para><i>RemoveAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files)</para>
@@ -44,6 +46,11 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <MyFiles Include="C:\demo\**\*.csproj"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
+    ///        <!-- Get a temp file -->
+    ///        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
+    ///            <Output TaskParameter="Path" PropertyName="TempPath"/>
+    ///        </MSBuild.ExtensionPack.FileSystem.File>
+    ///        <Message Text="TempPath: $(TempPath)"/>
     ///         <!-- Filter a collection of files based on their content -->
     ///         <Message Text="MyProjects %(MyFiles.Identity)"/>
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
@@ -85,7 +92,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
         private const string CountLinesTaskAction = "CountLines";
@@ -95,6 +102,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string SetAttributesTaskAction = "SetAttributes";
         private const string AddAttributesTaskAction = "AddAttributes";
         private const string RemoveAttributesTaskAction = "RemoveAttributes";
+        private const string GetTempFileNameTaskAction = "GetTempFileName";
 
         private Encoding fileEncoding = Encoding.UTF8;
         private string replacement = string.Empty;
@@ -106,6 +114,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         [DropdownValue(AddAttributesTaskAction)]
         [DropdownValue(CountLinesTaskAction)]
         [DropdownValue(GetChecksumTaskAction)]
+        [DropdownValue(GetTempFileNameTaskAction)]
         [DropdownValue(FilterByContentTaskAction)]
         [DropdownValue(RemoveAttributesTaskAction)]
         [DropdownValue(ReplaceTaskAction)]
@@ -134,10 +143,11 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
 
         /// <summary>
-        /// A path to process. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.
+        /// A path to process or get. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.
         /// </summary>
         [TaskAction(GetChecksumTaskAction, true)]
         [TaskAction(ReplaceTaskAction, false)]
+        [Output]
         public string Path { get; set; }
 
         /// <summary>
@@ -295,6 +305,10 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case AddAttributesTaskAction:
                 case RemoveAttributesTaskAction:
                     this.SetAttributes();
+                    break;
+                case GetTempFileNameTaskAction:
+                    this.LogTaskMessage("Getting temp file name");
+                    this.Path = System.IO.Path.GetTempFileName();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -671,12 +685,14 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             // First make sure the file is writable.
             FileAttributes fileAttributes = System.IO.File.GetAttributes(parseFile);
+            bool changedAttribute = false;
 
             // If readonly attribute is set, reset it.
             if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
                 System.IO.File.SetAttributes(parseFile, fileAttributes ^ FileAttributes.ReadOnly);
+                changedAttribute = true;
             }
 
             // Set TextEncoding if it was specified.
@@ -697,6 +713,12 @@ namespace MSBuild.ExtensionPack.FileSystem
             using (StreamWriter streamWriter = new StreamWriter(parseFile, false, this.fileEncoding))
             {
                 streamWriter.Write(newFile);
+            }
+
+            if (changedAttribute)
+            {
+                this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
+                System.IO.File.SetAttributes(parseFile, FileAttributes.ReadOnly);
             }
         }
     }

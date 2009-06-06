@@ -16,13 +16,13 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
+    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName)</para>
     /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>DeleteBackupHistory</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>RestoreAction, Incremental, NotificationInterval, NoPooling)</para>
+    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath)</para>
     /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -37,7 +37,6 @@ namespace MSBuild.ExtensionPack.Sql2008
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
-    ///     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks"/>
     ///     <Target Name="Default">
     ///         <ItemGroup>
     ///             <Database Include="ADatabase">
@@ -95,7 +94,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/599c249c-bc36-8b71-c6f4-935708b18eb8.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/599c249c-bc36-8b71-c6f4-935708b18eb8.htm")]
     public class Database : BaseTask
     {
         private const string BackupTaskAction = "Backup";
@@ -117,6 +116,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         private BackupActionType backupAction = BackupActionType.Database;
         private RestoreActionType restoreAction = RestoreActionType.Database;
         private int notificationInterval = 10;
+        private string fileGroupName = "PRIMARY";
 
         /// <summary>
         /// Sets the TaskAction.
@@ -194,8 +194,10 @@ namespace MSBuild.ExtensionPack.Sql2008
         public ITaskItem DatabaseItem { get; set; }
 
         /// <summary>
-        /// Sets the Log Name
+        /// Sets the Log Name. Defaults DatabaseItem.ItemSpec + "_log"
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(RestoreTaskAction, false)]
         public string LogName { get; set; }
 
         /// <summary>
@@ -230,15 +232,28 @@ namespace MSBuild.ExtensionPack.Sql2008
         }
 
         /// <summary>
+        /// Sets the FileGroupName. Defaults to PRIMARY
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string FileGroupName
+        {
+            get { return this.fileGroupName; }
+            set { this.fileGroupName = value; }
+        }
+
+        /// <summary>
         /// Sets the DataFilePath.
         /// </summary>
         [TaskAction(BackupTaskAction, true)]
         [TaskAction(RestoreTaskAction, true)]
+        [TaskAction(CreateTaskAction, false)]
         public ITaskItem DataFilePath { get; set; }
 
         /// <summary>
         /// Sets the LogFilePath.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(RestoreTaskAction, false)]
         public ITaskItem LogFilePath { get; set; }
 
         /// <summary>
@@ -358,7 +373,7 @@ namespace MSBuild.ExtensionPack.Sql2008
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Scripting Database: {0} to: {1}", this.DatabaseItem.ItemSpec, this.OutputFilePath.GetMetadata("FullPath")));
             Microsoft.SqlServer.Management.Smo.Database db = this.sqlServer.Databases[this.DatabaseItem.ItemSpec];
-            
+
             // Script the database
             ScriptingOptions opt = new ScriptingOptions { Bindings = true, ClusteredIndexes = true, ExtendedProperties = true, FullTextCatalogs = true, FullTextIndexes = true, IncludeDatabaseContext = true, IncludeDatabaseRoleMemberships = true, IncludeHeaders = true, Indexes = true, LoginSid = true, Permissions = true, Triggers = true, XmlIndexes = true };
             opt.IncludeHeaders = false;
@@ -369,7 +384,7 @@ namespace MSBuild.ExtensionPack.Sql2008
 
             // now we append to file
             opt.AppendToFile = true;
-            
+
             foreach (Login o in this.sqlServer.Logins)
             {
                 if (!o.IsSystemObject)
@@ -563,6 +578,25 @@ namespace MSBuild.ExtensionPack.Sql2008
             }
 
             SMO.Database newDatabase = new SMO.Database(this.sqlServer, this.DatabaseItem.ItemSpec);
+            if (this.DataFilePath != null)
+            {
+                FileGroup fileGroup = new FileGroup(newDatabase, this.FileGroupName);
+                DataFile dataFile = new DataFile(fileGroup, this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath"));
+                fileGroup.Files.Add(dataFile);
+                newDatabase.FileGroups.Add(fileGroup);
+            }
+
+            if (this.LogFilePath != null)
+            {
+                if (string.IsNullOrEmpty(this.LogName))
+                {
+                    this.LogName = this.DatabaseItem.ItemSpec + "_log";
+                }
+
+                LogFile logFile = new LogFile(newDatabase, this.LogName, this.LogFilePath.GetMetadata("FullPath"));
+                newDatabase.LogFiles.Add(logFile);
+            }
+
             newDatabase.Create();
         }
 
@@ -596,9 +630,14 @@ namespace MSBuild.ExtensionPack.Sql2008
             if (this.ReplaceDatabase)
             {
                 sqlRestore.ReplaceDatabase = true;
-                if (string.IsNullOrEmpty(this.LogName) || this.LogFilePath == null)
+                if (string.IsNullOrEmpty(this.LogName))
                 {
-                    this.Log.LogError("LogName and LogFilePath must be specified if ReplaceDatabase is true.");
+                    this.LogName = this.DatabaseItem.ItemSpec + "_log";
+                }
+
+                if (this.LogFilePath == null)
+                {
+                    this.Log.LogError("LogFilePath must be specified if ReplaceDatabase is true.");
                     return;
                 }
 

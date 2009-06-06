@@ -102,6 +102,35 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Computer.ActiveDirectory" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="AddUser"/>
+                                <xs:enumeration value="AddGroup"/>
+                                <xs:enumeration value="AddUserToGroup"/>
+                                <xs:enumeration value="DeleteUser"/>
+                                <xs:enumeration value="DeleteGroup"/>
+                                <xs:enumeration value="DeleteUserFromGroup"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="User"/>
+                    <xs:attribute name="Group"/>
+                    <xs:attribute name="FullName"/>
+                    <xs:attribute name="Description"/>
+                    <xs:attribute name="Password"/>
+                    <xs:attribute name="PasswordExpired"/>
+                    <xs:attribute name="PasswordNeverExpires"/>
+                    <xs:attribute name="Domain"/>
+                    <xs:attribute name="GroupType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Computer.ComponentServices" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
@@ -140,6 +169,7 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="Backup"/>
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Clear"/>
                                 <xs:enumeration value="Create"/>
@@ -207,6 +237,8 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="GetInternalIP"/>
+                                <xs:enumeration value="GetRemoteIP"/>
                                 <xs:enumeration value="Ping"/>
                             </xs:restriction>
                         </xs:simpleType>
@@ -329,15 +361,18 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
+                    <xs:attribute name="CommandLineValues"/>
                     <xs:attribute name="DisplayFiles"/>
-                    <xs:attribute name="TokenPattern"/>
-                    <xs:attribute name="ReplacementValues"/>
-                    <xs:attribute name="ForceWrite"/>
-                    <xs:attribute name="TargetPath"/>
-                    <xs:attribute name="TargetFiles"/>
-                    <xs:attribute name="TextEncoding"/>
-                    <xs:attribute name="FilesProcessed"/>
                     <xs:attribute name="FilesDetokenised"/>
+                    <xs:attribute name="FilesProcessed"/>
+                    <xs:attribute name="ForceWrite"/>
+                    <xs:attribute name="ProjectFile"/>
+                    <xs:attribute name="ReplacementValues"/>
+                    <xs:attribute name="Separator"/>
+                    <xs:attribute name="TargetFiles"/>
+                    <xs:attribute name="TargetPath"/>
+                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TokenPattern"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -352,6 +387,7 @@
                                 <xs:enumeration value="AddAttributes"/>
                                 <xs:enumeration value="CountLines"/>
                                 <xs:enumeration value="GetChecksum"/>
+                                <xs:enumeration value="GetTempFileName"/>
                                 <xs:enumeration value="FilterByContent"/>
                                 <xs:enumeration value="Replace"/>
                                 <xs:enumeration value="SetAttributes"/>
@@ -378,6 +414,26 @@
                     <xs:attribute name="Checksum"/>
                     <xs:attribute name="ExcludedFiles"/>
                     <xs:attribute name="IncludedFiles"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.FileSystem.FindUnder" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="FindFiles"/>
+                                <xs:enumeration value="FindDirectories"/>
+                                <xs:enumeration value="FindFilesAndDirectories"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Path"/>
+                    <xs:attribute name="Recursive"/>
+                    <xs:attribute name="SearchPattern"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -473,6 +529,7 @@
                     <xs:attribute name="End"/>
                     <xs:attribute name="Format"/>
                     <xs:attribute name="Result"/>
+                    <xs:attribute name="UseUtc"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -518,21 +575,21 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Framework.Metadata" substitutionGroup="msb:Task">
-      <xs:complexType>
-        <xs:complexContent>
-          <xs:extension base="msb:TaskType">
-            <xs:attribute name="TaskAction" use="required">
-              <xs:simpleType>
-                <xs:restriction base="xs:string">
-                  <xs:enumeration value="Add"/>
-                </xs:restriction>
-              </xs:simpleType>
-            </xs:attribute>
-            <xs:attribute name="Items"/>
-            <xs:attribute name="NewMetadata"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Add"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Items"/>
+                    <xs:attribute name="NewMetadata"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
     </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Framework.MsBuildHelper" substitutionGroup="msb:Task">
         <xs:complexType>
@@ -548,9 +605,11 @@
                                 <xs:enumeration value="GetItem"/>
                                 <xs:enumeration value="GetItemCount"/>
                                 <xs:enumeration value="GetLastItem"/>
+                                <xs:enumeration value="ItemColToString"/>
                                 <xs:enumeration value="RemoveDuplicateFiles"/>
                                 <xs:enumeration value="Sort"/>
                                 <xs:enumeration value="StringToItemCol"/>
+                                <xs:enumeration value="UpdateMetadata"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -604,6 +663,7 @@
                                 <xs:enumeration value="PadRight"/>
                                 <xs:enumeration value="Remove"/>
                                 <xs:enumeration value="Replace"/>
+                                <xs:enumeration value="Split"/>
                                 <xs:enumeration value="StartsWith"/>
                                 <xs:enumeration value="ToLower"/>
                                 <xs:enumeration value="ToUpper"/>
@@ -958,21 +1018,22 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
-                    <xs:attribute name="SetAssemblyVersion"/>
-                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="BuildName"/>
+                    <xs:attribute name="DateFormat"/>
+                    <xs:attribute name="Delimiter"/>
                     <xs:attribute name="Files"/>
-                    <xs:attribute name="TfsBuildNumber"/>
-                    <xs:attribute name="Version"/>
+                    <xs:attribute name="ForceSetVersion"/>
+                    <xs:attribute name="Major"/>
+                    <xs:attribute name="Minor"/>
                     <xs:attribute name="PaddingCount"/>
                     <xs:attribute name="PaddingDigit"/>
+                    <xs:attribute name="SetAssemblyVersion"/>
                     <xs:attribute name="StartDate"/>
-                    <xs:attribute name="DateFormat"/>
-                    <xs:attribute name="BuildName"/>
+                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TfsBuildNumber"/>
+                    <xs:attribute name="UseUtcDate"/>
+                    <xs:attribute name="Version"/>
                     <xs:attribute name="VersionFormat"/>
-                    <xs:attribute name="Minor"/>
-                    <xs:attribute name="Major"/>
-                    <xs:attribute name="Delimiter"/>
-                    <xs:attribute name="ForceSetVersion"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -990,6 +1051,23 @@
                     </xs:attribute>
                     <xs:attribute name="VB6Path"/>
                     <xs:attribute name="Projects" use="required"/>
+                    <xs:attribute name="StopOnError"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Web.HttpWebRequest" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="GetResponse"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Url" type="msb:non_empty_string" use="required"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1053,6 +1131,7 @@
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Continue"/>
                                 <xs:enumeration value="Delete"/>
+                                <xs:enumeration value="Identifier"/>
                                 <xs:enumeration value="Start"/>
                                 <xs:enumeration value="Stop"/>
                                 <xs:enumeration value="Pause"/>
@@ -1158,6 +1237,7 @@
                     <xs:attribute name="ComVisible"/>
                     <xs:attribute name="AssemblyInfoFiles" use="required" />
                     <xs:attribute name="SkipVersioning"/>
+                    <xs:attribute name="UseUtc"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

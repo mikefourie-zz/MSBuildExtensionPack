@@ -15,8 +15,8 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, Encoding ,ForceWrite, ReplacementValues, TokenPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Replace</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, Encoding ,ForceWrite, ReplacementValues, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed)</para>
+    /// <para><i>Replace</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -31,11 +31,13 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <PathToDetokenise>C:\Demo\*</PathToDetokenise>
     ///         <CPHome>www.codeplex.com/MSBuildExtensionPack</CPHome>
     ///         <Title>A New Title</Title>
+    ///         <clv>hello=hello#~#hello1=how#~#hello2=are</clv>
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <ItemGroup>
     ///             <FileCollection Include="C:\Demo1\TestFile.txt"/>
     ///             <FileCollection2 Include="C:\Demo1\TestFile2.txt"/>
+    ///             <FileCollection3 Include="C:\Demo1\TestFile3.txt"/>
     ///         </ItemGroup>
     ///         <ItemGroup>
     ///             <TokenValues Include="Title">
@@ -62,37 +64,55 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///             <Output TaskParameter="FilesDetokenised" ItemName="FilesDetokenised"/>
     ///         </MSBuild.ExtensionPack.FileSystem.Detokenise>
     ///         <Message Text="FilesDetokenised = @(FilesDetokenised), FilesProcessed = @(FilesProcessed)"/>
+    ///         <!-- 6 Detokenise using values that can be passed in via the command line -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetFiles="@(FileCollection3)" CommandLineValues="$(clv)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
+        private const string AnalyseTaskAction = "Analyse";
+        private const string DetokeniseTaskAction = "Detokenise";
         private const string ParseRegexPatternExtract = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
         private string tokenPattern = @"\$\([0-9a-zA-Z-._]+\)";
         private Project project;
         private Encoding fileEncoding = Encoding.UTF8;
         private Regex parseRegex;
         private bool analyseOnly;
+        private string separator = "#~#";
+        private Dictionary<string, string> commandLineDictionary;
 
         // this bool is used to indicate what mode we are in.
         // if true, then the task has been configured to use a passed in collection
-        // to use as replacement tokens. If false, then it will used the msbuild
+        // to use as replacement tokens. If false, then it will use the msbuild
         // proj file for replacement tokens
         private bool collectionMode = true;
 
         // this bool is used to track whether the file needs to be re-written.
         private bool tokenMatched;
 
+        [DropdownValue(AnalyseTaskAction)]
+        [DropdownValue(DetokeniseTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
         /// <summary>
         /// Set to true for files being processed to be output to the console.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public bool DisplayFiles { get; set; }
 
         /// <summary>
-        /// Specifies the format of the token to look for. The default patterns is $(token)
+        /// Specifies the format of the token to look for. The default pattern is $(token)
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public string TokenPattern
         {
             get { return this.tokenPattern; }
@@ -102,40 +122,79 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets the replacement values.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public ITaskItem[] ReplacementValues { get; set; }
+
+        /// <summary>
+        /// Sets the replacement values provided via the command line. The format is token1=value1#~#token2=value2 etc.
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
+        public string CommandLineValues { get; set; }
+
+        /// <summary>
+        /// Sets the separator to use to split the CommandLineValues. The default is #~#
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, true)]
+        public string Separator
+        {
+            get { return this.separator; }
+            set { this.separator = value; }
+        }
+
+        /// <summary>
+        /// Sets the MSBuidl file to load for token matching. Defaults to BuildEngine.ProjectFileOfTaskNode
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
+        public ITaskItem ProjectFile { get; set; }
 
         /// <summary>
         /// If this is set to true, then the file is re-written, even if no tokens are matched.
         /// this may be used in the case when the user wants to ensure all file are written
         /// with the same encoding.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public bool ForceWrite { get; set; }
 
         /// <summary>
         /// Sets the TargetPath.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public string TargetPath { get; set; }
 
         /// <summary>
         /// Sets the TargetFiles.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public ITaskItem[] TargetFiles { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding. If TargetFiles is specified, individual encodings can be specified by providing an Encoding metadata value.
         /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Gets the files processed count. [Output]
         /// </summary>
         [Output]
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public int FilesProcessed { get; set; }
 
         /// <summary>
         /// Gets the files detokenised count. [Output]
         /// </summary>
         [Output]
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
         public int FilesDetokenised { get; set; }
 
         /// <summary>
@@ -197,17 +256,27 @@ namespace MSBuild.ExtensionPack.FileSystem
             {
                 this.LogTaskMessage("Detokenise Task Execution Started [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
 
-                // if the ReplacementValues collection is null, then we need to load
+                // if the ReplacementValues collection and the CommandLineValues are null, then we need to load
                 // the project file that called this task to get it's properties.
-                if (this.ReplacementValues == null)
+                if (this.ReplacementValues == null && string.IsNullOrEmpty(this.CommandLineValues))
                 {
                     this.collectionMode = false;
 
                     // Read the project file to get the tokens
                     this.project = new Project();
-                    string projectFile = this.BuildEngine.ProjectFileOfTaskNode;
+                    string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
                     this.project.Load(projectFile);
+                }
+                else if (!string.IsNullOrEmpty(this.CommandLineValues))
+                {
+                    string[] commandLineValuesArray = this.CommandLineValues.Split(new[] { this.Separator }, StringSplitOptions.RemoveEmptyEntries);
+                    this.commandLineDictionary = new Dictionary<string, string>();
+                    foreach (string s in commandLineValuesArray)
+                    {
+                        string[] temp = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                        this.commandLineDictionary.Add(temp[0], temp[1]);
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(this.TextEncoding))
@@ -357,12 +426,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             if (this.tokenMatched || this.ForceWrite)
             {
                 // First make sure the file is writable.
+                bool changedAttribute = false;
                 FileAttributes fileAttributes = System.IO.File.GetAttributes(file);
 
                 // If readonly attribute is set, reset it.
                 if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
+                    this.LogTaskMessage(MessageImportance.Low, "Making file writable");
                     System.IO.File.SetAttributes(file, fileAttributes ^ FileAttributes.ReadOnly);
+                    changedAttribute = true;
                 }
 
                 if (!this.analyseOnly)
@@ -377,6 +449,12 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                         streamWriter.Write(newFile);
                         this.FilesDetokenised++;
+                    }
+
+                    if (changedAttribute)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
+                        System.IO.File.SetAttributes(file, FileAttributes.ReadOnly);
                     }
                 }
             }
@@ -393,19 +471,37 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Find the replacement property
             if (this.collectionMode)
             {
-                // we need to look in the ReplacementValues for a match
-                foreach (ITaskItem token in this.ReplacementValues)
+                if (this.ReplacementValues != null)
                 {
-                    if (token.ToString() == extractedProperty)
+                    // we need to look in the ReplacementValues for a match
+                    foreach (ITaskItem token in this.ReplacementValues)
                     {
-                        // set the bool so we can write the new file content
-                        this.tokenMatched = true;
-                        return token.GetMetadata("Replacement");
+                        if (token.ToString() == extractedProperty)
+                        {
+                            // set the bool so we can write the new file content
+                            this.tokenMatched = true;
+                            return token.GetMetadata("Replacement");
+                        }
                     }
+
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                    throw new ArgumentException("Review error log");
                 }
 
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
-                throw new ArgumentException("Review error log");
+                // we need to look in the CommandLineValues
+                try
+                {
+                    string replacement = this.commandLineDictionary[extractedProperty];
+
+                    // set the bool so we can write the new file content
+                    this.tokenMatched = true;
+                    return replacement;
+                }
+                catch
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                    throw new ArgumentException("Review error log");
+                }
             }
 
             // we need to look in the calling project's properties collection

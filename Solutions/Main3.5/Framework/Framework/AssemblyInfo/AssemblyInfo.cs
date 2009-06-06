@@ -107,7 +107,24 @@ namespace MSBuild.ExtensionPack.Framework
     /// </remarks>
     /// <seealso cref="AssemblyMajorVersion"/>
     /// <seealso cref="AssemblyMinorVersion"/>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.2.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
+    /// <example>
+    /// <code lang="xml"><![CDATA[
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <ItemGroup>
+    ///             <AssemblyInfoFiles Include="C:\AssemblyInfo.cs"/>
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyConfiguration="DEBUG" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+    ///     </Target>
+    /// </Project>
+    /// ]]></code>    
+    /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {
         private AssemblyVersionSettings assemblyFileVersionSettings;
@@ -880,6 +897,11 @@ namespace MSBuild.ExtensionPack.Framework
         public ITaskItem[] AssemblyInfoFiles { get; set; }
 
         /// <summary>
+        /// Set to true to use UTC Date / Time in calculations. Default is false.
+        /// </summary>
+        public bool UseUtc { get; set; }
+
+        /// <summary>
         /// Executes the AssemblyInfo task.
         /// </summary>
         /// <returns>True if the task was run sucecssfully. False if the task failed.</returns>
@@ -907,6 +929,12 @@ namespace MSBuild.ExtensionPack.Framework
 
             foreach (ITaskItem item in this.AssemblyInfoFiles)
             {
+                if (!File.Exists(item.ItemSpec))
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentUICulture, "File not found: {0}", item.ItemSpec));
+                    return false;
+                }
+
                 AssemblyInfoWrapper assemblyInfo = new AssemblyInfoWrapper(item.ItemSpec);
 
                 // Validate that stub file entries exist for any of the properties we've been asked to set.
@@ -957,7 +985,26 @@ namespace MSBuild.ExtensionPack.Framework
                         writer.Close();
                     }
 
+                    bool changedAttribute = false;
+
+                    // First make sure the file is writable.
+                    FileAttributes fileAttributes = File.GetAttributes(item.ItemSpec);
+
+                    // If readonly attribute is set, reset it.
+                    if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    {
+                        Log.LogMessage(MessageImportance.Low, "Making file writable");
+                        File.SetAttributes(item.ItemSpec, fileAttributes ^ FileAttributes.ReadOnly);
+                        changedAttribute = true;
+                    }
+
                     File.Copy(writerInfo.FullName, item.ItemSpec, true);
+
+                    if (changedAttribute)
+                    {
+                        Log.LogMessage(MessageImportance.Low, "Making file readonly");
+                        File.SetAttributes(item.ItemSpec, FileAttributes.ReadOnly);
+                    }
                 }
                 finally
                 {
@@ -1072,7 +1119,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber.ToString(format, CultureInfo.InvariantCulture));
                     return newVersionNumber.ToString(format, CultureInfo.InvariantCulture);
                 case IncrementMethod.DateString:
-                    string newVersionNumber1 = DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
+                    string newVersionNumber1 = this.UseUtc ? DateTime.UtcNow.ToString(format, CultureInfo.InvariantCulture) : DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
                     this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber1);
                     return newVersionNumber1;
                 default:

@@ -1,0 +1,19 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <MSBuild.ExtensionPack.Web.HttpWebRequest TaskAction="GetResponse" Url="http://www.freetodev.com">
+            <Output TaskParameter="Response" ItemName="ResponseDetail"/>
+        </MSBuild.ExtensionPack.Web.HttpWebRequest>
+        <Message Text="StatusDescription: %(ResponseDetail.StatusDescription)"/>
+        <Message Text="StatusCode: %(ResponseDetail.StatusCode)"/>
+        <Message Text="CharacterSet: %(ResponseDetail.CharacterSet)"/>
+        <Message Text="ProtocolVersion: %(ResponseDetail.ProtocolVersion)"/>
+        <Message Text="ResponseUri: %(ResponseDetail.ResponseUri)"/>
+        <Message Text="Server: %(ResponseDetail.Server)"/>
+        <Message Text="ResponseText: %(ResponseDetail.ResponseText)"/>        
+    </Target>
+</Project>

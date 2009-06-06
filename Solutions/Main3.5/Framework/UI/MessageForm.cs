@@ -72,7 +72,7 @@ namespace MSBuild.ExtensionPack.UI.Extended
 
         private void Button3_Click(object sender, System.EventArgs e)
         {
-            this.ButtonClickedText = this.button2.Text;
+            this.ButtonClickedText = this.button3.Text;
             this.Close();
         }
     }

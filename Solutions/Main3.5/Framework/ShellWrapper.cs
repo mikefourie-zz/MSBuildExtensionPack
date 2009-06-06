@@ -14,7 +14,8 @@ namespace MSBuild.ExtensionPack
     internal sealed class ShellWrapper
     {
         private readonly System.Collections.Specialized.NameValueCollection environmentVars = new NameValueCollection();
-        private static StringBuilder stdOut;
+        private readonly System.Text.StringBuilder stdOut = new System.Text.StringBuilder();
+        private readonly System.Text.StringBuilder stdError = new System.Text.StringBuilder();
 
         public ShellWrapper(string executable, string arguments)
         {
@@ -30,12 +31,18 @@ namespace MSBuild.ExtensionPack
         /// <summary>
         /// Gets the standard output.
         /// </summary>
-        public string StandardOutput { get; private set; }
+        public string StandardOutput
+        {
+            get { return this.stdOut.ToString(); }
+        }
 
         /// <summary>
         /// Gets the standard error.
         /// </summary>
-        public string StandardError { get; private set; }
+        public string StandardError
+        {
+            get { return this.stdError.ToString(); }
+        }
 
         /// <summary>
         /// Gets the exit code.
@@ -84,22 +91,17 @@ namespace MSBuild.ExtensionPack
                     startInfo.EnvironmentVariables[key] = this.EnvironmentVariables[key];
                 }
 
-                // Set event handler to asynchronously read the output. We need to do this to avoid deadlock conditions.
-                stdOut = new StringBuilder(string.Empty);
-                proc.OutputDataReceived += SortOutputHandler;
+                // Set event handlers to asynchronously read the output. We need to do this to avoid deadlock conditions.
+                proc.OutputDataReceived += this.StandardOutHandler;
+                proc.ErrorDataReceived += this.StandardErrorHandler;
 
                 proc.StartInfo = startInfo;
                 proc.Start();
                 proc.BeginOutputReadLine();
-
-                // its ok to read the one stream synchronously
-                this.StandardError = proc.StandardError.ReadToEnd();
+                proc.BeginErrorReadLine();
 
                 // wait for exit after reading the streams to avoid deadlock
                 proc.WaitForExit(Int32.MaxValue);
-
-                // now we can read all the output.
-                this.StandardOutput = stdOut.ToString();
 
                 // get the exit code and release the process handle
                 if (!proc.HasExited)
@@ -119,11 +121,23 @@ namespace MSBuild.ExtensionPack
             return this.ExitCode;
         }
 
-        private static void SortOutputHandler(object sendingProcess, DataReceivedEventArgs outline)
+        private void StandardErrorHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
         {
-            if (!String.IsNullOrEmpty(outline.Data))
+            // Collect the error output.
+            if (!String.IsNullOrEmpty(lineReceived.Data))
             {
-                stdOut.Append(Environment.NewLine + outline.Data);
+                // Add the text to the collected errors.
+                this.stdError.AppendLine(lineReceived.Data);
+            }
+        }
+
+        private void StandardOutHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
+        {
+            // Collect the command output.
+            if (!String.IsNullOrEmpty(lineReceived.Data))
+            {
+                // Add the text to the collected output.
+                this.stdOut.AppendLine(lineReceived.Data);
             }
         }
     }

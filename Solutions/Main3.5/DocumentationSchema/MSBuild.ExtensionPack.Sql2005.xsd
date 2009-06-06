@@ -33,10 +33,14 @@
                                 <xs:enumeration value="Backup"/>
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Create"/>
+                                <xs:enumeration value="DataFilePath"/>
                                 <xs:enumeration value="Delete"/>
                                 <xs:enumeration value="DeleteBackupHistory"/>
+                                <xs:enumeration value="FileGroupName"/>
                                 <xs:enumeration value="GetConnectionCount"/>
                                 <xs:enumeration value="GetInfo"/>
+                                <xs:enumeration value="LogFilePath"/>
+                                <xs:enumeration value="LogName"/>
                                 <xs:enumeration value="Rename"/>
                                 <xs:enumeration value="Restore"/>
                                 <xs:enumeration value="Script"/>
