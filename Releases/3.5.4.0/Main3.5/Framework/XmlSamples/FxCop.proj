@@ -1,0 +1,33 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <!--- Need to add to the dependencies because MSBuild.ExtensionPack.CodeQuality.StyleCop.dll references StyleCop -->
+        <DependencyDirectories Include="c:\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3"/>
+        <!-- Define a bespoke set of rules to run. Prefix the Rules path with ! to treat warnings as errors -->
+        <Rules Include="c:\Program Files (x86)\Microsoft FxCop 1.36\Rules\DesignRules.dll"/>
+        <Files Include="C:\Projects\CodePlex\MSBuildExtensionPack\Releases\3.5.1.0\Main3.5\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll"/>
+    </ItemGroup>
+    <Target Name="Default">
+        <!-- Call the task using a collection of files and all default rules -->
+        <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Files="@(Files)" OutputFile="c:\fxcoplog1.txt">
+            <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>
+        </MSBuild.ExtensionPack.CodeQuality.FxCop>
+        <Message Text="CA1 Failed: $(Result)"/>
+        <!-- Call the task using a project file -->        
+        <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Project="c:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\MSBuildFramework\XmlSamples\FXCop.FxCop" DependencyDirectories="@(DependencyDirectories)" OutputFile="c:\fxcoplog2.txt">
+            <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>            
+        </MSBuild.ExtensionPack.CodeQuality.FxCop>
+        <Message Text="CA2 Failed: $(Result)"/>
+        <!-- Call the task using a collection of files and bespoke rules. We can access the exact failure message using OutputText -->
+        <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Rules="@(Rules)" Files="@(Files)"  OutputFile="c:\fxcoplog3.txt" LogToConsole="true">
+            <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>
+            <Output TaskParameter="OutputText" PropertyName="Text"/>
+        </MSBuild.ExtensionPack.CodeQuality.FxCop>
+        <Message Text="CA3 Failed: $(Result)"/>
+        <Message Text="Failure Text: $(Text)" Condition="$(Result) == 'true'"/>
+    </Target>
+</Project>

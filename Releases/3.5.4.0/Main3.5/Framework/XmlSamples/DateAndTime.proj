@@ -1,0 +1,63 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <PropertyGroup>
+        <Start>1 Jan 2009</Start>
+    </PropertyGroup>
+    <Target Name="Default">
+        <!-- Let's Time how long it takes to perform a certain group of tasks -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss">
+            <Output TaskParameter="Result" PropertyName="MyStartTime"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="I'm sleeping..."/>
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="2000"/>
+        <Message Text="Sleep Over!"/>
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(MyStartTime)" Format="Seconds">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Slept For: $(DTResult)"/>
+        <!-- Get the elapsed days since the start date -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" Format="Days">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Days Since $(Start): $(DTResult)"/>
+        <!-- Get the elapsed minutes since the start date -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" Format="Minutes">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Minutes Since $(Start): $(DTResult)"/>
+        <!-- Get the elapsed hours since the start date -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" Format="Hours">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Hours Since $(Start): $(DTResult)"/>
+        <!-- Get the total elapsed time since the start date -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" Format="Total">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Total Elapsed Time Since $(Start): $(DTResult)"/>
+        <!-- Get the time in the specified format -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Date / Time: $(DTResult)"/>
+        <!-- Get the UTC time in the specified format -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss" UseUtc="true">
+            <Output TaskParameter="Result" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="UTC Date / Time: $(DTResult)"/>
+        <!-- Check if its later than a given time -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckLater" Start="14:10">
+            <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Later: $(DTResult)"/>
+        <!-- Check if the current time is between two times -->
+        <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="CheckBetween" Start="14:10" End="14:25">
+            <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
+        </MSBuild.ExtensionPack.Framework.DateAndTime>
+        <Message Text="Between: $(DTResult)"/>
+    </Target>
+</Project>

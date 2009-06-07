@@ -1,0 +1,38 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Create a Host Instance -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="Create" HostName="MSBEPTESTHOST" AccountName="yourserviceaccount" AccountPassword="yourpassword" Force="True"/>
+        <!-- Check a Host Instance exists (it should), and get it's state-->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="CheckExists" HostName="MSBEPTESTHOST">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+            <Output TaskParameter="State" PropertyName="InstanceState"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance>
+        <Message Text="BizTalkHostInstance Exists: $(DoesExist) and is $(InstanceState)"/>
+        <!-- Start a Host Instance -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="Start" HostName="MSBEPTESTHOST"/>
+        <!-- Get a Host Instance state-->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="GetState" HostName="MSBEPTESTHOST">
+            <Output TaskParameter="State" PropertyName="InstanceState"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance>
+        <Message Text="BizTalkHostInstance state: $(InstanceState)"/>
+        <!-- Stop a Host Instance -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="Stop" HostName="MSBEPTESTHOST"/>
+        <!-- Get a Host Instance state-->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="GetState" HostName="MSBEPTESTHOST">
+            <Output TaskParameter="State" PropertyName="InstanceState"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance>
+        <Message Text="BizTalkHostInstance state: $(InstanceState)"/>
+        <!-- Delete a Host Instance -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="Delete" HostName="MSBEPTESTHOST"/>
+        <!-- Check a Host Instance exists again (it shouldn't)-->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="CheckExists" HostName="MSBEPTESTHOST">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance>
+        <Message Text="BizTalkHostInstance Exists: $(DoesExist)"/>
+    </Target>
+</Project>
