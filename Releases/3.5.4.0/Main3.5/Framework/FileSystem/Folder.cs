@@ -4,17 +4,20 @@
 namespace MSBuild.ExtensionPack.FileSystem
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Management;
     using System.Security.AccessControl;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType)</para>
     /// <para><i>DeleteAll</i> (<b>Required: </b> Path, Match)</para>
+    /// <para><i>Get</i> (<b>Required: </b> Path <b>Optional:</b> Match, Recursive)</para>
     /// <para><i>Move</i> (<b>Required: </b> Path, TargetPath)</para>
     /// <para><i>RemoveContent</i> (<b>Required: </b> Path <b>Optional: </b>Force)</para>
     /// <para><i>RemoveSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType)</para>
@@ -51,6 +54,18 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
     ///         <!-- Move a folder -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
+    ///         <!-- Lets copy a selection of folders to multiple locations -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Get" Path="c:\ddd">
+    ///             <Output TaskParameter="Folders" ItemName="FoundFolders"/>
+    ///         </MSBuild.ExtensionPack.FileSystem.Folder>
+    ///         <Message Text="%(FoundFolders.Identity)"/>
+    ///         <ItemGroup>
+    ///             <MyWebService Include="C:\a\Dist\**\*.*">
+    ///                 <ToDir>%(FoundFolders.Identity)</ToDir>
+    ///             </MyWebService>
+    ///         </ItemGroup>
+    ///         <!-- Copy using the metadata -->
+    ///         <Copy SourceFiles="@(MyWebService)" DestinationFolder="%(ToDir)\%(RecursiveDir)" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -58,16 +73,18 @@ namespace MSBuild.ExtensionPack.FileSystem
     [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
-        private const string AddSecurityTaskAction = "CountLines";
+        private const string AddSecurityTaskAction = "AddSecurity";
         private const string DeleteAllTaskAction = "DeleteAll";
+        private const string GetTaskAction = "Get";
         private const string MoveTaskAction = "Move";
         private const string RemoveContentTaskAction = "RemoveContent";
         private const string RemoveSecurityTaskAction = "RemoveSecurity";
-        
+        private List<string> foldersFound;
         private AccessControlType accessType = AccessControlType.Allow;
 
         [DropdownValue(AddSecurityTaskAction)]
         [DropdownValue(DeleteAllTaskAction)]
+        [DropdownValue(GetTaskAction)]
         [DropdownValue(MoveTaskAction)]
         [DropdownValue(RemoveContentTaskAction)]
         [DropdownValue(RemoveSecurityTaskAction)]
@@ -83,6 +100,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         [Required]
         [TaskAction(AddSecurityTaskAction, true)]
         [TaskAction(DeleteAllTaskAction, true)]
+        [TaskAction(GetTaskAction, true)]
         [TaskAction(MoveTaskAction, true)]
         [TaskAction(RemoveContentTaskAction, true)]
         [TaskAction(RemoveSecurityTaskAction, true)]
@@ -92,6 +110,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Sets the regular expression to match in the name of a folder for Delete. Case is ignored.
         /// </summary>
         [TaskAction(DeleteAllTaskAction, true)]
+        [TaskAction(GetTaskAction, false)]
         public string Match { get; set; }
 
         /// <summary>
@@ -128,6 +147,17 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
 
         /// <summary>
+        /// Set to true to perform a recursive scan. Default is false.
+        /// </summary>
+        public bool Recursive { get; set; }
+
+        /// <summary>
+        /// Gets the folder list
+        /// </summary>
+        [Output]
+        public ITaskItem[] Folders { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         /// <remarks>
@@ -149,20 +179,23 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             switch (this.TaskAction)
             {
-                case "AddSecurity":
+                case AddSecurityTaskAction:
                     this.SetSecurity("Add");
                     break;
-                case "RemoveSecurity":
+                case RemoveSecurityTaskAction:
                     this.SetSecurity("Remove");
                     break;
-                case "RemoveContent":
+                case RemoveContentTaskAction:
                     this.RemoveContent(dir);
                     break;
-                case "Move":
+                case MoveTaskAction:
                     this.Move();
                     break;
-                case "DeleteAll":
+                case DeleteAllTaskAction:
                     this.DeleteAll();
+                    break;
+                case GetTaskAction:
+                    this.GetFolders();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -191,6 +224,58 @@ namespace MSBuild.ExtensionPack.FileSystem
             {
                 DelTree(d);
                 Directory.Delete(d.FullName);
+            }
+        }
+
+        private void GetFolders()
+        {
+            if (string.IsNullOrEmpty(this.Path))
+            {
+                Log.LogError("Path must be specified.");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Folders from: {0}", this.Path));
+            DirectoryInfo dirInfo = new DirectoryInfo(this.Path);
+            this.foldersFound = new List<string>();
+            this.ProcessGetAll(dirInfo);
+            this.Folders = new ITaskItem[this.foldersFound.Count];
+            int i = 0;
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Folders Found: {0}", this.foldersFound.Count));
+            foreach (string s in this.foldersFound)
+            {
+                ITaskItem newItem = new TaskItem(s);
+                this.Folders[i] = newItem;
+                i++;
+            }
+        }
+
+        private void ProcessGetAll(DirectoryInfo dirInfo)
+        {
+            foreach (DirectoryInfo child in dirInfo.GetDirectories())
+            {
+                if (string.IsNullOrEmpty(this.Match))
+                {
+                    this.foldersFound.Add(child.FullName);
+                }
+                else
+                {
+                    // Load the regex to use
+                    Regex reg = new Regex(this.Match, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+                    // Match the regular expression pattern against a text string.
+                    Match m = reg.Match(child.Name);
+                    if (m.Success)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting: {0}", child.FullName));
+                        this.foldersFound.Add(child.FullName);
+                    }
+                }
+
+                if (this.Recursive)
+                {
+                    this.ProcessGetAll(child);
+                }
             }
         }
 

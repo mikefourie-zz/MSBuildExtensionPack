@@ -447,6 +447,7 @@
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="AddSecurity"/>
                                 <xs:enumeration value="DeleteAll"/>
+                                <xs:enumeration value="Get"/>
                                 <xs:enumeration value="Move"/>
                                 <xs:enumeration value="RemoveContent"/>
                                 <xs:enumeration value="RemoveSecurity"/>
