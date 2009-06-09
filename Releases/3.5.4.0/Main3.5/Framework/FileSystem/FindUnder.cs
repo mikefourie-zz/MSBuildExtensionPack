@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>FindFiles</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
-    /// <para><i>FindDirectories</i> (<b>Required: </b> Path <b>Optional: </b>SearchPattern <b>Output: </b>FoundItems)</para>
+    /// <para><i>FindDirectories</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
     /// <para><i>FindFilesAndDirectories</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -179,7 +179,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (this.FindDirectories)
             {
-                subDirs = dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories);
+                subDirs = this.Recursive ? dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories) : dir.GetDirectories(this.SearchPattern, SearchOption.TopDirectoryOnly);
             }
 
             List<ITaskItem> items = new List<ITaskItem>();
