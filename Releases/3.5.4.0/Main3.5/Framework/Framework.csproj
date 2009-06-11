@@ -167,6 +167,7 @@
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
+    <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="VisualStudio\VBPProject.cs" />
     <Compile Include="Web\HttpWebRequest.cs" />
     <Compile Include="FileSystem\Share.cs" />

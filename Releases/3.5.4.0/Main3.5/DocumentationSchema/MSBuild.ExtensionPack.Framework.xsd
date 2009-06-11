@@ -536,6 +536,43 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Framework.DynamicExecute" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Run"/>
+                                <xs:enumeration value="Call"/>
+                                <xs:enumeration value="Define"/>
+                                <xs:enumeration value="Create"/>
+                                <xs:enumeration value="SetInput"/>
+                                <xs:enumeration value="Invoke"/>
+                                <xs:enumeration value="GetOutput"/>
+                                <xs:enumeration value="Destroy"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Code"/>
+                    <xs:attribute name="Inputs"/>
+                    <xs:attribute name="Outputs"/>
+                    <xs:attribute name="References"/>
+                    <xs:attribute name="UsingNamespaces"/>
+                    <xs:attribute name="NoDefaultParameters"/>
+                    <xs:attribute name="NoDefaultReferences"/>
+                    <xs:attribute name="NoDefaultUsingNamespaces"/>
+                    <xs:attribute name="MethodId"/>
+                    <xs:attribute name="ClosureId"/>
+                    <xs:attribute name="Name"/>
+                    <xs:attribute name="InputValue"/>
+                    <xs:attribute name="Input1"/>
+                    <xs:attribute name="Input2"/>
+                    <xs:attribute name="Input3"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Framework.Gac" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
