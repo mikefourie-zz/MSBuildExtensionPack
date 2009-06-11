@@ -1055,7 +1055,7 @@ namespace MSBuild.ExtensionPack.Framework
         private static NameAndType ParseTypeAndName(string typeAndName)
         {
             string[] typeandname = typeAndName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (typeAndName.Length != 2)
+            if (typeandname.Length != 2)
             {
                 throw new ArgumentException("Inputs/Outputs definition not valid: \"" + typeAndName + "\" is not a valid Type/Name pair");
             }
