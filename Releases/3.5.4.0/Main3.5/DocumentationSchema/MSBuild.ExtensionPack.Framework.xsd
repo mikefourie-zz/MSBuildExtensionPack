@@ -537,38 +537,215 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Framework.DynamicExecute" substitutionGroup="msb:Task">
+        <xs:annotation>
+            <xs:documentation>Executes .NET code dynamically.</xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="msb:TaskType">
                     <xs:attribute name="TaskAction" use="required">
+                        <xs:annotation>
+                            <xs:documentation>Specifies the task action to do.</xs:documentation>
+                        </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:enumeration value="Run"/>
-                                <xs:enumeration value="Call"/>
-                                <xs:enumeration value="Define"/>
-                                <xs:enumeration value="Create"/>
-                                <xs:enumeration value="SetInput"/>
-                                <xs:enumeration value="Invoke"/>
-                                <xs:enumeration value="GetOutput"/>
-                                <xs:enumeration value="Destroy"/>
+                                <xs:enumeration value="Run">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Compiles and executes code.
+                                            Required: @Code.
+                                            Optional: @Inputs, @Outputs, @Input1, @Input2, @Input3.
+                                            Outputs: &quot;Output1&quot;, &quot;Output2&quot;, &quot;Output3&quot;, &quot;OutputMethodId&quot;.
+                                            Rare Optional: @References, @UsingNamespaces, @NoDefaultParameters, @NoDefaultReferences, @NoDefaultUsingNamespaces.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="Call">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Calls a method. The method must have been previously defined by &quot;Define&quot;.
+                                            Required: @MethodId.
+                                            Optional: @Input1, @Input2, @Input3.
+                                            Outputs: &quot;Output1&quot;, &quot;Output2&quot;, &quot;Output3&quot;.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="Define">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Defines a method containing code.
+                                            Required: @Code.
+                                            Optional: @Inputs, @Outputs.
+                                            Outputs: &quot;OutputMethodId&quot;.
+                                            Rare Optional: @References, @UsingNamespaces, @NoDefaultParameters, @NoDefaultReferences, @NoDefaultUsingNamespaces.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="Create">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Creates a closure.
+                                            Required: @MethodId.
+                                            Outputs: &quot;OutputClosureId&quot;.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="SetInput">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Sets an argument value for a closure.
+                                            Required: @ClosureId, @Name, @InputValue.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="Invoke">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Invokes a closure.
+                                            Required: @ClosureId.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="GetOutput">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Retrieves a result value from a closure.
+                                            Required: @ClosureId, @Name.
+                                            Outputs: &quot;OutputValue&quot;
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
+                                <xs:enumeration value="Destroy">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Destroys a closure.
+                                            Required: @ClosureId.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:enumeration>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
-                    <xs:attribute name="Code"/>
-                    <xs:attribute name="Inputs"/>
-                    <xs:attribute name="Outputs"/>
-                    <xs:attribute name="References"/>
-                    <xs:attribute name="UsingNamespaces"/>
-                    <xs:attribute name="NoDefaultParameters"/>
-                    <xs:attribute name="NoDefaultReferences"/>
-                    <xs:attribute name="NoDefaultUsingNamespaces"/>
-                    <xs:attribute name="MethodId"/>
-                    <xs:attribute name="ClosureId"/>
-                    <xs:attribute name="Name"/>
-                    <xs:attribute name="InputValue"/>
-                    <xs:attribute name="Input1"/>
-                    <xs:attribute name="Input2"/>
-                    <xs:attribute name="Input3"/>
+                    <xs:attribute name="Code">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The actual method code.
+                                Required for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="Inputs">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The input parameters for the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="Outputs">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The output parameters for the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="References">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Additional assembly references for the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="UsingNamespaces">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Additional namespace scope imports for the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="NoDefaultParameters">
+                        <xs:annotation>
+                            <xs:documentation>
+                                If true, no default parameters are passed to the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="NoDefaultReferences">
+                        <xs:annotation>
+                            <xs:documentation>
+                                If true, no default assembly references are linked to the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="NoDefaultUsingNamespaces">
+                        <xs:annotation>
+                            <xs:documentation>
+                                If true, no namespace scopes are imported for the method.
+                                Optional for: &quot;Run&quot;, &quot;Define&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="MethodId">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The method on which to perform the task action.
+                                Required for: &quot;Call&quot;, &quot;Create&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="ClosureId">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The closure on which to perform the task action.
+                                Required for: &quot;SetInput&quot;, &quot;Invoke&quot;, &quot;GetOutput&quot;, &quot;Destroy&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="Name">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The name of the parameter to set or get.
+                                Required for: &quot;SetInput&quot;, &quot;GetOutput&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="InputValue">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The value to pass for this parameter.
+                                Required for: &quot;SetInput&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="Input1">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The value to pass for the first parameter.
+                                Optional for: &quot;Run&quot;, &quot;Call&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="Input2">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The value to pass for the second parameter.
+                                Optional for: &quot;Run&quot;, &quot;Call&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="Input3">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The value to pass for the third parameter.
+                                Optional for: &quot;Run&quot;, &quot;Call&quot;.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
