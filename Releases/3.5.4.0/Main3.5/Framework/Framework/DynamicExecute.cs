@@ -51,7 +51,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para>There are three types of parameters passed to the method: default parameters, input parameters, and output parameters.</para>
     /// <para>Currently, there is only one default parameter, named "@this". Its type is <b>Microsoft.Build.Utilities.Task</b>, and it may be used to access task-level properties such as <b>Log</b> and <b>BuildEngine2</b>. Default parameters may be disabled by specifying <see cref="NoDefaultParameters"/>.</para>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -77,7 +77,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para>The second way is to pass an array of task items, with the identity of each item set to its type and name separated by at least one space.</para>
     /// <para>The third way is to pass an array of task items, with the type looked up from the item's "Type" metadata. The name may be specified by the item's "Name" metadata or its identity.</para>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
