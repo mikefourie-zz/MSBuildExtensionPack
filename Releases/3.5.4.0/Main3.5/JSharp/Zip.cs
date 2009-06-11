@@ -99,7 +99,8 @@ namespace MSBuild.ExtensionPack.Compression
         public ITaskItem CompressPath { get; set; }
 
         /// <summary>
-        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
+        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName.
+        /// If this is not provided, you may get unexpected results.
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem RemoveRoot { get; set; }
