@@ -161,3 +161,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.DynamicExecute.#ExecuteGetOutput()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.DynamicExecute.#ExecuteCreate()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.DynamicExecute.#ConvertArgument(System.Type,Microsoft.Build.Framework.ITaskItem[])")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.DynamicExecute+NameAndType.#Type")]

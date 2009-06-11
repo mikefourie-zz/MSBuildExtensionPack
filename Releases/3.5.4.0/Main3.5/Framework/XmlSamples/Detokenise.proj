@@ -44,4 +44,17 @@
         <!-- 6 Detokenise using values that can be passed in via the command line -->
         <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetFiles="@(FileCollection3)" CommandLineValues="$(clv)"/>
     </Target>
+    <!--- Generate a report of files showing which tokens are used in files -->
+    <Target Name="Report" DependsOnTargets="GetFiles">
+        <CallTarget Targets="List"/>
+    </Target>
+    <Target Name="List" Inputs="@(Report1)" Outputs="%(Identity)">
+        <Message Text="Token: @(Report1)"/>
+        <Message Text="%(Report1.Files)"/>
+    </Target>
+    <Target Name="GetFiles">
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Report" TargetPath="C:\MyFiles*" DisplayFiles="false">
+            <Output TaskParameter="TokenReport" ItemName="Report1"/>
+        </MSBuild.ExtensionPack.FileSystem.Detokenise>
+    </Target>
 </Project>

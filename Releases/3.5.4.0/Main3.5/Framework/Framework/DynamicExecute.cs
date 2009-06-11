@@ -982,37 +982,37 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Retrieves a previously-defined method by ID.
         /// </summary>
-        /// <param name="methodID">The ID of the method definition.</param>
+        /// <param name="methodId">The ID of the method definition.</param>
         /// <returns>The method definition.</returns>
-        private static MethodDefinition LookupMethod(string methodID)
+        private static MethodDefinition LookupMethod(string methodId)
         {
             lock (Methods)
             {
-                if (!Methods.ContainsKey(methodID))
+                if (!Methods.ContainsKey(methodId))
                 {
-                    throw new KeyNotFoundException("Unknown DynamicExecute method id: " + methodID);
+                    throw new KeyNotFoundException("Unknown DynamicExecute method id: " + methodId);
                 }
 
-                return Methods[methodID];
+                return Methods[methodId];
             }
         }
 
         /// <summary>
         /// Creates a new closure and adds it to the container of existing closures.
         /// </summary>
-        /// <param name="methodID">The ID of the method definition.</param>
+        /// <param name="methodId">The ID of the method definition.</param>
         /// <returns>The ID of the new closure instance.</returns>
-        private static string CreateClosure(string methodID)
+        private static string CreateClosure(string methodId)
         {
             lock (Methods)
             {
-                if (!Methods.ContainsKey(methodID))
+                if (!Methods.ContainsKey(methodId))
                 {
-                    throw new KeyNotFoundException("Unknown DynamicExecute method id: " + methodID);
+                    throw new KeyNotFoundException("Unknown DynamicExecute method id: " + methodId);
                 }
 
                 string ret = System.Guid.NewGuid().ToString();
-                Closures.Add(ret, new Closure(Methods[methodID]));
+                Closures.Add(ret, new Closure(Methods[methodId]));
                 return ret;
             }
         }
@@ -1020,47 +1020,47 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Retrieves a previously-created closure by id.
         /// </summary>
-        /// <param name="closureID">The ID of the previously-created closure.</param>
+        /// <param name="closureId">The ID of the previously-created closure.</param>
         /// <returns>The previously-created closure.</returns>
-        private static Closure LookupClosure(string closureID)
+        private static Closure LookupClosure(string closureId)
         {
             lock (Methods)
             {
-                if (!Closures.ContainsKey(closureID))
+                if (!Closures.ContainsKey(closureId))
                 {
-                    throw new KeyNotFoundException("Unknown DynamicExecute closure id: " + closureID);
+                    throw new KeyNotFoundException("Unknown DynamicExecute closure id: " + closureId);
                 }
 
-                return Closures[closureID];
+                return Closures[closureId];
             }
         }
 
         /// <summary>
         /// Deletes a closure. If the closure id does not identify a previously-created closure, no error is thrown.
         /// </summary>
-        /// <param name="closureID">The ID of the closure to delete.</param>
-        private static void DestroyClosure(string closureID)
+        /// <param name="closureId">The ID of the closure to delete.</param>
+        private static void DestroyClosure(string closureId)
         {
             lock (Methods)
             {
-                Closures.Remove(closureID);
+                Closures.Remove(closureId);
             }
         }
 
         /// <summary>
         /// Splits a string containing a type followed by a name, separated by any number of space characters.
         /// </summary>
-        /// <param name="str">The string containing the type and name.</param>
+        /// <param name="typeAndName">The string containing the type and name.</param>
         /// <returns>An object containing the split string.</returns>
-        private static NameAndType ParseTypeAndName(string str)
+        private static NameAndType ParseTypeAndName(string typeAndName)
         {
-            string[] typeAndName = str.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] typeandname = typeAndName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (typeAndName.Length != 2)
             {
-                throw new ArgumentException("Inputs/Outputs definition not valid: \"" + str + "\" is not a valid Type/Name pair");
+                throw new ArgumentException("Inputs/Outputs definition not valid: \"" + typeAndName + "\" is not a valid Type/Name pair");
             }
 
-            return new NameAndType { Type = typeAndName[0], Name = typeAndName[1] };
+            return new NameAndType { Type = typeandname[0], Name = typeandname[1] };
         }
 
         /// <summary>
@@ -1280,7 +1280,7 @@ namespace MSBuild.ExtensionPack.Framework
             System.Reflection.Assembly result = results.CompiledAssembly;
             Type type = result.GetType("MSBuild.ExtensionPack.Framework.T");
             MethodInfo method = type.GetMethod("Go");
-            this.OutputMethodId = DefineMethod(method, inputs.Select((x) => x.Name), outputs.Select((x) => x.Name), this.NumberOfDefaultParameters());
+            this.OutputMethodId = DefineMethod(method, inputs.Select(x => x.Name), outputs.Select(x => x.Name), this.NumberOfDefaultParameters());
         }
 
         /// <summary>
