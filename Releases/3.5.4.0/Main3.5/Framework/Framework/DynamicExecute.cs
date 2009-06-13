@@ -208,7 +208,7 @@ namespace MSBuild.ExtensionPack.Framework
     ///         <!-- A much more complex example: defining a more reusable DynamicTask, that performs a cross product on item groups -->
     ///         <PropertyGroup>
     ///             <CrossProductCode>
-    ///                 <![CDATA[
+    ///                 &lt;![CDATA[
     ///                     if (string.IsNullOrEmpty(separator))
     ///                         separator = ";";
     ///                     result = new TaskItem[itemGroup1.Length * itemGroup2.Length];
@@ -247,7 +247,7 @@ namespace MSBuild.ExtensionPack.Framework
     ///                             result[i++] = new TaskItem(item1.ItemSpec + separator + item2.ItemSpec, metadata);
     ///                         }
     ///                     }
-    ///                 ]] >   <!-- Remove the spaces in this line for valid xml -->
+    ///                 ]]&gt;
     ///             </CrossProductCode>
     ///         </PropertyGroup>
     ///         <ItemGroup>
