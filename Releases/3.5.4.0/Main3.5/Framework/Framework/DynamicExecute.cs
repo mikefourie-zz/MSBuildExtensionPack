@@ -486,7 +486,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an optional parameter for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// <para>The name of a reference is taken from the metadata "Name", if it exists; otherwise, it is the item's identity.</para>
         /// <para>To reference assemblies in the GAC, a strong name must be used, e.g., "System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".</para>
-        /// <para>The default references are System, System.Core, Microsoft.Build.Framework, and Microsoft.Build.Utilities.v3.5.</para>
+        /// <para>The default references are System (System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), System.Core (System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), Microsoft.Build.Framework (Microsoft.Build.Framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a), and Microsoft.Build.Utilities.v3.5 (Microsoft.Build.Utilities.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a).</para>
         /// </remarks>
         /// <seealso cref="NoDefaultReferences"/>
         [TaskAction(DefineTaskAction, false)]
