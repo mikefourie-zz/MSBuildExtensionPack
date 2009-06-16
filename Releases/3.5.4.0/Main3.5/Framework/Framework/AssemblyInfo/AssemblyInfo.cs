@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Globalization;
     using System.IO;
     using System.Reflection;
+    using System.Text;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
@@ -131,6 +132,7 @@ namespace MSBuild.ExtensionPack.Framework
         private AssemblyVersionSettings assemblyVersionSettings;
         private string maxAssemblyFileVersion;
         private string maxAssemblyVersion;
+        private Encoding fileEncoding = Encoding.UTF8;
 
         /// <summary>
         /// The major version of the assembly.
@@ -902,6 +904,11 @@ namespace MSBuild.ExtensionPack.Framework
         public bool UseUtc { get; set; }
 
         /// <summary>
+        /// The encoding to write the new file in. The default is UTF8
+        /// </summary>
+        public string TextEncoding { get; set; }
+
+        /// <summary>
         /// Executes the AssemblyInfo task.
         /// </summary>
         /// <returns>True if the task was run sucecssfully. False if the task failed.</returns>
@@ -979,7 +986,21 @@ namespace MSBuild.ExtensionPack.Framework
                 try
                 {
                     writerInfo = this.GetTemporaryFileInfo();
-                    using (StreamWriter writer = new StreamWriter(writerInfo.OpenWrite()))
+
+                    if (!string.IsNullOrEmpty(this.TextEncoding))
+                    {
+                        try
+                        {
+                            this.fileEncoding = GetTextEncoding(this.TextEncoding);
+                        }
+                        catch (ArgumentException)
+                        {
+                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
+                            return false;
+                        }
+                    }
+
+                    using (StreamWriter writer = new StreamWriter(writerInfo.OpenWrite(), this.fileEncoding))
                     {
                         assemblyInfo.Write(writer);
                         writer.Close();
@@ -1016,6 +1037,34 @@ namespace MSBuild.ExtensionPack.Framework
             }
 
             return true;
+        }
+
+        private static Encoding GetTextEncoding(string enc)
+        {
+            switch (enc)
+            {
+                case "DEFAULT":
+                    return System.Text.Encoding.Default;
+                case "ASCII":
+                    return System.Text.Encoding.ASCII;
+                case "Unicode":
+                    return System.Text.Encoding.Unicode;
+                case "UTF7":
+                    return System.Text.Encoding.UTF7;
+                case "UTF8":
+                    return System.Text.Encoding.UTF8;
+                case "UTF32":
+                    return System.Text.Encoding.UTF32;
+                case "BigEndianUnicode":
+                    return System.Text.Encoding.BigEndianUnicode;
+                default:
+                    if (!string.IsNullOrEmpty(enc))
+                    {
+                        return Encoding.GetEncoding(enc);
+                    }
+
+                    return null;
+            }
         }
 
         private static void UpdateMaxVersion(ref string maxVersion, string newVersion)
