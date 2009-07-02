@@ -128,6 +128,47 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><b>Group D</b> - Each task item's <b>ItemSpec</b> is used as a string value, and this string is converted to the expected type. The result is an array with the same number of elements as the array of task items.</para>
     /// <para>If an input argument value is null, then no conversions are performed; the method is passed a null value.</para>
     /// <para>Special conversions exist if the input parameter is of <b>bool</b> type. Valid values include "true", "false", "yes", "no", "on", and "off", all case-insensitive. In addition, these values may be prefixed with the logical "not" operator ("!"). These conversions are supported because they are MSBuild conventions.</para>
+    /// <para><b>Conversion of Strings</b></para>
+    /// <para>String input parameters may cause problems if the argument value contains semicolons. In this case, the default MSBuild conversion will split the string into an array of <b>ITaskItem</b>, using the semicolons as separators.</para>
+    /// <para>To prevent this behavior, one may first escape the string by using the <see cref="TextString"/> <i>Replace</i> task action, as this example illustrates:</para>
+    /// <code lang="xml"><![CDATA[
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <PropertyGroup>
+    ///             <String>This semicolon does not separate items; it is used in a grammatical sense.</String>
+    ///         </PropertyGroup>
+    ///         <!-- Semicolons normally act as item separators; to prevent this treatment, escape them first -->
+    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Replace"
+    ///                                                     OldString="$(String)"
+    ///                                                     OldValue=";"
+    ///                                                     NewValue="%3B"
+    ///                                                     >
+    ///             <Output TaskParameter="NewString" PropertyName="EscapedString"/>
+    ///         </MSBuild.ExtensionPack.Framework.TextString>
+    ///         <!-- $(String) would be treated as a vector argument (2 elements), but $(EscapedString) is a scalar argument -->
+    ///         <MSBuild.ExtensionPack.Framework.DynamicExecute TaskAction="Run"
+    ///                                                         Inputs="string test"
+    ///                                                         Outputs="string result"
+    ///                                                         Code="result = test;"
+    ///                                                         Input1="$(EscapedString)"
+    ///                                                         >
+    ///             <Output TaskParameter="Output1" PropertyName="Result"/>
+    ///         </MSBuild.ExtensionPack.Framework.DynamicExecute>
+    ///         <!-- Converting the result to an item group shows that the semicolon is still not used as a separator -->
+    ///         <ItemGroup>
+    ///             <!-- Only one item will exist in this item group -->
+    ///             <ResultItemGroup Include="$(Result)"/>
+    ///         </ItemGroup>
+    ///         <!-- Result:  This semicolon does not separate items; it is used in a grammatical sense.  -->
+    ///         <Message Text="Result: @(ResultItemGroup->' %(Identity) ')"/>
+    ///     </Target>
+    /// </Project>
+    /// ]]></code>
     /// <para><b>Conversion of Output Parameters</b></para>
     /// <para>An output argument value passes through two conversions. The first is performed by the <b>GetOutput</b>, <b>Call</b>, or <b>Run</b> task action. The second is the default MSBuild conversion.</para>
     /// <para>The <b>DynamicExecute</b> task action performs the first conversion. This is always a conversion to <b>ITaskItem[]</b>, because that is the type of the <see cref="OutputValue"/>, <see cref="Output1"/>, <see cref="Output2"/>, and <see cref="Output3"/> properties.</para>
