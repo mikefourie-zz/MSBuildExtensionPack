@@ -175,6 +175,25 @@ namespace MSBuild.ExtensionPack.Web
             {
                 entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
                 entry.Invoke("SetInfo");
+                string propertyTypeName = ((string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value);
+                if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];
+                    for (int i = 0; i < metaBasePropertyBinaryFormat.Length; i++)
+                    {
+                        metaBasePropertyBinaryFormat[i] = metaBaseProperty.Substring(i * 2, 2);
+                    }
+
+                    PropertyValueCollection propValues = entry.Properties[metaBasePropertyName];
+                    propValues.Clear();
+                    propValues.Add(metaBasePropertyBinaryFormat);
+                    entry.CommitChanges();
+                }
+                else
+                {
+                    entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
+                    entry.Invoke("SetInfo");
+                }
             }
             else
             {
