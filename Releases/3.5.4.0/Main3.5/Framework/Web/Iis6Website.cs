@@ -173,8 +173,6 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
-                entry.Invoke("SetInfo");
                 string propertyTypeName = ((string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value);
                 if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
                 {
