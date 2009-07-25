@@ -120,7 +120,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string Arguments { get; set; }
 
         /// <summary>
-        /// Sets the SourceSafe version. Default is 2005
+        /// Sets the SourceSafe version. Supports 2005 and 6d. Default is 2005
         /// </summary>
         [TaskAction(CheckoutTaskAction, false)]
         [TaskAction(CheckinTaskAction, false)]
