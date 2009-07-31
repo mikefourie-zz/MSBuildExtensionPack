@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Web
     using System;
     using System.DirectoryServices;
     using System.Globalization;
+    using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
     using Microsoft.Build.Framework;
@@ -171,8 +172,31 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
-                entry.Invoke("SetInfo");
+                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
+                if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];
+                    for (int i = 0; i < metaBasePropertyBinaryFormat.Length; i++)
+                    {
+                        metaBasePropertyBinaryFormat[i] = metaBaseProperty.Substring(i * 2, 2);
+                    }
+
+                    PropertyValueCollection propValues = entry.Properties[metaBasePropertyName];
+                    propValues.Clear();
+                    propValues.Add(metaBasePropertyBinaryFormat);
+                    entry.CommitChanges();
+                }
+                else
+                {
+                    if (string.Compare(metaBasePropertyName, "path", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        DirectoryInfo f = new DirectoryInfo(metaBaseProperty);
+                        metaBaseProperty = f.FullName;
+                    }
+
+                    entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
+                    entry.Invoke("SetInfo");
+                }
             }
             else
             {

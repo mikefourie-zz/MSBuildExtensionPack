@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Web
     using System;
     using System.DirectoryServices;
     using System.Globalization;
+    using System.IO;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -173,7 +174,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                string propertyTypeName = ((string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value);
+                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
                 if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];
@@ -189,6 +190,12 @@ namespace MSBuild.ExtensionPack.Web
                 }
                 else
                 {
+                    if (string.Compare(metaBasePropertyName, "path", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        DirectoryInfo f = new DirectoryInfo(metaBaseProperty);
+                        metaBaseProperty = f.FullName;
+                    }
+
                     entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
                     entry.Invoke("SetInfo");
                 }
