@@ -76,6 +76,9 @@
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
+      <Link>CodeAnalysis.Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="AssemblyReferences\Microsoft.TeamFoundation.Build.Client.dll" />
     <Content Include="AssemblyReferences\Microsoft.TeamFoundation.Client.dll" />
     <None Include="XmlSamples\TeamBuild.proj" />

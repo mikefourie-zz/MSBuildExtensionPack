@@ -1,9 +1,11 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="TeamBuild.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-// Task Contributors: Jakob Ehn and Steve Nuchia
 //-----------------------------------------------------------------------
+
 namespace MSBuild.ExtensionPack.Tfs
 {
+    using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -14,6 +16,8 @@ namespace MSBuild.ExtensionPack.Tfs
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetLatest</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildDefinitionName, Status <b>Output: </b>Info)</para>
     /// <para><i>Queue</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildDefinitionName)</para>
+    /// <para><i>RelatedChangesets</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildUri  <b>Output: </b>Info, RelatedItems)</para>
+    /// <para><i>RelatedWorkItems</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildUri  <b>Output: </b>Info, RelatedItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -63,6 +67,26 @@ namespace MSBuild.ExtensionPack.Tfs
     ///         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
     ///         <!-- Queue a new build -->
     ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="QueueBuild" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
+    ///         <!-- Retrieve ChangeSets associated with a given build -->
+    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" 
+    ///             BuildUri="$(BuildUri)">
+    ///             <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
+    ///         </MSBuild.ExtensionPack.Tfs.TeamBuild>
+    ///         <Message Text="ID = %(Changesets.Identity)
+    ///                        Checked In By = %(Changesets.CheckedInBy);
+    ///                        URI = %(Changesets.ChangesetUri);
+    ///                        Comment = %(Changesets.Comment)" />
+    ///         <!-- Retrieve Work Items associated with a given build -->
+    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" 
+    ///             BuildUri="$(BuildUri)">
+    ///             <Output ItemName="WorkItems" TaskParameter="RelatedItems"/>
+    ///         </MSBuild.ExtensionPack.Tfs.TeamBuild>
+    ///         <Message Text="ID = %(Workitems.Identity)
+    ///                        Status = %(Workitems.Status);
+    ///                        Title = %(Workitems.Title);
+    ///                        Type  = %(Workitems.Type);
+    ///                        URI = %(Workitems.WorkItemUri);
+    ///                        AssignedTo = %(Workitems.AssignedTo)" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -72,6 +96,9 @@ namespace MSBuild.ExtensionPack.Tfs
     {
         private const string GetLatestTaskAction = "GetLatest";
         private const string QueueTaskAction = "Queue";
+        private const string RelatedChangesetsTaskAction = "RelatedChangesets";
+        private const string RelatedWorkItemsTaskAction = "RelatedWorkItems";
+
         private TeamFoundationServer tfs;
         private IBuildServer buildServer;
         private IBuildDetail buildDetails;
@@ -83,6 +110,8 @@ namespace MSBuild.ExtensionPack.Tfs
         /// Sets the TaskAction.
         /// </summary>
         [DropdownValue(GetLatestTaskAction)]
+        [DropdownValue(RelatedChangesetsTaskAction)]
+        [DropdownValue(RelatedWorkItemsTaskAction)]
         [DropdownValue(QueueTaskAction)]
         public override string TaskAction
         {
@@ -94,6 +123,8 @@ namespace MSBuild.ExtensionPack.Tfs
         /// The Url of the Team Foundation Server.
         /// </summary>
         [TaskAction(GetLatestTaskAction, true)]
+        [TaskAction(RelatedChangesetsTaskAction, true)]
+        [TaskAction(RelatedWorkItemsTaskAction, true)]
         [TaskAction(QueueTaskAction, true)]
         [Required]
         public string TeamFoundationServerUrl { get; set; }
@@ -102,6 +133,8 @@ namespace MSBuild.ExtensionPack.Tfs
         /// The name of the Team Project containing the build
         /// </summary>
         [TaskAction(GetLatestTaskAction, true)]
+        [TaskAction(RelatedChangesetsTaskAction, true)]
+        [TaskAction(RelatedWorkItemsTaskAction, true)]
         [TaskAction(QueueTaskAction, true)]
         [Required]
         public string TeamProject
@@ -122,6 +155,16 @@ namespace MSBuild.ExtensionPack.Tfs
         }
 
         /// <summary>
+        /// Build Uri.
+        /// </summary>
+        [TaskAction(RelatedChangesetsTaskAction, true)]
+        [TaskAction(RelatedWorkItemsTaskAction, true)]
+        public string BuildUri
+        {
+            get; set;
+        }
+
+        /// <summary>
         /// Set the Status property of the build to filter the search. Supports: Failed, InProgress, NotStarted, PartiallySucceeded, Stopped, Succeeded
         /// </summary>
         [TaskAction(GetLatestTaskAction, false)]
@@ -138,6 +181,12 @@ namespace MSBuild.ExtensionPack.Tfs
         public ITaskItem Info { get; set; }
 
         /// <summary>
+        /// Gets Related items associated with the build
+        /// </summary>
+        [Output]
+        public ITaskItem[] RelatedItems { get; private set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -151,6 +200,12 @@ namespace MSBuild.ExtensionPack.Tfs
                     case GetLatestTaskAction:
                         this.GetLatestInfo();
                         break;
+                    case RelatedChangesetsTaskAction:
+                        this.RelatedChangesets();
+                        break;
+                    case RelatedWorkItemsTaskAction:
+                        this.RelatedWorkItems();
+                        break;
                     case QueueTaskAction:
                         this.QueueBuild();
                         break;
@@ -160,6 +215,68 @@ namespace MSBuild.ExtensionPack.Tfs
                 }
             }
         }
+
+        private void RelatedChangesets()
+        {
+            if (String.IsNullOrEmpty(this.BuildUri))
+            {
+                this.GetLatestInfo();
+            }
+
+            this.LogTaskMessage(String.Format(
+                                    CultureInfo.CurrentCulture,
+                                    "Retrieving changesets related to Build {0}",
+                                    this.BuildUri));
+
+            var build = this.buildServer.GetAllBuildDetails(new Uri(this.BuildUri));
+            var changesets = InformationNodeConverters.GetAssociatedChangesets(build);
+            var taskItems = new List<ITaskItem>();
+
+            changesets.ForEach(
+                x =>
+                    {
+                        ITaskItem item = new TaskItem(x.ChangesetId.ToString(CultureInfo.CurrentCulture));
+                        item.SetMetadata("CheckedInBy", x.CheckedInBy ?? String.Empty);
+                        item.SetMetadata("ChangesetUri", x.ChangesetUri != null ? x.ChangesetUri.ToString() : String.Empty);
+                        item.SetMetadata("Comment", x.Comment ?? String.Empty);
+                        taskItems.Add(item);
+                    });
+
+            this.RelatedItems = taskItems.ToArray();
+        }
+
+        private void RelatedWorkItems()
+        {
+            if (String.IsNullOrEmpty(this.BuildUri))
+            {
+                this.GetLatestInfo();
+            }
+
+            this.LogTaskMessage(String.Format(
+                                    CultureInfo.CurrentCulture,
+                                    "Retrieving Work Items related to Build {0}",
+                                    this.BuildUri));
+
+            var build = this.buildServer.GetAllBuildDetails(new Uri(this.BuildUri));
+            var workitemSummaries = InformationNodeConverters.GetAssociatedWorkItems(build);
+            var taskItems = new List<ITaskItem>();
+
+            workitemSummaries.ForEach(
+                x =>
+                    {
+                        ITaskItem item = new TaskItem(x.WorkItemId.ToString(CultureInfo.CurrentCulture));
+                        item.SetMetadata("Status", x.Status);
+                        item.SetMetadata("Title", x.Title ?? String.Empty);
+                        item.SetMetadata("Type", x.Type ?? String.Empty);
+                        item.SetMetadata("WorkItemUri", x.WorkItemUri != null ? x.WorkItemUri.ToString() : String.Empty);
+                        item.SetMetadata("AssignedTo", x.AssignedTo ?? String.Empty);
+
+                        taskItems.Add(item);
+                    });
+
+            this.RelatedItems = taskItems.ToArray();
+        }
+
 
         private void QueueBuild()
         {
@@ -172,7 +289,8 @@ namespace MSBuild.ExtensionPack.Tfs
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Queueing Build: {0}", this.BuildDefinitionName));
             IBuildDefinition definition = this.buildServer.GetBuildDefinition(this.TeamProject, this.BuildDefinitionName);
             IBuildRequest request = definition.CreateBuildRequest();
-            this.buildServer.QueueBuild(request, QueueOptions.None);
+            var queuedBuild = this.buildServer.QueueBuild(request, QueueOptions.None);
+            this.BuildUri = queuedBuild.Build.Uri.ToString();
         }
 
         private void GetLatestInfo()
@@ -196,7 +314,7 @@ namespace MSBuild.ExtensionPack.Tfs
             // do the search and extract the details from the singleton expected result
             IBuildQueryResult results = this.buildServer.QueryBuilds(buildDetailSpec);
 
-            if (results.Failures.Length == 0 && results.Builds.Length == 1)
+            if (results.Failures.Length == 0 && results.Builds.Length > 1)
             {
                 this.buildDetails = results.Builds[0];
                 ITaskItem ibuildDef = new TaskItem(this.BuildDefinitionName);
@@ -234,6 +352,7 @@ namespace MSBuild.ExtensionPack.Tfs
                 ibuildDef.SetMetadata("TestStatus", this.buildDetails.TestStatus.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("TestSuccess", this.buildDetails.TestStatus == BuildPhaseStatus.Succeeded ? "true" : "false");
                 this.Info = ibuildDef;
+                this.BuildUri = this.buildDetails.Uri.ToString();
             }
         }
     }

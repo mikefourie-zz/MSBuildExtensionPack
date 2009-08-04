@@ -4,6 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Common\Attributes.cs = Common\Attributes.cs
 		Common\BaseTask.cs = Common\BaseTask.cs
+		Common\CodeAnalysis.Dictionary.xml = Common\CodeAnalysis.Dictionary.xml
 		CodeCoverage.testrunconfig = CodeCoverage.testrunconfig
 		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
 		Common\ExtensionPack.public.snk = Common\ExtensionPack.public.snk
