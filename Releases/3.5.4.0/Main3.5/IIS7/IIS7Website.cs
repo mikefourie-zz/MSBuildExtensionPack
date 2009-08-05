@@ -11,8 +11,8 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
-    /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories). WARNING: This TaskAction is marked for deprecation. Please use the Iis7Application task.</para>
+    /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications). WARNING: This TaskAction is marked for deprecation. Please use the Iis7Application task.</para>
+    /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
