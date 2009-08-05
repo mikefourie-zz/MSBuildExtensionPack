@@ -9,6 +9,7 @@ namespace MSBuild.ExtensionPack.UI
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>Confirm</i> (<b>Required: </b>Text <b>Optional: </b>Title, Height, Width, ConfirmText, ErrorText, ErrorTitle, Button1Text, Button2Text, MaskText <b>Output: </b>ButtonClickedText, UserText)</para>
     /// <para><i>Show</i> (<b>Required: </b>Text <b>Optional: </b>Title, Height, Width, Button1Text, Button2Text, Button3Text, MessageColour, MessageBold <b>Output: </b>ButtonClickedText)</para>
     /// <para><i>Prompt</i> (<b>Required: </b>Text <b>Optional: </b>Title, Height, Width, Button1Text, Button2Text, Button3Text, MessageColour, MessageBold, MaskText <b>Output: </b>ButtonClickedText, UserText)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -22,6 +23,13 @@ namespace MSBuild.ExtensionPack.UI
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
+    ///         <!-- Confirm a Password -->
+    ///         <MSBuild.ExtensionPack.UI.Dialog TaskAction="Confirm" Title="Confirmation Required" Button2Text="Cancel" Text="Enter Password" ConfirmText="Confirm Password" MaskText="true">
+    ///             <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+    ///             <Output TaskParameter="UserText" PropertyName="Typed"/>
+    ///         </MSBuild.ExtensionPack.UI.Dialog>
+    ///         <Message Text="User Clicked: $(Clicked)"/>
+    ///         <Message Text="User Typed: $(Typed)"/>
     ///         <!-- A simple message -->
     ///         <MSBuild.ExtensionPack.UI.Dialog TaskAction="Show" Text="Hello MSBuild">
     ///             <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
@@ -55,14 +63,19 @@ namespace MSBuild.ExtensionPack.UI
     {
         private const string ShowTaskAction = "Show";
         private const string PromptTaskAction = "Prompt";
+        private const string ConfirmTaskAction = "Confirm";
 
         private string title = "Message";
         private int height = 180;
         private int width = 400;
         private string button1Text = "Ok";
+        private string errorTitle = "Error";
+        private string errorText = "The supplied values do not match";
+        private string confirmText = "Confirm";
 
         [DropdownValue(ShowTaskAction)]
         [DropdownValue(PromptTaskAction)]
+        [DropdownValue(ConfirmTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -74,6 +87,7 @@ namespace MSBuild.ExtensionPack.UI
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public int Height
         {
             get { return this.height; }
@@ -85,6 +99,7 @@ namespace MSBuild.ExtensionPack.UI
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public int Width
         {
             get { return this.width; }
@@ -96,6 +111,7 @@ namespace MSBuild.ExtensionPack.UI
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public string Button1Text
         {
             get { return this.button1Text; }
@@ -107,6 +123,7 @@ namespace MSBuild.ExtensionPack.UI
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public string Button2Text { get; set; }
 
         /// <summary>
@@ -125,10 +142,41 @@ namespace MSBuild.ExtensionPack.UI
         public string Text { get; set; }
 
         /// <summary>
-        /// Sets the Title of the Dialog. Default is 'Message'
+        /// Sets the title for the error messagebox if Confirm fails. Default is 'Error'
+        /// </summary>
+        [TaskAction(ConfirmTaskAction, false)]
+        public string ErrorTitle
+        {
+            get { return this.errorTitle; }
+            set { this.errorTitle = value; }
+        }
+
+        /// <summary>
+        /// Sets the text for the error messagebox if Confirm fails. Default is 'The supplied values do not match'
+        /// </summary>
+        [TaskAction(ConfirmTaskAction, false)]
+        public string ErrorText
+        {
+            get { return this.errorText; }
+            set { this.errorText = value; }
+        }
+
+        /// <summary>
+        /// Sets the confirmation text for the message that is displayed. Default is 'Confirm' 
+        /// </summary>
+        [TaskAction(ConfirmTaskAction, false)]
+        public string ConfirmText
+        {
+            get { return this.confirmText; }
+            set { this.confirmText = value; }
+        }
+        
+        /// <summary>
+        /// Sets the Title of the Dialog. Default is 'Message' for Show and Prompt, 'Confirm' for Confirm TaskAction
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public string Title
         {
             get { return this.title; }
@@ -153,6 +201,7 @@ namespace MSBuild.ExtensionPack.UI
         /// Set to true to use the default password character to mask the user input
         /// </summary>
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public bool MaskText { get; set; }
 
         /// <summary>
@@ -161,6 +210,7 @@ namespace MSBuild.ExtensionPack.UI
         [Output]
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public string ButtonClickedText { get; set; }
 
         /// <summary>
@@ -168,6 +218,7 @@ namespace MSBuild.ExtensionPack.UI
         /// </summary>
         [Output]
         [TaskAction(PromptTaskAction, false)]
+        [TaskAction(ConfirmTaskAction, false)]
         public string UserText { get; set; }
 
         /// <summary>
@@ -182,11 +233,14 @@ namespace MSBuild.ExtensionPack.UI
 
             switch (this.TaskAction)
             {
-                case "Show":
+                case ShowTaskAction:
                     this.Show();
                     break;
-                case "Prompt":
+                case PromptTaskAction:
                     this.Prompt();
+                    break;
+                case ConfirmTaskAction:
+                    this.Confirm();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -209,6 +263,19 @@ namespace MSBuild.ExtensionPack.UI
         private void Prompt()
         {
             using (PromptForm form = new PromptForm(this.Text, this.MessageColour, this.MessageBold, this.Button1Text, this.Button2Text, this.Button3Text, this.MaskText))
+            {
+                form.Width = this.Width;
+                form.Height = this.Height;
+                form.Text = this.Title;
+                form.ShowDialog();
+                this.ButtonClickedText = form.ButtonClickedText;
+                this.UserText = form.UserText;
+            }
+        }
+
+        private void Confirm()
+        {
+            using (ConfirmForm form = new ConfirmForm(this.Text, this.ConfirmText, this.ErrorTitle, this.ErrorText, this.Button1Text, this.Button2Text, this.MaskText))
             {
                 form.Width = this.Width;
                 form.Height = this.Height;

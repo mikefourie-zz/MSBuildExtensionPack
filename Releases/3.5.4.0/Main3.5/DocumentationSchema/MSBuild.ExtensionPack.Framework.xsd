@@ -1113,6 +1113,7 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="Confirm"/>
                                 <xs:enumeration value="Show"/>
                                 <xs:enumeration value="Prompt"/>
                             </xs:restriction>
@@ -1123,6 +1124,9 @@
                     <xs:attribute name="Button1Text"/>
                     <xs:attribute name="Button2Text"/>
                     <xs:attribute name="Button3Text"/>
+                    <xs:attribute name="ConfirmText"/>
+                    <xs:attribute name="ErrorText"/>
+                    <xs:attribute name="ErrorTitle"/>
                     <xs:attribute name="Text" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Title"/>
                     <xs:attribute name="MessageColour"/>

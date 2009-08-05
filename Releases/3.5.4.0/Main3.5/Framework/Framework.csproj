@@ -168,6 +168,12 @@
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
+    <Compile Include="UI\ConfirmForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ConfirmForm.Designer.cs">
+      <DependentUpon>ConfirmForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="VisualStudio\VBPProject.cs" />
     <Compile Include="Web\HttpWebRequest.cs" />
     <Compile Include="FileSystem\Share.cs" />
@@ -357,6 +363,10 @@
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
     <None Include="XmlSamples\XmlFile.proj" />
+    <EmbeddedResource Include="UI\ConfirmForm.resx">
+      <DependentUpon>ConfirmForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
       <SubType>Designer</SubType>
