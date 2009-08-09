@@ -418,7 +418,7 @@ namespace MSBuild.ExtensionPack.Computer
         public string User { get; set; }
 
         /// <summary>
-        /// Sets the name of Service.
+        /// The Name of the service. Note, this is the 'Service Name' as displayed in services.msc, NOT the 'Display Name'
         /// </summary>
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(DisableTaskAction, true)]
