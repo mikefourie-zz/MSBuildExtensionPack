@@ -391,31 +391,33 @@
                                 <xs:enumeration value="GetChecksum"/>
                                 <xs:enumeration value="GetTempFileName"/>
                                 <xs:enumeration value="FilterByContent"/>
+                                <xs:enumeration value="Move"/>
                                 <xs:enumeration value="Replace"/>
                                 <xs:enumeration value="SetAttributes"/>
                                 <xs:enumeration value="RemoveAttributes"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
-                    <xs:attribute name="RegexPattern"/>
-                    <xs:attribute name="Replacement"/>
-                    <xs:attribute name="Path"/>
-                    <xs:attribute name="TextEncoding"/>
-                    <xs:attribute name="CommentIdentifiers"/>
-                    <xs:attribute name="Files"/>
-                    <xs:attribute name="TotalLinecount"/>
-                    <xs:attribute name="CommentLinecount"/>
-                    <xs:attribute name="EmptyLinecount"/>
-                    <xs:attribute name="TotalFilecount"/>
+                    <xs:attribute name="Checksum"/>
                     <xs:attribute name="CodeLinecount"/>
+                    <xs:attribute name="CommentIdentifiers"/>
+                    <xs:attribute name="CommentLinecount"/>
+                    <xs:attribute name="ElapsedTime"/>
+                    <xs:attribute name="EmptyLinecount"/>
                     <xs:attribute name="ExcludedFilecount"/>
+                    <xs:attribute name="ExcludedFiles"/>
+                    <xs:attribute name="Files"/>
                     <xs:attribute name="IncludedFilecount"/>
+                    <xs:attribute name="IncludedFiles"/>
                     <xs:attribute name="MaxSize"/>
                     <xs:attribute name="MinSize"/>
-                    <xs:attribute name="ElapsedTime"/>
-                    <xs:attribute name="Checksum"/>
-                    <xs:attribute name="ExcludedFiles"/>
-                    <xs:attribute name="IncludedFiles"/>
+                    <xs:attribute name="Path"/>
+                    <xs:attribute name="RegexPattern"/>
+                    <xs:attribute name="Replacement"/>
+                    <xs:attribute name="TargetPath"/>
+                    <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TotalFilecount"/>
+                    <xs:attribute name="TotalLinecount"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

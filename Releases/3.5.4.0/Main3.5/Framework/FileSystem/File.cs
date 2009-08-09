@@ -12,6 +12,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -20,6 +21,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
     /// <para><i>GetTempFileName</i> (<b>Output: </b>Path)</para>
     /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
+    /// <para><i>Move</i> (<b>Required: </b>Path, TargetPath)</para>
     /// <para><i>RemoveAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
@@ -46,11 +48,11 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <MyFiles Include="C:\demo\**\*.csproj"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
-    ///        <!-- Get a temp file -->
-    ///        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
-    ///            <Output TaskParameter="Path" PropertyName="TempPath"/>
-    ///        </MSBuild.ExtensionPack.FileSystem.File>
-    ///        <Message Text="TempPath: $(TempPath)"/>
+    ///         <!-- Get a temp file -->
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
+    ///             <Output TaskParameter="Path" PropertyName="TempPath"/>
+    ///         </MSBuild.ExtensionPack.FileSystem.File>
+    ///         <Message Text="TempPath: $(TempPath)"/>
     ///         <!-- Filter a collection of files based on their content -->
     ///         <Message Text="MyProjects %(MyFiles.Identity)"/>
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
@@ -88,6 +90,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <!-- Set some attributes -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles2)"/>
+    ///         <!-- Move a file -->
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="c:\demo\file.txt" TargetPath="c:\dddd\d\oo\d\mee.txt"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -101,6 +105,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string ReplaceTaskAction = "Replace";
         private const string SetAttributesTaskAction = "SetAttributes";
         private const string AddAttributesTaskAction = "AddAttributes";
+        private const string MoveTaskAction = "Move";
         private const string RemoveAttributesTaskAction = "RemoveAttributes";
         private const string GetTempFileNameTaskAction = "GetTempFileName";
 
@@ -116,6 +121,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         [DropdownValue(GetChecksumTaskAction)]
         [DropdownValue(GetTempFileNameTaskAction)]
         [DropdownValue(FilterByContentTaskAction)]
+        [DropdownValue(MoveTaskAction)]
         [DropdownValue(RemoveAttributesTaskAction)]
         [DropdownValue(ReplaceTaskAction)]
         [DropdownValue(SetAttributesTaskAction)]
@@ -146,9 +152,10 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// A path to process or get. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.
         /// </summary>
         [TaskAction(GetChecksumTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
         [TaskAction(ReplaceTaskAction, false)]
         [Output]
-        public string Path { get; set; }
+        public ITaskItem Path { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding.
@@ -171,10 +178,17 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(CountLinesTaskAction, true)]
         [TaskAction(SetAttributesTaskAction, true)]
         [TaskAction(AddAttributesTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
         [TaskAction(RemoveAttributesTaskAction, true)]
         [TaskAction(ReplaceTaskAction, false)]
         [TaskAction(FilterByContentTaskAction, true)]
         public ITaskItem[] Files { get; set; }
+
+        /// <summary>
+        /// Sets the TargetPath for a renamed file
+        /// </summary>
+        [TaskAction(MoveTaskAction, true)]
+        public ITaskItem TargetPath { get; set; }
 
         /// <summary>
         /// Gets the total number of lines counted
@@ -308,7 +322,10 @@ namespace MSBuild.ExtensionPack.FileSystem
                     break;
                 case GetTempFileNameTaskAction:
                     this.LogTaskMessage("Getting temp file name");
-                    this.Path = System.IO.Path.GetTempFileName();
+                    this.Path = new TaskItem(System.IO.Path.GetTempFileName());
+                    break;
+                case MoveTaskAction:
+                    this.Move();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -446,20 +463,45 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void GetChecksum()
         {
-            if (!System.IO.File.Exists(this.Path))
+            if (!System.IO.File.Exists(this.Path.GetMetadata("FullPath")))
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid File passed: {0}", this.Path));
                 return;
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Checksum for file: {0}", this.Path));
-            using (FileStream fs = System.IO.File.OpenRead(this.Path))
+            using (FileStream fs = System.IO.File.OpenRead(this.Path.GetMetadata("FullPath")))
             {
                 MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider();
                 byte[] hash = csp.ComputeHash(fs);
                 this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpperInvariant();
                 fs.Close();
             }
+        }
+
+        private void Move()
+        {
+            if (!System.IO.File.Exists(this.Path.GetMetadata("FullPath")))
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid File passed: {0}", this.Path));
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Moving File: {0} to: {1}", this.Path, this.TargetPath));
+
+            // If the TargetPath has multiple folders, then we need to create the parent
+            DirectoryInfo f = new DirectoryInfo(this.TargetPath.GetMetadata("FullPath"));
+            string parentPath = this.TargetPath.GetMetadata("FullPath").Replace(@"\" + f.Name, string.Empty);
+            if (!Directory.Exists(parentPath))
+            {
+                Directory.CreateDirectory(parentPath);
+            }
+            else if (System.IO.File.Exists(this.TargetPath.GetMetadata("FullPath")))
+            {
+                System.IO.File.Delete(this.TargetPath.GetMetadata("FullPath"));
+            }
+
+            System.IO.File.Move(this.Path.GetMetadata("FullPath"), this.TargetPath.GetMetadata("FullPath"));
         }
 
         private void CountLines()
@@ -558,7 +600,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.parseRegex = new Regex(this.RegexPattern, RegexOptions.Compiled);
 
             // Check to see if we are processing a file collection or a path
-            if (string.IsNullOrEmpty(this.Path) != true)
+            if (this.Path != null)
             {
                 // we need to process a path
                 this.ProcessPath();
@@ -572,8 +614,8 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void ProcessPath()
         {
-            string originalPath = this.Path;
-            string rootPath = this.Path.Replace("*", string.Empty);
+            string originalPath = this.Path.GetMetadata("FullPath");
+            string rootPath = this.Path.GetMetadata("FullPath").Replace("*", string.Empty);
 
             // Validation
             if (Directory.Exists(rootPath) == false)

@@ -104,7 +104,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(MoveTaskAction, true)]
         [TaskAction(RemoveContentTaskAction, true)]
         [TaskAction(RemoveSecurityTaskAction, true)]
-        public string Path { get; set; }
+        public ITaskItem Path { get; set; }
 
         /// <summary>
         /// Sets the regular expression to match in the name of a folder for Delete. Case is ignored.
@@ -117,7 +117,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Sets the TargetPath for a renamed folder
         /// </summary>
         [TaskAction(MoveTaskAction, true)]
-        public string TargetPath { get; set; }
+        public ITaskItem TargetPath { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to delete readonly files when performing RemoveContent
@@ -170,7 +170,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            DirectoryInfo dir = new DirectoryInfo(this.Path);
+            DirectoryInfo dir = new DirectoryInfo(this.Path.GetMetadata("FullPath"));
             if (!dir.Exists)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", this.Path));
@@ -229,14 +229,14 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void GetFolders()
         {
-            if (string.IsNullOrEmpty(this.Path))
+            if (string.IsNullOrEmpty(this.Path.GetMetadata("FullPath")))
             {
                 Log.LogError("Path must be specified.");
                 return;
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Folders from: {0}", this.Path));
-            DirectoryInfo dirInfo = new DirectoryInfo(this.Path);
+            DirectoryInfo dirInfo = new DirectoryInfo(this.Path.GetMetadata("FullPath"));
             this.foldersFound = new List<string>();
             this.ProcessGetAll(dirInfo);
             this.Folders = new ITaskItem[this.foldersFound.Count];
@@ -281,7 +281,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void SetSecurity(string action)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(this.Path);
+            DirectoryInfo dirInfo = new DirectoryInfo(this.Path.GetMetadata("FullPath"));
             DirectorySecurity currentSecurity = dirInfo.GetAccessControl();
 
             if (this.Users != null)
@@ -327,8 +327,8 @@ namespace MSBuild.ExtensionPack.FileSystem
                 Log.LogError("Match must be specified.");
                 return;
             }
-            
-            DirectoryInfo d = new DirectoryInfo(this.Path);
+
+            DirectoryInfo d = new DirectoryInfo(this.Path.GetMetadata("FullPath"));
             this.ProcessDeleteAll(d);
         }
 
@@ -424,7 +424,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void Move()
         {
-            if (string.IsNullOrEmpty(this.TargetPath))
+            if (string.IsNullOrEmpty(this.TargetPath.GetMetadata("FullPath")))
             {
                 Log.LogError("TargetPath must be specified.");
                 return;
@@ -433,14 +433,14 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Moving Folder: {0} to: {1}", this.Path, this.TargetPath));
             
             // If the TargetPath has multiple folders, then we need to create the parent
-            DirectoryInfo f = new DirectoryInfo(this.TargetPath);
-            string parentPath = this.TargetPath.Replace(@"\" + f.Name, string.Empty);
+            DirectoryInfo f = new DirectoryInfo(this.TargetPath.GetMetadata("FullPath"));
+            string parentPath = this.TargetPath.GetMetadata("FullPath").Replace(@"\" + f.Name, string.Empty);
             if (!Directory.Exists(parentPath))
             {
                 Directory.CreateDirectory(parentPath);
             }
 
-            Directory.Move(this.Path, this.TargetPath);
+            Directory.Move(this.Path.GetMetadata("FullPath"), this.TargetPath.GetMetadata("FullPath"));
         }
     }
 }
