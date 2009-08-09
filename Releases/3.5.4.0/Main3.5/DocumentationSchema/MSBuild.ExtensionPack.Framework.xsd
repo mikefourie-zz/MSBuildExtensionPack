@@ -68,6 +68,8 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="Message" type="msb:non_empty_string" use="required"/>
+                    <xs:attribute name="ProxyUserName"/>
+                    <xs:attribute name="ProxyUserPassword"/>
                     <xs:attribute name="TwitterUrl" type="msb:non_empty_string" use="required"/>
                 </xs:extension>
             </xs:complexContent>
