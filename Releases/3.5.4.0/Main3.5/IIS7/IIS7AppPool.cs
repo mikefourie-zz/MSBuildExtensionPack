@@ -387,7 +387,11 @@ namespace MSBuild.ExtensionPack.Web
                     this.pool.Start();
                     break;
                 case StopTaskAction:
-                    this.pool.Stop();
+                    if (this.pool.State != ObjectState.Stopped && this.pool.State != ObjectState.Stopping)
+                    {
+                        this.pool.Stop();
+                    }
+
                     break;
                 case RecycleTaskAction:
                     this.pool.Start();
