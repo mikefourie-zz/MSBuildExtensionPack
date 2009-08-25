@@ -59,7 +59,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string GetVersionTaskAction = "GetVersion";
         private const string SetVersionTaskAction = "SetVersion";
         private const string AppendAssemblyVersionFormat = "\n[assembly: System.Reflection.AssemblyVersion(\"{0}\")]";
+        private const string VBAppendAssemblyVersionFormat = "\n<assembly: System.Reflection.AssemblyVersion(\"{0}\")>";
         private const string AppendAssemblyFileVersionFormat = "\n[assembly: System.Reflection.AssemblyFileVersion(\"{0}\")]";
+        private const string VBAppendAssemblyFileVersionFormat = "\n<assembly: System.Reflection.AssemblyFileVersion(\"{0}\")>";
         private bool setAssemblyFileVersion = true;
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
@@ -406,7 +408,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 {
                     if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase))
                     {
-                        newFile = newFile.AppendFormat(AppendAssemblyFileVersionFormat, this.Version);
+                        switch (file.GetMetadata("Extension"))
+                        {
+                            case ".cs":
+                                newFile = newFile.AppendFormat(AppendAssemblyFileVersionFormat, this.Version);
+                                break;
+                            case ".vb":
+                                newFile = newFile.AppendFormat(VBAppendAssemblyFileVersionFormat, this.Version);
+                                break;
+                        }
                     }
                 }
 
@@ -416,7 +426,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     newFile = this.regexAssemblyVersion.Replace(newFile, @"AssemblyVersion(""" + this.AssemblyVersion + @""")");
                     if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase))
                     {
-                        newFile = newFile.AppendFormat(AppendAssemblyVersionFormat, this.AssemblyVersion);
+                        switch (file.GetMetadata("Extension"))
+                        {
+                            case ".cs":
+                                newFile = newFile.AppendFormat(AppendAssemblyVersionFormat, this.AssemblyVersion);
+                                break;
+                            case ".vb":
+                                newFile = newFile.AppendFormat(VBAppendAssemblyVersionFormat, this.AssemblyVersion);
+                                break;
+                        }
                     }
                 }
 
