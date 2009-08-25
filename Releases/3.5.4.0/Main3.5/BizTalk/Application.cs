@@ -431,40 +431,41 @@ namespace MSBuild.ExtensionPack.BizTalk
             {
                 if (!this.CheckExists(appl.ItemSpec))
                 {
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
-                    return;
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
                 }
-
-                OM.ApplicationStopOption option = OM.ApplicationStopOption.StopAll;
-                switch (this.TaskAction)
+                else
                 {
-                    case "StopAll":
-                        option = OM.ApplicationStopOption.StopAll;
-                        break;
-                    case "DisableAllReceiveLocations":
-                        option = OM.ApplicationStopOption.DisableAllReceiveLocations;
-                        break;
-                    case "UndeployAllPolicies":
-                        option = OM.ApplicationStopOption.UndeployAllPolicies;
-                        break;
-                    case "UnenlistAllOrchestrations":
-                        option = OM.ApplicationStopOption.UnenlistAllOrchestrations;
-                        break;
-                    case "UnenlistAllSendPortGroups":
-                        option = OM.ApplicationStopOption.UnenlistAllSendPortGroups;
-                        break;
-                    case "UnenlistAllSendPorts":
-                        option = OM.ApplicationStopOption.UnenlistAllSendPorts;
-                        break;
-                    case "StopReferencedApplications":
-                        option = OM.ApplicationStopOption.StopReferencedApplications;
-                        break;
-                }
+                    OM.ApplicationStopOption option = OM.ApplicationStopOption.StopAll;
+                    switch (this.TaskAction)
+                    {
+                        case "StopAll":
+                            option = OM.ApplicationStopOption.StopAll;
+                            break;
+                        case "DisableAllReceiveLocations":
+                            option = OM.ApplicationStopOption.DisableAllReceiveLocations;
+                            break;
+                        case "UndeployAllPolicies":
+                            option = OM.ApplicationStopOption.UndeployAllPolicies;
+                            break;
+                        case "UnenlistAllOrchestrations":
+                            option = OM.ApplicationStopOption.UnenlistAllOrchestrations;
+                            break;
+                        case "UnenlistAllSendPortGroups":
+                            option = OM.ApplicationStopOption.UnenlistAllSendPortGroups;
+                            break;
+                        case "UnenlistAllSendPorts":
+                            option = OM.ApplicationStopOption.UnenlistAllSendPorts;
+                            break;
+                        case "StopReferencedApplications":
+                            option = OM.ApplicationStopOption.StopReferencedApplications;
+                            break;
+                    }
 
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Application: {0}", appl.ItemSpec));
-                this.explorer.SaveChanges();
-                this.app.Stop(option);
-                this.explorer.SaveChanges();
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Application: {0}", appl.ItemSpec));
+                    this.explorer.SaveChanges();
+                    this.app.Stop(option);
+                    this.explorer.SaveChanges();
+                }
             }
         }
 
@@ -483,32 +484,33 @@ namespace MSBuild.ExtensionPack.BizTalk
                 if (!this.CheckExists(appl.ItemSpec))
                 {
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
-                    return;
                 }
-
-                switch (this.TaskAction)
+                else
                 {
-                    case "StartAll":
-                        this.app.Start(OM.ApplicationStartOption.StartAll);
-                        break;
-                    case "EnableAllReceiveLocations":
-                        this.app.Start(OM.ApplicationStartOption.EnableAllReceiveLocations);
-                        break;
-                    case "StartAllOrchestrations":
-                        this.app.Start(OM.ApplicationStartOption.StartAllOrchestrations);
-                        break;
-                    case "StartAllSendPortGroups":
-                        this.app.Start(OM.ApplicationStartOption.StartAllSendPortGroups);
-                        break;
-                    case "StartAllSendPorts":
-                        this.app.Start(OM.ApplicationStartOption.StartAllSendPorts);
-                        break;
-                    case "StartReferencedApplications":
-                        this.app.Start(OM.ApplicationStartOption.StartReferencedApplications);
-                        break;
-                }
+                    switch (this.TaskAction)
+                    {
+                        case "StartAll":
+                            this.app.Start(OM.ApplicationStartOption.StartAll);
+                            break;
+                        case "EnableAllReceiveLocations":
+                            this.app.Start(OM.ApplicationStartOption.EnableAllReceiveLocations);
+                            break;
+                        case "StartAllOrchestrations":
+                            this.app.Start(OM.ApplicationStartOption.StartAllOrchestrations);
+                            break;
+                        case "StartAllSendPortGroups":
+                            this.app.Start(OM.ApplicationStartOption.StartAllSendPortGroups);
+                            break;
+                        case "StartAllSendPorts":
+                            this.app.Start(OM.ApplicationStartOption.StartAllSendPorts);
+                            break;
+                        case "StartReferencedApplications":
+                            this.app.Start(OM.ApplicationStartOption.StartReferencedApplications);
+                            break;
+                    }
 
-                this.explorer.SaveChanges();
+                    this.explorer.SaveChanges();
+                }
             }
         }
 
