@@ -114,6 +114,8 @@
                                 <xs:enumeration value="AddUser"/>
                                 <xs:enumeration value="AddGroup"/>
                                 <xs:enumeration value="AddUserToGroup"/>
+                                <xs:enumeration value="CheckGroupExists"/>
+                                <xs:enumeration value="CheckUserExists"/>
                                 <xs:enumeration value="CheckUserPassword"/>
                                 <xs:enumeration value="DeleteUser"/>
                                 <xs:enumeration value="DeleteGroup"/>
