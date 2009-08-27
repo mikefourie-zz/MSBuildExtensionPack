@@ -123,6 +123,9 @@
     <Reference Include="System.DirectoryServices">
       <Name>System.DirectoryServices</Name>
     </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices">
       <Name>System.EnterpriseServices</Name>
@@ -166,6 +169,12 @@
     </Compile>
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
+    <Compile Include="Computer\GetPasswordForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Computer\GetPasswordForm.Designer.cs">
+      <DependentUpon>GetPasswordForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="UI\ConfirmForm.cs">
@@ -363,6 +372,9 @@
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
     <None Include="XmlSamples\XmlFile.proj" />
+    <EmbeddedResource Include="Computer\GetPasswordForm.resx">
+      <DependentUpon>GetPasswordForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\ConfirmForm.resx">
       <DependentUpon>ConfirmForm.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -114,9 +114,11 @@
                                 <xs:enumeration value="AddUser"/>
                                 <xs:enumeration value="AddGroup"/>
                                 <xs:enumeration value="AddUserToGroup"/>
+                                <xs:enumeration value="CheckUserPassword"/>
                                 <xs:enumeration value="DeleteUser"/>
                                 <xs:enumeration value="DeleteGroup"/>
                                 <xs:enumeration value="DeleteUserFromGroup"/>
+                                <xs:enumeration value="GetUserPassword"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -129,6 +131,8 @@
                     <xs:attribute name="PasswordNeverExpires"/>
                     <xs:attribute name="Domain"/>
                     <xs:attribute name="GroupType"/>
+                    <xs:attribute name="BindingContextOptions"/>
+                    <xs:attribute name="ContextTypeStore"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
