@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName)</para>
+    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName)</para>
     /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>DeleteBackupHistory</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -61,7 +61,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     ///         <!-- Create a database -->
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
     ///         <!-- Create the database again, using Force to delete the existing database -->
-    ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2" Force="true"/>
+    ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2" Collation="Latin1_General_CI_AI" Force="true"/>
     ///         <!-- Check whether a database exists -->
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
@@ -200,6 +200,12 @@ namespace MSBuild.ExtensionPack.Sql2008
         [TaskAction(RestoreTaskAction, false)]
         public string LogName { get; set; }
 
+        /// <summary>
+        /// Sets the collation of the database.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string Collation { get; set; }
+        
         /// <summary>
         /// Sets the type of backup action to perform. Supports Database, Files and Log. Default is Database
         /// </summary>
@@ -595,6 +601,11 @@ namespace MSBuild.ExtensionPack.Sql2008
 
                 LogFile logFile = new LogFile(newDatabase, this.LogName, this.LogFilePath.GetMetadata("FullPath"));
                 newDatabase.LogFiles.Add(logFile);
+            }
+            
+            if (!string.IsNullOrEmpty(this.Collation))
+            {
+                newDatabase.Collation = this.Collation;
             }
 
             newDatabase.Create();

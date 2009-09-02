@@ -4,7 +4,6 @@
         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
     </PropertyGroup>
     <Import Project="$(TPath)"/>
-    <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks"/>
     <Target Name="Default">
         <ItemGroup>
             <Database Include="ADatabase">
@@ -29,7 +28,7 @@
         <!-- Create a database -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
         <!-- Create the database again, using Force to delete the existing database -->
-        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2" Force="true"/>
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2" Collation="Latin1_General_CI_AI" Force="true"/>
         <!-- Check whether a database exists -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
