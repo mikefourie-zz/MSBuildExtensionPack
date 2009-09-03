@@ -350,9 +350,13 @@
                     </xs:attribute>
                     <xs:attribute name="Exists"/>
                     <xs:attribute name="User"/>
+                    <xs:attribute name="ServiceDisplayName"/>
                     <xs:attribute name="ServiceName"/>
                     <xs:attribute name="ServicePath"/>
                     <xs:attribute name="Password"/>
+                    <xs:attribute name="ServiceDependencies"/>
+                    <xs:attribute name="RemoteUser"/>
+                    <xs:attribute name="RemoteUserPassword"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
