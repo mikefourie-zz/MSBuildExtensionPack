@@ -618,7 +618,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void GetItemCount()
         {
             this.LogTaskMessage("Getting Item Count");
-            this.ItemCount = this.InputItems1.Length;
+            this.ItemCount = this.inputItems1 == null ? 0 : this.inputItems1.Count;
         }
     }
 }
