@@ -6,8 +6,8 @@
     <Import Project="$(TPath)"/>
     <Target Name="Default">
         <ItemGroup>
-            <AssemblyInfoFiles Include="C:\AssemblyInfo.cs"/>
+            <AssemblyInfoFiles Include="C:\CommonAssemblyInfo.cs"/>
         </ItemGroup>
-        <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyConfiguration="DEBUG" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo ComVisible="true" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
     </Target>
 </Project>
