@@ -15,8 +15,8 @@ namespace MSBuild.ExtensionPack.Tfs
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetLatest</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildDefinitionName, Status <b>Output: </b>Info)</para>
     /// <para><i>Queue</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildDefinitionName)</para>
-    /// <para><i>RelatedChangesets</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildUri  <b>Output: </b>Info, RelatedItems)</para>
-    /// <para><i>RelatedWorkItems</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildUri  <b>Output: </b>Info, RelatedItems)</para>
+    /// <para><i>RelatedChangesets</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildUri, BuildDefinitionName <b>Output: </b>Info, RelatedItems)</para>
+    /// <para><i>RelatedWorkItems</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildUri, BuildDefinitionName <b>Output: </b>Info, RelatedItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -27,6 +27,12 @@ namespace MSBuild.ExtensionPack.Tfs
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
+    ///     <PropertyGroup>
+    ///         <TeamFoundationServerUrl>http://YOURSERVER:8080/</TeamFoundationServerUrl>
+    ///         <TeamProject>Nationwide Payments Platform</TeamProject>
+    ///         <BuildUri></BuildUri>
+    ///         <BuildDefinitionName></BuildDefinitionName>
+    ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <!-- Get information on the latest build -->
     ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="GetLatest" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild">
@@ -66,26 +72,16 @@ namespace MSBuild.ExtensionPack.Tfs
     ///         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
     ///         <!-- Queue a new build -->
     ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="QueueBuild" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
-    ///         <!-- Retrieve ChangeSets associated with a given build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" 
-    ///             BuildUri="$(BuildUri)">
+    ///         <!-- Retrieve Changesets associated with a given build -->
+    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
     ///         </MSBuild.ExtensionPack.Tfs.TeamBuild>
-    ///         <Message Text="ID = %(Changesets.Identity)
-    ///                        Checked In By = %(Changesets.CheckedInBy);
-    ///                        URI = %(Changesets.ChangesetUri);
-    ///                        Comment = %(Changesets.Comment)" />
+    ///         <Message Text="ID = %(Changesets.Identity), Checked In By = %(Changesets.CheckedInBy), URI = %(Changesets.ChangesetUri), Comment = %(Changesets.Comment)"/>
     ///         <!-- Retrieve Work Items associated with a given build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" 
-    ///             BuildUri="$(BuildUri)">
+    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="WorkItems" TaskParameter="RelatedItems"/>
     ///         </MSBuild.ExtensionPack.Tfs.TeamBuild>
-    ///         <Message Text="ID = %(Workitems.Identity)
-    ///                        Status = %(Workitems.Status);
-    ///                        Title = %(Workitems.Title);
-    ///                        Type  = %(Workitems.Type);
-    ///                        URI = %(Workitems.WorkItemUri);
-    ///                        AssignedTo = %(Workitems.AssignedTo)" />
+    ///         <Message Text="ID = %(Workitems.Identity), Status = %(Workitems.Status), Title = %(Workitems.Title), Type  = %(Workitems.Type), URI = %(Workitems.WorkItemUri), AssignedTo = %(Workitems.AssignedTo)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -154,7 +150,7 @@ namespace MSBuild.ExtensionPack.Tfs
         }
 
         /// <summary>
-        /// Build Uri.
+        /// Build Uri. Defaults to latest build.
         /// </summary>
         [TaskAction(RelatedChangesetsTaskAction, true)]
         [TaskAction(RelatedWorkItemsTaskAction, true)]
@@ -222,11 +218,7 @@ namespace MSBuild.ExtensionPack.Tfs
                 this.GetLatestInfo();
             }
 
-            this.LogTaskMessage(String.Format(
-                                    CultureInfo.CurrentCulture,
-                                    "Retrieving changesets related to Build {0}",
-                                    this.BuildUri));
-
+            this.LogTaskMessage(String.Format(CultureInfo.CurrentCulture, "Retrieving changesets related to Build {0}", this.BuildUri));
             var build = this.buildServer.GetAllBuildDetails(new Uri(this.BuildUri));
             var changesets = InformationNodeConverters.GetAssociatedChangesets(build);
             var taskItems = new List<ITaskItem>();
