@@ -614,28 +614,32 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void ProcessPath()
         {
-            string originalPath = this.Path.GetMetadata("FullPath");
-            string rootPath = this.Path.GetMetadata("FullPath").Replace("*", string.Empty);
+            bool recursive = false;
+            if (this.Path.ItemSpec.EndsWith("*", StringComparison.OrdinalIgnoreCase))
+            {
+                this.Path.ItemSpec = this.Path.ItemSpec.Remove(this.Path.ItemSpec.Length - 1, 1);
+                recursive = true;
+            }
 
             // Validation
-            if (Directory.Exists(rootPath) == false)
+            if (Directory.Exists(this.Path.ItemSpec) == false)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path not found: {0}", rootPath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path not found: {0}", this.Path.ItemSpec));
                 return;
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Processing Path: {0} with RegEx: {1}, ReplacementText: {2}", this.Path, this.RegexPattern, this.Replacement));
 
             // Check if we need to do a recursive search
-            if (originalPath.Contains("*"))
+            if (recursive)
             {
                 // We have to do a recursive search
                 // Create a new DirectoryInfo object.
-                DirectoryInfo dir = new DirectoryInfo(rootPath);
+                DirectoryInfo dir = new DirectoryInfo(this.Path.ItemSpec);
 
                 if (!dir.Exists)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", this.Path.ItemSpec));
                     return;
                 }
 
@@ -645,11 +649,11 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
             else
             {
-                DirectoryInfo dir = new DirectoryInfo(originalPath);
+                DirectoryInfo dir = new DirectoryInfo(this.Path.ItemSpec);
 
                 if (!dir.Exists)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", originalPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", this.Path.ItemSpec));
                     return;
                 }
 
@@ -723,7 +727,12 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // Parse the entire file.
-            string newFile = this.parseRegex.Replace(entireFile, this.Replacement);
+            if (this.Replacement.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                this.Replacement = Regex.Unescape(this.Replacement);
+            }
+            
+            string newFile = Regex.Replace(entireFile, this.RegexPattern, this.Replacement);
 
             // First make sure the file is writable.
             FileAttributes fileAttributes = System.IO.File.GetAttributes(parseFile);
