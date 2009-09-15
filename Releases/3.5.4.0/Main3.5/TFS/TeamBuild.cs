@@ -304,7 +304,7 @@ namespace MSBuild.ExtensionPack.Tfs
             // do the search and extract the details from the singleton expected result
             IBuildQueryResult results = this.buildServer.QueryBuilds(buildDetailSpec);
 
-            if (results.Failures.Length == 0 && results.Builds.Length > 1)
+            if (results.Failures.Length == 0 && results.Builds.Length >= 1)
             {
                 this.buildDetails = results.Builds[0];
                 ITaskItem ibuildDef = new TaskItem(this.BuildDefinitionName);
