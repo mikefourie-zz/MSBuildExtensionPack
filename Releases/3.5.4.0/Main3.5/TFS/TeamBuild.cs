@@ -29,7 +29,7 @@ namespace MSBuild.ExtensionPack.Tfs
     ///     <Import Project="$(TPath)"/>
     ///     <PropertyGroup>
     ///         <TeamFoundationServerUrl>http://YOURSERVER:8080/</TeamFoundationServerUrl>
-    ///         <TeamProject>Nationwide Payments Platform</TeamProject>
+    ///         <TeamProject>YOURPROJECT</TeamProject>
     ///         <BuildUri></BuildUri>
     ///         <BuildDefinitionName></BuildDefinitionName>
     ///     </PropertyGroup>
