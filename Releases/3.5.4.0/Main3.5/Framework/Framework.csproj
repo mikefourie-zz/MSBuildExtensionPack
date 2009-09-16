@@ -187,6 +187,7 @@
       <DependentUpon>ConfirmForm.cs</DependentUpon>
     </Compile>
     <Compile Include="VisualStudio\VBPProject.cs" />
+    <Compile Include="Web\WebClient.cs" />
     <Compile Include="Web\HttpWebRequest.cs" />
     <Compile Include="FileSystem\Share.cs" />
     <Compile Include="Framework\Metadata.cs" />
@@ -369,6 +370,7 @@
     </None>
     <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\ActiveDirectory.proj" />
+    <None Include="XmlSamples\WebClient.proj" />
     <None Include="XmlSamples\FindUnder.proj" />
     <None Include="XmlSamples\HttpWebRequest.proj" />
     <None Include="XmlSamples\Metadata.proj" />
