@@ -887,6 +887,7 @@
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="Compare"/>
                                 <xs:enumeration value="EndsWith"/>
+                                <xs:enumeration value="Format"/>
                                 <xs:enumeration value="GetLength"/>
                                 <xs:enumeration value="Insert"/>
                                 <xs:enumeration value="PadLeft"/>

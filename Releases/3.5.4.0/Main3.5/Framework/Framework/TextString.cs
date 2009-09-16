@@ -12,6 +12,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Compare</i> (<b>Required: </b> String1, String2, Comparison <b> Optional: </b> IgnoreCase <b>Output: </b>Result)</para>
     /// <para><i>EndsWith</i> (<b>Required: </b> String1, String2<b> Optional: </b> IgnoreCase <b>Output: </b>Result)</para>
+    /// <para><i>Format</i> (<b>Required: </b> String1, Strings<b> Output: </b>NewString)</para>
     /// <para><i>GetLength</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>Insert</i> (<b>Required: </b> OldString, String1, StartIndex<b> Output: </b> NewString)</para>
     /// <para><i>PadLeft</i> (<b>Required: </b> OldString, String1 (1 char) <b> Optional: </b>Count <b>Output: </b> NewString)</para>
@@ -34,16 +35,16 @@ namespace MSBuild.ExtensionPack.Framework
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
+    ///         <!-- Format a string -->
+    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Format" String1="{0}.{1}.{2}.{3}" Strings="3;5;4;0">
+    ///             <Output TaskParameter="NewString" PropertyName="val"/>
+    ///         </MSBuild.ExtensionPack.Framework.TextString>
+    ///         <Message Text="Format Result: $(val)"/>
     ///         <!-- Split a string -->
     ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";">
     ///             <Output ItemName="out" TaskParameter="Strings"/>
     ///         </MSBuild.ExtensionPack.Framework.TextString>
     ///         <Message Text="The Result: %(Out.Identity)"/>
-    ///         <!-- Split a string and extract 1st item into NewString -->
-    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";" StartIndex="1">
-    ///             <Output PropertyName="out" TaskParameter="NewString"/>
-    ///         </MSBuild.ExtensionPack.Framework.TextString>
-    ///         <Message Text="The Result: $(Result)"/>
     ///         <!-- Split another string -->
     ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="HelloMIKEhowMIKEareMIKeyou" String2="MIKE">
     ///             <Output ItemName="out" TaskParameter="Strings"/>
@@ -118,6 +119,7 @@ namespace MSBuild.ExtensionPack.Framework
     {
         private const string CompareTaskAction = "Compare";
         private const string EndsWithTaskAction = "EndsWith";
+        private const string FormatTaskAction = "Format";
         private const string GetLengthTaskAction = "GetLength";
         private const string InsertTaskAction = "Insert";
         private const string PadLeftTaskAction = "PadLeft";
@@ -135,6 +137,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         [DropdownValue(CompareTaskAction)]
         [DropdownValue(EndsWithTaskAction)]
+        [DropdownValue(FormatTaskAction)]
         [DropdownValue(GetLengthTaskAction)]
         [DropdownValue(InsertTaskAction)]
         [DropdownValue(PadLeftTaskAction)]
@@ -174,6 +177,7 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         [TaskAction(CompareTaskAction, false)]
         [TaskAction(EndsWithTaskAction, false)]
+        [TaskAction(FormatTaskAction, false)]
         [TaskAction(StartsWithTaskAction, false)]
         public bool Result { get; set; }
 
@@ -182,6 +186,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [TaskAction(CompareTaskAction, true)]
         [TaskAction(EndsWithTaskAction, true)]
+        [TaskAction(FormatTaskAction, true)]
         [TaskAction(InsertTaskAction, true)]
         [TaskAction(PadLeftTaskAction, true)]
         [TaskAction(PadRightTaskAction, true)]
@@ -260,6 +265,7 @@ namespace MSBuild.ExtensionPack.Framework
         public string NewValue { get; set; }
 
         [Output]
+        [TaskAction(FormatTaskAction, true)]
         public ITaskItem[] Strings { get; set; }
 
         /// <summary>
@@ -288,6 +294,10 @@ namespace MSBuild.ExtensionPack.Framework
                 case "EndsWith":
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether: {0} ends with: {1}", this.String1, this.String2));
                     this.Result = this.String1.EndsWith(this.String2, this.stringCom);
+                    break;
+                case FormatTaskAction:
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Formatting: {0}", this.String1));
+                    this.NewString = string.Format(CultureInfo.CurrentCulture, this.String1, this.Strings);
                     break;
                 case "StartsWith":
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether: {0} starts with: {1}", this.String1, this.String2));
