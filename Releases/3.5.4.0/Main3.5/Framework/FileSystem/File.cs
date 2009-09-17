@@ -727,12 +727,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // Parse the entire file.
-            if (this.Replacement.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                this.Replacement = Regex.Unescape(this.Replacement);
-            }
-            
-            string newFile = Regex.Replace(entireFile, this.RegexPattern, this.Replacement);
+            string newFile = this.parseRegex.Replace(entireFile, this.Replacement);
 
             // First make sure the file is writable.
             FileAttributes fileAttributes = System.IO.File.GetAttributes(parseFile);
