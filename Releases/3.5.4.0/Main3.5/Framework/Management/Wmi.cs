@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Management
     ///             <!-- Note that #~# is used as a separator-->
     ///             <WmiExec Include="Description#~#ExtensionPack Description"/>
     ///         </ItemGroup>
-    ///         <!-- Create a share using the WmiExec ItemGroup info-->
+    ///         <!-- Set share details using the WmiExec ItemGroup info-->
     ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="SetShareInfo" Instance="Name='ashare'" MethodParameters="@(WmiExec)" Namespace="\root\CIMV2">
     ///             <Output TaskParameter="ReturnValue" PropertyName="Rval"/>
     ///         </MSBuild.ExtensionPack.Management.Wmi>
@@ -55,7 +55,7 @@ namespace MSBuild.ExtensionPack.Management
     ///         </MSBuild.ExtensionPack.Management.Wmi>
     ///         <Message Text="WMI Info for ServerSettings on %(Info2.Identity): InstanceName=%(Info2.InstanceName)"/>
     ///         <!-- Query a remote server -->
-    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="GetInfo" MachineName="AREMOTESERVER" UserName="ADOMAIN\AUSERNAME" UserPassword="APASSWORD" Class="Win32_BIOS" Properties="@(WmiProps)" Namespace="\root\cimv2">
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Query" MachineName="AREMOTESERVER" UserName="ADOMAIN\AUSERNAME" UserPassword="APASSWORD" Class="Win32_BIOS" Properties="@(WmiProps)" Namespace="\root\cimv2">
     ///             <Output TaskParameter="Info" ItemName="Info2"/>
     ///         </MSBuild.ExtensionPack.Management.Wmi>
     ///         <Message Text="WMI Info for %(Info2.Identity): BIOSVersion=%(Info2.BIOSVersion), CurrentLanguage=%(Info2.CurrentLanguage), Manufacturer=%(Info2.Manufacturer), SerialNumber=%(Info2.SerialNumber)"/>
@@ -181,7 +181,7 @@ namespace MSBuild.ExtensionPack.Management
             }
 
             ManagementObject classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null);
-
+            
             // Obtain in-parameters for the method
             ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
@@ -199,7 +199,6 @@ namespace MSBuild.ExtensionPack.Management
 
             // Execute the method and obtain the return values.
             ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
-
             if (outParams != null)
             {
                 this.ReturnValue = outParams["ReturnValue"].ToString();
@@ -216,11 +215,10 @@ namespace MSBuild.ExtensionPack.Management
             ObjectQuery query = new ObjectQuery("SELECT * FROM " + this.Class);
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
-
             this.info = new List<ITaskItem>();
-            ITaskItem item = new TaskItem(this.MachineName);
             foreach (ManagementObject m in queryCollection)
             {
+                ITaskItem item = new TaskItem(this.MachineName);
                 foreach (ITaskItem prop in this.Properties)
                 {
                     try
@@ -251,9 +249,9 @@ namespace MSBuild.ExtensionPack.Management
                         this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Property Not Found: {0}", prop.ItemSpec));
                     }
                 }
-            }
 
-            this.info.Add(item);
+                this.info.Add(item);
+            }
         }
     }
 }
