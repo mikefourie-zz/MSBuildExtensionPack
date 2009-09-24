@@ -33,7 +33,19 @@ namespace MSBuild.ExtensionPack.Management
     ///             <Wmi2Props Include="InstanceName"/>
     ///             <!-- Note that #~# is used as a separator-->
     ///             <WmiExec Include="Description#~#ExtensionPack Description"/>
+    ///             <WmiExec2 Include="Name#~#MyNewShare;Path#~#C:\demo;Type#~#0"/>
+    ///             <WmiExec3 Include="CommandLine#~#calc.exe"/>
     ///         </ItemGroup>
+    ///         <!-- Start the Calculator -->
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Process" Method="Create" MethodParameters="@(WmiExec3)" Namespace="\root\CIMV2">
+    ///             <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+    ///         </MSBuild.ExtensionPack.Management.Wmi>
+    ///         <Message Text="ReturnValue: $(Rval2)"/>
+    ///         <!-- Create a share -->
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="Create" MethodParameters="@(WmiExec2)" Namespace="\root\CIMV2">
+    ///             <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+    ///         </MSBuild.ExtensionPack.Management.Wmi>
+    ///         <Message Text="ReturnValue: $(Rval2)"/>
     ///         <!-- Set share details using the WmiExec ItemGroup info-->
     ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="SetShareInfo" Instance="Name='ashare'" MethodParameters="@(WmiExec)" Namespace="\root\CIMV2">
     ///             <Output TaskParameter="ReturnValue" PropertyName="Rval"/>
@@ -178,30 +190,56 @@ namespace MSBuild.ExtensionPack.Management
             if (!string.IsNullOrEmpty(this.Instance))
             {
                 managementPath += "." + this.Instance;
-            }
 
-            ManagementObject classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null);
-            
-            // Obtain in-parameters for the method
-            ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+                var classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null);
 
-            if (this.MethodParameters != null)
-            {
-                // Add the input parameters.
-                foreach (ITaskItem param in this.MethodParameters)
+                // Obtain in-parameters for the method
+                ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+
+                if (this.MethodParameters != null)
                 {
-                    string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
-                    inParams[data[0]] = data[1];
+                    // Add the input parameters.
+                    foreach (ITaskItem param in this.MethodParameters)
+                    {
+                        string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                        inParams[data[0]] = data[1];
+                    }
+                }
+
+                // Execute the method and obtain the return values.
+                ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
+                if (outParams != null)
+                {
+                    this.ReturnValue = outParams["ReturnValue"].ToString();
                 }
             }
-
-            // Execute the method and obtain the return values.
-            ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
-            if (outParams != null)
+            else
             {
-                this.ReturnValue = outParams["ReturnValue"].ToString();
+                ManagementClass mgmtClass = new ManagementClass(this.Scope, new ManagementPath(managementPath), null);
+
+                // Obtain in-parameters for the method
+                ManagementBaseObject inParams = mgmtClass.GetMethodParameters(this.Method);
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+
+                if (this.MethodParameters != null)
+                {
+                    // Add the input parameters.
+                    foreach (ITaskItem param in this.MethodParameters)
+                    {
+                        string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                        inParams[data[0]] = data[1];
+                    }
+                }
+
+                // Execute the method and obtain the return values.
+                ManagementBaseObject outParams = mgmtClass.InvokeMethod(this.Method, inParams, null);
+                if (outParams != null)
+                {
+                    this.ReturnValue = outParams["ReturnValue"].ToString();
+                }
             }
         }
 

@@ -13,7 +13,19 @@
             <Wmi2Props Include="InstanceName"/>
             <!-- Note that #~# is used as a separator-->
             <WmiExec Include="Description#~#ExtensionPack Description"/>
+            <WmiExec2 Include="Name#~#MyNewShare;Path#~#C:\demo;Type#~#0"/>
+            <WmiExec3 Include="CommandLine#~#calc.exe"/>
         </ItemGroup>
+        <!-- Start the Calculator -->
+        <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Process" Method="Create" MethodParameters="@(WmiExec3)" Namespace="\root\CIMV2">
+            <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+        </MSBuild.ExtensionPack.Management.Wmi>
+        <Message Text="ReturnValue: $(Rval2)"/>
+        <!-- Create a share -->
+        <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="Create" MethodParameters="@(WmiExec2)" Namespace="\root\CIMV2">
+            <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+        </MSBuild.ExtensionPack.Management.Wmi>
+        <Message Text="ReturnValue: $(Rval2)"/>
         <!-- Set share details using the WmiExec ItemGroup info-->
         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="SetShareInfo" Instance="Name='ashare'" MethodParameters="@(WmiExec)" Namespace="\root\CIMV2">
             <Output TaskParameter="ReturnValue" PropertyName="Rval"/>
