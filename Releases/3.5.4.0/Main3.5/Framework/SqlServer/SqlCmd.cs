@@ -3,10 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.SqlServer
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.SqlServer.Extended;
 
@@ -54,25 +51,11 @@ namespace MSBuild.ExtensionPack.SqlServer
         private const string ExecuteTaskAction = "Execute";
         private const string ExecutionMessage = "Executing '{0}' with '{1}'";
         private const string InputFileMessage = "Adding input file '{0}'";
-
         private const string InvalidSqlCmdPathError = "Unable to resolve path to sqlcmd.exe. Assuming it is in the PATH environment variable.";
-
         private const string InvalidTaskActionError = "Invalid TaskAction passed: {0}";
-
         private const string LoginTimeoutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
-
         private const string QueryMessage = "Adding query '{0}'";
-        /*
- -i "C:\build\current\Prod
-sqlcmd.exe
-         * */
         private const string QueryTimeoutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
-
-        // I found this number by finding where the command sent to SqlCmd got truncated on a 60,000+ character command.  It turns out it, the
-        // number is 8191 * 4 =  32,764; 8,191 is the documented maximum number of characters in a command-line string(see 
-        // http://support.microsoft.com/kb/830473).
-        private const int CommandLineMaxLength = 32764;
-
         private int loginTimeout = 8;
         private int queryTimeout;
         private string server = ".";
@@ -413,6 +396,21 @@ sqlcmd.exe
                 sb.Append(" -A ");
             }
 
+            // Input/Output Options
+
+            // Input Files
+            if (this.InputFiles != null)
+            {
+                foreach (ITaskItem file in this.InputFiles)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
+                    sb.Append(" -i ");
+                    sb.Append("\"");
+                    sb.Append(file.GetMetadata("FullPath"));
+                    sb.Append("\"");
+                }
+            }
+
             // Output file
             if (!string.IsNullOrEmpty(this.OutputFile))
             {
@@ -538,15 +536,9 @@ sqlcmd.exe
                 this.SqlCmdPath = "sqlcmd.exe";
             }
 
-            var baseArguments = this.BuildArguments();
-            var lengthRemaining = CommandLineMaxLength - this.SqlCmdPath.Length - 1 - baseArguments.Length - 1;
-            LogTaskMessage(MessageImportance.Low, "There are {0} characters available in the argument list for the input files.", new object[] { lengthRemaining });
-            foreach (var inputFileArgs in new InputFileArgumentEnumerator(this, this.InputFiles, lengthRemaining))
-            {
-                var argumentLength = baseArguments.Length + 1 + inputFileArgs.Length;
-                this.LogTaskMessage(MessageImportance.Low, "About to execute command that is {0} characters long.", new object[] { argumentLength });
-                this.ExecuteCommand(baseArguments + " " + inputFileArgs);
-            }
+            // Build out the arguments
+            var arguments = this.BuildArguments();
+            this.ExecuteCommand(arguments);
         }
 
         private void SwitchReturnValue(int returnValue, string error)
@@ -556,80 +548,6 @@ sqlcmd.exe
                 case 1:
                     this.LogTaskWarning("Exit Code 1. Failure: " + error);
                     break;
-            }
-        }
-
-        private class InputFileArgumentEnumerator : IEnumerator<string>, IEnumerable<string>
-        {
-            private readonly BaseTask task;
-            private readonly int maxArgLength = CommandLineMaxLength;
-            private readonly ITaskItem[] inputFiles;
-            private int currentIdx;
-            private StringBuilder currentArgList;
-
-            public InputFileArgumentEnumerator(BaseTask baseTask, ITaskItem[] inputFileList, int maxArgLength)
-            {
-                this.task = baseTask;
-                this.inputFiles = inputFileList;
-                this.maxArgLength = maxArgLength;
-                this.Reset();
-            }
-
-            public string Current
-            {
-                get { return this.currentArgList.ToString(); }
-            }
-
-            object IEnumerator.Current
-            {
-                get { return this.Current; }
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public bool MoveNext()
-            {
-                if (this.inputFiles == null || this.currentIdx >= this.inputFiles.Length)
-                {
-                    return false;
-                }
-
-                this.currentArgList = new StringBuilder();
-                for (; this.currentIdx < this.inputFiles.Length; ++this.currentIdx)
-                {
-                    ITaskItem file = this.inputFiles[this.currentIdx];
-                    string fullPath = file.GetMetadata("FullPath");
-                    if (this.currentArgList.Length + 6 + fullPath.Length > this.maxArgLength)
-                    {
-                        break;
-                    }
-
-                    this.task.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
-                    this.currentArgList.Append(" -i ");
-                    this.currentArgList.Append("\"");
-                    this.currentArgList.Append(file.GetMetadata("FullPath"));
-                    this.currentArgList.Append("\"");
-                }
-
-                return true;
-            }
-
-            public void Reset()
-            {
-                this.currentIdx = 0;
-                this.currentArgList = new StringBuilder();
-            }
-
-            public IEnumerator<string> GetEnumerator()
-            {
-                return this;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this;
             }
         }
     }
