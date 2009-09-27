@@ -114,7 +114,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/9c5401ed-6f55-089e-3918-2476c186ca66.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/9c5401ed-6f55-089e-3918-2476c186ca66.htm")]
     public class TextString : BaseTask
     {
         private const string CompareTaskAction = "Compare";

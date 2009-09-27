@@ -15,8 +15,6 @@ namespace MSBuild.ExtensionPack.Framework
     using Microsoft.Build.Utilities;
     using Microsoft.CSharp;
 
-    //// TODO: [HelpUrl]
-
     // Possible future extensions:
     //   Advanced conversions (supporting more user-defined types via IFormattable, constructors, ToString, TypeConverter/TypeDescriptor, or Reflection/AssignableFrom)
     //   Languages other than C# (not too hard if we convert to CodeDOM)
@@ -43,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para>A "closure" is a reference to a method along with values for all the method's input and output parameters.</para>
     /// <para><b>Using Closures</b></para>
     /// <para>A closure contains values for all inputs and outputs of a particular method. Generally, a closure is created, its input values are set, it is invoked, its output values are retrieved, and finally the closure is destroyed.</para>
-    /// <para>When a closure is created, all input and ouput values are set to their default values. It is possible to call a method without specifying input values; in this case, the default values are used. It is also possible to re-use a closure instead of destroying it; however, this may cause confusion since the output values are not reset before invoking the method again.</para>
+    /// <para>When a closure is created, all input and output values are set to their default values. It is possible to call a method without specifying input values; in this case, the default values are used. It is also possible to re-use a closure instead of destroying it; however, this may cause confusion since the output values are not reset before invoking the method again.</para>
     /// <para>Most of the time, the <b>Call</b> or <b>Run</b> task actions are used. These create a closure to do their work, destroying it when they are done. These task actions are much more compact than using the closure-based task actions such as <b>SetInput</b> and <b>GetOutput</b>.</para>
     /// <para>However, <b>Call</b> and <b>Run</b> do have limitations. Closures allow any number of input and output values, instead of just three. Also, input and output values are set and retrieved by name when using closures directly; <b>Run</b> and <b>Call</b> can only set and retrieve by position.</para>
     /// <para><b>Code Context</b></para>
@@ -175,7 +173,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para>This conversion is designed to work similarly to the MSBuild conversions and default C# conversions to prevent unexpected behavior. The exact steps taken are dependent on the group the output type belongs to; see <i>Supported Types</i> above for more information about the type grouping.</para>
     /// <para><b>Group A</b> - The actual objects returned must be of type <b>TaskItem</b> or <b>TaskItem[]</b> (returning an instance of another type implementing <b>ITaskItem</b> is not supported). No actual conversion is performed. If the method produces a single <b>TaskItem</b>, then the task action creates an array of task items containing only the single element.</para>
     /// <para><b>Groups B and C</b> - An array of task items is returned containing a single element. The <b>ItemSpec</b> of that single element is the output value converted to a string. Note that null values are treated specially (see below).</para>
-    /// <para><b>Group D</b> - An array of task items is returned, with the same number of items as the ouput array. For each corresponding array item, the <b>ItemSpec</b> of the task item array element is set to the string representation of the output array element.</para>
+    /// <para><b>Group D</b> - An array of task items is returned, with the same number of items as the output array. For each corresponding array item, the <b>ItemSpec</b> of the task item array element is set to the string representation of the output array element.</para>
     /// <para>If an output argument value is null, then no conversions are performed by the task action. MSBuild will convert a null value to an empty string or empty item group if necessary.</para>
     /// <para>The default MSBuild conversion will convert from <b>ITaskItem[]</b> to an item group or string as necessary.</para>
     /// <para><b>Advanced Code Options</b></para>
@@ -184,7 +182,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para>Finally, the method is given some default parameters. Currently, the only default parameter is "@this", but all parameter names beginning with an underscore ("_") are reserved for future default parameters. Specify <see cref="NoDefaultParameters"/> to prevent default parameters from being used.</para>
     /// <para><b>Limitations</b></para>
     /// <para>One defined method may not call another defined method.</para>
-    /// <para>There is no facility for a method storing data in a way that it could be retrieved by a future call of the method (or another method). A workaround is to convert any such data to a string representation and pass that as an input and/or ouput parameter.</para>
+    /// <para>There is no facility for a method storing data in a way that it could be retrieved by a future call of the method (or another method). A workaround is to convert any such data to a string representation and pass that as an input and / or output parameter.</para>
     /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -457,6 +455,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/2e32aa32-13c7-6374-e53e-241ff534fe1c.htm")]
     public sealed class DynamicExecute : BaseTask
     {
         private const string DefineTaskAction = "Define";

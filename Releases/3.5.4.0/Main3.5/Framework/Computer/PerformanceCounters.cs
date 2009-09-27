@@ -46,7 +46,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/7badb83c-0162-f8c7-afd0-969f571268fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/7badb83c-0162-f8c7-afd0-969f571268fe.htm")]
     public class PerformanceCounters : BaseTask
     {
         private const string AddTaskAction = "Add";

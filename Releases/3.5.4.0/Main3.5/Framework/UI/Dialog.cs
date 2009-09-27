@@ -58,7 +58,7 @@ namespace MSBuild.ExtensionPack.UI
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/35220eaf-ab0c-7bec-9a02-8d6ffde55632.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/35220eaf-ab0c-7bec-9a02-8d6ffde55632.htm")]
     public class Dialog : BaseTask
     {
         private const string ShowTaskAction = "Show";
