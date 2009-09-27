@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
@@ -65,9 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\Common\Attributes.cs">
-	  <Link>Attributes.cs</Link>
-	</Compile>
+    <Compile Include="..\Common\Attributes.cs">
+      <Link>Attributes.cs</Link>
+    </Compile>
     <Compile Include="..\Common\BaseTask.cs">
       <Link>BaseTask.cs</Link>
     </Compile>
@@ -83,7 +83,7 @@
   <ItemGroup>
     <None Include="XmlSamples\IIS7Binding.proj" />
     <None Include="XmlSamples\IIS7AppPool.proj" />
-    <None Include="XmlSamples\IIS7Websiteproj.proj" />
+    <None Include="XmlSamples\IIS7Website.proj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AssemblyReferences\Microsoft.Web.Administration.dll" />

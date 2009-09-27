@@ -48,11 +48,22 @@ namespace MSBuild.ExtensionPack.Web
     ///             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
     ///         </MSBuild.ExtensionPack.Web.Iis7Website>
     ///         <Message Text="NewSite SiteId: $(NewSiteId)"/>
+    ///         <!-- Start a site -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="NewSite2"/>
+    ///         <!-- Check if the site exists -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckExists" Name="NewSite2">
+    ///             <Output TaskParameter="Exists" PropertyName="SiteExists"/>
+    ///         </MSBuild.ExtensionPack.Web.Iis7Website>
+    ///         <Message Text="NewSite2 SiteExists: $(SiteExists)"/>
     ///         <!-- Create a basic site -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Create" Name="NewSite2" Path="c:\demo2" Port="84" Force="true">
     ///             <Output TaskParameter="SiteId" PropertyName="NewSiteId2"/>
     ///         </MSBuild.ExtensionPack.Web.Iis7Website>
     ///         <Message Text="NewSite2 SiteId: $(NewSiteId2)"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckExists" Name="NewSite2">
+    ///             <Output TaskParameter="Exists" PropertyName="SiteExists"/>
+    ///         </MSBuild.ExtensionPack.Web.Iis7Website>
+    ///         <Message Text="NewSite2 SiteExists: $(SiteExists)"/>
     ///         <!-- Stop a site -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Stop" Name="NewSite2"/>
     ///         <!-- Start a site -->
@@ -288,7 +299,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.SiteExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -301,7 +312,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.SiteExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
