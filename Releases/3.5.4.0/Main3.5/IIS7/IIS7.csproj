@@ -75,12 +75,16 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IIS7Application.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="IIS7AppPool.cs" />
     <Compile Include="IIS7Binding.cs" />
     <Compile Include="IIS7Website.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="XmlSamples\IIS7Application.proj" />
     <None Include="XmlSamples\IIS7Binding.proj" />
     <None Include="XmlSamples\IIS7AppPool.proj" />
     <None Include="XmlSamples\IIS7Website.proj" />
