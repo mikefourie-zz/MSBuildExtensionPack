@@ -850,6 +850,7 @@
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="Escape"/>
+                                <xs:enumeration value="FilterItems"/>
                                 <xs:enumeration value="GetCommonItems"/>
                                 <xs:enumeration value="GetCurrentDirectory"/>
                                 <xs:enumeration value="GetDistinctItems"/>
@@ -865,6 +866,8 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="CurrentDirectory"/>
+                    <xs:attribute name="RegexPattern"/>
+                    <xs:attribute name="MetaData"/>
                     <xs:attribute name="Position"/>
                     <xs:attribute name="ItemString"/>
                     <xs:attribute name="Separator"/>

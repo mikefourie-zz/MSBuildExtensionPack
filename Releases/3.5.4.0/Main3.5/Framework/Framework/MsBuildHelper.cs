@@ -10,12 +10,14 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Globalization;
     using System.IO;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Escape</i> (<b>Required: </b> InputString <b>Output: </b> OutputString)</para>
+    /// <para><i>FilterItems</i> (<b>Required: </b> InputItems1, RegexPattern <b>Optional:</b> Metadata <b>Output: </b> OutputItems)</para>
     /// <para><i>GetCommonItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>GetCurrentDirectory</i> (<b>Output: </b> CurrentDirectory)</para>
     /// <para><i>GetDistinctItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
@@ -47,7 +49,37 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Col3 Include="hello"/>
     ///             <Col3 Include="bye"/>
     ///             <DuplicateFiles Include="C:\Demo\**\*"/>
+    ///             <XXX Include="AA"/>
+    ///             <XXX Include="AAB"/>
+    ///             <XXX Include="ABA"/>
+    ///             <XXX Include="AABA"/>
+    ///             <XXX Include="BBAA"/>
+    ///             <YYY Include="AA">
+    ///                 <Filter>CC</Filter>
+    ///             </YYY>
+    ///             <YYY Include="AA">
+    ///                 <Filter>CHJC</Filter>
+    ///             </YYY>
+    ///             <YYY Include="BB">
+    ///                 <Filter>CCDG</Filter>
+    ///             </YYY>
+    ///             <YYY Include="CC">
+    ///                 <Filter>CDC</Filter>
+    ///             </YYY>
+    ///             <YYY Include="DD">
+    ///                 <Filter>CCEE</Filter>
+    ///             </YYY>
     ///         </ItemGroup>
+    ///         <!-- Filter Items based on Name -->
+    ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItems" InputItems1="@(XXX)" RegexPattern="^AA">
+    ///             <Output TaskParameter="OutputItems" ItemName="filtered"/>
+    ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+    ///         <Message Text="filtered Items: %(filtered.Identity)"/>
+    ///         <!-- Filter Items based on MetaData -->
+    ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItems" InputItems1="@(YYY)" Metadata="Filter" RegexPattern="^CC">
+    ///             <Output TaskParameter="OutputItems" ItemName="filteredbymeta"/>
+    ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+    ///         <Message Text="filteredbymeta Items: %(filteredbymeta.Identity)"/>
     ///         <!-- Convert an Item Collection into a string -->
     ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="ItemColToString" InputItems1="@(Col1)" Separator=" - ">
     ///             <Output TaskParameter="OutString" PropertyName="out"/>
@@ -134,6 +166,7 @@ namespace MSBuild.ExtensionPack.Framework
     public class MSBuildHelper : BaseTask
     {
         private const string EscapeTaskAction = "Escape";
+        private const string FilterItemsTaskAction = "FilterItems";
         private const string GetCommonItemsTaskAction = "GetCommonItems";
         private const string GetCurrentDirectoryTaskAction = "GetCurrentDirectory";
         private const string GetDistinctItemsTaskAction = "GetDistinctItems";
@@ -151,6 +184,7 @@ namespace MSBuild.ExtensionPack.Framework
         private List<ITaskItem> outputItems;
 
         [DropdownValue(EscapeTaskAction)]
+        [DropdownValue(FilterItemsTaskAction)]
         [DropdownValue(GetCommonItemsTaskAction)]
         [DropdownValue(GetCurrentDirectoryTaskAction)]
         [DropdownValue(GetDistinctItemsTaskAction)]
@@ -197,7 +231,14 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets the input string
         /// </summary>
+        [TaskAction(EscapeTaskAction, true)]
         public string InString { get; set; }
+
+        /// <summary>
+        /// Sets the Metadata
+        /// </summary>
+        [TaskAction(FilterItemsTaskAction, false)]
+        public string Metadata { get; set; }
         
         /// <summary>
         /// Gets the output string
@@ -208,6 +249,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets InputItems1.
         /// </summary>
+        [TaskAction(FilterItemsTaskAction, true)]
         [TaskAction(GetCommonItemsTaskAction, true)]
         [TaskAction(GetDistinctItemsTaskAction, true)]
         [TaskAction(GetItemTaskAction, true)]
@@ -264,6 +306,12 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(StringToItemColTaskAction, false)]
         public int ItemCount { get; set; }
 
+        /// <summary>
+        /// Sets the regex pattern.
+        /// </summary>
+        [TaskAction(FilterItemsTaskAction, true)]
+        public string RegexPattern { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -275,6 +323,9 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 case "Escape":
                     this.Escape();
+                    break;
+                case FilterItemsTaskAction:
+                    this.FilterItems();
                     break;
                 case "RemoveDuplicateFiles":
                     this.RemoveDuplicateFiles();
@@ -313,6 +364,38 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private void FilterItems()
+        {
+            this.LogTaskMessage("Filtering Items");
+            if (this.inputItems1 == null)
+            {
+                Log.LogError("InputItems1 is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.RegexPattern))
+            {
+                Log.LogError("RegexPattern is required");
+                return;
+            }
+
+            // Load the regex to use
+            Regex parseRegex = new Regex(this.RegexPattern, RegexOptions.Compiled);
+            this.outputItems = new List<ITaskItem>();
+
+            foreach (ITaskItem item in this.InputItems1)
+            {
+                Match m = string.IsNullOrEmpty(this.Metadata) ? parseRegex.Match(item.ItemSpec) : parseRegex.Match(item.GetMetadata(this.Metadata));
+
+                if (m.Success)
+                {
+                    this.outputItems.Add(item);
+                }
+            }
+
+            this.ItemCount = this.outputItems.Count;
         }
 
         private void UpdateMetadata()
