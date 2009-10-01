@@ -248,12 +248,12 @@ namespace MSBuild.ExtensionPack.Management
         /// </summary>
         private void Query()
         {
+            this.info = new List<ITaskItem>();
             this.GetManagementScope(this.Namespace);
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing WMI query: SELECT * FROM {0}", this.Class));
             ObjectQuery query = new ObjectQuery("SELECT * FROM " + this.Class);
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
-            this.info = new List<ITaskItem>();
             foreach (ManagementObject m in queryCollection)
             {
                 ITaskItem item = new TaskItem(this.MachineName);
