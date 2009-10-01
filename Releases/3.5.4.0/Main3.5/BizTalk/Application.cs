@@ -355,7 +355,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             foreach (ITaskItem appl in this.Applications)
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application: {0}", appl.ItemSpec));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application: {0} - {1}", appl.ItemSpec, this.TaskAction));
                 if (this.CheckExists(appl.ItemSpec))
                 {
                     if (this.Force)
@@ -412,7 +412,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 apps.UiLevel = 2;
 
                 Microsoft.BizTalk.ApplicationDeployment.Application deadapp = apps[application.ItemSpec];
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application: {0}", application.ItemSpec));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application: {0} - {1}", application.ItemSpec, this.TaskAction));
                 apps.Remove(deadapp);
             }
 
@@ -461,7 +461,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                             break;
                     }
 
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Application: {0}", appl.ItemSpec));
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application: {0} - {1}", appl.ItemSpec, this.TaskAction));
                     this.explorer.SaveChanges();
                     this.app.Stop(option);
                     this.explorer.SaveChanges();
@@ -479,8 +479,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             foreach (ITaskItem appl in this.Applications)
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Manage Application: {0}. Action: {1}", appl.ItemSpec, this.TaskAction));
-
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Application: {0} - {1}", appl.ItemSpec, this.TaskAction));
                 if (!this.CheckExists(appl.ItemSpec))
                 {
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", appl.ItemSpec));
