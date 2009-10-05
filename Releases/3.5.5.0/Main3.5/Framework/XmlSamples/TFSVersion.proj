@@ -1,0 +1,15 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <FilesToVersion Include="C:\Users\Michael\Documents\Visual Studio 2008\Projects\ConsoleApplication1\ConsoleApplication1\My Project\AssemblyInfo.vb"/>
+    </ItemGroup>
+    <Target Name="Default">
+
+        <MSBuild.ExtensionPack.VisualStudio.TfsVersion TaskAction="SetVersion" Files="%(FilesToVersion.Identity)" Version="3.1.2.5" ForceSetVersion="true"/>
+
+    </Target>
+</Project>

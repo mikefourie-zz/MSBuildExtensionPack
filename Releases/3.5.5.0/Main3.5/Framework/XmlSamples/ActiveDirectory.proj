@@ -1,0 +1,61 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+  <Target Name="Default">
+    <!-- Check a user Exists -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
+      <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
+    <!-- Add local Users -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS2" Description="Elgnt" PasswordNeverExpires="true"/>
+    <!-- Check a user Exists -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
+      <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
+    <!-- Check a Group Exists -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+      <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    <Message Text="NewGroup1 Exists: $(DoesExist)"/>
+    <!-- Add local Groups -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
+    <!-- Check a Group Exists -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+      <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    <Message Text="NewGroup1 Exists: $(DoesExist)"/>
+    <!-- Add the users to the Groups -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJS1;JudgeJS2" Group="NewGroup1;NewGroup2"/>
+    <!-- Delete Users from Groups -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJS1" Group="NewGroup1;NewGroup2"/>
+    <!-- Delete local Users -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUser" User="JudgeJS1;JudgeJS2"/>
+    <!-- Delete local Groups -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteGroup" Group="NewGroup1;NewGroup2"/>
+    <!-- Add a remote User -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" MachineName="D420-7" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    <!-- Add a remote Group -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="RemoteGroup1" MachineName="D420-7" Description="na"/>
+    <!-- Add a Domain User -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Domain="mydomain" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    <!-- Add a Domain Group -->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="DomainGroup1" Domain="mydomain" Description="na"/>
+    <!-- Get a user's password-->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="GetUserPassword" User="Michael" ContextTypeStore="Machine">
+      <Output TaskParameter="Password" PropertyName="Pass"/>
+    </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    <Message Text="User Password: $(Pass)"/>
+    <!-- Check a user's password-->
+    <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserPassword" User="Michael" ContextTypeStore="Machine" Password="$(Pass)">
+      <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    <Message Text="User Exists: $(DoesExist)"/>
+  </Target>
+</Project>

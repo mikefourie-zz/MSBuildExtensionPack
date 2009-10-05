@@ -1,0 +1,43 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Users Include="AReadUser">
+                <Permission>ExecuteFile, Read</Permission>
+            </Users>
+            <Users Include="AChangeUser">
+                <Permission>FullControl</Permission>
+            </Users>
+        </ItemGroup>
+        <!-- Add security for users -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" Path="c:\Demo2" Users="@(Users)"/>
+        <!-- Remove security for users -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" Path="c:\Demo2" Users="@(Users)"/>
+        <!-- Add Deny security for users -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" AccessType="Deny" Path="c:\Demo2" Users="@(Users)"/>
+        <!-- Remove Deny security for users -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" AccessType="Deny" Path="c:\Demo2" Users="@(Users)"/>
+        <!-- Delete all folders matching a given name -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="DeleteAll" Path="c:\Demo2" Match="_svn"/>
+        <!-- Remove all content from a folder whilst maintaining the target folder -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
+        <!-- Move a folder -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
+        <!-- Lets copy a selection of folders to multiple locations -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Get" Path="c:\ddd">
+            <Output TaskParameter="Folders" ItemName="FoundFolders"/>
+        </MSBuild.ExtensionPack.FileSystem.Folder>
+        <Message Text="%(FoundFolders.Identity)"/>
+        <ItemGroup>
+            <MyWebService Include="C:\a\Dist\**\*.*">
+                <ToDir>%(FoundFolders.Identity)</ToDir>
+            </MyWebService>
+        </ItemGroup>
+        <!-- Copy using the metadata -->
+        <Copy SourceFiles="@(MyWebService)" DestinationFolder="%(ToDir)\%(RecursiveDir)" />
+    </Target>
+</Project>

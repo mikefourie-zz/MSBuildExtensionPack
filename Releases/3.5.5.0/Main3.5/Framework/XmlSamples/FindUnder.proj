@@ -1,0 +1,41 @@
+﻿<!--
+  Sample project file demonstrating the use of the MSBuild.ExtensionPack.FileSystem.FindUnder task.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Demo" ToolsVersion="3.5">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Demo">
+        <!-- Only finds files -->
+        <MSBuild.ExtensionPack.FileSystem.FindUnder TaskAction="FindFiles" Path="$(MSBuildProjectDirectory)">
+            <Output ItemName="AllFoundFiles" TaskParameter="FoundItems"/>
+        </MSBuild.ExtensionPack.FileSystem.FindUnder>
+        <Message Text="===== Found Files =====" Importance="high"/>
+        <Message Text="AllFoundFiles:%0d%0a@(AllFoundFiles,'%0d%0a')"/>
+        <!-- Only finds directories -->
+        <MSBuild.ExtensionPack.FileSystem.FindUnder TaskAction="FindDirectories" Path="$(MSBuildProjectDirectory)\..\">
+            <Output ItemName="AllFoundDirectories" TaskParameter="FoundItems"/>
+        </MSBuild.ExtensionPack.FileSystem.FindUnder>
+        <Message Text="===== Found Directories =====" Importance="high"/>
+        <Message Text="AllFoundDirectories:%0d%0a@(AllFoundDirectories,'%0d%0a')"/>
+        <!-- Find both files and directories -->
+        <MSBuild.ExtensionPack.FileSystem.FindUnder TaskAction="FindFilesAndDirectories" Path="$(MSBuildProjectDirectory)\..\">
+            <Output ItemName="AllFoundItems" TaskParameter="FoundItems"/>
+        </MSBuild.ExtensionPack.FileSystem.FindUnder>
+        <Message Text="===== Found Files and Directories =====" Importance="high"/>
+        <Message Text="AllFoundItems:%0d%0a@(AllFoundItems,'%0d%0a')"/>
+        <!-- Find both files with SearchPattern = "F*" -->
+        <MSBuild.ExtensionPack.FileSystem.FindUnder TaskAction="FindFiles" Path="$(MSBuildProjectDirectory)\..\" SearchPattern="F*">
+            <Output ItemName="AllFilesStartingWithF" TaskParameter="FoundItems"/>
+        </MSBuild.ExtensionPack.FileSystem.FindUnder>
+        <Message Text="===== Found Files Starting with 'F' =====" Importance="high"/>
+        <Message Text="AllFilesStartingWithF:%0d%0a@(AllFilesStartingWithF,'%0d%0a')"/>
+        <MSBuild.ExtensionPack.FileSystem.FindUnder TaskAction="FindFiles" Path="$(MSBuildProjectDirectory)\..\" SearchPattern="F*" Recursive="false">
+            <Output ItemName="AllFilesStartingWithF" TaskParameter="FoundItems"/>
+        </MSBuild.ExtensionPack.FileSystem.FindUnder>
+        <Message Text="===== Found Files Starting with 'F' =====" Importance="high"/>
+        <Message Text="AllFilesStartingWithF:%0d%0a@(AllFilesStartingWithF,'%0d%0a')"/>
+    </Target>
+</Project>

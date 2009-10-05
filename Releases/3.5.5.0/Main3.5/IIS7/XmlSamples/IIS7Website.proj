@@ -1,0 +1,48 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <Application Include="/photos">
+            <PhysicalPath>C:\photos</PhysicalPath>
+        </Application>
+        <Application Include="/photos2">
+            <PhysicalPath>C:\photos2</PhysicalPath>
+        </Application>
+        <VirtualDirectory Include="/photosToo">
+            <ApplicationPath>/photos2</ApplicationPath>
+            <PhysicalPath>C:\photos2</PhysicalPath>
+        </VirtualDirectory>
+    </ItemGroup>
+    <Target Name="Default">
+        <!-- Create a site with a virtual directory -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Create" Name="NewSite" Path="c:\demo" Port="86" Force="true" Applications="@(Application)" VirtualDirectories="@(VirtualDirectory)">
+            <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
+        </MSBuild.ExtensionPack.Web.Iis7Website>
+        <Message Text="NewSite SiteId: $(NewSiteId)"/>
+        <!-- Start a site -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="NewSite2"/>
+        <!-- Check if the site exists -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckExists" Name="NewSite2">
+            <Output TaskParameter="Exists" PropertyName="SiteExists"/>
+        </MSBuild.ExtensionPack.Web.Iis7Website>
+        <Message Text="NewSite2 SiteExists: $(SiteExists)"/>
+        <!-- Create a basic site -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Create" Name="NewSite2" Path="c:\demo2" Port="84" Force="true">
+            <Output TaskParameter="SiteId" PropertyName="NewSiteId2"/>
+        </MSBuild.ExtensionPack.Web.Iis7Website>
+        <Message Text="NewSite2 SiteId: $(NewSiteId2)"/>
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckExists" Name="NewSite2">
+            <Output TaskParameter="Exists" PropertyName="SiteExists"/>
+        </MSBuild.ExtensionPack.Web.Iis7Website>
+        <Message Text="NewSite2 SiteExists: $(SiteExists)"/>
+        <!-- Stop a site -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Stop" Name="NewSite2"/>
+        <!-- Start a site -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="NewSite2"/>
+        <!-- Delete a site -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Delete" Name="NewSite2"/>
+    </Target>
+</Project>

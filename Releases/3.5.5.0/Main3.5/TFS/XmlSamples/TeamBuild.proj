@@ -1,0 +1,63 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <PropertyGroup>
+        <TeamFoundationServerUrl>http://YOURSERVER:8080/</TeamFoundationServerUrl>
+        <TeamProject>YOURPROJECT</TeamProject>
+        <BuildUri></BuildUri>
+        <BuildDefinitionName></BuildDefinitionName>
+    </PropertyGroup>
+    <Target Name="Default">
+        <!-- Get information on the latest build -->
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="GetLatest" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild">
+            <Output ItemName="BuildInfo" TaskParameter="Info"/>
+        </MSBuild.ExtensionPack.Tfs.TeamBuild>
+        <Message Text="BuildAgentDirectory: %(BuildInfo.BuildAgentDirectory)"/>
+        <Message Text="BuildAgentBuildServerVersion: %(BuildInfo.BuildAgentBuildServerVersion)"/>
+        <Message Text="BuildAgentDescription: %(BuildInfo.BuildAgentDescription)"/>
+        <Message Text="BuildAgentFullPath: %(BuildInfo.BuildAgentFullPath)"/>
+        <Message Text="BuildAgentMachineName: %(BuildInfo.BuildAgentMachineName)"/>
+        <Message Text="BuildAgentMaxProcesses: %(BuildInfo.BuildAgentMaxProcesses)"/>
+        <Message Text="BuildAgentName: %(BuildInfo.BuildAgentName)"/>
+        <Message Text="BuildAgentPort: %(BuildInfo.BuildAgentPort)"/>
+        <Message Text="BuildAgentUri: %(BuildInfo.BuildAgentUri)"/>
+        <Message Text="BuildDefinitionUri: %(BuildInfo.BuildDefinitionUri)"/>
+        <Message Text="BuildFinished: %(BuildInfo.BuildFinished)"/>
+        <Message Text="BuildNumber: %(BuildInfo.BuildNumber)"/>
+        <Message Text="BuildUri: %(BuildInfo.BuildUri)"/>
+        <Message Text="CompilationStatus: %(BuildInfo.CompilationStatus)"/>
+        <Message Text="CompilationSuccess: %(BuildInfo.CompilationSuccess)"/>
+        <Message Text="ConfigurationFolderPath: %(BuildInfo.ConfigurationFolderPath)"/>
+        <Message Text="ConfigurationFolderUri: %(BuildInfo.ConfigurationFolderUri)"/>
+        <Message Text="DropLocation: %(BuildInfo.DropLocation)"/>
+        <Message Text="FinishTime: %(BuildInfo.FinishTime)"/>
+        <Message Text="KeepForever: %(BuildInfo.KeepForever)"/>
+        <Message Text="LabelName: %(BuildInfo.LabelName)"/>
+        <Message Text="LastChangedBy: %(BuildInfo.LastChangedBy)"/>
+        <Message Text="LastChangedOn: %(BuildInfo.LastChangedOn)"/>
+        <Message Text="LogLocation: %(BuildInfo.LogLocation)"/>
+        <Message Text="Quality: %(BuildInfo.Quality)"/>
+        <Message Text="Reason: %(BuildInfo.Reason)"/>
+        <Message Text="RequestedBy: %(BuildInfo.RequestedBy)"/>
+        <Message Text="RequestedFor: %(BuildInfo.RequestedFor)"/>
+        <Message Text="SourceGetVersion: %(BuildInfo.SourceGetVersion)"/>
+        <Message Text="StartTime: %(BuildInfo.StartTime)"/>
+        <Message Text="TestStatus: %(BuildInfo.TestStatus)"/>
+        <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
+        <!-- Queue a new build -->
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="QueueBuild" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
+        <!-- Retrieve Changesets associated with a given build -->
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
+            <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
+        </MSBuild.ExtensionPack.Tfs.TeamBuild>
+        <Message Text="ID = %(Changesets.Identity), Checked In By = %(Changesets.CheckedInBy), URI = %(Changesets.ChangesetUri), Comment = %(Changesets.Comment)"/>
+        <!-- Retrieve Work Items associated with a given build -->
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
+            <Output ItemName="WorkItems" TaskParameter="RelatedItems"/>
+        </MSBuild.ExtensionPack.Tfs.TeamBuild>
+        <Message Text="ID = %(Workitems.Identity), Status = %(Workitems.Status), Title = %(Workitems.Title), Type  = %(Workitems.Type), URI = %(Workitems.WorkItemUri), AssignedTo = %(Workitems.AssignedTo)"/>
+    </Target>
+</Project>

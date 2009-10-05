@@ -1,0 +1,62 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Database Include="ADatabase">
+                <NewName>ADatabase2</NewName>
+            </Database>
+            <Database2 Include="ADatabase2">
+                <NewName>ADatabase</NewName>
+            </Database2>
+        </ItemGroup>
+        <!-- Get information on a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="GetInfo" DatabaseItem="ADatabase">
+            <Output TaskParameter="Information" ItemName="AllInfo"/>
+        </MSBuild.ExtensionPack.Sql2008.Database>
+        <!-- All the database information properties are available as metadata on the Infomation item -->
+        <Message Text="SpaceAvailable: %(AllInfo.SpaceAvailable)"/>
+        <!-- Backup a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Backup" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
+        <!-- Verify a database backup -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="VerifyBackup" DataFilePath="c:\a\ADatabase.bak"/>
+        <!-- Restore a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
+        <!-- Create a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
+        <!-- Create the database again, using Force to delete the existing database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2" Collation="Latin1_General_CI_AI" Force="true"/>
+        <!-- Check whether a database exists -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Sql2008.Database>
+        <Message Text="Database Exists: $(DoesExist)"/>
+        <!-- Delete a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Delete" DatabaseItem="ADatabase2"/>
+        <!-- Check whether a database exists -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Sql2008.Database>
+        <Message Text="Database Exists: $(DoesExist)"/>
+        <!-- Get the number of active connections to a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="GetConnectionCount" DatabaseItem="ADatabase">
+            <Output TaskParameter="ConnectionCount" PropertyName="Count"/>
+        </MSBuild.ExtensionPack.Sql2008.Database>
+        <Message Text="Database ConnectionCount: $(Count)"/>
+        <!-- Delete the backup history for a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="DeleteBackupHistory" DatabaseItem="ADatabase"/>
+        <!-- Set a database offline -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="SetOffline" DatabaseItem="ADatabase"/>
+        <!-- Set a database online -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="SetOnline" DatabaseItem="ADatabase"/>
+        <!-- Rename a database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Rename" DatabaseItem="@(Database)"/>
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Rename" DatabaseItem="@(Database2)"/>
+        <!-- Script a database to file -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Script" DatabaseItem="ReportServer" OutputFilePath="c:\ADatabaseScript.sql"/>
+    </Target>
+</Project>
+

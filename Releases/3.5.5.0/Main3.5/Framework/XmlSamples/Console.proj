@@ -1,0 +1,23 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Read input from the user -->
+        <MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine">
+            <Output TaskParameter="UserResponse" PropertyName="Line"/>
+        </MSBuild.ExtensionPack.UI.Console>
+        <Message Text="User Typed: $(Line)"/>
+         <!-- Read input from the user and uppercase it all -->
+        <MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Please enter your password and press the [Enter] key" ToUpper="true">
+            <Output TaskParameter="UserResponse" PropertyName="Line"/>
+        </MSBuild.ExtensionPack.UI.Console>
+        <Message Text="User Typed: $(Line)"/>
+        <!-- Play some beeps -->
+        <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="3"/>
+        <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="4" Duration="500" Frequency="1000"/>
+        <MSBuild.ExtensionPack.UI.Console TaskAction="Beep" Repeat="3" Interval="2000"/>
+    </Target>
+</Project>

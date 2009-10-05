@@ -1,0 +1,27 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Create a website -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Create"  Name="awebsite" Force="true" Properties="AspEnableApplicationRestart=False;AspScriptTimeout=1200;ContentIndexed=False;LogExtFileFlags=917455;ScriptMaps=;ServerBindings=:80:www.free2todev.com;SecureBindings=;ServerAutoStart=True;UseHostName=True"/>
+        <!-- Pause a website -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Pause" Name="awebsite" />
+        <!-- Stop a website -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Stop" Name="awebsite" />
+        <!-- Start a website -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Start" Name="awebsite" />
+        <!-- Check whether a website exists -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="CheckExists" Name="awebsite">
+            <Output PropertyName="SiteExists" TaskParameter="Exists"/>
+        </MSBuild.ExtensionPack.Web.Iis6Website>
+        <Message Text="Website Exists: $(SiteExists)"/>
+        <!-- Check whether a website exists -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="CheckExists" Name="anonwebsite">
+            <Output PropertyName="SiteExists" TaskParameter="Exists"/>
+        </MSBuild.ExtensionPack.Web.Iis6Website>
+        <Message Text="Website Exists: $(SiteExists)"/>
+    </Target>
+</Project>
