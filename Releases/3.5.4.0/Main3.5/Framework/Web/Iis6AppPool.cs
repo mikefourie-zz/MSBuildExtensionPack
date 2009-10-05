@@ -71,7 +71,7 @@ namespace MSBuild.ExtensionPack.Web
         }
         
         /// <summary>
-        /// Sets the app pool properties. This is a semicolon seperated list, e.g. AppPoolAutoStart=TRUE;PeriodicRestartTime=0
+        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(ModifyTaskAction, false)]

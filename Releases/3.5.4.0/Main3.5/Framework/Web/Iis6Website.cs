@@ -80,9 +80,8 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Gets or sets the app pool properties.
+        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
         /// </summary>
-        /// <value>The app pool properties.</value>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
         {
@@ -93,7 +92,6 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
-        /// <value>The name.</value>
         [Required]
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]

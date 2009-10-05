@@ -27,11 +27,11 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
-    ///         <Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
     ///         <!-- Create another IIsWebVirtualDir -->
-    ///         <Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
     ///         <!-- Delete the IIsWebVirtualDir-->
-    ///         <Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Sets the Properties. Use a semi-colon delimiter.
+        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
