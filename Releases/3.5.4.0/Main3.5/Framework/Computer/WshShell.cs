@@ -169,7 +169,6 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 
                 shortcutToCreate.Save();
-
             }
         }
     }

@@ -10,15 +10,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Comments, Notes, Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All)</para>
-    /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Server, Recursive, VersionSpec, Version, Baseless, Force)</para>
-    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist)</para>
-    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
-    /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive)</para>
+    /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Comments, Notes, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
+    /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
+    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode)</para>
+    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -76,7 +76,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private bool recursive = true;
         private ShellWrapper shellWrapper;
         private string itemSpec = string.Empty;
-        private int returnValue;
         private string returnOutput;
 
         [DropdownValue(AddTaskAction)]
@@ -249,6 +248,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Lets you set text to override check-in policies
         /// </summary>
         public string OverrideText { get; set; }
+
+        /// <summary>
+        /// Gets the ExitCode
+        /// </summary>
+        [Output]
+        public int ExitCode { get; set; }
 
         protected override void InternalExecute()
         {
@@ -447,7 +452,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
-            this.returnValue = this.shellWrapper.Execute();
+            this.ExitCode = this.shellWrapper.Execute();
             this.returnOutput = this.shellWrapper.StandardOutput;
             this.LogTaskMessage(MessageImportance.Low, this.returnOutput);
             this.SwitchReturnValue(this.shellWrapper.StandardError.Trim());
@@ -478,7 +483,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void SwitchReturnValue(string error)
         {
-            switch (this.returnValue)
+            switch (this.ExitCode)
             {
                 case 1:
                     this.LogTaskWarning("Exit Code 1. Partial success: " + error);

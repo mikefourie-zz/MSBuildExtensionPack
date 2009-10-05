@@ -10,8 +10,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Branch</i> (<b>Required: </b>OldItem, NewItem <b>Optional: </b>Version, WorkingDirectory, VersionSpec)</para>
-    /// <para><i>Rename</i> (<b>Required: </b>OldItem, NewItem <b>Optional: </b>Version, WorkingDirectory, VersionSpec)</para>
+    /// <para><i>Branch</i> (<b>Required: </b>OldItem, NewItem <b>Optional: </b>Version, WorkingDirectory, VersionSpec <b>Output:</b> ExitCode)</para>
+    /// <para><i>Rename</i> (<b>Required: </b>OldItem, NewItem <b>Optional: </b>Version, WorkingDirectory, VersionSpec <b>Output:</b> ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -90,6 +90,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
             set { this.version = value; }
         }
 
+        /// <summary>
+        /// Gets the ExitCode
+        /// </summary>
+        [Output]
+        public int ExitCode { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -146,14 +152,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, arguments));
-            int returnValue = this.shellWrapper.Execute();
+            this.ExitCode = this.shellWrapper.Execute();
             this.LogTaskMessage(MessageImportance.Low, this.shellWrapper.StandardOutput);
-            this.SwitchReturnValue(returnValue, this.shellWrapper.StandardError.Trim());
+            this.SwitchReturnValue(this.shellWrapper.StandardError.Trim());
         }
 
-        private void SwitchReturnValue(int returnValue, string error)
+        private void SwitchReturnValue(string error)
         {
-            switch (returnValue)
+            switch (this.ExitCode)
             {
                 case 1:
                     this.LogTaskWarning("Exit Code 1. Partial success: " + error);
