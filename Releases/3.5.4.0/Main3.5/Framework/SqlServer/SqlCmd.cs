@@ -167,7 +167,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(LoginTimeoutRangeError, value);
+                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, LoginTimeoutRangeError, value));
                 }
             }
         }
@@ -287,7 +287,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(QueryTimeoutRangeError, value);
+                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, QueryTimeoutRangeError, value));
                 }
             }
         }

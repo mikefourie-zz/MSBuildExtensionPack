@@ -316,7 +316,7 @@ namespace MSBuild.ExtensionPack.Xml
                 (o, e) =>
                 {
                     this.Output += e.Message;
-                    this.Log.LogWarning("{0}", e.Message);
+                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, "{0}", e.Message));
                     errorEncountered = true;
                 });
 

@@ -1301,7 +1301,7 @@ namespace MSBuild.ExtensionPack.Framework
                 {
                     if (error.IsWarning)
                     {
-                        this.Log.LogWarning(error.ErrorNumber + ": " + error.ErrorText);
+                        this.LogTaskWarning(error.ErrorNumber + ": " + error.ErrorText);
                     }
                     else
                     {

@@ -427,7 +427,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception e)
             {
-                Log.LogMessage(e.ToString());
+                this.LogTaskMessage(e.ToString());
                 this.Exists = false;
             }
         }

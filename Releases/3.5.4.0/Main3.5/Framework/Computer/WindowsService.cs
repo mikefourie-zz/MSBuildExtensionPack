@@ -936,7 +936,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Install Service succeeded for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Install Service succeeded for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
             }
         }
 
@@ -944,7 +944,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
 
-            this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Attempting to install the '{0}' service to the '{1}' machine", displayName, machineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Attempting to install the '{0}' service to the '{1}' machine", displayName, machineName));
             if (userName.IndexOf('\\') < 0)
             {
                 userName = ".\\" + userName;
@@ -1015,7 +1015,7 @@ namespace MSBuild.ExtensionPack.Computer
                     }
                     else
                     {
-                        this.Log.LogMessage(string.Format(CultureInfo.CurrentCulture, "Uninstall Service succeeded for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Uninstall Service succeeded for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
                     }
                 }
                 catch (Exception ex)

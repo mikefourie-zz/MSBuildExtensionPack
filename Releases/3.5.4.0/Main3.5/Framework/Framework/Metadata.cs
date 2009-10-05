@@ -81,20 +81,20 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.Items == null || this.Items.Length <= 0)
             {
-                Log.LogWarning("No items to attach metadata to", null);
+                this.LogTaskWarning("No items to attach metadata to");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.NewMetadata))
             {
-                Log.LogWarning("No metadata to attach to items", null);
+                this.LogTaskWarning("No metadata to attach to items");
                 return;
             }
 
             IDictionary<string, string> metadataBag = ParseParameters(this.NewMetadata);
             if (metadataBag.Count <= 0)
             {
-                Log.LogWarning("No metadata to attach to items", null);
+                this.LogTaskWarning("No metadata to attach to items");
                 return;
             }
 

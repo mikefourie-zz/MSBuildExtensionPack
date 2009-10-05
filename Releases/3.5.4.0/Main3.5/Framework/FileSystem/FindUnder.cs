@@ -155,7 +155,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             string fullPath = this.Path.GetMetadata("Fullpath");
-            Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
             if (string.IsNullOrEmpty(fullPath) || !Directory.Exists(fullPath))
             {
                 Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Path specified {0} doesn't exist", fullPath));
