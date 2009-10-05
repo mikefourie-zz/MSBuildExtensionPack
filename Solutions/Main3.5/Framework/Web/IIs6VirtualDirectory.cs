@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Web
     using System;
     using System.DirectoryServices;
     using System.Globalization;
+    using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
     using Microsoft.Build.Framework;
@@ -26,16 +27,16 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
-    ///         <Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
     ///         <!-- Create another IIsWebVirtualDir -->
-    ///         <Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
     ///         <!-- Delete the IIsWebVirtualDir-->
-    ///         <Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
         private const string CreateTaskAction = "Create";
@@ -99,7 +100,7 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Sets the Properties. Use a semi-colon delimiter.
+        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
@@ -171,8 +172,31 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
-                entry.Invoke("SetInfo");
+                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
+                if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];
+                    for (int i = 0; i < metaBasePropertyBinaryFormat.Length; i++)
+                    {
+                        metaBasePropertyBinaryFormat[i] = metaBaseProperty.Substring(i * 2, 2);
+                    }
+
+                    PropertyValueCollection propValues = entry.Properties[metaBasePropertyName];
+                    propValues.Clear();
+                    propValues.Add(metaBasePropertyBinaryFormat);
+                    entry.CommitChanges();
+                }
+                else
+                {
+                    if (string.Compare(metaBasePropertyName, "path", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        DirectoryInfo f = new DirectoryInfo(metaBaseProperty);
+                        metaBaseProperty = f.FullName;
+                    }
+
+                    entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
+                    entry.Invoke("SetInfo");
+                }
             }
             else
             {

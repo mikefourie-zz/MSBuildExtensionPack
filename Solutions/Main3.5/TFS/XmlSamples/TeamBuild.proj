@@ -4,6 +4,12 @@
         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
     </PropertyGroup>
     <Import Project="$(TPath)"/>
+    <PropertyGroup>
+        <TeamFoundationServerUrl>http://YOURSERVER:8080/</TeamFoundationServerUrl>
+        <TeamProject>YOURPROJECT</TeamProject>
+        <BuildUri></BuildUri>
+        <BuildDefinitionName></BuildDefinitionName>
+    </PropertyGroup>
     <Target Name="Default">
         <!-- Get information on the latest build -->
         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="GetLatest" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild">
@@ -43,5 +49,15 @@
         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
         <!-- Queue a new build -->
         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="QueueBuild" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
+        <!-- Retrieve Changesets associated with a given build -->
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
+            <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
+        </MSBuild.ExtensionPack.Tfs.TeamBuild>
+        <Message Text="ID = %(Changesets.Identity), Checked In By = %(Changesets.CheckedInBy), URI = %(Changesets.ChangesetUri), Comment = %(Changesets.Comment)"/>
+        <!-- Retrieve Work Items associated with a given build -->
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
+            <Output ItemName="WorkItems" TaskParameter="RelatedItems"/>
+        </MSBuild.ExtensionPack.Tfs.TeamBuild>
+        <Message Text="ID = %(Workitems.Identity), Status = %(Workitems.Status), Title = %(Workitems.Title), Type  = %(Workitems.Type), URI = %(Workitems.WorkItemUri), AssignedTo = %(Workitems.AssignedTo)"/>
     </Target>
 </Project>

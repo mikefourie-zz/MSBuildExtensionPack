@@ -27,5 +27,17 @@
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
         <!-- Move a folder -->
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
+        <!-- Lets copy a selection of folders to multiple locations -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Get" Path="c:\ddd">
+            <Output TaskParameter="Folders" ItemName="FoundFolders"/>
+        </MSBuild.ExtensionPack.FileSystem.Folder>
+        <Message Text="%(FoundFolders.Identity)"/>
+        <ItemGroup>
+            <MyWebService Include="C:\a\Dist\**\*.*">
+                <ToDir>%(FoundFolders.Identity)</ToDir>
+            </MyWebService>
+        </ItemGroup>
+        <!-- Copy using the metadata -->
+        <Copy SourceFiles="@(MyWebService)" DestinationFolder="%(ToDir)\%(RecursiveDir)" />
     </Target>
 </Project>

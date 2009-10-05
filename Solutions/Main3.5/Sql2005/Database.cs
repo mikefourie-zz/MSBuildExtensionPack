@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName)</para>
+    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName)</para>
     /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>DeleteBackupHistory</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -61,7 +61,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     ///         <!-- Create a database -->
     ///         <MSBuild.ExtensionPack.Sql2005.Database TaskAction="Create" DatabaseItem="ADatabase2" MachineName="MyServer\SQL2005Instance"/>
     ///         <!-- Create the database again, using Force to delete the existing database -->
-    ///         <MSBuild.ExtensionPack.Sql2005.Database TaskAction="Create" DatabaseItem="ADatabase2" Force="true" MachineName="MyServer\SQL2005Instance"/>
+    ///         <MSBuild.ExtensionPack.Sql2005.Database TaskAction="Create" DatabaseItem="ADatabase2" Force="true" Collation="Latin1_General_CI_AI" MachineName="MyServer\SQL2005Instance"/>
     ///         <!-- Check whether a database exists -->
     ///         <MSBuild.ExtensionPack.Sql2005.Database TaskAction="CheckExists" DatabaseItem="ADatabase2" MachineName="MyServer\SQL2005Instance">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/2b1ebce5-3d34-c41b-5fcf-a942f14c9b51.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/2b1ebce5-3d34-c41b-5fcf-a942f14c9b51.htm")]
     public class Database : BaseTask
     {
         private const string BackupTaskAction = "Backup";
@@ -199,6 +199,12 @@ namespace MSBuild.ExtensionPack.Sql2005
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(RestoreTaskAction, false)]
         public string LogName { get; set; }
+
+        /// <summary>
+        /// Sets the collation of the database.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string Collation { get; set; }
 
         /// <summary>
         /// Sets the type of backup action to perform. Supports Database, Files and Log. Default is Database
@@ -595,6 +601,11 @@ namespace MSBuild.ExtensionPack.Sql2005
 
                 LogFile logFile = new LogFile(newDatabase, this.LogName, this.LogFilePath.GetMetadata("FullPath"));
                 newDatabase.LogFiles.Add(logFile);
+            }
+
+            if (!string.IsNullOrEmpty(this.Collation))
+            {
+                newDatabase.Collation = this.Collation;
             }
 
             newDatabase.Create();

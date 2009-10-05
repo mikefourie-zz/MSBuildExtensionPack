@@ -28,7 +28,7 @@
         <!-- Create a database -->
         <MSBuild.ExtensionPack.Sql2005.Database TaskAction="Create" DatabaseItem="ADatabase2" MachineName="MyServer\SQL2005Instance"/>
         <!-- Create the database again, using Force to delete the existing database -->
-        <MSBuild.ExtensionPack.Sql2005.Database TaskAction="Create" DatabaseItem="ADatabase2" Force="true" MachineName="MyServer\SQL2005Instance"/>
+        <MSBuild.ExtensionPack.Sql2005.Database TaskAction="Create" DatabaseItem="ADatabase2" Force="true" Collation="Latin1_General_CI_AI" MachineName="MyServer\SQL2005Instance"/>
         <!-- Check whether a database exists -->
         <MSBuild.ExtensionPack.Sql2005.Database TaskAction="CheckExists" DatabaseItem="ADatabase2" MachineName="MyServer\SQL2005Instance">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>

@@ -50,6 +50,7 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
+                    <xs:attribute name="Collation" />
                     <xs:attribute name="NoPooling" />
                     <xs:attribute name="ReplaceDatabase" />
                     <xs:attribute name="Incremental" />

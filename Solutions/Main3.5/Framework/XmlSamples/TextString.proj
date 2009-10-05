@@ -5,6 +5,11 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
+        <!-- Format a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Format" String1="{0}.{1}.{2}.{3}" Strings="3;5;4;0">
+            <Output TaskParameter="NewString" PropertyName="val"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="Format Result: $(val)"/>
         <!-- Split a string -->
         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";">
             <Output ItemName="out" TaskParameter="Strings"/>

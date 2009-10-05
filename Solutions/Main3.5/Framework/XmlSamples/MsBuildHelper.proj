@@ -14,7 +14,37 @@
             <Col3 Include="hello"/>
             <Col3 Include="bye"/>
             <DuplicateFiles Include="C:\Demo\**\*"/>
+            <XXX Include="AA"/>
+            <XXX Include="AAB"/>
+            <XXX Include="ABA"/>
+            <XXX Include="AABA"/>
+            <XXX Include="BBAA"/>
+            <YYY Include="AA">
+                <Filter>CC</Filter>
+            </YYY>
+            <YYY Include="AA">
+                <Filter>CHJC</Filter>
+            </YYY>
+            <YYY Include="BB">
+                <Filter>CCDG</Filter>
+            </YYY>
+            <YYY Include="CC">
+                <Filter>CDC</Filter>
+            </YYY>
+            <YYY Include="DD">
+                <Filter>CCEE</Filter>
+            </YYY>
         </ItemGroup>
+        <!-- Filter Items based on Name -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItems" InputItems1="@(XXX)" RegexPattern="^AA">
+            <Output TaskParameter="OutputItems" ItemName="filtered"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="filtered Items: %(filtered.Identity)"/>
+        <!-- Filter Items based on MetaData -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItems" InputItems1="@(YYY)" Metadata="Filter" RegexPattern="^CC">
+            <Output TaskParameter="OutputItems" ItemName="filteredbymeta"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="filteredbymeta Items: %(filteredbymeta.Identity)"/>
         <!-- Convert an Item Collection into a string -->
         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="ItemColToString" InputItems1="@(Col1)" Separator=" - ">
             <Output TaskParameter="OutString" PropertyName="out"/>

@@ -49,7 +49,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/bed0ab5a-a18e-b41d-9809-75deacc056e3.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/bed0ab5a-a18e-b41d-9809-75deacc056e3.htm")]
     public class SourceSafe : BaseTask
     {
         private const string CheckoutTaskAction = "Checkout";
@@ -120,7 +120,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string Arguments { get; set; }
 
         /// <summary>
-        /// Sets the SourceSafe version. Default is 2005
+        /// Sets the SourceSafe version. Supports 2005 and 6d. Default is 2005
         /// </summary>
         [TaskAction(CheckoutTaskAction, false)]
         [TaskAction(CheckinTaskAction, false)]

@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Web
     using System;
     using System.DirectoryServices;
     using System.Globalization;
+    using System.IO;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -50,7 +51,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -79,9 +80,8 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Gets or sets the app pool properties.
+        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
         /// </summary>
-        /// <value>The app pool properties.</value>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
         {
@@ -92,7 +92,6 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
-        /// <value>The name.</value>
         [Required]
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]
@@ -173,8 +172,31 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
-                entry.Invoke("SetInfo");
+                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
+                if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];
+                    for (int i = 0; i < metaBasePropertyBinaryFormat.Length; i++)
+                    {
+                        metaBasePropertyBinaryFormat[i] = metaBaseProperty.Substring(i * 2, 2);
+                    }
+
+                    PropertyValueCollection propValues = entry.Properties[metaBasePropertyName];
+                    propValues.Clear();
+                    propValues.Add(metaBasePropertyBinaryFormat);
+                    entry.CommitChanges();
+                }
+                else
+                {
+                    if (string.Compare(metaBasePropertyName, "path", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        DirectoryInfo f = new DirectoryInfo(metaBaseProperty);
+                        metaBaseProperty = f.FullName;
+                    }
+
+                    entry.Invoke("Put", metaBasePropertyName, metaBaseProperty);
+                    entry.Invoke("SetInfo");
+                }
             }
             else
             {

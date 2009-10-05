@@ -33,8 +33,20 @@ namespace MSBuild.ExtensionPack.Management
     ///             <Wmi2Props Include="InstanceName"/>
     ///             <!-- Note that #~# is used as a separator-->
     ///             <WmiExec Include="Description#~#ExtensionPack Description"/>
+    ///             <WmiExec2 Include="Name#~#MyNewShare;Path#~#C:\demo;Type#~#0"/>
+    ///             <WmiExec3 Include="CommandLine#~#calc.exe"/>
     ///         </ItemGroup>
-    ///         <!-- Create a share using the WmiExec ItemGroup info-->
+    ///         <!-- Start the Calculator -->
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Process" Method="Create" MethodParameters="@(WmiExec3)" Namespace="\root\CIMV2">
+    ///             <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+    ///         </MSBuild.ExtensionPack.Management.Wmi>
+    ///         <Message Text="ReturnValue: $(Rval2)"/>
+    ///         <!-- Create a share -->
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="Create" MethodParameters="@(WmiExec2)" Namespace="\root\CIMV2">
+    ///             <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+    ///         </MSBuild.ExtensionPack.Management.Wmi>
+    ///         <Message Text="ReturnValue: $(Rval2)"/>
+    ///         <!-- Set share details using the WmiExec ItemGroup info-->
     ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="SetShareInfo" Instance="Name='ashare'" MethodParameters="@(WmiExec)" Namespace="\root\CIMV2">
     ///             <Output TaskParameter="ReturnValue" PropertyName="Rval"/>
     ///         </MSBuild.ExtensionPack.Management.Wmi>
@@ -55,7 +67,7 @@ namespace MSBuild.ExtensionPack.Management
     ///         </MSBuild.ExtensionPack.Management.Wmi>
     ///         <Message Text="WMI Info for ServerSettings on %(Info2.Identity): InstanceName=%(Info2.InstanceName)"/>
     ///         <!-- Query a remote server -->
-    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="GetInfo" MachineName="AREMOTESERVER" UserName="ADOMAIN\AUSERNAME" UserPassword="APASSWORD" Class="Win32_BIOS" Properties="@(WmiProps)" Namespace="\root\cimv2">
+    ///         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Query" MachineName="AREMOTESERVER" UserName="ADOMAIN\AUSERNAME" UserPassword="APASSWORD" Class="Win32_BIOS" Properties="@(WmiProps)" Namespace="\root\cimv2">
     ///             <Output TaskParameter="Info" ItemName="Info2"/>
     ///         </MSBuild.ExtensionPack.Management.Wmi>
     ///         <Message Text="WMI Info for %(Info2.Identity): BIOSVersion=%(Info2.BIOSVersion), CurrentLanguage=%(Info2.CurrentLanguage), Manufacturer=%(Info2.Manufacturer), SerialNumber=%(Info2.SerialNumber)"/>
@@ -74,7 +86,7 @@ namespace MSBuild.ExtensionPack.Management
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
     public class Wmi : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
@@ -178,31 +190,56 @@ namespace MSBuild.ExtensionPack.Management
             if (!string.IsNullOrEmpty(this.Instance))
             {
                 managementPath += "." + this.Instance;
-            }
 
-            ManagementObject classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null);
+                var classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null);
 
-            // Obtain in-parameters for the method
-            ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+                // Obtain in-parameters for the method
+                ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
 
-            if (this.MethodParameters != null)
-            {
-                // Add the input parameters.
-                foreach (ITaskItem param in this.MethodParameters)
+                if (this.MethodParameters != null)
                 {
-                    string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
-                    inParams[data[0]] = data[1];
+                    // Add the input parameters.
+                    foreach (ITaskItem param in this.MethodParameters)
+                    {
+                        string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                        inParams[data[0]] = data[1];
+                    }
+                }
+
+                // Execute the method and obtain the return values.
+                ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
+                if (outParams != null)
+                {
+                    this.ReturnValue = outParams["ReturnValue"].ToString();
                 }
             }
-
-            // Execute the method and obtain the return values.
-            ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
-
-            if (outParams != null)
+            else
             {
-                this.ReturnValue = outParams["ReturnValue"].ToString();
+                ManagementClass mgmtClass = new ManagementClass(this.Scope, new ManagementPath(managementPath), null);
+
+                // Obtain in-parameters for the method
+                ManagementBaseObject inParams = mgmtClass.GetMethodParameters(this.Method);
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+
+                if (this.MethodParameters != null)
+                {
+                    // Add the input parameters.
+                    foreach (ITaskItem param in this.MethodParameters)
+                    {
+                        string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                        inParams[data[0]] = data[1];
+                    }
+                }
+
+                // Execute the method and obtain the return values.
+                ManagementBaseObject outParams = mgmtClass.InvokeMethod(this.Method, inParams, null);
+                if (outParams != null)
+                {
+                    this.ReturnValue = outParams["ReturnValue"].ToString();
+                }
             }
         }
 
@@ -211,16 +248,15 @@ namespace MSBuild.ExtensionPack.Management
         /// </summary>
         private void Query()
         {
+            this.info = new List<ITaskItem>();
             this.GetManagementScope(this.Namespace);
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing WMI query: SELECT * FROM {0}", this.Class));
             ObjectQuery query = new ObjectQuery("SELECT * FROM " + this.Class);
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
-
-            this.info = new List<ITaskItem>();
-            ITaskItem item = new TaskItem(this.MachineName);
             foreach (ManagementObject m in queryCollection)
             {
+                ITaskItem item = new TaskItem(this.MachineName);
                 foreach (ITaskItem prop in this.Properties)
                 {
                     try
@@ -251,9 +287,9 @@ namespace MSBuild.ExtensionPack.Management
                         this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Property Not Found: {0}", prop.ItemSpec));
                     }
                 }
-            }
 
-            this.info.Add(item);
+                this.info.Add(item);
+            }
         }
     }
 }

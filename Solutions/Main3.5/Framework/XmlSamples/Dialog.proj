@@ -5,6 +5,13 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
+        <!-- Confirm a Password -->
+        <MSBuild.ExtensionPack.UI.Dialog TaskAction="Confirm" Title="Confirmation Required" Button2Text="Cancel" Text="Enter Password" ConfirmText="Confirm Password" MaskText="true">
+            <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+            <Output TaskParameter="UserText" PropertyName="Typed"/>
+        </MSBuild.ExtensionPack.UI.Dialog>
+        <Message Text="User Clicked: $(Clicked)"/>
+        <Message Text="User Typed: $(Typed)"/>
         <!-- A simple message -->
         <MSBuild.ExtensionPack.UI.Dialog TaskAction="Show" Text="Hello MSBuild">
             <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>

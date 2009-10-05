@@ -67,7 +67,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
     public class Zip : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -99,7 +99,8 @@ namespace MSBuild.ExtensionPack.Compression
         public ITaskItem CompressPath { get; set; }
 
         /// <summary>
-        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
+        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName.
+        /// If this is not provided, you may get unexpected results.
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem RemoveRoot { get; set; }

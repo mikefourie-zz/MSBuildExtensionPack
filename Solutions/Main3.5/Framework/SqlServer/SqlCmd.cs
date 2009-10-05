@@ -45,7 +45,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
@@ -81,7 +81,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         [TaskAction(ExecuteTaskAction, false)]
         public string SqlCmdPath { get; set; }
 
-#region Login Related Options
+        #region Login Related Options
 
         /// <summary>
         /// <para>Gets or sets the user login id. If neither the <see cref="LogOn"/> or <see cref="Password"/> option is specified,
@@ -167,7 +167,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(LoginTimeoutRangeError, value);
+                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, LoginTimeoutRangeError, value));
                 }
             }
         }
@@ -181,9 +181,9 @@ namespace MSBuild.ExtensionPack.SqlServer
         [TaskAction(ExecuteTaskAction, false)]
         public bool DedicatedAdminConnection { get; set; }
 
-#endregion
+        #endregion
 
-#region Input/Output Options
+        #region Input/Output Options
 
         /// <summary>
         /// <para>Gets or sets the path to a file that contains a batch of SQL statements. Multiple files may be specified that will be read 
@@ -228,9 +228,9 @@ namespace MSBuild.ExtensionPack.SqlServer
         [TaskAction(ExecuteTaskAction, false)]
         public bool UseClientRegionalSettings { get; set; }
 
-#endregion
+        #endregion
 
-#region Query Execution Options
+        #region Query Execution Options
 
         /// <summary>
         /// Gets or sets one or more command line queries to execute when <see cref="SqlCmd"/> starts, but does not exit
@@ -287,7 +287,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.Log.LogWarning(QueryTimeoutRangeError, value);
+                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, QueryTimeoutRangeError, value));
                 }
             }
         }
@@ -307,9 +307,9 @@ namespace MSBuild.ExtensionPack.SqlServer
         [TaskAction(ExecuteTaskAction, false)]
         public bool DisableVariableSubstitution { get; set; }
 
-#endregion
+        #endregion
 
-#region Formatting Options
+        #region Formatting Options
 
         /// <summary>
         /// Specifies the number of rows to print between the column headings. The default is to print headings one time for each set of 
@@ -319,7 +319,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         [TaskAction(ExecuteTaskAction, false)]
         public int Headers { get; set; }
 
-#endregion
+        #endregion
 
         protected override void InternalExecute()
         {

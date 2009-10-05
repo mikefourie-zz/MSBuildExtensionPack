@@ -13,8 +13,20 @@
             <Wmi2Props Include="InstanceName"/>
             <!-- Note that #~# is used as a separator-->
             <WmiExec Include="Description#~#ExtensionPack Description"/>
+            <WmiExec2 Include="Name#~#MyNewShare;Path#~#C:\demo;Type#~#0"/>
+            <WmiExec3 Include="CommandLine#~#calc.exe"/>
         </ItemGroup>
-        <!-- Create a share using the WmiExec ItemGroup info-->
+        <!-- Start the Calculator -->
+        <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Process" Method="Create" MethodParameters="@(WmiExec3)" Namespace="\root\CIMV2">
+            <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+        </MSBuild.ExtensionPack.Management.Wmi>
+        <Message Text="ReturnValue: $(Rval2)"/>
+        <!-- Create a share -->
+        <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="Create" MethodParameters="@(WmiExec2)" Namespace="\root\CIMV2">
+            <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+        </MSBuild.ExtensionPack.Management.Wmi>
+        <Message Text="ReturnValue: $(Rval2)"/>
+        <!-- Set share details using the WmiExec ItemGroup info-->
         <MSBuild.ExtensionPack.Management.Wmi TaskAction="Execute" Class="Win32_Share" Method="SetShareInfo" Instance="Name='ashare'" MethodParameters="@(WmiExec)" Namespace="\root\CIMV2">
             <Output TaskParameter="ReturnValue" PropertyName="Rval"/>
         </MSBuild.ExtensionPack.Management.Wmi>
@@ -35,7 +47,7 @@
         </MSBuild.ExtensionPack.Management.Wmi>
         <Message Text="WMI Info for ServerSettings on %(Info2.Identity): InstanceName=%(Info2.InstanceName)"/>
         <!-- Query a remote server -->
-        <MSBuild.ExtensionPack.Management.Wmi TaskAction="GetInfo" MachineName="AREMOTESERVER" UserName="ADOMAIN\AUSERNAME" UserPassword="APASSWORD" Class="Win32_BIOS" Properties="@(WmiProps)" Namespace="\root\cimv2">
+        <MSBuild.ExtensionPack.Management.Wmi TaskAction="Query" MachineName="AREMOTESERVER" UserName="ADOMAIN\AUSERNAME" UserPassword="APASSWORD" Class="Win32_BIOS" Properties="@(WmiProps)" Namespace="\root\cimv2">
             <Output TaskParameter="Info" ItemName="Info2"/>
         </MSBuild.ExtensionPack.Management.Wmi>
         <Message Text="WMI Info for %(Info2.Identity): BIOSVersion=%(Info2.BIOSVersion), CurrentLanguage=%(Info2.CurrentLanguage), Manufacturer=%(Info2.Manufacturer), SerialNumber=%(Info2.SerialNumber)"/>

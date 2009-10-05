@@ -37,7 +37,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/469bf63a-ec25-9248-f956-7bf87e364cbd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/469bf63a-ec25-9248-f956-7bf87e364cbd.htm")]
     public class Metadata : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -81,20 +81,20 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.Items == null || this.Items.Length <= 0)
             {
-                Log.LogWarning("No items to attach metadata to", null);
+                this.LogTaskWarning("No items to attach metadata to");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.NewMetadata))
             {
-                Log.LogWarning("No metadata to attach to items", null);
+                this.LogTaskWarning("No metadata to attach to items");
                 return;
             }
 
             IDictionary<string, string> metadataBag = ParseParameters(this.NewMetadata);
             if (metadataBag.Count <= 0)
             {
-                Log.LogWarning("No metadata to attach to items", null);
+                this.LogTaskWarning("No metadata to attach to items");
                 return;
             }
 

@@ -12,11 +12,13 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Text.RegularExpressions;
     using Microsoft.Build.BuildEngine;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Replace</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Report</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TokenPattern <b>Output: </b>FilesProcessed, TokenReport)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -67,22 +69,38 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <!-- 6 Detokenise using values that can be passed in via the command line -->
     ///         <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetFiles="@(FileCollection3)" CommandLineValues="$(clv)"/>
     ///     </Target>
+    ///     <!--- Generate a report of files showing which tokens are used in files -->
+    ///     <Target Name="Report" DependsOnTargets="GetFiles">
+    ///         <CallTarget Targets="List"/>
+    ///     </Target>
+    ///     <Target Name="List" Inputs="@(Report1)" Outputs="%(Identity)">
+    ///         <Message Text="Token: @(Report1)"/>
+    ///         <Message Text="%(Report1.Files)"/>
+    ///     </Target>
+    ///     <Target Name="GetFiles">
+    ///         <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Report" TargetPath="C:\MyFiles*" DisplayFiles="false">
+    ///             <Output TaskParameter="TokenReport" ItemName="Report1"/>
+    ///         </MSBuild.ExtensionPack.FileSystem.Detokenise>
+    ///     </Target>
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
         private const string DetokeniseTaskAction = "Detokenise";
+        private const string ReportTaskAction = "Report";
         private const string ParseRegexPatternExtract = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
         private string tokenPattern = @"\$\([0-9a-zA-Z-._]+\)";
         private Project project;
         private Encoding fileEncoding = Encoding.UTF8;
         private Regex parseRegex;
-        private bool analyseOnly;
+        private bool analyseOnly, report;
         private string separator = "#~#";
         private Dictionary<string, string> commandLineDictionary;
+        private SortedDictionary<string, string> tokenDictionary;
+        private string activeFile;
 
         // this bool is used to indicate what mode we are in.
         // if true, then the task has been configured to use a passed in collection
@@ -95,6 +113,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         [DropdownValue(AnalyseTaskAction)]
         [DropdownValue(DetokeniseTaskAction)]
+        [DropdownValue(ReportTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -106,6 +125,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
+        [TaskAction(ReportTaskAction, false)]
         public bool DisplayFiles { get; set; }
 
         /// <summary>
@@ -145,7 +165,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         }
 
         /// <summary>
-        /// Sets the MSBuidl file to load for token matching. Defaults to BuildEngine.ProjectFileOfTaskNode
+        /// Sets the MSBuild file to load for token matching. Defaults to BuildEngine.ProjectFileOfTaskNode
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
@@ -165,6 +185,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
+        [TaskAction(ReportTaskAction, false)]
         public string TargetPath { get; set; }
 
         /// <summary>
@@ -172,6 +193,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
+        [TaskAction(ReportTaskAction, false)]
         public ITaskItem[] TargetFiles { get; set; }
 
         /// <summary>
@@ -197,6 +219,9 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(DetokeniseTaskAction, false)]
         public int FilesDetokenised { get; set; }
 
+        [Output]
+        public ITaskItem[] TokenReport { get; set; }
+
         /// <summary>
         /// Performs the action of this task.
         /// </summary>
@@ -209,17 +234,35 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             switch (this.TaskAction)
             {
-                case "Analyse":
+                case AnalyseTaskAction:
                     this.analyseOnly = true;
                     break;
-                case "Detokenise":
+                case DetokeniseTaskAction:
+                    break;
+                case ReportTaskAction:
+                    this.analyseOnly = true;
+                    this.report = true;
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
 
+            this.tokenDictionary = new SortedDictionary<string, string>();
             this.DoDetokenise();
+
+            if (this.tokenDictionary.Count > 0 && this.report)
+            {
+                this.TokenReport = new TaskItem[this.tokenDictionary.Count];
+                int i = 0;
+                foreach (var s in this.tokenDictionary)
+                {
+                    ITaskItem t = new TaskItem(s.Key);
+                    t.SetMetadata("Files", s.Value);
+                    this.TokenReport[i] = t;
+                    i++;
+                }
+            }
         }
 
         private static Encoding GetTextEncoding(string enc)
@@ -318,7 +361,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Path: {0}", this.TargetPath));
             string originalPath = this.TargetPath;
             string rootPath = originalPath.Replace("*", string.Empty);
-            
+
             // Check if we need to do a recursive search
             if (originalPath.Contains("*"))
             {
@@ -329,7 +372,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
                     throw new ArgumentException("Review error log");
                 }
-                
+
                 FileSystemInfo[] infos = dir.GetFileSystemInfos("*");
                 this.ProcessFolder(infos);
             }
@@ -394,6 +437,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private void DetokeniseFileProvided(string file, bool checkExists, Encoding enc)
         {
             this.FilesProcessed++;
+            this.activeFile = file;
 
             if (this.DisplayFiles)
             {
@@ -464,10 +508,10 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             // Get the match.
             string propertyFound = regexMatch.Captures[0].ToString();
-            
+
             // Extract the keyword from the match.
             string extractedProperty = Regex.Match(propertyFound, ParseRegexPatternExtract).Captures[0].ToString();
-            
+
             // Find the replacement property
             if (this.collectionMode)
             {
@@ -480,12 +524,20 @@ namespace MSBuild.ExtensionPack.FileSystem
                         {
                             // set the bool so we can write the new file content
                             this.tokenMatched = true;
+                            if (this.report)
+                            {
+                                this.UpdateTokenDictionary(extractedProperty);
+                            }
+
                             return token.GetMetadata("Replacement");
                         }
                     }
 
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
-                    throw new ArgumentException("Review error log");
+                    if (!this.report)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                        throw new ArgumentException("Review error log");
+                    }
                 }
 
                 // we need to look in the CommandLineValues
@@ -495,25 +547,61 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                     // set the bool so we can write the new file content
                     this.tokenMatched = true;
+                    if (this.report)
+                    {
+                        this.UpdateTokenDictionary(extractedProperty);
+                    }
+
                     return replacement;
                 }
                 catch
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
-                    throw new ArgumentException("Review error log");
+                    if (!this.report)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                        throw new ArgumentException("Review error log");
+                    }
                 }
             }
 
             // we need to look in the calling project's properties collection
             if (this.project.EvaluatedProperties[extractedProperty] == null)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
-                throw new ArgumentException("Review error log");
+                if (!this.report)
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                    throw new ArgumentException("Review error log");
+                }
             }
 
             // set the bool so we can write the new file content
             this.tokenMatched = true;
+            if (this.report)
+            {
+                this.UpdateTokenDictionary(extractedProperty);
+            }
+
+            if (this.report)
+            {
+                return string.Empty;
+            }
+
             return this.project.EvaluatedProperties[extractedProperty].FinalValue;
+        }
+
+        private void UpdateTokenDictionary(string extractedProperty)
+        {
+            if (this.tokenDictionary.ContainsKey(extractedProperty))
+            {
+                if (!this.tokenDictionary[extractedProperty].Contains(this.activeFile))
+                {
+                    this.tokenDictionary[extractedProperty] += this.activeFile + ";";
+                }
+
+                return;
+            }
+
+            this.tokenDictionary.Add(extractedProperty, this.activeFile + ";");
         }
     }
 }

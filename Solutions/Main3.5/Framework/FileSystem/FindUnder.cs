@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>FindFiles</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
-    /// <para><i>FindDirectories</i> (<b>Required: </b> Path <b>Optional: </b>SearchPattern <b>Output: </b>FoundItems)</para>
+    /// <para><i>FindDirectories</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
     /// <para><i>FindFilesAndDirectories</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
     public class FindUnder : BaseTask
     {
         private const string FindFilesTaskAction = "FindFiles";
@@ -155,7 +155,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             string fullPath = this.Path.GetMetadata("Fullpath");
-            Log.LogMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
             if (string.IsNullOrEmpty(fullPath) || !Directory.Exists(fullPath))
             {
                 Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Path specified {0} doesn't exist", fullPath));
@@ -179,7 +179,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (this.FindDirectories)
             {
-                subDirs = dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories);
+                subDirs = this.Recursive ? dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories) : dir.GetDirectories(this.SearchPattern, SearchOption.TopDirectoryOnly);
             }
 
             List<ITaskItem> items = new List<ITaskItem>();

@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Communication
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Tweet</i> (<b>Required: </b>Message, UserName, UserPassword <b>Optional:</b> TwitterUrl)</para>
+    /// <para><i>Tweet</i> (<b>Required: </b>Message, UserName, UserPassword <b>Optional:</b> ProxyUserName, ProxyUserPassword, TwitterUrl)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/e462eba9-1ca9-d3cf-8e65-3467d5b3fc4e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/e462eba9-1ca9-d3cf-8e65-3467d5b3fc4e.htm")]
     public class Twitter : BaseTask
     {
         private const string TweetTaskAction = "Tweet";
@@ -52,6 +52,18 @@ namespace MSBuild.ExtensionPack.Communication
             get { return this.twitterUrl; }
             set { this.twitterUrl = value; }
         }
+
+        /// <summary>
+        /// Sets the username to use for proxy authentication if required.
+        /// </summary>
+        [TaskAction(TweetTaskAction, false)]
+        public string ProxyUserName { get; set; }
+
+        /// <summary>
+        /// Sets the password to use for proxy authentication if required.
+        /// </summary>
+        [TaskAction(TweetTaskAction, false)]
+        public string ProxyUserPassword { get; set; }
 
         /// <summary>
         /// Sets the message to send to Twitter
@@ -100,6 +112,11 @@ namespace MSBuild.ExtensionPack.Communication
 
             request.Timeout = 30000;
             request.Method = "POST";
+            if (!string.IsNullOrEmpty(this.ProxyUserName))
+            {
+                request.Proxy.Credentials = new NetworkCredential(this.ProxyUserName, this.ProxyUserPassword);
+            }
+
             request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = "MSBuild Extension Pack - Twitter Task";
             request.Credentials = new NetworkCredential(this.UserName, this.UserPassword);

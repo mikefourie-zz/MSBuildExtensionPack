@@ -128,7 +128,7 @@ namespace MSBuild.ExtensionPack.Science
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
     public class Maths : BaseTask
     {
         private const string AddTaskAction = "Add";

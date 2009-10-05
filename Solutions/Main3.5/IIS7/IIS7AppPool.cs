@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
     public class Iis7AppPool : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -387,7 +387,11 @@ namespace MSBuild.ExtensionPack.Web
                     this.pool.Start();
                     break;
                 case StopTaskAction:
-                    this.pool.Stop();
+                    if (this.pool.State != ObjectState.Stopped && this.pool.State != ObjectState.Stopping)
+                    {
+                        this.pool.Stop();
+                    }
+
                     break;
                 case RecycleTaskAction:
                     this.pool.Start();
