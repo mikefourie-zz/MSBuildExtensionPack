@@ -376,7 +376,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(this.Destination))
             {
-                args += "\"" + this.Destination + "\" ";
+                args += " \"" + this.Destination + "\" ";
             }
             else
             {
