@@ -729,42 +729,45 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Parse the entire file.
             string newFile = this.parseRegex.Replace(entireFile, this.Replacement);
 
-            // First make sure the file is writable.
-            FileAttributes fileAttributes = System.IO.File.GetAttributes(parseFile);
-            bool changedAttribute = false;
-
-            // If readonly attribute is set, reset it.
-            if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            if (newFile != entireFile)
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
-                System.IO.File.SetAttributes(parseFile, fileAttributes ^ FileAttributes.ReadOnly);
-                changedAttribute = true;
-            }
+                // First make sure the file is writable.
+                FileAttributes fileAttributes = System.IO.File.GetAttributes(parseFile);
+                bool changedAttribute = false;
 
-            // Set TextEncoding if it was specified.
-            if (string.IsNullOrEmpty(this.TextEncoding) == false)
-            {
-                try
+                // If readonly attribute is set, reset it.
+                if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
-                    this.fileEncoding = System.Text.Encoding.GetEncoding(this.TextEncoding);
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Making File Writeable: {0}", parseFile));
+                    System.IO.File.SetAttributes(parseFile, fileAttributes ^ FileAttributes.ReadOnly);
+                    changedAttribute = true;
                 }
-                catch (ArgumentException)
+
+                // Set TextEncoding if it was specified.
+                if (string.IsNullOrEmpty(this.TextEncoding) == false)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
-                    return;
+                    try
+                    {
+                        this.fileEncoding = System.Text.Encoding.GetEncoding(this.TextEncoding);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
+                        return;
+                    }
                 }
-            }
 
-            // Write out the new file.
-            using (StreamWriter streamWriter = new StreamWriter(parseFile, false, this.fileEncoding))
-            {
-                streamWriter.Write(newFile);
-            }
+                // Write out the new file.
+                using (StreamWriter streamWriter = new StreamWriter(parseFile, false, this.fileEncoding))
+                {
+                    streamWriter.Write(newFile);
+                }
 
-            if (changedAttribute)
-            {
-                this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
-                System.IO.File.SetAttributes(parseFile, FileAttributes.ReadOnly);
+                if (changedAttribute)
+                {
+                    this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
+                    System.IO.File.SetAttributes(parseFile, FileAttributes.ReadOnly);
+                }
             }
         }
     }
