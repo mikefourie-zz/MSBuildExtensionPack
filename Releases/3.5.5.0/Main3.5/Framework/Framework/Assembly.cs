@@ -170,11 +170,6 @@ namespace MSBuild.ExtensionPack.Framework
             switch (this.TaskAction)
             {
                 case "GetInfo":
-
-                    System.Console.Beep();
-                    System.Console.Beep();
-                    System.Console.Beep();
-                    System.Console.Beep();
                     this.GetInfo();
                     break;
                 case "Invoke":
