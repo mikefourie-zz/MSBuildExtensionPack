@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.SqlServer
 {
+    using System;
     using System.Globalization;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.SqlServer.Extended;
@@ -271,11 +272,6 @@ namespace MSBuild.ExtensionPack.SqlServer
         {
             get
             {
-                if (this.queryTimeout < 1)
-                {
-                    return 1;
-                }
-
                 return this.queryTimeout;
             }
 
@@ -287,7 +283,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, QueryTimeoutRangeError, value));
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, QueryTimeoutRangeError, value));
                 }
             }
         }
