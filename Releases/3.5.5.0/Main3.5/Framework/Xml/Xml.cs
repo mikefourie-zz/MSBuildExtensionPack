@@ -98,7 +98,7 @@ namespace MSBuild.ExtensionPack.Xml
     {
         private const string TransformTaskAction = "Transform";
         private const string ValidateTaskAction = "Validate";
-        
+
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
 
@@ -261,32 +261,57 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            XDocument newxmlDoc = new XDocument();
-            using (XmlWriter writer = newxmlDoc.CreateWriter())
-            {
-                // Load the style sheet.
-                XslCompiledTransform xslt = new XslCompiledTransform();
-                xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())));
+            // Load the style sheet.
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())));
 
+            StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);
+            using (writer)
+            {
                 // Execute the transform and output the results to a writer.
-                xslt.Transform(this.xmlDoc.CreateReader(), writer);
+                xslt.Transform(this.xmlDoc.CreateReader(), null, writer);
             }
 
-            this.Output = newxmlDoc.ToString();
+            this.Output = writer.ToString();
 
             if (!string.IsNullOrEmpty(this.OutputFile))
             {
-                XmlWriterSettings writerSettings = new XmlWriterSettings { Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
-                using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
+                if (xslt.OutputSettings.OutputMethod == XmlOutputMethod.Text)
                 {
-                    if (xw != null)
+                    FileStream stream = new FileStream(this.OutputFile, FileMode.Create);
+                    StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default);
+                    using (streamWriter)
                     {
-                        newxmlDoc.WriteTo(xw);
+                        if (streamWriter != null)
+                        {
+                            // Execute the transform and output the results to a writer.
+                            xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
+                        }
+                        else
+                        {
+                            Log.LogError("There was an error creating the StreamWriter for the OutputFile");
+                            return;
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    XDocument newxmlDoc = XDocument.Load(new StringReader(this.Output));
+                    if (!string.IsNullOrEmpty(this.OutputFile))
                     {
-                        Log.LogError("There was an error creating the XmlWriter for the OutputFile");
-                        return;
+                        XmlWriterSettings writerSettings = new XmlWriterSettings { Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
+                        using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
+                        {
+                            if (xw != null)
+                            {
+                                newxmlDoc.WriteTo(xw);
+                            }
+                            else
+                            {
+                                Log.LogError("There was an error creating the XmlWriter for the OutputFile");
+                                return;
+                            }
+                        }
                     }
                 }
             }
