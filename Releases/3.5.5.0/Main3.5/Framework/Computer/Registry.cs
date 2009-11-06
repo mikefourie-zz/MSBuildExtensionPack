@@ -46,6 +46,8 @@ namespace MSBuild.ExtensionPack.Computer
     ///             <Output PropertyName="REmpty" TaskParameter="Empty"/>
     ///         </MSBuild.ExtensionPack.Computer.Registry>
     ///         <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
+    ///         <!-- Set some Binary Data -->
+    ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" DataType="Binary" Value="binval" Data="10, 43, 44, 45, 14, 255" />
     ///         <!-- Delete a key -->
     ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
     ///     </Target>
@@ -219,8 +221,9 @@ namespace MSBuild.ExtensionPack.Computer
                             case RegistryValueKind.Binary:
                                 string[] parts = this.Data.Split(separator);
                                 byte[] val = new byte[parts.Length];
-                                for (int i = 0; i < parts.Length; val[i++] = Byte.Parse(parts[i], CultureInfo.CurrentCulture))
+                                for (int i = 0; i < parts.Length; i++)
                                 {
+                                    val[i] = Byte.Parse(parts[i], CultureInfo.CurrentCulture);
                                 }
 
                                 registryValue = val;
