@@ -16,6 +16,8 @@ namespace MSBuild.ExtensionPack.Compression
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para><b>This task requires:</b></para>
     ///     <para>Microsoft Visual J# 2.0 Redistributable Package – Second Edition (x86)</para>
+    ///     <para/>
+    ///     <para>Please note that file attributes are not maintained when using these tasks.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
