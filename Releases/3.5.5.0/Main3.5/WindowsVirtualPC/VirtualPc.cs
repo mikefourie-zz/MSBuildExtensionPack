@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// Provides various tasks to work with Windows Virtual Pc (Requires Windows 7)
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddHardDiskConnectionTaskAction</i> (<b>Required: </b>Name, FileName, DeviceNumber, BusNumber)</para>
+    /// <para><i>AddHardDiskConnection</i> (<b>Required: </b>Name, FileName, DeviceNumber, BusNumber)</para>
     /// <para><i>ClickMouse</i> (<b>Required: </b>Name)</para>
     /// <para><i>DiscardSavedState</i> (<b>Required: </b>Name)</para>
     /// <para><i>DiscardUndoDisks</i> (<b>Required: </b>Name)</para>
@@ -26,7 +26,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// <para><i>Logoff</i> (<b>Required: </b>Name <b>Optional: </b>WaitForCompletion)</para>
     /// <para><i>MergeUndoDisks</i> (<b>Required: </b>Name <b>Optional: </b>WaitForCompletion)</para>
     /// <para><i>Pause</i> (<b>Required: </b>Name)</para>
-    /// <para><i>RemoveHardDiskConnectionTaskAction</i> (<b>Required: </b>Name, FileName)</para>
+    /// <para><i>RemoveHardDiskConnection</i> (<b>Required: </b>Name, FileName)</para>
     /// <para><i>Reset</i> (<b>Required: </b>Name <b>Optional: </b>WaitForCompletion)</para>
     /// <para><i>Restart</i> (<b>Required: </b>Name <b>Optional: </b>WaitForCompletion)</para>
     /// <para><i>Resume</i> (<b>Required: </b>Name)</para>
