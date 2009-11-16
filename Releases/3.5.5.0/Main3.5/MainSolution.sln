@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 		DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd = DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd = DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2005", "Sql2005\Sql2005.csproj", "{42F6A494-5D2C-4D6D-8B42-CCB704303840}"
@@ -95,7 +96,7 @@ Global
 		SccProjectTopLevelParentUniqueName10 = MainSolution.sln
 		SccProjectName10 = UnitTests/FrameworkTests
 		SccLocalPath10 = UnitTests\\FrameworkTests
-		SccProjectUniqueName11 = WindowsVirtualPC\\WindowsVirtualPC.csproj
+		SccProjectUniqueName11 = WindowsVirtualPC\\WindowsVirtualPc.csproj
 		SccProjectName11 = WindowsVirtualPC
 		SccLocalPath11 = WindowsVirtualPC
 	EndGlobalSection

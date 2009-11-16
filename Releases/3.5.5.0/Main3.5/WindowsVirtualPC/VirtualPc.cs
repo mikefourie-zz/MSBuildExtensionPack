@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     using Microsoft.VirtualPC.Interop;
 
     /// <summary>
-    /// Provides various tasks to work with Windows Virtual Pc
+    /// Provides various tasks to work with Windows Virtual Pc (Requires Windows 7)
     /// <para/>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddHardDiskConnectionTaskAction</i> (<b>Required: </b>Name, FileName, DeviceNumber, BusNumber)</para>
@@ -37,7 +37,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// <para><i>TurnOff</i> (<b>Required: </b>Name <b>Optional: </b>WaitForCompletion)</para>
     /// <para><i>TypeAsciiText</i> (<b>Required: </b>Name, Text)</para>
     /// <para><i>TypeKeySequence</i> (<b>Required: </b>Name, Text)</para>
-    /// <para><i>WaitForLowCPUUtilization</i> (<b>Required: </b>Name <b>Optional:</b> MaxCpuThreshold, MaxCpuUsage)</para>
+    /// <para><i>WaitForLowCpuUtilization</i> (<b>Required: </b>Name <b>Optional:</b> MaxCpuThreshold, MaxCpuUsage)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
