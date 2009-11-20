@@ -22,7 +22,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath)</para>
+    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath)</para>
     /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -159,8 +159,9 @@ namespace MSBuild.ExtensionPack.Sql2005
         public bool NoPooling { get; set; }
 
         /// <summary>
-        /// Set to true to restore a database to a new location
+        /// A Boolean value that specifies whether a new image of the restored database will be created. If True, a new image of the database is created. The image is created regardless of the presence of an existing database with the same name. If False (default), a new image of the database is not created by the restore operation. The database targeted by the restore operation must exist on an instance of Microsoft SQL Server. 
         /// </summary>
+        [TaskAction(RestoreTaskAction, false)]
         public bool ReplaceDatabase { get; set; }
 
         /// <summary>
@@ -254,6 +255,12 @@ namespace MSBuild.ExtensionPack.Sql2005
         [TaskAction(RestoreTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem DataFilePath { get; set; }
+
+        /// <summary>
+        /// Sets the NewDataFilePath.
+        /// </summary>
+        [TaskAction(RestoreTaskAction, true)]
+        public ITaskItem NewDataFilePath { get; set; }
 
         /// <summary>
         /// Sets the LogFilePath.
@@ -638,6 +645,21 @@ namespace MSBuild.ExtensionPack.Sql2005
             sqlRestore.PercentCompleteNotification = this.NotificationInterval;
             sqlRestore.ReplaceDatabase = true;
             sqlRestore.PercentComplete += this.ProgressEventHandler;
+
+            if (this.NewDataFilePath != null)
+            {
+                sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.NewDataFilePath.GetMetadata("FullPath")));
+                if (this.LogFilePath != null)
+                {
+                    if (string.IsNullOrEmpty(this.LogName))
+                    {
+                        this.LogName = this.DatabaseItem.ItemSpec + "_log";
+                    }
+
+                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.LogName, this.LogFilePath.GetMetadata("FullPath")));
+                }
+            }
+
             if (this.ReplaceDatabase)
             {
                 sqlRestore.ReplaceDatabase = true;
@@ -652,7 +674,15 @@ namespace MSBuild.ExtensionPack.Sql2005
                     return;
                 }
 
-                sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath")));
+                if (this.NewDataFilePath != null)
+                {
+                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.NewDataFilePath.GetMetadata("FullPath")));
+                }
+                else
+                {
+                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath")));
+                }
+
                 sqlRestore.RelocateFiles.Add(new RelocateFile(this.LogName, this.LogFilePath.GetMetadata("FullPath")));
             }
 

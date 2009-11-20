@@ -25,6 +25,8 @@
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="VerifyBackup" DataFilePath="c:\a\ADatabase.bak"/>
         <!-- Restore a database -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
+        <!-- Restore a database to a different location-->
+        <MSBuild.ExtensionPack.Sql2008.Database MachineName="Desktop\SQL2008" TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak" NewDataFilePath="c:\k\ADatabase2.mdf" LogFilePath="c:\a\ADatabase2_log.LDF"/>
         <!-- Create a database -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
         <!-- Create the database again, using Force to delete the existing database -->

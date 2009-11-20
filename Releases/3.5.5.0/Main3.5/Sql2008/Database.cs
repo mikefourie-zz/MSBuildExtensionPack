@@ -22,7 +22,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath)</para>
+    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath)</para>
     /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -58,6 +58,8 @@ namespace MSBuild.ExtensionPack.Sql2008
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="VerifyBackup" DataFilePath="c:\a\ADatabase.bak"/>
     ///         <!-- Restore a database -->
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
+    ///         <!-- Restore a database to a different location-->
+    ///         <MSBuild.ExtensionPack.Sql2008.Database MachineName="Desktop\SQL2008" TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak" NewDataFilePath="c:\k\ADatabase2.mdf" LogFilePath="c:\a\ADatabase2_log.LDF"/>
     ///         <!-- Create a database -->
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
     ///         <!-- Create the database again, using Force to delete the existing database -->
@@ -159,8 +161,9 @@ namespace MSBuild.ExtensionPack.Sql2008
         public bool NoPooling { get; set; }
 
         /// <summary>
-        /// Set to true to restore a database to a new location
+        /// A Boolean value that specifies whether a new image of the restored database will be created. If True, a new image of the database is created. The image is created regardless of the presence of an existing database with the same name. If False (default), a new image of the database is not created by the restore operation. The database targeted by the restore operation must exist on an instance of Microsoft SQL Server. 
         /// </summary>
+        [TaskAction(RestoreTaskAction, false)]
         public bool ReplaceDatabase { get; set; }
 
         /// <summary>
@@ -255,6 +258,12 @@ namespace MSBuild.ExtensionPack.Sql2008
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem DataFilePath { get; set; }
 
+        /// <summary>
+        /// Sets the NewDataFilePath.
+        /// </summary>
+        [TaskAction(RestoreTaskAction, true)]
+        public ITaskItem NewDataFilePath { get; set; }
+        
         /// <summary>
         /// Sets the LogFilePath.
         /// </summary>
@@ -638,6 +647,21 @@ namespace MSBuild.ExtensionPack.Sql2008
             sqlRestore.PercentCompleteNotification = this.NotificationInterval;
             sqlRestore.ReplaceDatabase = true;
             sqlRestore.PercentComplete += this.ProgressEventHandler;
+
+            if (this.NewDataFilePath != null)
+            {
+                sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.NewDataFilePath.GetMetadata("FullPath")));
+                if (this.LogFilePath != null)
+                {
+                    if (string.IsNullOrEmpty(this.LogName))
+                    {
+                        this.LogName = this.DatabaseItem.ItemSpec + "_log";
+                    }
+
+                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.LogName, this.LogFilePath.GetMetadata("FullPath")));
+                }
+            }
+
             if (this.ReplaceDatabase)
             {
                 sqlRestore.ReplaceDatabase = true;
@@ -652,7 +676,15 @@ namespace MSBuild.ExtensionPack.Sql2008
                     return;
                 }
 
-                sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath")));
+                if (this.NewDataFilePath != null)
+                {
+                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.NewDataFilePath.GetMetadata("FullPath")));
+                }
+                else
+                {
+                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath")));
+                }
+
                 sqlRestore.RelocateFiles.Add(new RelocateFile(this.LogName, this.LogFilePath.GetMetadata("FullPath")));
             }
 
