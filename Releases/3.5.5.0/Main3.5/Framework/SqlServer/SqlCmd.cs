@@ -190,7 +190,8 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <para>Gets or sets the path to a file that contains a batch of SQL statements. Multiple files may be specified that will be read 
         /// and processed in order. Do not use any spaces between the file names. <see cref="SqlCmd"/> will first check to see 
         /// whether all files exist. If one or more files do not exist, <see cref="SqlCmd"/> will exit. The <see cref="InputFiles"/> and
-        /// <see cref="CommandLineQuery"/> options are mutually exclusive.</para>        
+        /// <see cref="CommandLineQuery"/> options are mutually exclusive.</para>
+        /// Please note that if you provide a large number of files, you may exceed the maximum length of a command line (http://support.microsoft.com/kb/830473). It's recommended you make use of smaller batches if you encounter this issue.       
         /// </summary>
         [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] InputFiles { get; set; }
