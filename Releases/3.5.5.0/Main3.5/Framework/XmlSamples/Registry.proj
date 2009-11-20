@@ -26,6 +26,11 @@
         <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
         <!-- Set some Binary Data -->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" DataType="Binary" Value="binval" Data="10, 43, 44, 45, 14, 255" />
+        <!--Get some Binary Data--> 
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="Get" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="binval">
+            <Output PropertyName="RData" TaskParameter="Data"/>
+        </MSBuild.ExtensionPack.Computer.Registry>
+        <Message Text="Registry Value: $(RData)"/>
         <!-- Delete a key -->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
     </Target>
