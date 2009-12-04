@@ -4,7 +4,10 @@
 namespace MSBuild.ExtensionPack.SqlServer
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Text;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.SqlServer.Extended;
 
@@ -52,11 +55,20 @@ namespace MSBuild.ExtensionPack.SqlServer
         private const string ExecuteTaskAction = "Execute";
         private const string ExecutionMessage = "Executing '{0}' with '{1}'";
         private const string InputFileMessage = "Adding input file '{0}'";
+
         private const string InvalidSqlCmdPathError = "Unable to resolve path to sqlcmd.exe. Assuming it is in the PATH environment variable.";
+
         private const string InvalidTaskActionError = "Invalid TaskAction passed: {0}";
+
         private const string LoginTimeoutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
+
         private const string QueryMessage = "Adding query '{0}'";
+
         private const string QueryTimeoutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
+
+        // 8191 * 4 =  32,764; 8,191 is the documented maximum number of characters in a command-line string(see http://support.microsoft.com/kb/830473).
+        private const int CommandLineMaxLength = 32764;
+
         private int loginTimeout = 8;
         private int queryTimeout;
         private string server = ".";
@@ -393,21 +405,6 @@ namespace MSBuild.ExtensionPack.SqlServer
                 sb.Append(" -A ");
             }
 
-            // Input/Output Options
-
-            // Input Files
-            if (this.InputFiles != null)
-            {
-                foreach (ITaskItem file in this.InputFiles)
-                {
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
-                    sb.Append(" -i ");
-                    sb.Append("\"");
-                    sb.Append(file.GetMetadata("FullPath"));
-                    sb.Append("\"");
-                }
-            }
-
             // Output file
             if (!string.IsNullOrEmpty(this.OutputFile))
             {
@@ -533,9 +530,20 @@ namespace MSBuild.ExtensionPack.SqlServer
                 this.SqlCmdPath = "sqlcmd.exe";
             }
 
-            // Build out the arguments
-            var arguments = this.BuildArguments();
-            this.ExecuteCommand(arguments);
+            string baseArguments = this.BuildArguments();
+            if (this.InputFiles != null && this.InputFiles.Length > 0)
+            {
+                int lengthRemaining = CommandLineMaxLength - this.SqlCmdPath.Length - baseArguments.Length - 2;
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "There are {0} characters available in the argument list for the input files.", lengthRemaining));
+                foreach (var inputFileArgs in new InputFileArgumentCollection(this, this.InputFiles, lengthRemaining))
+                {
+                    this.ExecuteCommand(baseArguments + " " + inputFileArgs);
+                }
+            }
+            else
+            {
+                this.ExecuteCommand(baseArguments);
+            }
         }
 
         private void SwitchReturnValue(int returnValue, string error)
@@ -545,6 +553,81 @@ namespace MSBuild.ExtensionPack.SqlServer
                 case 1:
                     this.LogTaskWarning("Exit Code 1. Failure: " + error);
                     break;
+            }
+        }
+
+        private sealed class InputFileArgumentCollection : IEnumerator<string>, IEnumerable<string>
+        {
+            private readonly BaseTask task;
+            private readonly int maxArgLength = CommandLineMaxLength;
+            private readonly ITaskItem[] inputFiles;
+            private int currentIndex;
+            private StringBuilder currentArgList;
+
+            public InputFileArgumentCollection(BaseTask baseTask, ITaskItem[] inputFileList, int maxArgLength)
+            {
+                this.task = baseTask;
+                this.inputFiles = inputFileList;
+                this.maxArgLength = maxArgLength;
+                this.Reset();
+            }
+
+            public string Current
+            {
+                get { return this.currentArgList.ToString(); }
+            }
+
+            object IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            public void Dispose()
+            {
+                GC.SuppressFinalize(this);
+            }
+
+            public bool MoveNext()
+            {
+                if (this.inputFiles == null || this.currentIndex >= this.inputFiles.Length)
+                {
+                    return false;
+                }
+
+                this.currentArgList = new StringBuilder();
+                for (; this.currentIndex < this.inputFiles.Length; ++this.currentIndex)
+                {
+                    ITaskItem file = this.inputFiles[this.currentIndex];
+                    string fullPath = file.GetMetadata("FullPath");
+                    if (this.currentArgList.Length + 6 + fullPath.Length > this.maxArgLength)
+                    {
+                        break;
+                    }
+
+                    this.task.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
+                    this.currentArgList.Append(" -i ");
+                    this.currentArgList.Append("\"");
+                    this.currentArgList.Append(file.GetMetadata("FullPath"));
+                    this.currentArgList.Append("\"");
+                }
+
+                return true;
+            }
+
+            public void Reset()
+            {
+                this.currentIndex = 0;
+                this.currentArgList = new StringBuilder();
+            }
+
+            public IEnumerator<string> GetEnumerator()
+            {
+                return this;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this;
             }
         }
     }
