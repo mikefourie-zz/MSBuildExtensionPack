@@ -1326,6 +1326,7 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
+                    <xs:attribute name="Timeout"/>
                     <xs:attribute name="Url" type="msb:non_empty_string" use="required"/>
                 </xs:extension>
             </xs:complexContent>

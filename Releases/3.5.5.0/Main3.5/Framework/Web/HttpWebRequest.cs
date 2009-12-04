@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Output:</b> Response)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout <b>Output:</b> Response)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -42,12 +42,23 @@ namespace MSBuild.ExtensionPack.Web
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
+        private int timeout = 100000;
 
         [DropdownValue(GetResponseTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
+        }
+
+        /// <summary>
+        /// Sets the number of milliseconds to wait before the request times out. The default value is 100,000 milliseconds (100 seconds).
+        /// </summary>
+        [TaskAction(GetResponseTaskAction, false)]
+        public int Timeout
+        {
+            get { return this.timeout; }
+            set { this.timeout = value; }
         }
 
         /// <summary>
@@ -79,10 +90,10 @@ namespace MSBuild.ExtensionPack.Web
         private void GetResponse()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Executing HttpRequest against: {0}", this.Url));
-
             System.Net.HttpWebRequest request = WebRequest.Create(new Uri(this.Url)) as System.Net.HttpWebRequest;
             if (request != null)
             {
+                request.Timeout = this.Timeout;
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
                     int code = (int)response.StatusCode;
@@ -95,7 +106,6 @@ namespace MSBuild.ExtensionPack.Web
                     this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
                     this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
                     this.Response.SetMetadata("Server", response.Server);
-
                     response.Close();
                 }
             }
