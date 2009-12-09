@@ -33,6 +33,7 @@ namespace MSBuild.ExtensionPack.Web
     ///     <ItemGroup>
     ///         <Application Include="/photos">
     ///             <PhysicalPath>C:\photos</PhysicalPath>
+    ///             <AppPool>NewAppPool100</AppPool>
     ///         </Application>
     ///         <Application Include="/photos2">
     ///             <PhysicalPath>C:\photos2</PhysicalPath>
@@ -124,14 +125,14 @@ namespace MSBuild.ExtensionPack.Web
         public string Name { get; set; }
 
         /// <summary>
-        /// ITaskItem of Applications
+        /// ITaskItem of Applications. Use AppPool and PhysicalPath metadata to specify applicable values
         /// </summary>
         [TaskAction(AddApplicationTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Applications { get; set; }
 
         /// <summary>
-        /// ITaskItem of VirtualDirectories
+        /// ITaskItem of VirtualDirectories. Use PhysicalPath metadata to specify applicable values
         /// </summary>
         [TaskAction(AddVirtualDirectoryTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
@@ -253,19 +254,36 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.Applications != null)
             {
-                foreach (ITaskItem app in this.Applications)
-                {
-                    string physicalPath = app.GetMetadata("PhysicalPath");
-                    if (!Directory.Exists(physicalPath))
-                    {
-                        Directory.CreateDirectory(physicalPath);
-                    }
+                this.ProcessApplications();
+                this.iisServerManager.CommitChanges();
+            }
+        }
 
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
-                    this.website.Applications.Add(app.ItemSpec, physicalPath);
+        private void ProcessApplications()
+        {
+            foreach (ITaskItem app in this.Applications)
+            {
+                string physicalPath = app.GetMetadata("PhysicalPath");
+                if (!Directory.Exists(physicalPath))
+                {
+                    Directory.CreateDirectory(physicalPath);
                 }
 
-                this.iisServerManager.CommitChanges();
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
+                this.website.Applications.Add(app.ItemSpec, physicalPath);
+
+                // Set Application Pool if given
+                if (!string.IsNullOrEmpty(app.GetMetadata("AppPool")))
+                {
+                    ApplicationPool pool = this.iisServerManager.ApplicationPools[app.GetMetadata("AppPool")];
+                    if (pool == null)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} specified for: {1} was not found", app.GetMetadata("AppPool"), app.ItemSpec));
+                        return;
+                    }
+
+                    this.website.Applications[app.ItemSpec].ApplicationPoolName = app.GetMetadata("AppPool");
+                }
             }
         }
 
@@ -279,18 +297,7 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.VirtualDirectories != null)
             {
-                foreach (ITaskItem virDir in this.VirtualDirectories)
-                {
-                    string physicalPath = virDir.GetMetadata("PhysicalPath");
-                    if (!Directory.Exists(physicalPath))
-                    {
-                        Directory.CreateDirectory(physicalPath);
-                    }
-
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
-                    this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
-                }
-
+                this.ProcessVirtualDirectories(); 
                 this.iisServerManager.CommitChanges();
             }
         }
@@ -356,36 +363,31 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.Applications != null)
             {
-                foreach (ITaskItem app in this.Applications)
-                {
-                    string physicalPath = app.GetMetadata("PhysicalPath");
-                    if (!Directory.Exists(physicalPath))
-                    {
-                        Directory.CreateDirectory(physicalPath);
-                    }
-
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
-                    this.website.Applications.Add(app.ItemSpec, physicalPath);
-                }
+                this.ProcessApplications();
             }
 
             if (this.VirtualDirectories != null)
             {
-                foreach (ITaskItem virDir in this.VirtualDirectories)
-                {
-                    string physicalPath = virDir.GetMetadata("PhysicalPath");
-                    if (!Directory.Exists(physicalPath))
-                    {
-                        Directory.CreateDirectory(physicalPath);
-                    }
-
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
-                    this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
-                }
+                this.ProcessVirtualDirectories();
             }
 
             this.iisServerManager.CommitChanges();
             this.SiteId = this.website.Id;
+        }
+
+        private void ProcessVirtualDirectories()
+        {
+            foreach (ITaskItem virDir in this.VirtualDirectories)
+            {
+                string physicalPath = virDir.GetMetadata("PhysicalPath");
+                if (!Directory.Exists(physicalPath))
+                {
+                    Directory.CreateDirectory(physicalPath);
+                }
+
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
+                this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
+            }
         }
 
         private void ModifyPath()
