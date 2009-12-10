@@ -453,6 +453,25 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.FileSystem.FileVersion" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Increment"/>
+                                <xs:enumeration value="Reset"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="File"/>
+                    <xs:attribute name="Increment"/>
+                    <xs:attribute name="Value"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.FileSystem.FindUnder" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>

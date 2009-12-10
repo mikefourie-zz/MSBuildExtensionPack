@@ -180,6 +180,7 @@
     <Compile Include="Computer\GetPasswordForm.Designer.cs">
       <DependentUpon>GetPasswordForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="UI\ConfirmForm.cs">
@@ -372,6 +373,7 @@
     </None>
     <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\ActiveDirectory.proj" />
+    <None Include="XmlSamples\FileVersion.proj" />
     <None Include="XmlSamples\WshShell.proj" />
     <None Include="XmlSamples\WebClient.proj" />
     <None Include="XmlSamples\FindUnder.proj" />
