@@ -574,6 +574,14 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="AddDays"/>
+                                <xs:enumeration value="AddHours"/>
+                                <xs:enumeration value="AddMilliseconds"/>
+                                <xs:enumeration value="AddMinutes"/>
+                                <xs:enumeration value="AddMonths"/>
+                                <xs:enumeration value="AddSeconds"/>
+                                <xs:enumeration value="AddTicks"/>
+                                <xs:enumeration value="AddYears"/>
                                 <xs:enumeration value="CheckBetween"/>
                                 <xs:enumeration value="CheckLater"/>
                                 <xs:enumeration value="Get"/>
