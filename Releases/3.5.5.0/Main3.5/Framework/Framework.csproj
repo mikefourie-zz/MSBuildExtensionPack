@@ -183,6 +183,12 @@
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
+    <Compile Include="SqlServer\ExecuteEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SqlServer\SqlExecute.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -374,6 +380,7 @@
     <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\ActiveDirectory.proj" />
     <None Include="XmlSamples\FileVersion.proj" />
+    <None Include="XmlSamples\SqlExecute.proj" />
     <None Include="XmlSamples\WshShell.proj" />
     <None Include="XmlSamples\WebClient.proj" />
     <None Include="XmlSamples\FindUnder.proj" />

@@ -1121,6 +1121,30 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.SqlServer.SqlExecute" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Execute"/>
+                                <xs:enumeration value="ExecuteRawReader"/>
+                                <xs:enumeration value="ExecuteReader"/>
+                                <xs:enumeration value="ExecuteScalar"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ConnectionString"/>
+                    <xs:attribute name="Sql"/>
+                    <xs:attribute name="Files"/>
+                    <xs:attribute name="CommandTimeout"/>
+                    <xs:attribute name="Retry"/>
+                    <xs:attribute name="UseTransaction"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.SqlServer.SqlVersion" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
