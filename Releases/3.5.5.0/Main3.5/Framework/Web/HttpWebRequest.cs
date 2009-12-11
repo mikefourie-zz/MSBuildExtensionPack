@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout <b>Output:</b> Response)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout <b>Output:</b> Response, Status)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -26,7 +26,9 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Target Name="Default">
     ///         <MSBuild.ExtensionPack.Web.HttpWebRequest TaskAction="GetResponse" Url="http://www.freetodev.com">
     ///             <Output TaskParameter="Response" ItemName="ResponseDetail"/>
+    ///             <Output TaskParameter="Status" PropertyName="ResponseStatus"/>
     ///         </MSBuild.ExtensionPack.Web.HttpWebRequest>
+    ///         <Message Text="Status: $(ResponseStatus)"/>
     ///         <Message Text="StatusDescription: %(ResponseDetail.StatusDescription)"/>
     ///         <Message Text="StatusCode: %(ResponseDetail.StatusCode)"/>
     ///         <Message Text="CharacterSet: %(ResponseDetail.CharacterSet)"/>
@@ -72,6 +74,12 @@ namespace MSBuild.ExtensionPack.Web
         public ITaskItem Response { get; set; }
 
         /// <summary>
+        /// Contains the StatusDescription for successful requests. Contains the Status when encountering a WebException.
+        /// </summary>
+        [Output]
+        public string Status { get; set; }
+
+        /// <summary>
         /// When overridden in a derived class, executes the task.
         /// </summary>
         protected override void InternalExecute()
@@ -94,19 +102,35 @@ namespace MSBuild.ExtensionPack.Web
             if (request != null)
             {
                 request.Timeout = this.Timeout;
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                try
                 {
-                    int code = (int)response.StatusCode;
-                    StreamReader responseReader = new StreamReader(response.GetResponseStream());
-                    this.Response = new TaskItem(this.Url);
-                    this.Response.SetMetadata("ResponseText", responseReader.ReadToEnd());
-                    this.Response.SetMetadata("StatusDescription", response.StatusDescription);
-                    this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentUICulture));
-                    this.Response.SetMetadata("CharacterSet", response.CharacterSet);
-                    this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
-                    this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
-                    this.Response.SetMetadata("Server", response.Server);
-                    response.Close();
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    {
+                        int code = (int)response.StatusCode;
+                        StreamReader responseReader = new StreamReader(response.GetResponseStream());
+                        this.Response = new TaskItem(this.Url);
+                        this.Response.SetMetadata("ResponseText", responseReader.ReadToEnd());
+                        this.Status = response.StatusDescription;
+                        this.Response.SetMetadata("StatusDescription", response.StatusDescription);
+                        this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentUICulture));
+                        this.Response.SetMetadata("CharacterSet", response.CharacterSet);
+                        this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
+                        this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
+                        this.Response.SetMetadata("Server", response.Server);
+                        response.Close();
+                    }
+                }
+                catch (WebException ex)
+                {
+                    this.Log.LogError("{0}. Status: {1}", ex.Message, ex.Status);
+                    this.Status = ex.Status.ToString();
+                    if (ex.Response != null)
+                    {
+                        using (StreamReader responseReader = new StreamReader(ex.Response.GetResponseStream()))
+                        {
+                            this.Log.LogError(responseReader.ReadToEnd());
+                        }
+                    }
                 }
             }
         }
