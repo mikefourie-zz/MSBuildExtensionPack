@@ -332,9 +332,9 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         protected override void InternalExecute()
         {
-            switch (this.TaskAction.ToUpperInvariant())
+            switch (this.TaskAction)
             {
-                case "EXECUTE":
+                case ExecuteTaskAction:
                     this.SqlExecute();
                     break;
                 default:
