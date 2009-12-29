@@ -1267,8 +1267,11 @@
                                 <xs:enumeration value="Checkin"/>
                                 <xs:enumeration value="Delete"/>
                                 <xs:enumeration value="Get"/>
+                                <xs:enumeration value="GetProperties"/>
+                                <xs:enumeration value="GetChangeset"/>
                                 <xs:enumeration value="Merge"/>
                                 <xs:enumeration value="GetPendingChanges"/>
+                                <xs:enumeration value="Resolve"/>
                                 <xs:enumeration value="UndoCheckout"/>
                                 <xs:enumeration value="Undelete"/>
                             </xs:restriction>
