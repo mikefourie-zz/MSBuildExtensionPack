@@ -1,6 +1,5 @@
 //-----------------------------------------------------------------------
 // <copyright file="MsBuildHelper.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-// Task Contributors: Hamid Shahid, Stephen Schaff
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
