@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <summary>
     /// Specifies how certain version numbers are incremented by the task.
     /// </summary>
-    internal enum IncrementMethod
+    public enum IncrementMethod
     {
         /// <summary>
         /// Do not auto-increment the number.
@@ -30,7 +30,12 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Format the current date and time using a formatting string, and use that as the number.
         /// </summary>
-        DateString = 2
+        DateString = 2,
+
+        /// <summary>
+        /// Format the current date as the two digit year and the day of the year, and use that as the number, i.e. the revision number for 7/03/2009 is 09184
+        /// </summary>
+        Julian = 3
     }
 
     /// <summary>
@@ -145,7 +150,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyMajorVersion</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyMajorVersion&gt;8&lt;/AssemblyMajorVersion&gt;
         ///     </code>
         /// </example>
@@ -166,7 +171,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyMinorVersion</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyMinorVersion&gt;0&lt;/AssemblyMinorVersion&gt;
         ///     </code>
         /// </example>
@@ -195,7 +200,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyBuildNumber&gt;0&lt;/AssemblyBuildNumber&gt;
         /// &lt;AssemblyBuildNumberType&gt;DirectSet&lt;/AssemblyBuildNumberType&gt;
         ///     </code>
@@ -227,7 +232,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyRevision&gt;0&lt;/AssemblyRevision&gt;
         /// &lt;AssemblyRevisionType&gt;DirectSet&lt;/AssemblyRevisionType&gt;
         ///     </code>
@@ -266,7 +271,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     this is to set the <em>AssemblyVersion</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyVersion&gt;1.2.3.4&lt;/AssemblyVersion&gt;
         ///     </code>
         /// </example>
@@ -292,7 +297,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyBuildNumberType&gt;DateFormat&lt;/AssemblyBuildNumberType&gt;
         /// &lt;AssemblyBuildNumberFormat&gt;yyMMdd&lt;/AssemblyBuildNumberFormat&gt;
         ///     </code>
@@ -316,7 +321,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyRevisionType&gt;AutoIncrement&lt;/AssemblyRevisionType&gt;
         /// &lt;AssemblyRevisionFormat&gt;00&lt;/AssemblyRevisionFormat&gt;
         ///     </code>
@@ -343,7 +348,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyBuildNumberType&gt;DateFormat&lt;/AssemblyBuildNumberType&gt;
         /// &lt;AssemblyBuildNumberFormat&gt;yyMMdd&lt;/AssemblyBuildNumberFormat&gt;
         ///     </code>
@@ -368,7 +373,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyRevisionType&gt;AutoIncrement&lt;/AssemblyRevisionType&gt;
         /// &lt;AssemblyRevisionFormat&gt;00&lt;/AssemblyRevisionFormat&gt;
         ///     </code>
@@ -408,7 +413,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyFileMajorVersion</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileMajorVersion&gt;8&lt;/AssemblyFileMajorVersion&gt;
         ///     </code>
         /// </example>
@@ -429,7 +434,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyFileMinorVersion</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileMinorVersion&gt;0&lt;/AssemblyFileMinorVersion&gt;
         ///     </code>
         /// </example>
@@ -458,7 +463,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileBuildNumber&gt;0&lt;/AssemblyFileBuildNumber&gt;
         /// &lt;AssemblyFileBuildNumberType&gt;DirectSet&lt;/AssemblyFileBuildNumberType&gt;
         ///     </code>
@@ -490,7 +495,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileRevision&gt;0&lt;/AssemblyFileRevision&gt;
         /// &lt;AssemblyFileRevisionType&gt;DirectSet&lt;/AssemblyFileRevisionType&gt;
         ///     </code>
@@ -529,7 +534,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     this is to set the <em>AssemblyFileVersion</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileVersion&gt;1.2.3.4&lt;/AssemblyFileVersion&gt;
         ///     </code>
         /// </example>
@@ -555,7 +560,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileBuildNumberType&gt;DateFormat&lt;/AssemblyFileBuildNumberType&gt;
         /// &lt;AssemblyFileBuildNumberFormat&gt;yyMMdd&lt;/AssemblyFileBuildNumberFormat&gt;
         ///     </code>
@@ -579,7 +584,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileRevisionType&gt;AutoIncrement&lt;/AssemblyFileRevisionType&gt;
         /// &lt;AssemblyFileRevisionFormat&gt;00&lt;/AssemblyFileRevisionFormat&gt;
         ///     </code>
@@ -601,7 +606,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileBuildNumberType&gt;DateFormat&lt;/AssemblyFileBuildNumberType&gt;
         /// &lt;AssemblyFileBuildNumberFormat&gt;yyMMdd&lt;/AssemblyFileBuildNumberFormat&gt;
         ///     </code>
@@ -626,7 +631,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     </para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyFileRevisionType&gt;AutoIncrement&lt;/AssemblyFileRevisionType&gt;
         /// &lt;AssemblyFileRevisionFormat&gt;00&lt;/AssemblyFileRevisionFormat&gt;
         ///     </code>
@@ -682,7 +687,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyDescription</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyDescription&gt;Microsoft Visual Studio 2005&lt;/AssemblyDescription&gt;
         ///     </code>
         /// </example>
@@ -698,7 +703,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyConfiguration</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyConfiguration&gt;Debug&lt;/AssemblyConfiguration&gt;
         ///     </code>
         /// </example>
@@ -714,7 +719,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyCompany</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyCompany&gt;Microsoft Corporation&lt;/AssemblyCompany&gt;
         ///     </code>
         /// </example>
@@ -731,7 +736,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyProduct</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyProduct&gt;Microsoft® Visual Studio® 2005&lt;/AssemblyProduct&gt;
         ///     </code>
         /// </example>
@@ -748,7 +753,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyCopyright</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyCopyright&gt;© Microsoft Corporation. All rights reserved.&lt;/AssemblyCopyright&gt;
         ///     </code>
         /// </example>
@@ -763,7 +768,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyTrademark</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyTrademark&gt;Microsoft Corporation&lt;/AssemblyTrademark&gt;
         ///     </code>
         /// </example>
@@ -779,7 +784,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyCulture</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyCulture&gt;en&lt;/AssemblyCulture&gt;
         ///     </code>
         /// </example>
@@ -793,7 +798,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyGuid</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyGuid&gt;56269a04-c55a-4c5a-92ba-dfdb569bc708&lt;/AssemblyGuid&gt;
         ///     </code>
         /// </example>
@@ -814,7 +819,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>false</em>.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyIncludeSigningInformation&gt;true&lt;/AssemblyIncludeSigningInformation&gt;
         /// &lt;AssemblyDelaySign&gt;true&lt;/AssemblyDelaySign&gt;
         ///     </code>
@@ -828,7 +833,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyDelaySign</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyDelaySign&gt;false&lt;/AssemblyDelaySign&gt;
         ///     </code>
         /// </example>
@@ -841,7 +846,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyKeyFile</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyKeyFile&gt;c:\key.snk&lt;/AssemblyKeyFile&gt;
         ///     </code>
         /// </example>
@@ -854,7 +859,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyKeyName</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyKeyName&gt;myContainer&lt;/AssemblyKeyName&gt;
         ///     </code>
         /// </example>
@@ -871,7 +876,7 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <em>AssemblyComVisible</em> property.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSBuild">
+        ///     <code lang="xml">
         /// &lt;AssemblyComVisible&gt;myContainer&lt;/AssemblyComVisible&gt;
         ///     </code>
         /// </example>
@@ -887,7 +892,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// to have them processed by the task.</para>
         /// </remarks>
         /// <example>
-        ///     <code lang="MSbuild">
+        ///     <code lang="xml">
         /// &lt;!-- Add all AssemblyInfo files in all sub-directories to the list of
         /// files that should be processed by the task --&gt;
         /// &lt;ItemGroup&gt;
@@ -1108,7 +1113,7 @@ namespace MSBuild.ExtensionPack.Framework
             // the Revision updates on every build. It's important to ensure that the Revision resets to 0
             // when the BuildNumber flips across to a new day.
             string originalBuildNumber = string.Empty;
-            bool handleSpecialInteraction = (requestedVersion.BuildNumberType == IncrementMethod.DateString) &&
+            bool handleSpecialInteraction = ((requestedVersion.BuildNumberType == IncrementMethod.DateString) || (requestedVersion.BuildNumberType == IncrementMethod.Julian)) &&
                                             (requestedVersion.RevisionType == IncrementMethod.AutoIncrement);
 
             if (handleSpecialInteraction)
@@ -1171,6 +1176,11 @@ namespace MSBuild.ExtensionPack.Framework
                     string newVersionNumber1 = this.UseUtc ? DateTime.UtcNow.ToString(format, CultureInfo.InvariantCulture) : DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
                     this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber1);
                     return newVersionNumber1;
+                case IncrementMethod.Julian:
+                    string newVersionNumber2 = this.UseUtc ? DateTime.UtcNow.ToString(format, CultureInfo.InvariantCulture) : DateTime.Now.ToString("yy", CultureInfo.InvariantCulture);
+                    newVersionNumber2 += DateTime.Now.DayOfYear.ToString("000", CultureInfo.InvariantCulture);
+                    this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber2);
+                    return newVersionNumber2;
                 default:
                     return string.Empty;
             }
