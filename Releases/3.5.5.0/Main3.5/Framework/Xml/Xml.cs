@@ -219,12 +219,12 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            switch (this.TaskAction.ToUpperInvariant())
+            switch (this.TaskAction)
             {
-                case "TRANSFORM":
+                case TransformTaskAction:
                     this.Transform();
                     break;
-                case "VALIDATE":
+                case ValidateTaskAction:
                     this.Validate();
                     break;
                 default:
@@ -260,38 +260,31 @@ namespace MSBuild.ExtensionPack.Xml
                 this.Log.LogError("XslTransform or XslTransformFile must be specified");
                 return;
             }
-
-            // Load the style sheet.
-            XslCompiledTransform xslt = new XslCompiledTransform();
-            xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())));
-
-            StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);
-            using (writer)
+            
+            XDocument tempxmlDoc = new XDocument();
+            XslCompiledTransform xslt;
+            using (XmlWriter writer = tempxmlDoc.CreateWriter())
             {
+                // Load the style sheet.
+                xslt = new XslCompiledTransform();
+                XsltSettings settings = new XsltSettings { EnableScript = true };
+                xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())), settings, null);
+
                 // Execute the transform and output the results to a writer.
-                xslt.Transform(this.xmlDoc.CreateReader(), null, writer);
+                xslt.Transform(this.xmlDoc.CreateReader(), writer);
             }
 
-            this.Output = writer.ToString();
+            this.Output = tempxmlDoc.ToString();
 
             if (!string.IsNullOrEmpty(this.OutputFile))
             {
                 if (xslt.OutputSettings.OutputMethod == XmlOutputMethod.Text)
                 {
-                    FileStream stream = new FileStream(this.OutputFile, FileMode.Create);
-                    StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default);
-                    using (streamWriter)
+                    using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
+                    using (StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default))
                     {
-                        if (streamWriter != null)
-                        {
                             // Execute the transform and output the results to a writer.
                             xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
-                        }
-                        else
-                        {
-                            Log.LogError("There was an error creating the StreamWriter for the OutputFile");
-                            return;
-                        }
                     }
                 }
                 else
