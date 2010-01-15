@@ -22,7 +22,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath)</para>
+    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath, SecondaryDataFileName, SecondaryDataFilePath)</para>
     /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -204,6 +204,12 @@ namespace MSBuild.ExtensionPack.Sql2008
         public string LogName { get; set; }
 
         /// <summary>
+        /// Sets the secondary data file name. No default value.
+        /// </summary>
+        [TaskAction(RestoreTaskAction, false)]
+        public string SecondaryDataFileName { get; set; }
+
+        /// <summary>
         /// Sets the collation of the database.
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
@@ -263,6 +269,12 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// </summary>
         [TaskAction(RestoreTaskAction, true)]
         public ITaskItem NewDataFilePath { get; set; }
+        
+        /// <summary>
+        /// Sets the SecondaryDataFilePath.
+        /// </summary>
+        [TaskAction(RestoreTaskAction, true)]
+        public ITaskItem SecondaryDataFilePath { get; set; }
         
         /// <summary>
         /// Sets the LogFilePath.
@@ -641,51 +653,35 @@ namespace MSBuild.ExtensionPack.Sql2008
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Restoring SQL {2}: {0} from {1}", this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath"), this.RestoreAction));
-            Restore sqlRestore = new Restore { Database = this.DatabaseItem.ItemSpec, Action = this.restoreAction };
-            sqlRestore.Devices.AddDevice(this.DataFilePath.GetMetadata("FullPath"), DeviceType.File);
-            sqlRestore.PercentCompleteNotification = this.NotificationInterval;
-            sqlRestore.ReplaceDatabase = true;
-            sqlRestore.PercentComplete += this.ProgressEventHandler;
-
-            if (this.NewDataFilePath != null)
+            if (this.ReplaceDatabase && this.LogFilePath == null)
             {
-                sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.NewDataFilePath.GetMetadata("FullPath")));
-                if (this.LogFilePath != null)
-                {
-                    if (string.IsNullOrEmpty(this.LogName))
-                    {
-                        this.LogName = this.DatabaseItem.ItemSpec + "_log";
-                    }
-
-                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.LogName, this.LogFilePath.GetMetadata("FullPath")));
-                }
+                this.Log.LogError("LogFilePath must be specified if ReplaceDatabase is true.");
+                return;
             }
 
-            if (this.ReplaceDatabase)
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Restoring SQL {2}: {0} from {1}", this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath"), this.RestoreAction));
+            Restore sqlRestore = new Restore { Database = this.DatabaseItem.ItemSpec, Action = this.restoreAction, PercentCompleteNotification = this.NotificationInterval, ReplaceDatabase = this.ReplaceDatabase };
+            sqlRestore.Devices.AddDevice(this.DataFilePath.GetMetadata("FullPath"), DeviceType.File);
+            sqlRestore.PercentComplete += this.ProgressEventHandler;
+            if (string.IsNullOrEmpty(this.LogName))
             {
-                sqlRestore.ReplaceDatabase = true;
-                if (string.IsNullOrEmpty(this.LogName))
-                {
-                    this.LogName = this.DatabaseItem.ItemSpec + "_log";
-                }
+                this.LogName = this.DatabaseItem.ItemSpec + "_log";
+            }
 
-                if (this.LogFilePath == null)
-                {
-                    this.Log.LogError("LogFilePath must be specified if ReplaceDatabase is true.");
-                    return;
-                }
+            // add primary data file
+            string dataFilePath = (this.NewDataFilePath != null) ? this.NewDataFilePath.GetMetadata("FullPath") : this.DataFilePath.GetMetadata("FullPath");
+            sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, dataFilePath));
 
-                if (this.NewDataFilePath != null)
-                {
-                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.NewDataFilePath.GetMetadata("FullPath")));
-                }
-                else
-                {
-                    sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath")));
-                }
-
+            // add log file, if path provided
+            if (this.LogFilePath != null)
+            {
                 sqlRestore.RelocateFiles.Add(new RelocateFile(this.LogName, this.LogFilePath.GetMetadata("FullPath")));
+            }
+
+            // add secondary data file, if name and path provided
+            if (null != this.SecondaryDataFilePath && !string.IsNullOrEmpty(this.SecondaryDataFileName))
+            {
+                sqlRestore.RelocateFiles.Add(new RelocateFile(this.SecondaryDataFileName, this.SecondaryDataFilePath.GetMetadata("FullPath")));
             }
 
             sqlRestore.SqlRestore(this.sqlServer);
