@@ -64,6 +64,8 @@
                     <xs:attribute name="OutputFilePath" />
                     <xs:attribute name="ReplaceDatabase" />
                     <xs:attribute name="RestoreAction"/>
+                    <xs:attribute name="SecondaryDataFilePath"/>
+                    <xs:attribute name="SecondaryDataFileName"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
