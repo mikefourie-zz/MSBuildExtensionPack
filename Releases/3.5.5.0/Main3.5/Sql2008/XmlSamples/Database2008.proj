@@ -59,6 +59,8 @@
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Rename" DatabaseItem="@(Database2)"/>
         <!-- Script a database to file -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Script" DatabaseItem="ReportServer" OutputFilePath="c:\ADatabaseScript.sql"/>
+        <!-- Restore a database to a new Name -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Restore" MachineName="$(SqlServerName)" DatabaseItem="$(DatabaseName)" DataFilePath="$(DbDataFilePath)" PrimaryDataFileName="SomeDatabase" LogName="SomeDatabase_log" SecondaryDataFileName="SomeDatabase_CDC" NewDataFilePath="$(OSFilePath)$(DatabaseName).mdf" SecondaryDataFilePath="$(OSFilePath)$(DatabaseName)_CDC.ndf" LogFilePath="$(OSFilePath)\$(DatabaseName)_log.ldf" ReplaceDatabase="True" />
     </Target>
 </Project>
 

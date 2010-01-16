@@ -22,7 +22,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath, SecondaryDataFileName, SecondaryDataFilePath)</para>
+    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath, PrimaryDataFileName, SecondaryDataFileName, SecondaryDataFilePath)</para>
     /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
     /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
@@ -92,6 +92,8 @@ namespace MSBuild.ExtensionPack.Sql2008
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Rename" DatabaseItem="@(Database2)"/>
     ///         <!-- Script a database to file -->
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Script" DatabaseItem="ReportServer" OutputFilePath="c:\ADatabaseScript.sql"/>
+    ///         <!-- Restore a database to a new Name -->
+    ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Restore" MachineName="$(SqlServerName)" DatabaseItem="$(DatabaseName)" DataFilePath="$(DbDataFilePath)" PrimaryDataFileName="SomeDatabase" LogName="SomeDatabase_log" SecondaryDataFileName="SomeDatabase_CDC" NewDataFilePath="$(OSFilePath)$(DatabaseName).mdf" SecondaryDataFilePath="$(OSFilePath)$(DatabaseName)_CDC.ndf" LogFilePath="$(OSFilePath)\$(DatabaseName)_log.ldf" ReplaceDatabase="True" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -195,6 +197,12 @@ namespace MSBuild.ExtensionPack.Sql2008
         [TaskAction(SetOnlineTaskAction, true)]
         [TaskAction(VerifyBackupTaskAction, true)]
         public ITaskItem DatabaseItem { get; set; }
+
+        /// <summary>
+        /// Sets the primary data file name.
+        /// </summary>
+        [TaskAction(RestoreTaskAction, false)]
+        public string PrimaryDataFileName { get; set; }
 
         /// <summary>
         /// Sets the Log Name. Defaults DatabaseItem.ItemSpec + "_log"
@@ -659,18 +667,19 @@ namespace MSBuild.ExtensionPack.Sql2008
                 return;
             }
 
+            string primaryDataFileName = (!string.IsNullOrEmpty(this.PrimaryDataFileName)) ? this.PrimaryDataFileName : this.DatabaseItem.ItemSpec;
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Restoring SQL {2}: {0} from {1}", this.DatabaseItem.ItemSpec, this.DataFilePath.GetMetadata("FullPath"), this.RestoreAction));
             Restore sqlRestore = new Restore { Database = this.DatabaseItem.ItemSpec, Action = this.restoreAction, PercentCompleteNotification = this.NotificationInterval, ReplaceDatabase = this.ReplaceDatabase };
             sqlRestore.Devices.AddDevice(this.DataFilePath.GetMetadata("FullPath"), DeviceType.File);
             sqlRestore.PercentComplete += this.ProgressEventHandler;
+
             if (string.IsNullOrEmpty(this.LogName))
             {
-                this.LogName = this.DatabaseItem.ItemSpec + "_log";
+                this.LogName = primaryDataFileName + "_log";
             }
 
             // add primary data file
-            string dataFilePath = (this.NewDataFilePath != null) ? this.NewDataFilePath.GetMetadata("FullPath") : this.DataFilePath.GetMetadata("FullPath");
-            sqlRestore.RelocateFiles.Add(new RelocateFile(this.DatabaseItem.ItemSpec, dataFilePath));
+            sqlRestore.RelocateFiles.Add(new RelocateFile(primaryDataFileName, (this.NewDataFilePath != null) ? this.NewDataFilePath.GetMetadata("FullPath") : this.DataFilePath.GetMetadata("FullPath")));
 
             // add log file, if path provided
             if (this.LogFilePath != null)
@@ -679,7 +688,7 @@ namespace MSBuild.ExtensionPack.Sql2008
             }
 
             // add secondary data file, if name and path provided
-            if (null != this.SecondaryDataFilePath && !string.IsNullOrEmpty(this.SecondaryDataFileName))
+            if (!string.IsNullOrEmpty(this.SecondaryDataFileName) && this.SecondaryDataFilePath != null)
             {
                 sqlRestore.RelocateFiles.Add(new RelocateFile(this.SecondaryDataFileName, this.SecondaryDataFilePath.GetMetadata("FullPath")));
             }

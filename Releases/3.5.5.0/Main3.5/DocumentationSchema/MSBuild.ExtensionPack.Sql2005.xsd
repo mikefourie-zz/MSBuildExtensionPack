@@ -62,6 +62,7 @@
                     <xs:attribute name="NoPooling" />
                     <xs:attribute name="NotificationInterval" />
                     <xs:attribute name="OutputFilePath" />
+                    <xs:attribute name="PrimaryDataFileName" />
                     <xs:attribute name="ReplaceDatabase" />
                     <xs:attribute name="RestoreAction"/>
                     <xs:attribute name="SecondaryDataFilePath"/>
