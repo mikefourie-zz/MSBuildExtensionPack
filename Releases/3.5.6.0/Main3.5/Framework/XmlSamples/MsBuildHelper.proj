@@ -1,0 +1,127 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <!-- Define some collections to use in the samples-->
+            <Col1 Include="hello"/>
+            <Col1 Include="how"/>
+            <Col1 Include="are"/>
+            <Col2 Include="you"/>
+            <Col3 Include="hello"/>
+            <Col3 Include="bye"/>
+            <DuplicateFiles Include="C:\Demo\**\*"/>
+            <XXX Include="AA"/>
+            <XXX Include="AAB"/>
+            <XXX Include="ABA"/>
+            <XXX Include="AABA"/>
+            <XXX Include="BBAA"/>
+            <YYY Include="AA">
+                <Filter>CC</Filter>
+            </YYY>
+            <YYY Include="AA">
+                <Filter>CHJC</Filter>
+            </YYY>
+            <YYY Include="BB">
+                <Filter>CCDG</Filter>
+            </YYY>
+            <YYY Include="CC">
+                <Filter>CDC</Filter>
+            </YYY>
+            <YYY Include="DD">
+                <Filter>CCEE</Filter>
+            </YYY>
+        </ItemGroup>
+        <!-- Filter Items based on Name -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItems" InputItems1="@(XXX)" RegexPattern="^AA">
+            <Output TaskParameter="OutputItems" ItemName="filtered"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="filtered Items: %(filtered.Identity)"/>
+        <!-- Filter Items based on MetaData -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItems" InputItems1="@(YYY)" Metadata="Filter" RegexPattern="^CC">
+            <Output TaskParameter="OutputItems" ItemName="filteredbymeta"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="filteredbymeta Items: %(filteredbymeta.Identity)"/>
+        <!-- Convert an Item Collection into a string -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="ItemColToString" InputItems1="@(Col1)" Separator=" - ">
+            <Output TaskParameter="OutString" PropertyName="out"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="OutString: $(out)"/>
+        <!-- Escape a string with special MSBuild characters -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Escape" InString="hello how;are *you">
+            <Output TaskParameter="OutString" PropertyName="out"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="OutString: $(out)"/>
+        <!-- Sort an ItemGroup alphabetically -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="Sort" InputItems1="@(Col1)">
+            <Output TaskParameter="OutputItems" ItemName="sorted"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="Sorted Items: %(sorted.Identity)"/>
+        <!-- Get a single item by position -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetItem" InputItems1="@(Col1)" Position="2">
+            <Output TaskParameter="OutputItems" ItemName="AnItem"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="Item: %(AnItem.Identity)"/>
+        <!-- Get the last item -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetLastItem" InputItems1="@(Col1)">
+            <Output TaskParameter="OutputItems" ItemName="LastItem"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="Last Item: %(LastItem.Identity)"/>
+        <!-- Get common items. Note that this can be accomplished without using a custom task. -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetCommonItems" InputItems1="@(Col1)" InputItems2="@(Col3)">
+            <Output TaskParameter="OutputItems" ItemName="comm"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="Common Items: %(comm.Identity)"/>
+        <!-- Get distinct items. Note that this can be accomplished without using a custom task. -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetDistinctItems" InputItems1="@(Col1)" InputItems2="@(Col3)">
+            <Output TaskParameter="OutputItems" ItemName="distinct"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="Distinct Items: %(distinct.Identity)"/>
+        <!-- Remove duplicate files. This can accomplish a large performance gain in some copy operations -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="RemoveDuplicateFiles" InputItems1="@(DuplicateFiles)">
+            <Output TaskParameter="OutputItems" ItemName="NewCol1"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="Full File List contains: %(DuplicateFiles.Identity)"/>
+        <Message Text="Removed Duplicates Contains: %(NewCol1.Identity)"/>
+        <!-- Get the number of items in a collection -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="GetItemCount" InputItems1="@(NewCol1)">
+            <Output TaskParameter="ItemCount" PropertyName="MyCount"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="$(MyCount)"/>
+        <!-- Convert a seperated list to an ItemGroup -->
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="StringToItemCol" ItemString="how,how,are,you" Separator=",">
+            <Output TaskParameter="OutputItems" ItemName="NewCol11"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+        <Message Text="String Item Collection contains: %(NewCol11.Identity)"/>
+    </Target>
+    <Target Name="UpdateMetadata">
+        <!-- This sample uses the UpdateMetadata TaskAction to update existing meatadata using that from another item -->
+        <ItemGroup>
+            <SolutionToBuild Include="$(BuildProjectFolderPath)\ChangeThisOne.sln">
+                <Meta1>OriginalValue</Meta1>
+            </SolutionToBuild>
+            <SolutionToBuild Include="$(BuildProjectFolderPath)\ChangeThisToo.sln">
+                <Meta1>OriginalValue</Meta1>
+                <Meta2>Mike</Meta2>
+            </SolutionToBuild>
+        </ItemGroup>
+        <Message Text="Before = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)" />
+        <ItemGroup>
+            <ItemsToChange Include="@(SolutionToBuild)">
+                <Meta1>ChangedValue</Meta1>
+                <Meta2>Dave</Meta2>
+            </ItemsToChange>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="UpdateMetadata" InputItems1="@(SolutionToBuild)" InputItems2="@(ItemsToChange)">
+            <Output TaskParameter="OutputItems" ItemName="SolutionToBuildTemp" />
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper >
+        <ItemGroup>
+            <SolutionToBuild Remove="@(SolutionToBuild)"/>
+            <SolutionToBuild Include="@(SolutionToBuildTemp)"/>
+        </ItemGroup>
+        <Message Text="After  = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)"/>
+    </Target>
+</Project>

@@ -1,0 +1,162 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06FDB13A-E163-49EE-AC60-4EF4085DADC5}"
+	ProjectSection(SolutionItems) = preProject
+		Common\Attributes.cs = Common\Attributes.cs
+		Common\BaseAppDomainIsolatedTask.cs = Common\BaseAppDomainIsolatedTask.cs
+		Common\BaseTask.cs = Common\BaseTask.cs
+		Common\CodeAnalysis.Dictionary.xml = Common\CodeAnalysis.Dictionary.xml
+		CodeCoverage.testrunconfig = CodeCoverage.testrunconfig
+		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
+		Common\ExtensionPack.public.snk = Common\ExtensionPack.public.snk
+		MainSolution.vsmdi = MainSolution.vsmdi
+		Common\MSBuild.ExtensionPack.tasks = Common\MSBuild.ExtensionPack.tasks
+		SetEnv.cmd = SetEnv.cmd
+		Settings.StyleCop = Settings.StyleCop
+		SkipDelaySignVerification.cmd = SkipDelaySignVerification.cmd
+		Common\StringExtension.cs = Common\StringExtension.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizTalk", "BizTalk\BizTalk.csproj", "{E6255821-7BC4-4617-AC16-A620A51C9962}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop", "StyleCop\StyleCop.csproj", "{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "DocumentationSchema", "{27FF4005-D504-48A9-A0C0-40C32F21F324}"
+	ProjectSection(SolutionItems) = preProject
+		DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd = DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd = DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd = DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd = DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Sql2005.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sql2005.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Sql2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sql2008.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd = DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd = DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2005", "Sql2005\Sql2005.csproj", "{42F6A494-5D2C-4D6D-8B42-CCB704303840}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2008", "Sql2008\Sql2008.csproj", "{FB484536-C3A1-4DA1-8464-C2A5E92A6333}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "Framework\Framework.csproj", "{1C780E39-26D5-4E6F-9533-91D867C1136C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS7", "IIS7\IIS7.csproj", "{A2B689B5-516B-4E6F-87D6-0EE111E0F049}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSharp", "JSharp\JSharp.csproj", "{8D8428EA-4270-493D-A968-D6F94F99CC00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS", "TFS\TFS.csproj", "{51FAA268-396F-4226-AED8-0F08657453F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync", "Sync\Sync.csproj", "{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{5909040A-8319-49A2-858B-BD3A1A9EE7B0}"
+	ProjectSection(SolutionItems) = preProject
+		UnitTests\MockBuildEngine.cs = UnitTests\MockBuildEngine.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkTests", "UnitTests\FrameworkTests\FrameworkTests.csproj", "{ABACCC22-B8B3-4B17-9464-789E093A3503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsVirtualPc", "WindowsVirtualPC\WindowsVirtualPc.csproj", "{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 12
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs08.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = BizTalk\\BizTalk.csproj
+		SccProjectName1 = BizTalk
+		SccLocalPath1 = BizTalk
+		SccProjectUniqueName2 = StyleCop\\StyleCop.csproj
+		SccProjectName2 = StyleCop
+		SccLocalPath2 = StyleCop
+		SccProjectUniqueName3 = Sql2008\\Sql2008.csproj
+		SccProjectName3 = Sql2008
+		SccLocalPath3 = Sql2008
+		SccProjectUniqueName4 = Sql2005\\Sql2005.csproj
+		SccProjectName4 = Sql2005
+		SccLocalPath4 = Sql2005
+		SccProjectUniqueName5 = Framework\\Framework.csproj
+		SccProjectName5 = Framework
+		SccLocalPath5 = Framework
+		SccProjectUniqueName6 = IIS7\\IIS7.csproj
+		SccProjectName6 = IIS7
+		SccLocalPath6 = IIS7
+		SccProjectUniqueName7 = JSharp\\JSharp.csproj
+		SccProjectName7 = JSharp
+		SccLocalPath7 = JSharp
+		SccProjectUniqueName8 = TFS\\TFS.csproj
+		SccProjectName8 = TFS
+		SccLocalPath8 = TFS
+		SccProjectUniqueName9 = Sync\\Sync.csproj
+		SccProjectName9 = Sync
+		SccLocalPath9 = Sync
+		SccProjectUniqueName10 = UnitTests\\FrameworkTests\\FrameworkTests.csproj
+		SccProjectTopLevelParentUniqueName10 = MainSolution.sln
+		SccProjectName10 = UnitTests/FrameworkTests
+		SccLocalPath10 = UnitTests\\FrameworkTests
+		SccProjectUniqueName11 = WindowsVirtualPC\\WindowsVirtualPc.csproj
+		SccProjectName11 = WindowsVirtualPC
+		SccLocalPath11 = WindowsVirtualPC
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = MainSolution.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6255821-7BC4-4617-AC16-A620A51C9962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6255821-7BC4-4617-AC16-A620A51C9962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6255821-7BC4-4617-AC16-A620A51C9962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6255821-7BC4-4617-AC16-A620A51C9962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42F6A494-5D2C-4D6D-8B42-CCB704303840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F6A494-5D2C-4D6D-8B42-CCB704303840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F6A494-5D2C-4D6D-8B42-CCB704303840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F6A494-5D2C-4D6D-8B42-CCB704303840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB484536-C3A1-4DA1-8464-C2A5E92A6333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB484536-C3A1-4DA1-8464-C2A5E92A6333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB484536-C3A1-4DA1-8464-C2A5E92A6333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB484536-C3A1-4DA1-8464-C2A5E92A6333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C780E39-26D5-4E6F-9533-91D867C1136C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C780E39-26D5-4E6F-9533-91D867C1136C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C780E39-26D5-4E6F-9533-91D867C1136C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C780E39-26D5-4E6F-9533-91D867C1136C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D8428EA-4270-493D-A968-D6F94F99CC00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D8428EA-4270-493D-A968-D6F94F99CC00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D8428EA-4270-493D-A968-D6F94F99CC00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D8428EA-4270-493D-A968-D6F94F99CC00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51FAA268-396F-4226-AED8-0F08657453F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51FAA268-396F-4226-AED8-0F08657453F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51FAA268-396F-4226-AED8-0F08657453F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51FAA268-396F-4226-AED8-0F08657453F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ABACCC22-B8B3-4B17-9464-789E093A3503} = {5909040A-8319-49A2-858B-BD3A1A9EE7B0}
+	EndGlobalSection
+EndGlobal

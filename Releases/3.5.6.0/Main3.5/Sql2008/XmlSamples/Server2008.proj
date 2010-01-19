@@ -1,0 +1,21 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Get information for a server, not that this defaults to the default instance on the local server -->
+        <MSBuild.ExtensionPack.Sql2008.Server TaskAction="GetInfo">
+            <Output TaskParameter="Information" ItemName="AllInfo"/>
+        </MSBuild.ExtensionPack.Sql2008.Server>
+        <!-- All the server information properties are available as metadata on the Infomation item -->
+        <Message Text="PhysicalMemory: %(AllInfo.PhysicalMemory)"/>
+        <!-- Get all the active connections to the server -->
+        <MSBuild.ExtensionPack.Sql2008.Server TaskAction="GetConnectionCount">
+            <Output TaskParameter="ConnectionCount" PropertyName="Count"/>
+        </MSBuild.ExtensionPack.Sql2008.Server>
+        <Message Text="Server ConnectionCount: $(Count)"/>
+    </Target>
+</Project>
+
