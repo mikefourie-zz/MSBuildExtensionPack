@@ -1,0 +1,16 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Add a certificate -->
+        <MSBuild.ExtensionPack.Security.Certificate TaskAction="Add" FileName="C:\MyCertificate.cer" CertPassword="PASSW">
+            <Output TaskParameter="Thumbprint" PropertyName="TPrint"/>
+        </MSBuild.ExtensionPack.Security.Certificate>
+        <Message Text="Thumbprint: $(TPrint)"/>
+        <!-- Remove a certificate -->
+        <MSBuild.ExtensionPack.Security.Certificate TaskAction="Remove" Thumbprint="$(TPrint)"/>
+    </Target>
+</Project>

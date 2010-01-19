@@ -1,0 +1,84 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Format a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Format" String1="{0}.{1}.{2}.{3}" Strings="3;5;4;0">
+            <Output TaskParameter="NewString" PropertyName="val"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="Format Result: $(val)"/>
+        <!-- Split a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="Hello;how;are;you" String2=";">
+            <Output ItemName="out" TaskParameter="Strings"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: %(Out.Identity)"/>
+        <!-- Split another string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Split" String1="HelloMIKEhowMIKEareMIKeyou" String2="MIKE">
+            <Output ItemName="out" TaskParameter="Strings"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: %(Out.Identity)"/>
+        <!-- Uppercase a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="ToUpper" OldString="helLo">
+            <Output PropertyName="out" TaskParameter="NewString"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(out)"/>
+        <!-- Lowercase a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="ToLower" OldString="HellO">
+            <Output PropertyName="out" TaskParameter="NewString"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(out)"/>
+        <!-- PadLeft a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="PadLeft" OldString="Hello" String1="A" Count="10">
+            <Output PropertyName="out" TaskParameter="NewString"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(out)"/>
+        <!-- PadRight a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="PadRight" OldString="Hello" String1="A" Count="10">
+            <Output PropertyName="out" TaskParameter="NewString"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(out)"/>
+        <!-- Check whether a string starts with another string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="StartsWith" String1="Hello" String2="He">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- Check whether a string ends with another string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="EndsWith" String1="Hello" String2="Lo" IgnoreCase="false">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- Compare two strings to see whether they are equal -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Compare" String1="Hello" String2="Hello" Comparison="equals">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- Compare two strings to see whether they are equal -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Compare" String1="Hello" String2="Hallo" Comparison="equals">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- See whether one string is greater than another -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Compare" String1="Hello" String2="Hallo" Comparison="greaterthan">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- See whether one string is less than another -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Compare" String1="Hello" String2="Hallo" Comparison="lessthan">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- See whether a string contains another string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Compare" String1="Hello" String2="llo" Comparison="contains">
+            <Output PropertyName="TheResult" TaskParameter="Result"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(TheResult)"/>
+        <!-- Replace the contents off a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Replace" OldString="Hello" OldValue="llo" NewValue="XYZ">
+            <Output PropertyName="out" TaskParameter="NewString"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(out)"/>
+    </Target>
+</Project>

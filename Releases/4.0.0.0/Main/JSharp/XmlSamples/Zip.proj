@@ -1,0 +1,46 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default" DependsOnTargets="Sample1;Sample2"/>
+    <Target Name="Sample1">
+        <ItemGroup>
+            <!-- Set the collection of files to Zip-->
+            <FilesToZip Include="C:\hotfixes\**\*"/>
+        </ItemGroup>
+        <!-- Create a zip file based on the FilesToZip collection -->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(FilesToZip)" RemoveRoot="C:\hotfixes\" ZipFileName="C:\newZipByFile.zip"/>
+        <!-- Create a zip file based on a Path -->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressPath="C:\hotfixes" RemoveRoot="C:\hotfixes\" ZipFileName="C:\newZipByPath.zip"/>
+        <!-- Extract a zip file-->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Extract" ExtractPath="C:\aaa11" ZipFileName="C:\newZipByPath.zip"/>
+    </Target>
+    <Target Name="Sample2">
+        <PropertyGroup>
+            <SourceDirectory>MotorData\</SourceDirectory>
+        </PropertyGroup>
+        <ItemGroup>
+            <Files Include="$(SourceDirectory)*" Exclude="$(SourceDirectory).XYZ\**\*">
+                <Group>Common</Group>
+            </Files>
+            <Files Include="$(SourceDirectory)Cars\*" Exclude="$(SourceDirectory)Cars\.XYZ\**\*">
+                <Group>Cars</Group>
+            </Files>
+            <Files Include="$(SourceDirectory)Trucks\*" Exclude="$(SourceDirectory)Trucks\.XYZ\**\*">
+                <Group>Trucks</Group>
+            </Files>
+        </ItemGroup>
+        <!-- Create the output folder -->
+        <ItemGroup>
+            <OutputDirectory Include="output\"/>
+        </ItemGroup>
+        <MakeDir Directories="@(OutputDirectory)"/>
+        <PropertyGroup>
+            <WorkingDir>%(OutputDirectory.Fullpath)</WorkingDir>
+        </PropertyGroup>
+        <!-- Zip files based on the group they belong to -->
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(Files)" ZipFileName="$(WorkingDir)%(Files.Group).zip"/>
+    </Target>
+</Project>

@@ -1,0 +1,16 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Download a File-->
+        <MSBuild.ExtensionPack.Web.WebClient TaskAction="DownloadFile" Url="http://hlstiw.bay.livefilestore.com/y1p7GhsJWeF4ig_Yb-8QXeA1bL0nY_MdOGaRQ3opRZS0YVvfshMfoZYe_cb1wSzPhx4nL_yidkG8Ji9msjRcTt0ew/Team%20Build%202008%20DeskSheet%202.0.pdf?download" FileName="C:\TFS Build 2008 DeskSheet.pdf"/>
+        <!-- Get the contents of a Url-->
+        <MSBuild.ExtensionPack.Web.WebClient TaskAction="OpenRead" Url="http://www.msbuildextensionpack.com">
+            <Output TaskParameter="Data" PropertyName="Out"/>
+        </MSBuild.ExtensionPack.Web.WebClient>
+        <Message Text="$(Out)"/>
+    </Target>
+</Project>

@@ -1,0 +1,60 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <PropertyGroup>
+        <PathToDetokenise>C:\Demo\*</PathToDetokenise>
+        <CPHome>www.codeplex.com/MSBuildExtensionPack</CPHome>
+        <Title>A New Title</Title>
+        <clv>hello=hello#~#hello1=how#~#hello2=are</clv>
+    </PropertyGroup>
+    <Target Name="Default">
+        <ItemGroup>
+            <FileCollection Include="C:\Demo1\TestFile.txt"/>
+            <FileCollection2 Include="C:\Demo1\TestFile2.txt"/>
+            <FileCollection3 Include="C:\Demo1\TestFile3.txt"/>
+        </ItemGroup>
+        <ItemGroup>
+            <TokenValues Include="Title">
+                <Replacement>ANewTextString</Replacement>
+            </TokenValues >
+            <TokenValues Include="ProjectHome">
+                <Replacement>www.codeplex.com/MSBuildExtensionPack</Replacement>
+            </TokenValues >
+        </ItemGroup>
+        <!-- Analyse a collection of files. This can be used to ensure that all tokens are known. -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Analyse" TargetFiles="@(FileCollection)" ReplacementValues="@(TokenValues)"/>
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Analyse" TargetFiles="@(FileCollection2)"/>
+        <!-- 1 Detokenise the files defined in FileCollection and use the TokenValues collection for substitution. -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetFiles="@(FileCollection)" ReplacementValues="@(TokenValues)"/>
+        <!-- 2 Detokenise the files defined in FileCollection2 and use the tokens defined by the .proj properties -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetFiles="@(FileCollection2)"/>
+        <!-- 3 Detokenise the files at the given TargetPath and perform a recursive search -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetPath="$(PathToDetokenise)"/>
+        <!-- 4 This will produce the same result as #3, but no file processing will be logged to the console. Because ForceWrite has been specified, all files will be re-written -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetPath="$(PathToDetokenise)" DisplayFiles="false" ForceWrite="true"/>
+        <!-- 5 This will produce the same result as 4, though ForceWrite is false by default so the difference can be displayed using the output parameters -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetPath="$(PathToDetokenise)" DisplayFiles="false">
+            <Output TaskParameter="FilesProcessed" ItemName="FilesProcessed"/>
+            <Output TaskParameter="FilesDetokenised" ItemName="FilesDetokenised"/>
+        </MSBuild.ExtensionPack.FileSystem.Detokenise>
+        <Message Text="FilesDetokenised = @(FilesDetokenised), FilesProcessed = @(FilesProcessed)"/>
+        <!-- 6 Detokenise using values that can be passed in via the command line -->
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Detokenise" TargetFiles="@(FileCollection3)" CommandLineValues="$(clv)"/>
+    </Target>
+    <!--- Generate a report of files showing which tokens are used in files -->
+    <Target Name="Report" DependsOnTargets="GetFiles">
+        <CallTarget Targets="List"/>
+    </Target>
+    <Target Name="List" Inputs="@(Report1)" Outputs="%(Identity)">
+        <Message Text="Token: @(Report1)"/>
+        <Message Text="%(Report1.Files)"/>
+    </Target>
+    <Target Name="GetFiles">
+        <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Report" TargetPath="C:\MyFiles*" DisplayFiles="false">
+            <Output TaskParameter="TokenReport" ItemName="Report1"/>
+        </MSBuild.ExtensionPack.FileSystem.Detokenise>
+    </Target>
+</Project>

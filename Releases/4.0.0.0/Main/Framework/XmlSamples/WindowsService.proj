@@ -1,0 +1,61 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+        <User>serviceAcct</User>
+        <Password>P2ssw0rd</Password>
+        <RemoteMachine>VSTS2008</RemoteMachine>
+        <RemoteUser>vsts2008\tfssetup</RemoteUser>
+        <RemoteUserPassword>1Setuptfs</RemoteUserPassword>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- check whether a service exists (this should return true in most cases) -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="Schedule">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.WindowsService>
+        <Message Text="Schedule service exists: $(DoesExist)"/>
+        <!-- check whether another service exists (this should return false)-->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="ThisServiceShouldNotExist">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.WindowsService>
+        <Message Text="ThisServiceShouldNotExist service exists: $(DoesExist)"/>
+        <!-- Check whether a service exists on a Remote Machine(this should return true in most cases) -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="CheckExists" ServiceName="Schedule" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.WindowsService>
+        <Message Text="Schedule service exists on '$(RemoteMachine)': $(DoesExist)"/>
+        <!-- Start a service -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Start" ServiceName="MSSQLSERVER"/>
+        <!-- Start a service on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Start" ServiceName="BITS" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)" />
+        <!-- Stop a service -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Stop" ServiceName="MSSQLSERVER"/>
+        <!-- Stop a service on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Stop" ServiceName="BITS" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)"/>
+        <!-- Uninstall a service on the Local Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Uninstall" ServiceName="__TestService1" ServicePath="c:\WINDOWS\system32\taskmgr.exe" />
+        <!-- Uninstall a service on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Uninstall" ServiceName="__TestService1" ServicePath="c:\WINDOWS\system32\taskmgr.exe" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)" />
+        <!-- Install a service on the Local machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Install" ServiceName="__TestService1" User="$(User)" Password="$(password)" ServicePath="c:\WINDOWS\system32\taskmgr.exe" />
+        <!-- Install a service on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Install" ServiceName="__TestService1" User="$(User)" Password="$(password)" ServicePath="c:\WINDOWS\system32\taskmgr.exe" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)" />
+        <!-- Disable a service -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Disable" ServiceName="__TestService1"/>
+        <!-- Disable a service on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="Disable" ServiceName="__TestService1" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)"/>
+        <!-- Set a service to start automatically on system startup-->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="SetAutomatic" ServiceName="__TestService1"/>
+        <!-- Set a service to start automatically on system startup on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="SetAutomatic" ServiceName="__TestService1" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)"/>
+        <!-- Set a service to start manually -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="SetManual" ServiceName="__TestService1"/>
+        <!-- Set a service to start manually on a Remote Machine -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="SetManual" ServiceName="__TestService1" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)"/>
+        <!-- Update the Identity that the service runs in -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="UpdateIdentity" ServiceName="__TestService1" User="$(User)" Password="$(Password)"/>
+        <!-- Update the Identity that the service on a Remote Machine runs in -->
+        <MSBuild.ExtensionPack.Computer.WindowsService TaskAction="UpdateIdentity" ServiceName="__TestService1" User="$(User)" Password="$(Password)" RemoteUser="$(RemoteUser)" RemoteUserPassword="$(RemoteUserPassword)" MachineName="$(RemoteMachine)"/>
+    </Target>
+</Project>

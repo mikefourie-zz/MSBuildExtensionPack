@@ -1,0 +1,15 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Perfrom various source administration operations -->
+        <MSBuild.ExtensionPack.VisualStudio.TfsSourceAdmin TaskAction="Branch" OldItem="C:\Projects\SpeedCMMI\Demo" NewItem="C:\Projects\SpeedCMMI\Demo1\B4" WorkingDirectory="C:\projects\SpeedCMMI"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\Projects\SpeedCMMI" WorkingDirectory="C:\projects\SpeedCMMI"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Get" ItemPath="C:\Projects\SpeedCMMI" WorkingDirectory="C:\projects\SpeedCMMI"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSourceAdmin TaskAction="Rename" OldItem="C:\Projects\SpeedCMMI\Demo1\B4\VersionNumber.cs" NewItem="C:\Projects\SpeedCMMI\Demo1\B4\VersionNumberNew.cs" WorkingDirectory="C:\projects\SpeedCMMI"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\Projects\SpeedCMMI" WorkingDirectory="C:\projects\SpeedCMMI"/>
+    </Target>
+</Project>
