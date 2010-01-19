@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Output:</b> Response)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout <b>Output:</b> Response, Status)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -26,7 +26,9 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Target Name="Default">
     ///         <MSBuild.ExtensionPack.Web.HttpWebRequest TaskAction="GetResponse" Url="http://www.freetodev.com">
     ///             <Output TaskParameter="Response" ItemName="ResponseDetail"/>
+    ///             <Output TaskParameter="Status" PropertyName="ResponseStatus"/>
     ///         </MSBuild.ExtensionPack.Web.HttpWebRequest>
+    ///         <Message Text="Status: $(ResponseStatus)"/>
     ///         <Message Text="StatusDescription: %(ResponseDetail.StatusDescription)"/>
     ///         <Message Text="StatusCode: %(ResponseDetail.StatusCode)"/>
     ///         <Message Text="CharacterSet: %(ResponseDetail.CharacterSet)"/>
@@ -38,16 +40,27 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
+        private int timeout = 100000;
 
         [DropdownValue(GetResponseTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
+        }
+
+        /// <summary>
+        /// Sets the number of milliseconds to wait before the request times out. The default value is 100,000 milliseconds (100 seconds).
+        /// </summary>
+        [TaskAction(GetResponseTaskAction, false)]
+        public int Timeout
+        {
+            get { return this.timeout; }
+            set { this.timeout = value; }
         }
 
         /// <summary>
@@ -59,6 +72,12 @@ namespace MSBuild.ExtensionPack.Web
 
         [Output]
         public ITaskItem Response { get; set; }
+
+        /// <summary>
+        /// Contains the StatusDescription for successful requests. Contains the Status when encountering a WebException.
+        /// </summary>
+        [Output]
+        public string Status { get; set; }
 
         /// <summary>
         /// When overridden in a derived class, executes the task.
@@ -79,24 +98,39 @@ namespace MSBuild.ExtensionPack.Web
         private void GetResponse()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Executing HttpRequest against: {0}", this.Url));
-
             System.Net.HttpWebRequest request = WebRequest.Create(new Uri(this.Url)) as System.Net.HttpWebRequest;
             if (request != null)
             {
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                request.Timeout = this.Timeout;
+                try
                 {
-                    int code = (int)response.StatusCode;
-                    StreamReader responseReader = new StreamReader(response.GetResponseStream());
-                    this.Response = new TaskItem(this.Url);
-                    this.Response.SetMetadata("ResponseText", responseReader.ReadToEnd());
-                    this.Response.SetMetadata("StatusDescription", response.StatusDescription);
-                    this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentUICulture));
-                    this.Response.SetMetadata("CharacterSet", response.CharacterSet);
-                    this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
-                    this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
-                    this.Response.SetMetadata("Server", response.Server);
-
-                    response.Close();
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    {
+                        int code = (int)response.StatusCode;
+                        StreamReader responseReader = new StreamReader(response.GetResponseStream());
+                        this.Response = new TaskItem(this.Url);
+                        this.Response.SetMetadata("ResponseText", responseReader.ReadToEnd());
+                        this.Status = response.StatusDescription;
+                        this.Response.SetMetadata("StatusDescription", response.StatusDescription);
+                        this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentUICulture));
+                        this.Response.SetMetadata("CharacterSet", response.CharacterSet);
+                        this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
+                        this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
+                        this.Response.SetMetadata("Server", response.Server);
+                        response.Close();
+                    }
+                }
+                catch (WebException ex)
+                {
+                    this.Log.LogError("{0}. Status: {1}", ex.Message, ex.Status);
+                    this.Status = ex.Status.ToString();
+                    if (ex.Response != null)
+                    {
+                        using (StreamReader responseReader = new StreamReader(ex.Response.GetResponseStream()))
+                        {
+                            this.Log.LogError(responseReader.ReadToEnd());
+                        }
+                    }
                 }
             }
         }

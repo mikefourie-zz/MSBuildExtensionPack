@@ -93,12 +93,12 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
         private const string TransformTaskAction = "Transform";
         private const string ValidateTaskAction = "Validate";
-        
+
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
 
@@ -219,12 +219,12 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            switch (this.TaskAction.ToUpperInvariant())
+            switch (this.TaskAction)
             {
-                case "TRANSFORM":
+                case TransformTaskAction:
                     this.Transform();
                     break;
-                case "VALIDATE":
+                case ValidateTaskAction:
                     this.Validate();
                     break;
                 default:
@@ -260,33 +260,51 @@ namespace MSBuild.ExtensionPack.Xml
                 this.Log.LogError("XslTransform or XslTransformFile must be specified");
                 return;
             }
-
-            XDocument newxmlDoc = new XDocument();
-            using (XmlWriter writer = newxmlDoc.CreateWriter())
+            
+            XDocument tempxmlDoc = new XDocument();
+            XslCompiledTransform xslt;
+            using (XmlWriter writer = tempxmlDoc.CreateWriter())
             {
                 // Load the style sheet.
-                XslCompiledTransform xslt = new XslCompiledTransform();
-                xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())));
+                xslt = new XslCompiledTransform();
+                XsltSettings settings = new XsltSettings { EnableScript = true };
+                xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())), settings, null);
 
                 // Execute the transform and output the results to a writer.
                 xslt.Transform(this.xmlDoc.CreateReader(), writer);
             }
 
-            this.Output = newxmlDoc.ToString();
+            this.Output = tempxmlDoc.ToString();
 
             if (!string.IsNullOrEmpty(this.OutputFile))
             {
-                XmlWriterSettings writerSettings = new XmlWriterSettings { Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
-                using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
+                if (xslt.OutputSettings.OutputMethod == XmlOutputMethod.Text)
                 {
-                    if (xw != null)
+                    using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
+                    using (StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default))
                     {
-                        newxmlDoc.WriteTo(xw);
+                            // Execute the transform and output the results to a writer.
+                            xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
                     }
-                    else
+                }
+                else
+                {
+                    XDocument newxmlDoc = XDocument.Load(new StringReader(this.Output));
+                    if (!string.IsNullOrEmpty(this.OutputFile))
                     {
-                        Log.LogError("There was an error creating the XmlWriter for the OutputFile");
-                        return;
+                        XmlWriterSettings writerSettings = new XmlWriterSettings { Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
+                        using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
+                        {
+                            if (xw != null)
+                            {
+                                newxmlDoc.WriteTo(xw);
+                            }
+                            else
+                            {
+                                Log.LogError("There was an error creating the XmlWriter for the OutputFile");
+                                return;
+                            }
+                        }
                     }
                 }
             }

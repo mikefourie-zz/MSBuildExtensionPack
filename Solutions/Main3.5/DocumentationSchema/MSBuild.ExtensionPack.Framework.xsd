@@ -453,6 +453,25 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.FileSystem.FileVersion" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Increment"/>
+                                <xs:enumeration value="Reset"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="File"/>
+                    <xs:attribute name="Increment"/>
+                    <xs:attribute name="Value"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.FileSystem.FindUnder" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
@@ -555,6 +574,14 @@
                     <xs:attribute name="TaskAction" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
+                                <xs:enumeration value="AddDays"/>
+                                <xs:enumeration value="AddHours"/>
+                                <xs:enumeration value="AddMilliseconds"/>
+                                <xs:enumeration value="AddMinutes"/>
+                                <xs:enumeration value="AddMonths"/>
+                                <xs:enumeration value="AddSeconds"/>
+                                <xs:enumeration value="AddTicks"/>
+                                <xs:enumeration value="AddYears"/>
                                 <xs:enumeration value="CheckBetween"/>
                                 <xs:enumeration value="CheckLater"/>
                                 <xs:enumeration value="Get"/>
@@ -1094,6 +1121,30 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.SqlServer.SqlExecute" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="TaskAction" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Execute"/>
+                                <xs:enumeration value="ExecuteRawReader"/>
+                                <xs:enumeration value="ExecuteReader"/>
+                                <xs:enumeration value="ExecuteScalar"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ConnectionString"/>
+                    <xs:attribute name="Sql"/>
+                    <xs:attribute name="Files"/>
+                    <xs:attribute name="CommandTimeout"/>
+                    <xs:attribute name="Retry"/>
+                    <xs:attribute name="UseTransaction"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.SqlServer.SqlVersion" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
@@ -1216,8 +1267,11 @@
                                 <xs:enumeration value="Checkin"/>
                                 <xs:enumeration value="Delete"/>
                                 <xs:enumeration value="Get"/>
+                                <xs:enumeration value="GetProperties"/>
+                                <xs:enumeration value="GetChangeset"/>
                                 <xs:enumeration value="Merge"/>
                                 <xs:enumeration value="GetPendingChanges"/>
+                                <xs:enumeration value="Resolve"/>
                                 <xs:enumeration value="UndoCheckout"/>
                                 <xs:enumeration value="Undelete"/>
                             </xs:restriction>
@@ -1326,6 +1380,7 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
+                    <xs:attribute name="Timeout"/>
                     <xs:attribute name="Url" type="msb:non_empty_string" use="required"/>
                 </xs:extension>
             </xs:complexContent>

@@ -60,7 +60,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
     public class BizTalkHostInstance : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -176,15 +176,14 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Start()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting Host Instance: {0} on: {1}", this.HostName, this.MachineName));
-
             if (!this.GetHostInstanceByHostName())
             {
                 return;
             }
 
-            if ((uint)this.hostInstance["ServiceState"] != (uint)HostState.Running)
+            if ((uint)this.hostInstance["HostType"] == (uint)BizTalkHostType.InProcess && (uint)this.hostInstance["ServiceState"] != (uint)HostState.Running)
             {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting Host Instance: {0} on: {1}", this.HostName, this.MachineName));
                 this.hostInstance.InvokeMethod("Start", null);
             }
         }
@@ -204,15 +203,14 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Stop()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Host Instance: {0} on: {1}", this.HostName, this.MachineName));
-
             if (!this.GetHostInstanceByHostName())
             {
                 return;
             }
 
-            if ((uint)this.hostInstance["ServiceState"] != (uint)HostState.Stopped)
+            if ((uint)this.hostInstance["HostType"] == (uint)BizTalkHostType.InProcess && (uint)this.hostInstance["ServiceState"] != (uint)HostState.Stopped)
             {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Host Instance: {0} on: {1}", this.HostName, this.MachineName));
                 this.hostInstance.InvokeMethod("Stop", null);
             }
         }
@@ -220,13 +218,12 @@ namespace MSBuild.ExtensionPack.BizTalk
         private void Delete()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Host Instance: {0} on: {1}", this.HostName, this.MachineName));
-
             if (!this.GetHostInstanceByHostName())
             {
                 return;
             }
 
-            if ((uint)this.hostInstance["ServiceState"] != (uint)HostState.Stopped)
+            if ((uint)this.hostInstance["HostType"] == (uint)BizTalkHostType.InProcess && (uint)this.hostInstance["ServiceState"] != (uint)HostState.Stopped)
             {
                 this.hostInstance.InvokeMethod("Stop", null);
             }
@@ -301,7 +298,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         private bool GetHostInstanceByHostName()
         {
             EnumerationOptions wmiEnumerationOptions = new EnumerationOptions { ReturnImmediately = false };
-            ObjectQuery wmiQuery = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_HostInstance WHERE HostName = '{0}' AND HostType = {1}", this.HostName, (int)BizTalkHostType.InProcess));
+            ObjectQuery wmiQuery = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_HostInstance WHERE HostName = '{0}'", this.HostName));
             ManagementObjectSearcher wmiSearcher = new ManagementObjectSearcher(this.Scope, wmiQuery, wmiEnumerationOptions);
             ManagementObjectCollection hostInstanceCollection = wmiSearcher.Get();
             foreach (ManagementObject instance in hostInstanceCollection)

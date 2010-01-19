@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 		DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd = DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd = DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2005", "Sql2005\Sql2005.csproj", "{42F6A494-5D2C-4D6D-8B42-CCB704303840}"
@@ -56,9 +57,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkTests", "UnitTests\FrameworkTests\FrameworkTests.csproj", "{ABACCC22-B8B3-4B17-9464-789E093A3503}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsVirtualPc", "WindowsVirtualPC\WindowsVirtualPc.csproj", "{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs08.codeplex.com/
 		SccLocalPath0 = .
@@ -93,6 +96,9 @@ Global
 		SccProjectTopLevelParentUniqueName10 = MainSolution.sln
 		SccProjectName10 = UnitTests/FrameworkTests
 		SccLocalPath10 = UnitTests\\FrameworkTests
+		SccProjectUniqueName11 = WindowsVirtualPC\\WindowsVirtualPc.csproj
+		SccProjectName11 = WindowsVirtualPC
+		SccLocalPath11 = WindowsVirtualPC
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
@@ -142,6 +148,10 @@ Global
 		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

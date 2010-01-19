@@ -3,7 +3,11 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.SqlServer
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Text;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.SqlServer.Extended;
 
@@ -45,17 +49,26 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
         private const string ExecutionMessage = "Executing '{0}' with '{1}'";
         private const string InputFileMessage = "Adding input file '{0}'";
+
         private const string InvalidSqlCmdPathError = "Unable to resolve path to sqlcmd.exe. Assuming it is in the PATH environment variable.";
+
         private const string InvalidTaskActionError = "Invalid TaskAction passed: {0}";
+
         private const string LoginTimeoutRangeError = "The LoginTimeout value specified '{0}' does not fall in the allowed range of 0 to 65534. Using the default value of eight (8) seconds.";
+
         private const string QueryMessage = "Adding query '{0}'";
+
         private const string QueryTimeoutRangeError = "The QueryTimeout value specified '{0}' does not fall in the allowed range of 1 to 65535.";
+
+        // 8191 * 4 =  32,764; 8,191 is the documented maximum number of characters in a command-line string(see http://support.microsoft.com/kb/830473).
+        private const int CommandLineMaxLength = 32764;
+
         private int loginTimeout = 8;
         private int queryTimeout;
         private string server = ".";
@@ -189,7 +202,8 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <para>Gets or sets the path to a file that contains a batch of SQL statements. Multiple files may be specified that will be read 
         /// and processed in order. Do not use any spaces between the file names. <see cref="SqlCmd"/> will first check to see 
         /// whether all files exist. If one or more files do not exist, <see cref="SqlCmd"/> will exit. The <see cref="InputFiles"/> and
-        /// <see cref="CommandLineQuery"/> options are mutually exclusive.</para>        
+        /// <see cref="CommandLineQuery"/> options are mutually exclusive.</para>
+        /// Please note that if you provide a large number of files, you may exceed the maximum length of a command line (http://support.microsoft.com/kb/830473). It's recommended you make use of smaller batches if you encounter this issue.       
         /// </summary>
         [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] InputFiles { get; set; }
@@ -271,11 +285,6 @@ namespace MSBuild.ExtensionPack.SqlServer
         {
             get
             {
-                if (this.queryTimeout < 1)
-                {
-                    return 1;
-                }
-
                 return this.queryTimeout;
             }
 
@@ -287,7 +296,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 else
                 {
-                    this.LogTaskWarning(string.Format(CultureInfo.InvariantCulture, QueryTimeoutRangeError, value));
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, QueryTimeoutRangeError, value));
                 }
             }
         }
@@ -323,9 +332,9 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         protected override void InternalExecute()
         {
-            switch (this.TaskAction.ToUpperInvariant())
+            switch (this.TaskAction)
             {
-                case "EXECUTE":
+                case ExecuteTaskAction:
                     this.SqlExecute();
                     break;
                 default:
@@ -394,21 +403,6 @@ namespace MSBuild.ExtensionPack.SqlServer
             if (this.DedicatedAdminConnection)
             {
                 sb.Append(" -A ");
-            }
-
-            // Input/Output Options
-
-            // Input Files
-            if (this.InputFiles != null)
-            {
-                foreach (ITaskItem file in this.InputFiles)
-                {
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
-                    sb.Append(" -i ");
-                    sb.Append("\"");
-                    sb.Append(file.GetMetadata("FullPath"));
-                    sb.Append("\"");
-                }
             }
 
             // Output file
@@ -536,9 +530,20 @@ namespace MSBuild.ExtensionPack.SqlServer
                 this.SqlCmdPath = "sqlcmd.exe";
             }
 
-            // Build out the arguments
-            var arguments = this.BuildArguments();
-            this.ExecuteCommand(arguments);
+            string baseArguments = this.BuildArguments();
+            if (this.InputFiles != null && this.InputFiles.Length > 0)
+            {
+                int lengthRemaining = CommandLineMaxLength - this.SqlCmdPath.Length - baseArguments.Length - 2;
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "There are {0} characters available in the argument list for the input files.", lengthRemaining));
+                foreach (var inputFileArgs in new InputFileArgumentCollection(this, this.InputFiles, lengthRemaining))
+                {
+                    this.ExecuteCommand(baseArguments + " " + inputFileArgs);
+                }
+            }
+            else
+            {
+                this.ExecuteCommand(baseArguments);
+            }
         }
 
         private void SwitchReturnValue(int returnValue, string error)
@@ -548,6 +553,81 @@ namespace MSBuild.ExtensionPack.SqlServer
                 case 1:
                     this.LogTaskWarning("Exit Code 1. Failure: " + error);
                     break;
+            }
+        }
+
+        private sealed class InputFileArgumentCollection : IEnumerator<string>, IEnumerable<string>
+        {
+            private readonly BaseTask task;
+            private readonly int maxArgLength = CommandLineMaxLength;
+            private readonly ITaskItem[] inputFiles;
+            private int currentIndex;
+            private StringBuilder currentArgList;
+
+            public InputFileArgumentCollection(BaseTask baseTask, ITaskItem[] inputFileList, int maxArgLength)
+            {
+                this.task = baseTask;
+                this.inputFiles = inputFileList;
+                this.maxArgLength = maxArgLength;
+                this.Reset();
+            }
+
+            public string Current
+            {
+                get { return this.currentArgList.ToString(); }
+            }
+
+            object IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            public void Dispose()
+            {
+                GC.SuppressFinalize(this);
+            }
+
+            public bool MoveNext()
+            {
+                if (this.inputFiles == null || this.currentIndex >= this.inputFiles.Length)
+                {
+                    return false;
+                }
+
+                this.currentArgList = new StringBuilder();
+                for (; this.currentIndex < this.inputFiles.Length; ++this.currentIndex)
+                {
+                    ITaskItem file = this.inputFiles[this.currentIndex];
+                    string fullPath = file.GetMetadata("FullPath");
+                    if (this.currentArgList.Length + 6 + fullPath.Length > this.maxArgLength)
+                    {
+                        break;
+                    }
+
+                    this.task.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, InputFileMessage, file.GetMetadata("FullPath")));
+                    this.currentArgList.Append(" -i ");
+                    this.currentArgList.Append("\"");
+                    this.currentArgList.Append(file.GetMetadata("FullPath"));
+                    this.currentArgList.Append("\"");
+                }
+
+                return true;
+            }
+
+            public void Reset()
+            {
+                this.currentIndex = 0;
+                this.currentArgList = new StringBuilder();
+            }
+
+            public IEnumerator<string> GetEnumerator()
+            {
+                return this;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this;
             }
         }
     }

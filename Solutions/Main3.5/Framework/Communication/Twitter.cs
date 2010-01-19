@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/e462eba9-1ca9-d3cf-8e65-3467d5b3fc4e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/e462eba9-1ca9-d3cf-8e65-3467d5b3fc4e.htm")]
     public class Twitter : BaseTask
     {
         private const string TweetTaskAction = "Tweet";

@@ -9,6 +9,14 @@ namespace MSBuild.ExtensionPack.Framework
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>AddDays</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddHours</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddMilliseconds</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddMinutes</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddMonths</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddSeconds</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddTicks</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
+    /// <para><i>AddYears</i> (<b>Required: </b>Format, Value <b>Optional: </b>Start <b>Output: </b> Result)</para>
     /// <para><i>CheckBetween</i> (<b>Required: </b>Start, End <b>Optional:</b> UseUtc <b>Output: </b> BoolResult)</para>
     /// <para><i>CheckLater</i> (<b>Required: </b>Start <b>Optional:</b> UseUtc <b>Output: </b> BoolResult)</para>
     /// <para><i>Get</i> (<b>Required: </b>Format <b>Optional:</b> UseUtc <b>Output: </b> Result)</para>
@@ -78,22 +86,149 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output TaskParameter="BoolResult" PropertyName="DTResult"/>
     ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
     ///         <Message Text="Between: $(DTResult)"/>
+    ///         <!-- Test Add time targets based on start time provided in AddTimeStart. -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="Get" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="AddTimeStart"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Add Time To: $(AddTimeStart)"/>
+    ///         <!-- Add days -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddDays" Start="$(Start)" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Add 30 days: $(DTResult)"/>
+    ///         <!-- Verify add days -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" End="$(DTResult)" Format="Days">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Days Since $(Start): $(DTResult)"/>
+    ///         <!-- Add hours -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddHours" Start="$(Start)" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 hours from time: $(DTResult)"/>
+    ///         <!-- Verify add hours -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" End="$(DTResult)" Format="Hours">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Hours Since $(Start): $(DTResult)"/>
+    ///         <!-- Add milliseconds -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddMilliseconds" Start="$(Start)" Value="3000" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="3000 Millisecond from time: $(DTResult)"/>
+    ///         <!-- Verify add milliseconds -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" End="$(DTResult)" Format="MilliSeconds">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Milliseconds Since $(Start): $(DTResult)"/>
+    ///         <!-- Add minutes -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddMinutes" Start="$(Start)" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 minutes from time: $(DTResult)"/>
+    ///         <!-- Verify add minutes -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" End="$(DTResult)" Format="Minutes">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Minutes Since $(Start): $(DTResult)"/>
+    ///         <!-- Add months -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddMonths" Start="$(Start)" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 months from time: $(DTResult)"/>
+    ///         <!-- Add seconds -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddSeconds" Start="$(Start)" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 Seconds from time: $(DTResult)"/>
+    ///         <!-- Verify add seconds -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="GetElapsed" Start="$(Start)" End="$(DTResult)" Format="Seconds">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="Seconds Since $(Start): $(DTResult)"/>
+    ///         <!-- Add ticks -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddTicks" Start="$(Start)" Value="3000" Format="dd MMM yy HH:mm:ss:fff">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="3000 ticks from time: $(DTResult)"/>
+    ///         <!-- Add years -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddYears" Start="$(Start)" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 Years from time: $(DTResult)"/>
+    ///         <!-- Test Add time targets based current time. -->
+    ///         <!-- Add days -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddDays" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 days from time: $(DTResult)"/>
+    ///         <!-- Add hours -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddHours" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 hours from time: $(DTResult)"/>
+    ///         <!-- Add milliseconds -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddMilliseconds" Value="3000" Format="dd MMM yy HH:mm:ss:fff">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="3000 Millisecond from time: $(DTResult)"/>
+    ///         <!-- Add minutes -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddMinutes" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 minutes from time: $(DTResult)"/>
+    ///         <!-- Add months -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddMonths" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 months from time: $(DTResult)"/>
+    ///         <!-- Add seconds -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddSeconds" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 Seconds from time: $(DTResult)"/>
+    ///         <!-- Add ticks -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddTicks" Value="3000" Format="dd MMM yy HH:mm:ss:fff">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="3000 ticks from time: $(DTResult)"/>
+    ///         <!-- Add years -->
+    ///         <MSBuild.ExtensionPack.Framework.DateAndTime TaskAction="AddYears" Value="30" Format="dd MMM yy HH:mm:ss">
+    ///             <Output TaskParameter="Result" PropertyName="DTResult"/>
+    ///         </MSBuild.ExtensionPack.Framework.DateAndTime>
+    ///         <Message Text="30 Years from time: $(DTResult)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/1c668832-24f2-d646-1f66-7ea1f3e76415.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/1c668832-24f2-d646-1f66-7ea1f3e76415.htm")]
     public class DateAndTime : BaseTask
     {
         private const string GetTaskAction = "Get";
         private const string GetElapsedTaskAction = "GetElapsed";
         private const string CheckLaterTaskAction = "CheckLater";
         private const string CheckBetweenTaskAction = "CheckBetween";
+        private const string AddDaysTaskAction = "AddDays";
+        private const string AddHoursTaskAction = "AddHours";
+        private const string AddMillisecondsTaskAction = "AddMilliseconds";
+        private const string AddMinutesTaskAction = "AddMinutes";
+        private const string AddMonthsTaskAction = "AddMonths";
+        private const string AddSecondsTaskAction = "AddSeconds";
+        private const string AddTicksTaskAction = "AddTicks";
+        private const string AddYearsTaskAction = "AddYears";
 
         [DropdownValue(CheckBetweenTaskAction)]
         [DropdownValue(CheckLaterTaskAction)]
         [DropdownValue(GetTaskAction)]
         [DropdownValue(GetElapsedTaskAction)]
+        [DropdownValue(AddDaysTaskAction)]
+        [DropdownValue(AddHoursTaskAction)]
+        [DropdownValue(AddMillisecondsTaskAction)]
+        [DropdownValue(AddMinutesTaskAction)]
+        [DropdownValue(AddMonthsTaskAction)]
+        [DropdownValue(AddSecondsTaskAction)]
+        [DropdownValue(AddTicksTaskAction)]
+        [DropdownValue(AddYearsTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -106,6 +241,14 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(CheckBetweenTaskAction, true)]
         [TaskAction(CheckLaterTaskAction, true)]
         [TaskAction(GetElapsedTaskAction, true)]
+        [TaskAction(AddDaysTaskAction, false)]
+        [TaskAction(AddHoursTaskAction, false)]
+        [TaskAction(AddMillisecondsTaskAction, false)]
+        [TaskAction(AddMinutesTaskAction, false)]
+        [TaskAction(AddMonthsTaskAction, false)]
+        [TaskAction(AddSecondsTaskAction, false)]
+        [TaskAction(AddTicksTaskAction, false)]
+        [TaskAction(AddYearsTaskAction, false)]
         public DateTime Start { get; set; }
 
         /// <summary>
@@ -122,12 +265,30 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(GetElapsedTaskAction, true)]
         public string Format { get; set; }
 
+        [TaskAction(AddDaysTaskAction, true)]
+        [TaskAction(AddHoursTaskAction, true)]
+        [TaskAction(AddMillisecondsTaskAction, true)]
+        [TaskAction(AddMinutesTaskAction, true)]
+        [TaskAction(AddMonthsTaskAction, true)]
+        [TaskAction(AddSecondsTaskAction, true)]
+        [TaskAction(AddTicksTaskAction, true)]
+        [TaskAction(AddYearsTaskAction, true)]
+        public double Value { get; set; }
+
         /// <summary>
         /// The output Result
         /// </summary>
         [Output]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(GetElapsedTaskAction, false)]
+        [TaskAction(AddDaysTaskAction, false)]
+        [TaskAction(AddHoursTaskAction, false)]
+        [TaskAction(AddMillisecondsTaskAction, false)]
+        [TaskAction(AddMinutesTaskAction, false)]
+        [TaskAction(AddMonthsTaskAction, false)]
+        [TaskAction(AddSecondsTaskAction, false)]
+        [TaskAction(AddTicksTaskAction, false)]
+        [TaskAction(AddYearsTaskAction, false)]
         public string Result { get; set; }
 
         /// <summary>
@@ -168,10 +329,45 @@ namespace MSBuild.ExtensionPack.Framework
                 case CheckBetweenTaskAction:
                     this.CheckBetween();
                     break;
+                case AddDaysTaskAction:
+                    this.AddDays();
+                    break;
+                case AddHoursTaskAction:
+                    this.AddHours();
+                    break;
+                case AddMillisecondsTaskAction:
+                    this.AddMilliseconds();
+                    break;
+                case AddMinutesTaskAction:
+                    this.AddMinutes();
+                    break;
+                case AddMonthsTaskAction:
+                    this.AddMonths();
+                    break;
+                case AddSecondsTaskAction:
+                    this.AddSeconds();
+                    break;
+                case AddTicksTaskAction:
+                    this.AddTicks();
+                    break;
+                case AddYearsTaskAction:
+                    this.AddYears();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private static DateTime GetDefaultOrUserStartTime(DateTime startTime)
+        {
+            // Default to current time if caller did not specify a time.
+            if (startTime == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                return DateTime.Now;
+            }
+
+            return startTime;
         }
 
         private void CheckLater()
@@ -232,7 +428,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 this.End = this.UseUtc ? DateTime.UtcNow : DateTime.Now;
             }
-            
+
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Elapsed: {0}", this.Format));
             TimeSpan t = this.End - this.Start;
 
@@ -266,6 +462,54 @@ namespace MSBuild.ExtensionPack.Framework
         {
             this.LogTaskMessage("Getting Date / Time");
             this.Result = this.UseUtc ? DateTime.UtcNow.ToString(this.Format, CultureInfo.CurrentCulture) : DateTime.Now.ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddDays()
+        {
+            this.LogTaskMessage("Add Days");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddDays(this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddHours()
+        {
+            this.LogTaskMessage("Add Hours");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddHours(this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddMilliseconds()
+        {
+            this.LogTaskMessage("Add Milliseconds");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddMilliseconds(this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddMinutes()
+        {
+            this.LogTaskMessage("Add Minutes");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddMinutes(this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddMonths()
+        {
+            this.LogTaskMessage("Add Months");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddMonths((int)this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddSeconds()
+        {
+            this.LogTaskMessage("Add Seconds");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddSeconds(this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddTicks()
+        {
+            this.LogTaskMessage("Add Ticks");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddTicks((long)this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
+        }
+
+        private void AddYears()
+        {
+            this.LogTaskMessage("Add Years");
+            this.Result = GetDefaultOrUserStartTime(this.Start).AddYears((int)this.Value).ToString(this.Format, CultureInfo.CurrentCulture);
         }
     }
 }

@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.Computer
 {
     using System;
     using System.Globalization;
+    using System.Text;
     using Microsoft.Build.Framework;
     using Microsoft.Win32;
 
@@ -46,13 +47,20 @@ namespace MSBuild.ExtensionPack.Computer
     ///             <Output PropertyName="REmpty" TaskParameter="Empty"/>
     ///         </MSBuild.ExtensionPack.Computer.Registry>
     ///         <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
+    ///         <!-- Set some Binary Data -->
+    ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" DataType="Binary" Value="binval" Data="10, 43, 44, 45, 14, 255" />
+    ///         <!--Get some Binary Data--> 
+    ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Get" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="binval">
+    ///             <Output PropertyName="RData" TaskParameter="Data"/>
+    ///         </MSBuild.ExtensionPack.Computer.Registry>
+    ///         <Message Text="Registry Value: $(RData)"/>
     ///         <!-- Delete a key -->
     ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
@@ -61,7 +69,6 @@ namespace MSBuild.ExtensionPack.Computer
         private const string DeleteKeyTreeTaskAction = "DeleteKeyTree";
         private const string GetTaskAction = "Get";
         private const string SetTaskAction = "Set";
-        
         private RegistryKey registryKey;
         private RegistryHive hive;
 
@@ -93,7 +100,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the value. If Value is not provided, an attempt will be made to read the Default Value.
         /// </summary>
         [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]        
+        [TaskAction(SetTaskAction, true)]
         public string Value { get; set; }
 
         /// <summary>
@@ -145,28 +152,53 @@ namespace MSBuild.ExtensionPack.Computer
 
             switch (this.TaskAction)
             {
-                case "CreateKey":
+                case CreateKeyTaskAction:
                     this.CreateKey();
                     break;
-                case "DeleteKey":
+                case DeleteKeyTaskAction:
                     this.DeleteKey();
                     break;
-                case "DeleteKeyTree":
+                case DeleteKeyTreeTaskAction:
                     this.DeleteKeyTree();
                     break;
-                case "Get":
+                case GetTaskAction:
                     this.Get();
                     break;
-                case "Set":
+                case SetTaskAction:
                     this.Set();
                     break;
-                case "CheckEmpty":
+                case CheckEmptyTaskAction:
                     this.CheckEmpty();
                     break;
                 default:
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private static string GetRegistryKeyValue(RegistryKey subkey, string value)
+        {
+            var v = subkey.GetValue(value);
+            if (v == null)
+            {
+                return null;
+            }
+
+            RegistryValueKind valueKind = subkey.GetValueKind(value);
+            if (valueKind == RegistryValueKind.Binary && v is byte[])
+            {
+                byte[] valueBytes = (byte[])v;
+                StringBuilder bytes = new StringBuilder(valueBytes.Length * 2);
+                foreach (byte b in valueBytes)
+                {
+                    bytes.Append(b.ToString(CultureInfo.InvariantCulture));
+                    bytes.Append(',');
+                }
+
+                return bytes.ToString(0, bytes.Length - 1);
+            }
+
+            return v.ToString();
         }
 
         /// <summary>
@@ -200,8 +232,8 @@ namespace MSBuild.ExtensionPack.Computer
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
             {
-                object oldData = subKey.GetValue(this.Value);
-                if (oldData == null || oldData.ToString() != this.Data)
+                string oldData = GetRegistryKeyValue(subKey, this.Value);
+                if (oldData == null || oldData != this.Data)
                 {
                     if (string.IsNullOrEmpty(this.DataType))
                     {
@@ -213,14 +245,15 @@ namespace MSBuild.ExtensionPack.Computer
                         char[] separator = { ',' };
                         object registryValue;
 
-                        RegistryValueKind valueKind = (Microsoft.Win32.RegistryValueKind) Enum.Parse(typeof(RegistryValueKind), this.DataType, true);
+                        RegistryValueKind valueKind = (Microsoft.Win32.RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), this.DataType, true);
                         switch (valueKind)
                         {
                             case RegistryValueKind.Binary:
                                 string[] parts = this.Data.Split(separator);
                                 byte[] val = new byte[parts.Length];
-                                for (int i = 0; i < parts.Length; val[i++] = Byte.Parse(parts[i], CultureInfo.CurrentCulture))
+                                for (int i = 0; i < parts.Length; i++)
                                 {
+                                    val[i] = Byte.Parse(parts[i], CultureInfo.CurrentCulture);
                                 }
 
                                 registryValue = val;
@@ -271,7 +304,7 @@ namespace MSBuild.ExtensionPack.Computer
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
             if (subKey == null)
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Reqistry Key provided is not valid: {0}", this.Key));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Registry Key provided is not valid: {0}", this.Key));
                 return;
             }
 
@@ -284,13 +317,13 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 else
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Reqistry value provided is not valid: {0}", this.Value));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Registry value provided is not valid: {0}", this.Value));
                 }
 
                 return;
             }
 
-            this.Data = v.ToString();
+            this.Data = GetRegistryKeyValue(subKey, this.Value);
             subKey.Close();
             this.registryKey.Close();
         }
@@ -311,7 +344,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
             this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).CreateSubKey(this.Key);
-            
+
             if (this.registryKey != null)
             {
                 this.registryKey.Close();

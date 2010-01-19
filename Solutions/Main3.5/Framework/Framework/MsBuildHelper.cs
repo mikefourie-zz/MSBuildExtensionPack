@@ -1,6 +1,5 @@
 //-----------------------------------------------------------------------
 // <copyright file="MsBuildHelper.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-// Task Contributors: Hamid Shahid, Stephen Schaff
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
@@ -162,7 +161,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/d73eca07-8b36-919e-cbb6-ea1c17667dfe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/d73eca07-8b36-919e-cbb6-ea1c17667dfe.htm")]
     public class MSBuildHelper : BaseTask
     {
         private const string EscapeTaskAction = "Escape";

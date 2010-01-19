@@ -79,7 +79,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
     public class Assembly : BaseAppDomainIsolatedTask
     {
         private const string GetInfoTaskAction = "GetInfo";
@@ -170,11 +170,6 @@ namespace MSBuild.ExtensionPack.Framework
             switch (this.TaskAction)
             {
                 case "GetInfo":
-
-                    System.Console.Beep();
-                    System.Console.Beep();
-                    System.Console.Beep();
-                    System.Console.Beep();
                     this.GetInfo();
                     break;
                 case "Invoke":

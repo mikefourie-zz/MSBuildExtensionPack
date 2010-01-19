@@ -16,6 +16,8 @@ namespace MSBuild.ExtensionPack.Compression
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para><b>This task requires:</b></para>
     ///     <para>Microsoft Visual J# 2.0 Redistributable Package – Second Edition (x86)</para>
+    ///     <para/>
+    ///     <para>Please note that file attributes are not maintained when using these tasks.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -67,7 +69,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
     public class Zip : BaseTask
     {
         private const string CreateTaskAction = "Create";

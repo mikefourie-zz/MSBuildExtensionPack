@@ -48,7 +48,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
     public class SystemDrive : BaseTask
     {
         private const string CheckDriveSpaceTaskAction = "CheckDriveSpace";

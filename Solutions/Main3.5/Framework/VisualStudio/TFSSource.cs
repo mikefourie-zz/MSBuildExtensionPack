@@ -6,7 +6,44 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Text;
     using Microsoft.Build.Framework;
+
+    /// <summary>
+    /// AutoArg enumeration
+    /// </summary>
+    public enum AutoArg
+    {
+        /// <summary>
+        /// AcceptMerge
+        /// </summary>
+        AcceptMerge,
+        
+        /// <summary>
+        /// AcceptTheirs
+        /// </summary>
+        AcceptTheirs,
+        
+        /// <summary>
+        /// AcceptYours
+        /// </summary>
+        AcceptYours,
+        
+        /// <summary>
+        /// OverwriteLocal
+        /// </summary>
+        OverwriteLocal,
+        
+        /// <summary>
+        /// DeleteConflict
+        /// </summary>
+        DeleteConflict,
+        
+        /// <summary>
+        /// AcceptYoursRenameTheirs
+        /// </summary>
+        AcceptYoursRenameTheirs
+    }
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -15,7 +52,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
+    /// <para><i>GetChangeset</i> (<b>Required: </b>VersionSpec <b>Optional: </b>Server, WorkingDirectory <b>Output:</b> ExitCode, Changeset)</para>
     /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
+    /// <para><i>Resolve</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Recursive, Version, Auto, NewName)</para>
     /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode)</para>
     /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
@@ -58,7 +97,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.4.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
     public class TfsSource : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -68,9 +107,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string GetTaskAction = "Get";
         private const string MergeTaskAction = "Merge";
         private const string GetPendingChangesTaskAction = "GetPendingChanges";
+        private const string ResolveTaskAction = "Resolve";
+        private const string GetChangesetTaskAction = "GetChangeset";
         private const string UndoCheckoutTaskAction = "UndoCheckout";
         private const string UndeleteTaskAction = "Undelete";
-        
+
         private string teamFoundationExe;
         private string version = "2008";
         private bool recursive = true;
@@ -84,6 +125,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(GetTaskAction)]
         [DropdownValue(MergeTaskAction)]
+        [DropdownValue(ResolveTaskAction)]
+        [DropdownValue(GetChangesetTaskAction)]
         [DropdownValue(GetPendingChangesTaskAction)]
         [DropdownValue(UndoCheckoutTaskAction)]
         [DropdownValue(UndeleteTaskAction)]
@@ -94,10 +137,24 @@ namespace MSBuild.ExtensionPack.VisualStudio
         }
 
         /// <summary>
-        /// Sets the version spec for Get
+        /// Sets the version spec for Get or changeset number for GetChangeset. If no VersionSpec is provided for GetChangeset, then /latest is used.
         /// </summary>
+        [TaskAction(GetChangesetTaskAction, false)]
         [TaskAction(MergeTaskAction, false)]
         public string VersionSpec { get; set; }
+
+        /// <summary>
+        /// Resolves outstanding conflicts between different versions of specified items in the current workspace 
+        /// AcceptMerge, AcceptTheirs, AcceptYours, OverwriteLocal, DeleteConflict, AcceptYoursRenameTheirs 
+        /// </summary>
+        [TaskAction(ResolveTaskAction, false)]
+        public string Auto { get; set; }
+
+        /// <summary>
+        /// Used to resolve a name collision conflict. Can only be used in conjunction with AcceptMerge and AcceptYoursRenameTheirs. With AcceptMerge, /newname is only valid with conflicts that involve rename and/or undelete. If used, you must supply a new path.
+        /// </summary>
+        [TaskAction(ResolveTaskAction, false)]
+        public string NewName { get; set; }
 
         /// <summary>
         /// Forces all files to be retrieved, not just those that are out-of-date.
@@ -147,6 +204,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(MergeTaskAction, false)]
+        [TaskAction(ResolveTaskAction, false)]
         [TaskAction(GetPendingChangesTaskAction, true)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
@@ -160,8 +218,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(CheckoutTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
+        [TaskAction(ResolveTaskAction, false)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
+        [TaskAction(ResolveTaskAction, false)]
         public ITaskItem[] ItemCol { get; set; }
 
         /// <summary>
@@ -172,6 +232,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(CheckoutTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
+        [TaskAction(ResolveTaskAction, false)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
         public string WorkingDirectory { get; set; }
@@ -221,6 +282,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(MergeTaskAction, false)]
+        [TaskAction(ResolveTaskAction, false)]
         [TaskAction(GetPendingChangesTaskAction, true)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
@@ -245,6 +307,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public bool PendingChangesExist { get; set; }
 
         /// <summary>
+        /// Gets the Changeset details
+        /// </summary>
+        [Output]
+        public string Changeset { get; set; }
+
+        /// <summary>
         /// Lets you set text to override check-in policies
         /// </summary>
         public string OverrideText { get; set; }
@@ -261,41 +329,64 @@ namespace MSBuild.ExtensionPack.VisualStudio
             {
                 return;
             }
-            
+
             this.ResolveExePath();
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "TF Operation: {0}", this.TaskAction));
             switch (this.TaskAction)
             {
-                case "Add":
+                case AddTaskAction:
                     this.Add();
                     break;
-                case "Checkin":
+                case CheckinTaskAction:
                     this.Checkin();
                     break;
-                case "Checkout":
+                case CheckoutTaskAction:
                     this.Checkout();
                     break;
-                case "Get":
+                case GetTaskAction:
                     this.GetFiles();
                     break;
-                case "GetPendingChanges":
+                case GetPendingChangesTaskAction:
                     this.GetPendingChanges();
                     break;
-                case "Delete":
+                case GetChangesetTaskAction:
+                    this.GetChangesetDetails();
+                    break;
+                case DeleteTaskAction:
                     this.Delete();
                     break;
-                case "Merge":
+                case MergeTaskAction:
                     this.Merge();
                     break;
-                case "UndoCheckout":
+                case ResolveTaskAction:
+                    this.Resolve();
+                    break;
+                case UndoCheckoutTaskAction:
                     this.UndoCheckout();
                     break;
-                case "Undelete":
+                case UndeleteTaskAction:
                     this.Undelete();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void GetChangesetDetails()
+        {
+            if (string.IsNullOrEmpty(this.VersionSpec))
+            {
+                this.ExecuteCommand("changeset", string.Empty, "/latest /noprompt");
+            }
+            else
+            {
+                this.ExecuteCommand("changeset", this.VersionSpec, string.Empty);
+            }
+
+            if (this.returnOutput.StartsWith("Changeset:", StringComparison.OrdinalIgnoreCase))
+            {
+                this.Changeset = this.returnOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0].Replace("Changeset:", string.Empty).Trim();
             }
         }
 
@@ -353,7 +444,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             if (string.IsNullOrEmpty(this.ItemPath))
             {
-                Log.LogError("ItemPath is required for Merge");
+                this.Log.LogError("ItemPath is required for Merge");
                 return;
             }
 
@@ -376,15 +467,47 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(this.Destination))
             {
-                args += "\"" + this.Destination + "\" ";
+                args += " \"" + this.Destination + "\" ";
             }
             else
             {
-                Log.LogError("Destination is required for Merge");
+                this.Log.LogError("Destination is required for Merge");
                 return;
             }
 
             this.ExecuteCommand("merge", args, "/noprompt /recursive");
+        }
+
+        private void Resolve()
+        {
+            StringBuilder args = new StringBuilder();
+            if (!string.IsNullOrEmpty(this.Auto))
+            {
+                AutoArg auto;
+                try
+                {
+                    auto = (AutoArg)Enum.Parse(typeof(AutoArg), this.Auto, true);
+                }
+                catch (ArgumentException)
+                {
+                    this.Log.LogError("Auto is restricted to these values: AcceptMerge, AcceptTheirs, AcceptYours, OverwriteLocal, DeleteConflict, AcceptYoursRenameTheirs");
+                    return;
+                }
+
+                args.AppendFormat(" /auto:{0}", auto);
+                if ((auto == AutoArg.AcceptMerge) || (auto == AutoArg.AcceptYoursRenameTheirs))
+                {
+                    if (string.IsNullOrEmpty(this.NewName))
+                    {
+                        this.Log.LogError("ItemPath is required for Merge");
+                        return;
+                    }
+
+                    args.AppendFormat(" /newname:\"{0}\"", this.NewName);
+                }
+            }
+
+            this.ExecuteCommand("resolve", args.ToString(), " /recursive");
         }
 
         private void Checkin()
@@ -422,7 +545,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <param name="lastOptions">The last options.</param>
         private void ExecuteCommand(string action, string options, string lastOptions)
         {
-            if (!this.DetermineItemSpec())
+            this.itemSpec = string.Empty;
+            if ((this.TaskAction != GetChangesetTaskAction) && !this.DetermineItemSpec())
             {
                 return;
             }
