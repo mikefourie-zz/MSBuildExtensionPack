@@ -180,9 +180,11 @@
     <Compile Include="Computer\GetPasswordForm.Designer.cs">
       <DependentUpon>GetPasswordForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileSystem\RoboCopy.cs" />
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
+    <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -379,6 +381,8 @@
     </None>
     <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\ActiveDirectory.proj" />
+    <None Include="XmlSamples\GenericTool.proj" />
+    <None Include="XmlSamples\RoboCopy.proj" />
     <None Include="XmlSamples\FileVersion.proj" />
     <None Include="XmlSamples\SqlExecute.proj" />
     <None Include="XmlSamples\WshShell.proj" />

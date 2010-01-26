@@ -6,7 +6,6 @@ namespace MSBuild.ExtensionPack
     using System;
     using System.Collections.Specialized;
     using System.Diagnostics;
-    using System.Text;
 
     /// <summary>
     /// ShellExecute.
