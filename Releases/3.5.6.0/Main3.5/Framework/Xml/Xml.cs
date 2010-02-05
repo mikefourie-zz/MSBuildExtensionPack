@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Xml
 {
+    using System;
     using System.Globalization;
     using System.IO;
     using System.Text;
@@ -14,7 +15,7 @@ namespace MSBuild.ExtensionPack.Xml
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
+    /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> ConformanceLevel, Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
     /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Output: </b>IsValid, Output)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -101,6 +102,7 @@ namespace MSBuild.ExtensionPack.Xml
 
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
+        private ConformanceLevel conformanceLevel;
 
         [DropdownValue(TransformTaskAction)]
         [DropdownValue(ValidateTaskAction)]
@@ -168,6 +170,15 @@ namespace MSBuild.ExtensionPack.Xml
         {
             get { return this.fileEncoding.ToString(); }
             set { this.fileEncoding = System.Text.Encoding.GetEncoding(value); }
+        }
+
+        /// <summary>
+        /// Sets the ConformanceLevel. Supports Auto, Document and Fragment. Default is ConformanceLevel.Document
+        /// </summary>
+        public string Conformance
+        {
+            get { return this.conformanceLevel.ToString(); }
+            set { this.conformanceLevel = (ConformanceLevel)Enum.Parse(typeof(ConformanceLevel), value); }
         }
 
         /// <summary>
@@ -283,8 +294,8 @@ namespace MSBuild.ExtensionPack.Xml
                     using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
                     using (StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default))
                     {
-                            // Execute the transform and output the results to a writer.
-                            xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
+                        // Execute the transform and output the results to a writer.
+                        xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
                     }
                 }
                 else
@@ -292,7 +303,7 @@ namespace MSBuild.ExtensionPack.Xml
                     XDocument newxmlDoc = XDocument.Load(new StringReader(this.Output));
                     if (!string.IsNullOrEmpty(this.OutputFile))
                     {
-                        XmlWriterSettings writerSettings = new XmlWriterSettings { Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
+                        XmlWriterSettings writerSettings = new XmlWriterSettings { ConformanceLevel = this.conformanceLevel, Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
                         using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
                         {
                             if (xw != null)
