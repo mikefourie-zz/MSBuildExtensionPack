@@ -1565,7 +1565,7 @@
                     <xs:attribute name="XmlFile"/>
                     <xs:attribute name="XslTransformFile"/>
                     <xs:attribute name="Xml"/>
-                    <xs:attribute name="ConformanceLevel"/>
+                    <xs:attribute name="Conformance"/>
                     <xs:attribute name="XslTransform"/>
                     <xs:attribute name="OutputFile"/>
                     <xs:attribute name="SchemaFiles"/>
