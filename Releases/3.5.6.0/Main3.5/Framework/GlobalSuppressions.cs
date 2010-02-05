@@ -188,3 +188,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Changeset", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.TfsSource.#GetChangesetDetails()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Changeset", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.TfsSource.#Changeset")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Robo", Scope = "type", Target = "MSBuild.ExtensionPack.FileSystem.RoboCopy")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "WeekDay", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.IncrementMethod.#YearWeekDay")]
