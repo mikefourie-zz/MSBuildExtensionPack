@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Management
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -191,54 +192,54 @@ namespace MSBuild.ExtensionPack.Management
             {
                 managementPath += "." + this.Instance;
 
-                var classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null);
-
-                // Obtain in-parameters for the method
-                ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
-
-                if (this.MethodParameters != null)
+                using (var classInstance = new ManagementObject(this.Scope, new ManagementPath(managementPath), null))
                 {
-                    // Add the input parameters.
-                    foreach (ITaskItem param in this.MethodParameters)
+                    // Obtain in-parameters for the method
+                    ManagementBaseObject inParams = classInstance.GetMethodParameters(this.Method);
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+
+                    if (this.MethodParameters != null)
                     {
-                        string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
-                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
-                        inParams[data[0]] = data[1];
+                        // Add the input parameters.
+                        foreach (string[] data in this.MethodParameters.Select(param => param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries)))
+                        {
+                            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                            inParams[data[0]] = data[1];
+                        }
                     }
-                }
 
-                // Execute the method and obtain the return values.
-                ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
-                if (outParams != null)
-                {
-                    this.ReturnValue = outParams["ReturnValue"].ToString();
+                    // Execute the method and obtain the return values.
+                    ManagementBaseObject outParams = classInstance.InvokeMethod(this.Method, inParams, null);
+                    if (outParams != null)
+                    {
+                        this.ReturnValue = outParams["ReturnValue"].ToString();
+                    }
                 }
             }
             else
             {
-                ManagementClass mgmtClass = new ManagementClass(this.Scope, new ManagementPath(managementPath), null);
-
-                // Obtain in-parameters for the method
-                ManagementBaseObject inParams = mgmtClass.GetMethodParameters(this.Method);
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
-
-                if (this.MethodParameters != null)
+                using (ManagementClass mgmtClass = new ManagementClass(this.Scope, new ManagementPath(managementPath), null))
                 {
-                    // Add the input parameters.
-                    foreach (ITaskItem param in this.MethodParameters)
+                    // Obtain in-parameters for the method
+                    ManagementBaseObject inParams = mgmtClass.GetMethodParameters(this.Method);
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Method: {0}", this.Method));
+
+                    if (this.MethodParameters != null)
                     {
-                        string[] data = param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries);
-                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
-                        inParams[data[0]] = data[1];
+                        // Add the input parameters.
+                        foreach (string[] data in this.MethodParameters.Select(param => param.ItemSpec.Split(new[] { "#~#" }, StringSplitOptions.RemoveEmptyEntries)))
+                        {
+                            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Param: {0}. Value: {1}", data[0], data[1]));
+                            inParams[data[0]] = data[1];
+                        }
                     }
-                }
 
-                // Execute the method and obtain the return values.
-                ManagementBaseObject outParams = mgmtClass.InvokeMethod(this.Method, inParams, null);
-                if (outParams != null)
-                {
-                    this.ReturnValue = outParams["ReturnValue"].ToString();
+                    // Execute the method and obtain the return values.
+                    ManagementBaseObject outParams = mgmtClass.InvokeMethod(this.Method, inParams, null);
+                    if (outParams != null)
+                    {
+                        this.ReturnValue = outParams["ReturnValue"].ToString();
+                    }
                 }
             }
         }
@@ -252,43 +253,41 @@ namespace MSBuild.ExtensionPack.Management
             this.GetManagementScope(this.Namespace);
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing WMI query: SELECT * FROM {0}", this.Class));
             ObjectQuery query = new ObjectQuery("SELECT * FROM " + this.Class);
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
-            ManagementObjectCollection queryCollection = searcher.Get();
-            foreach (ManagementObject m in queryCollection)
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
             {
-                ITaskItem item = new TaskItem(this.MachineName);
-                foreach (ITaskItem prop in this.Properties)
+                ManagementObjectCollection queryCollection = searcher.Get();
+                foreach (ManagementObject m in queryCollection)
                 {
-                    try
+                    ITaskItem item = new TaskItem(this.MachineName);
+                    foreach (ITaskItem prop in this.Properties)
                     {
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Property: {0}", prop.ItemSpec));
-                        string value = string.Empty;
-
-                        // sometimes the properties might be arrays.....
                         try
                         {
-                            string[] propertiesArray = (string[])m[prop.ItemSpec];
-                            foreach (string arrValue in propertiesArray)
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Extracting Property: {0}", prop.ItemSpec));
+                            string value = string.Empty;
+
+                            // sometimes the properties might be arrays.....
+                            try
                             {
-                                value += arrValue + "~~~";
+                                string[] propertiesArray = (string[]) m[prop.ItemSpec];
+                                value = propertiesArray.Aggregate(value, (current, arrValue) => current + (arrValue + "~~~"));
+                                value = value.Remove(value.Length - 3, 3);
+                            }
+                            catch
+                            {
+                                value = m[prop.ItemSpec].ToString();
                             }
 
-                            value = value.Remove(value.Length - 3, 3);
+                            item.SetMetadata(prop.ItemSpec, value + string.Empty);
                         }
                         catch
                         {
-                            value = m[prop.ItemSpec].ToString();
+                            this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Property Not Found: {0}", prop.ItemSpec));
                         }
+                    }
 
-                        item.SetMetadata(prop.ItemSpec, value + string.Empty);
-                    }
-                    catch
-                    {
-                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Property Not Found: {0}", prop.ItemSpec));
-                    }
+                    this.info.Add(item);
                 }
-
-                this.info.Add(item);
             }
         }
     }

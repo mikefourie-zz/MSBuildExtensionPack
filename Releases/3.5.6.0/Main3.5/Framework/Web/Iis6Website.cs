@@ -172,7 +172,12 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
+                string propertyTypeName;
+                using (DirectoryEntry di = new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName))
+                {
+                    propertyTypeName = (string)di.Properties["Syntax"].Value;
+                }
+
                 if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];

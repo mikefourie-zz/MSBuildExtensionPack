@@ -176,13 +176,15 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 this.GetManagementScope(@"\root\cimv2");
                 ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM Win32_Environment WHERE Name = '{0}'", this.Variable));
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
-                ManagementObjectCollection moc = searcher.Get();
-                foreach (ManagementObject mo in moc)
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
                 {
-                    if (mo["VariableValue"] != null)
+                    ManagementObjectCollection moc = searcher.Get();
+                    foreach (ManagementObject mo in moc)
                     {
-                        this.Value = mo["VariableValue"].ToString().Split(';');
+                        if (mo["VariableValue"] != null)
+                        {
+                            this.Value = mo["VariableValue"].ToString().Split(';');
+                        }
                     }
                 }
             }

@@ -222,7 +222,10 @@ namespace MSBuild.ExtensionPack.Xml
             {
                 // Load the Xml
                 this.LogTaskMessage(MessageImportance.Low, "Loading Xml");
-                this.xmlDoc = XDocument.Load(new StringReader(this.Xml));
+                using (StringReader sr = new StringReader(this.Xml))
+                {
+                    this.xmlDoc = XDocument.Load(sr);
+                }
             }
             else
             {
@@ -264,7 +267,10 @@ namespace MSBuild.ExtensionPack.Xml
             {
                 // Load the XslTransform
                 this.LogTaskMessage(MessageImportance.Low, "Loading XslTransform");
-                xslDoc = XDocument.Load(new StringReader(this.XslTransform));
+                using (StringReader sr = new StringReader(this.XslTransform))
+                {
+                    xslDoc = XDocument.Load(sr);
+                }
             }
             else
             {
@@ -279,7 +285,11 @@ namespace MSBuild.ExtensionPack.Xml
                 // Load the style sheet.
                 xslt = new XslCompiledTransform();
                 XsltSettings settings = new XsltSettings { EnableScript = true };
-                xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())), settings, null);
+                using (StringReader sr = new StringReader(xslDoc.ToString()))
+                {
+                    XmlReader xmlR = XmlReader.Create(sr);
+                    xslt.Load(xmlR, settings, null);
+                }
 
                 // Execute the transform and output the results to a writer.
                 xslt.Transform(this.xmlDoc.CreateReader(), writer);
@@ -292,15 +302,18 @@ namespace MSBuild.ExtensionPack.Xml
                 if (xslt.OutputSettings.OutputMethod == XmlOutputMethod.Text)
                 {
                     using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
-                    using (StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default))
                     {
+                        StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default);
+
                         // Execute the transform and output the results to a writer.
                         xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
                     }
                 }
                 else
                 {
-                    XDocument newxmlDoc = XDocument.Load(new StringReader(this.Output));
+                    using (StringReader sr = new StringReader(this.Output))
+                    {
+                        XDocument newxmlDoc = XDocument.Load(sr);
                     if (!string.IsNullOrEmpty(this.OutputFile))
                     {
                         XmlWriterSettings writerSettings = new XmlWriterSettings { ConformanceLevel = this.conformanceLevel, Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
@@ -314,6 +327,7 @@ namespace MSBuild.ExtensionPack.Xml
                             {
                                 Log.LogError("There was an error creating the XmlWriter for the OutputFile");
                                 return;
+                                }
                             }
                         }
                     }

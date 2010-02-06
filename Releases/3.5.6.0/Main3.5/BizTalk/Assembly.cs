@@ -376,26 +376,28 @@ namespace MSBuild.ExtensionPack.BizTalk
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", resource.SourcePath, resource.DeploymentPath));
                 System.IO.File.Copy(resource.SourcePath, resource.DeploymentPath);
                 this.GetManagementScope(@"\root\cimv2");
-                ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true));
-                ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
-                methodParameters["CommandLine"] = @"gacutil.exe /i " + resource.DeploymentPath;
-                ManagementBaseObject outParams = m.InvokeMethod("Create", methodParameters, null);
-
-                if (outParams != null)
+                using (ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true)))
                 {
-                    if (int.Parse(outParams["returnValue"].ToString(), CultureInfo.InvariantCulture) != 0)
+                    ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
+                    methodParameters["CommandLine"] = @"gacutil.exe /i " + resource.DeploymentPath;
+                    ManagementBaseObject outParams = m.InvokeMethod("Create", methodParameters, null);
+
+                    if (outParams != null)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Remote AddAssembly returned non-zero returnValue: {0}", outParams["returnValue"]));
+                        if (int.Parse(outParams["returnValue"].ToString(), CultureInfo.InvariantCulture) != 0)
+                        {
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Remote AddAssembly returned non-zero returnValue: {0}", outParams["returnValue"]));
+                            return;
+                        }
+
+                        this.LogTaskMessage(MessageImportance.Low, "Process ReturnValue: " + outParams["returnValue"]);
+                        this.LogTaskMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
+                    }
+                    else
+                    {
+                        this.Log.LogError("Remote Create returned null");
                         return;
                     }
-
-                    this.LogTaskMessage(MessageImportance.Low, "Process ReturnValue: " + outParams["returnValue"]);
-                    this.LogTaskMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
-                }
-                else
-                {
-                    this.Log.LogError("Remote Create returned null");
-                    return;
                 }
             }
         }

@@ -212,8 +212,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     try
                     {
                         using (FileStream myStreamFile = new FileStream(project.ItemSpec + ".log", FileMode.Open))
-                        using (System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile))
                         {
+                            System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile);
                             string myBuffer = myStream.ReadToEnd();
                             Log.LogError(myBuffer);
                         }

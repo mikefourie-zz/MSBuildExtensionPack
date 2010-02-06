@@ -472,10 +472,11 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Checksum for file: {0}", this.Path));
             using (FileStream fs = System.IO.File.OpenRead(this.Path.GetMetadata("FullPath")))
             {
-                MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider();
-                byte[] hash = csp.ComputeHash(fs);
-                this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpperInvariant();
-                fs.Close();
+                using (MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider())
+                {
+                    byte[] hash = csp.ComputeHash(fs);
+                    this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpperInvariant();
+                }
             }
         }
 

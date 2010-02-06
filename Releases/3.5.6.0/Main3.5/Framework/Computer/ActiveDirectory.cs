@@ -529,15 +529,17 @@ namespace MSBuild.ExtensionPack.Computer
                     DirectoryEntry grp;
                     if (this.groupType == ADGroupType.Local)
                     {
-                        groupDir = new DirectoryEntry("WinNT://" + this.MachineName + ",computer");
-                        try
+                        using (groupDir = new DirectoryEntry("WinNT://" + this.MachineName + ",computer"))
                         {
-                            grp = groupDir.Children.Find(g.ItemSpec, "group");
-                        }
-                        catch
-                        {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
-                            return;
+                            try
+                            {
+                                grp = groupDir.Children.Find(g.ItemSpec, "group");
+                            }
+                            catch
+                            {
+                                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                                return;
+                            }
                         }
                     }
                     else

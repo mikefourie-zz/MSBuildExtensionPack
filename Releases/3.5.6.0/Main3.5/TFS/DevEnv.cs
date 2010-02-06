@@ -396,6 +396,11 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <param name="messageImportance">The importance of the message. Controllable via the StandardErrorImportance and StandardOutImportance properties.</param>
         protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
         {
+            if (string.IsNullOrEmpty(singleLine))
+            {
+                return;
+            }
+
             // Add build steps for important messages.
             if (messageImportance == MessageImportance.High)
             {

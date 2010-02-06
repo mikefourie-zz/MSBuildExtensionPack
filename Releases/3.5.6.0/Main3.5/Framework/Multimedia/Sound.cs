@@ -129,11 +129,15 @@ namespace MSBuild.ExtensionPack.Multimedia
             if (!string.IsNullOrEmpty(this.SoundFile))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SoundFile));
-                SoundPlayer player = new SoundPlayer { LoadTimeout = 5000, SoundLocation = this.SoundFile };
-                for (int i = 1; i <= this.Repeat; i++)
+                using (SoundPlayer player = new SoundPlayer())
                 {
-                    player.PlaySync();
-                    Thread.Sleep(this.Interval);
+                    player.LoadTimeout = 5000;
+                    player.SoundLocation = this.SoundFile;
+                    for (int i = 1; i <= this.Repeat; i++)
+                    {
+                        player.PlaySync();
+                        Thread.Sleep(this.Interval);
+                    }
                 }
 
                 return;

@@ -331,23 +331,27 @@ namespace MSBuild.ExtensionPack.Computer
         private void DeleteKeyTree()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKeyTree(this.Key);
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            {
+                r.DeleteSubKeyTree(this.Key);
+            }
         }
 
         private void DeleteKey()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKey(this.Key, false);
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            {
+                r.DeleteSubKey(this.Key, false);
+            }
         }
 
         private void CreateKey()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).CreateSubKey(this.Key);
-
-            if (this.registryKey != null)
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            using (RegistryKey r2 = r.CreateSubKey(this.Key))
             {
-                this.registryKey.Close();
             }
         }
     }

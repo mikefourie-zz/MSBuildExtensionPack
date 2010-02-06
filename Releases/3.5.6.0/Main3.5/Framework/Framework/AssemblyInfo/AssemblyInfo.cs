@@ -1050,7 +1050,6 @@ namespace MSBuild.ExtensionPack.Framework
                     using (StreamWriter writer = new StreamWriter(writerInfo.OpenWrite(), this.fileEncoding))
                     {
                         assemblyInfo.Write(writer);
-                        writer.Close();
                     }
 
                     bool changedAttribute = false;

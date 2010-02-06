@@ -136,8 +136,10 @@ namespace MSBuild.ExtensionPack.Computer
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting CounterName: {0}", this.CounterName));
-                PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName);
-                this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
+                using (PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName))
+                {
+                    this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
+                }                
             }
             else
             {

@@ -114,7 +114,6 @@ namespace MSBuild.ExtensionPack
                 }
 
                 this.ExitCode = proc.ExitCode;
-                proc.Close();
             }
 
             return this.ExitCode;

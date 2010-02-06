@@ -313,9 +313,9 @@ namespace MSBuild.ExtensionPack.Tfs
                 ibuildDef.SetMetadata("BuildAgentDescription", this.buildDetails.BuildAgent.Description ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentFullPath", this.buildDetails.BuildAgent.FullPath ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentMachineName", this.buildDetails.BuildAgent.MachineName ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentMaxProcesses", this.buildDetails.BuildAgent.MaxProcesses.ToString(CultureInfo.CurrentUICulture) ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentMaxProcesses", this.buildDetails.BuildAgent.MaxProcesses.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentName", this.buildDetails.BuildAgent.Name ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentPort", this.buildDetails.BuildAgent.Port.ToString(CultureInfo.CurrentUICulture) ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentPort", this.buildDetails.BuildAgent.Port.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentUri", this.buildDetails.BuildAgentUri.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("BuildDefinitionUri", this.buildDetails.BuildDefinitionUri.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("BuildFinished", this.buildDetails.BuildFinished.ToString() ?? string.Empty);
