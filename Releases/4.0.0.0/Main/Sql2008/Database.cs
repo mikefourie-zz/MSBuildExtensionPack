@@ -593,7 +593,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         private bool CheckDatabaseExists()
         {
             this.sqlServer.Refresh();
-            return !(this.sqlServer.Databases[this.DatabaseItem.ItemSpec] == null);
+            return this.sqlServer.Databases[this.DatabaseItem.ItemSpec] != null;
         }
 
         private void Create()

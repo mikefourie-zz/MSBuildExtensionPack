@@ -102,7 +102,6 @@ namespace MSBuild.ExtensionPack.FileSystem
             {
                 using (FileStream fs = this.versionFile.Create())
                 {
-                    fs.Close();
                 }
             }
 

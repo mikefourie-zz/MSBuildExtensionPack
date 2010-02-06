@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.Web
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Web.Administration;
 
@@ -224,13 +225,10 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
-            foreach (Binding binding in this.website.Bindings)
+            if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation)))
             {
-                if (binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation))
-                {
-                    this.Exists = true;
-                    return;
-                }
+                this.Exists = true;
+                return;
             }
         }
 
@@ -282,13 +280,10 @@ namespace MSBuild.ExtensionPack.Web
             else
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
-                foreach (Binding binding in this.website.Bindings)
+                if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation))
                 {
-                    if (binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation)
-                    {
-                        Log.LogError("A binding with the same ip, port and host header already exists.");
-                        return;
-                    }
+                    this.Log.LogError("A binding with the same ip, port and host header already exists.");
+                    return;
                 }
 
                 this.website.Bindings.Add(this.BindingInformation, this.BindingProtocol);

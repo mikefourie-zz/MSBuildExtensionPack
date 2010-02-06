@@ -112,12 +112,11 @@ namespace MSBuild.ExtensionPack.Web
                         this.Response.SetMetadata("ResponseText", responseReader.ReadToEnd());
                         this.Status = response.StatusDescription;
                         this.Response.SetMetadata("StatusDescription", response.StatusDescription);
-                        this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentUICulture));
+                        this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentCulture));
                         this.Response.SetMetadata("CharacterSet", response.CharacterSet);
                         this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
                         this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
                         this.Response.SetMetadata("Server", response.Server);
-                        response.Close();
                     }
                 }
                 catch (WebException ex)

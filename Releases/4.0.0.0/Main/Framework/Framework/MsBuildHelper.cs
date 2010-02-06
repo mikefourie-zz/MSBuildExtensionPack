@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
@@ -427,14 +428,10 @@ namespace MSBuild.ExtensionPack.Framework
                                 break;
                             }
 
-                            foreach (var x in itemToModify.MetadataNames)
+                            if (itemToModify.MetadataNames.Cast<object>().Any(x => s == x))
                             {
-                                if (s == x)
-                                {
-                                    this.LogTaskMessage(string.Format(CultureInfo.InstalledUICulture, "Updating {0}.{1} to {2}", this.OutputItems[sourceIndex], s, itemToModify.GetMetadata(s.ToString())));
-                                    this.OutputItems[sourceIndex].SetMetadata(s.ToString(), itemToModify.GetMetadata(s.ToString()));
-                                    break;
-                                }
+                                this.LogTaskMessage(string.Format(CultureInfo.InstalledUICulture, "Updating {0}.{1} to {2}", this.OutputItems[sourceIndex], s, itemToModify.GetMetadata(s.ToString())));
+                                this.OutputItems[sourceIndex].SetMetadata(s.ToString(), itemToModify.GetMetadata(s.ToString()));
                             }
                         }
                     }
@@ -653,9 +650,9 @@ namespace MSBuild.ExtensionPack.Framework
             }
 
             StringBuilder stringToReturn = new StringBuilder();
-            for (int index = 0; index < this.inputItems1.Count; index++)
+            foreach (ITaskItem t in this.inputItems1)
             {
-                stringToReturn.AppendFormat("{0}{1}", this.inputItems1[index].ItemSpec, this.Separator);
+                stringToReturn.AppendFormat("{0}{1}", t.ItemSpec, this.Separator);
             }
 
             this.OutString = stringToReturn.ToString().Substring(0, stringToReturn.Length - this.Separator.Length);

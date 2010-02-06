@@ -26,62 +26,62 @@ namespace MSBuild.ExtensionPack.Framework
         //// This does mean that lines like /** in C# will get treated as valid lines, but that's a real borderline case.
         public AssemblyInfoWrapper(string fileName)
         {
-            StreamReader reader = File.OpenText(fileName);
-            int lineNumber = 0;
-            string input;
-            MatchCollection matches;
-            bool skipLine = false;
-
-            while ((input = reader.ReadLine()) != null)
+            using (StreamReader reader = File.OpenText(fileName))
             {
-                this.rawFileLines.Add(input);
+                int lineNumber = 0;
+                string input;
+                MatchCollection matches;
+                bool skipLine = false;
 
-                // Skip single comment lines
-                if (this.singleLineCSharpCommentPattern.IsMatch(input) || this.singleLineVbCommentPattern.IsMatch(input))
+                while ((input = reader.ReadLine()) != null)
                 {
-                    lineNumber++;
-                    continue;
-                }
+                    this.rawFileLines.Add(input);
 
-                // Skip multi-line C# comments
-                if (this.multilineCSharpCommentStartPattern.IsMatch(input))
-                {
-                    lineNumber++;
-                    skipLine = true;
-                    continue;
-                }
-
-                // Stop skipping when we're at the end of a C# multiline comment
-                if (this.multilineCSharpCommentEndPattern.IsMatch(input) && skipLine)
-                {
-                    lineNumber++;
-                    skipLine = false;
-                    continue;
-                }
-
-                // If we're in the middle of a multiline comment, keep going
-                if (skipLine)
-                {
-                    lineNumber++;
-                    continue;
-                }
-
-                // Check to see if the current line is an attribute on the assembly info.
-                // If so we need to keep the line number in our dictionary so we can go
-                // back later and get it when this class is accessed through its indexer.
-                matches = this.attributeNamePattern.Matches(input);
-                if (matches.Count > 0)
-                {
-                    if (this.attributeIndex.ContainsKey(matches[0].Groups["attributeName"].Value) == false)
+                    // Skip single comment lines
+                    if (this.singleLineCSharpCommentPattern.IsMatch(input) || this.singleLineVbCommentPattern.IsMatch(input))
                     {
-                        this.attributeIndex.Add(matches[0].Groups["attributeName"].Value, lineNumber);
+                        lineNumber++;
+                        continue;
                     }
+
+                    // Skip multi-line C# comments
+                    if (this.multilineCSharpCommentStartPattern.IsMatch(input))
+                    {
+                        lineNumber++;
+                        skipLine = true;
+                        continue;
+                    }
+
+                    // Stop skipping when we're at the end of a C# multiline comment
+                    if (this.multilineCSharpCommentEndPattern.IsMatch(input) && skipLine)
+                    {
+                        lineNumber++;
+                        skipLine = false;
+                        continue;
+                    }
+
+                    // If we're in the middle of a multiline comment, keep going
+                    if (skipLine)
+                    {
+                        lineNumber++;
+                        continue;
+                    }
+
+                    // Check to see if the current line is an attribute on the assembly info.
+                    // If so we need to keep the line number in our dictionary so we can go
+                    // back later and get it when this class is accessed through its indexer.
+                    matches = this.attributeNamePattern.Matches(input);
+                    if (matches.Count > 0)
+                    {
+                        if (this.attributeIndex.ContainsKey(matches[0].Groups["attributeName"].Value) == false)
+                        {
+                            this.attributeIndex.Add(matches[0].Groups["attributeName"].Value, lineNumber);
+                        }
+                    }
+
+                    lineNumber++;
                 }
-
-                lineNumber++;
             }
-
-            reader.Close();
         }
 
         public string this[string attribute]

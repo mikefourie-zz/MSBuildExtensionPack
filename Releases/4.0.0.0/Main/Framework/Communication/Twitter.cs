@@ -121,25 +121,19 @@ namespace MSBuild.ExtensionPack.Communication
             request.UserAgent = "MSBuild Extension Pack - Twitter Task";
             request.Credentials = new NetworkCredential(this.UserName, this.UserPassword);
 
-            using (Stream requestStream = request.GetRequestStream())
+            Stream requestStream = request.GetRequestStream();
+            using (StreamWriter writer = new StreamWriter(requestStream))
             {
-                using (StreamWriter writer = new StreamWriter(requestStream))
-                {
-                    writer.Write(post);
-                }
-            }
-
-            WebResponse response = request.GetResponse();
-            string content;
-            using (Stream responseStream = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(responseStream))
-                {
-                    content = reader.ReadToEnd();
-                }
+                writer.Write(post);
             }
             
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Response: {0}", content));
+            WebResponse response = request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            using (StreamReader reader = new StreamReader(responseStream))
+            {
+                string content = reader.ReadToEnd();
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Response: {0}", content));
+            }
         }
     }
 }

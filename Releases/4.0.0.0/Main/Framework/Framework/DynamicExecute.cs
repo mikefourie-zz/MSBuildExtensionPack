@@ -1249,7 +1249,7 @@ namespace MSBuild.ExtensionPack.Framework
             code.AppendLine("namespace MSBuild.ExtensionPack.Framework {");
             code.AppendLine("public static class T {");
             code.Append("public static void Go(");
-            
+
             if (!this.NoDefaultParameters)
             {
                 code.Append("Microsoft.Build.Utilities.Task @this");
@@ -1273,7 +1273,6 @@ namespace MSBuild.ExtensionPack.Framework
             code.AppendLine("} } }");
 
             // Prepare references
-            CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters { GenerateInMemory = true };
             if (!this.NoDefaultReferences)
             {
@@ -1292,35 +1291,38 @@ namespace MSBuild.ExtensionPack.Framework
                 }
             }
 
-            // Compile it
-            CompilerResults results = provider.CompileAssemblyFromSource(parameters, code.ToString());
-            if (results.Errors.Count != 0)
+            using (CSharpCodeProvider provider = new CSharpCodeProvider())
             {
-                bool onlyWarnings = true;
-                foreach (CompilerError error in results.Errors)
+                // Compile it
+                CompilerResults results = provider.CompileAssemblyFromSource(parameters, code.ToString());
+                if (results.Errors.Count != 0)
                 {
-                    if (error.IsWarning)
+                    bool onlyWarnings = true;
+                    foreach (CompilerError error in results.Errors)
                     {
-                        this.LogTaskWarning(error.ErrorNumber + ": " + error.ErrorText);
+                        if (error.IsWarning)
+                        {
+                            this.LogTaskWarning(error.ErrorNumber + ": " + error.ErrorText);
+                        }
+                        else
+                        {
+                            this.Log.LogError(error.ErrorNumber + ": " + error.ErrorText);
+                            onlyWarnings = false;
+                        }
                     }
-                    else
+
+                    if (!onlyWarnings)
                     {
-                        this.Log.LogError(error.ErrorNumber + ": " + error.ErrorText);
-                        onlyWarnings = false;
+                        throw new InvalidProgramException("Compilation of DynamicExecute method failed");
                     }
                 }
 
-                if (!onlyWarnings)
-                {
-                    throw new InvalidProgramException("Compilation of DynamicExecute method failed");
-                }
+                // Load the compiled method
+                System.Reflection.Assembly result = results.CompiledAssembly;
+                Type type = result.GetType("MSBuild.ExtensionPack.Framework.T");
+                MethodInfo method = type.GetMethod("Go");
+                this.OutputMethodId = DefineMethod(method, inputs.Select(x => x.Name), outputs.Select(x => x.Name), this.NumberOfDefaultParameters());
             }
-
-            // Load the compiled method
-            System.Reflection.Assembly result = results.CompiledAssembly;
-            Type type = result.GetType("MSBuild.ExtensionPack.Framework.T");
-            MethodInfo method = type.GetMethod("Go");
-            this.OutputMethodId = DefineMethod(method, inputs.Select(x => x.Name), outputs.Select(x => x.Name), this.NumberOfDefaultParameters());
         }
 
         /// <summary>

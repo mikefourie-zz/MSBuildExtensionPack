@@ -154,16 +154,7 @@ namespace MSBuild.ExtensionPack.Tfs
         /// </summary>
         protected IConfigurationSummary ConfigurationSummary
         {
-            get
-            {
-                if (this.configurationSummary == null)
-                {
-                    // Try to get the existing configuration summary, if null, create a new one.
-                    this.configurationSummary = InformationNodeConverters.GetConfigurationSummary(this.Build, this.SolutionConfiguration, this.SolutionPlatform) ?? InformationNodeConverters.AddConfigurationSummary(this.Build, this.SolutionConfiguration, this.SolutionPlatform, null);
-                }
-
-                return this.configurationSummary;
-            }
+            get { return this.configurationSummary ?? (this.configurationSummary = InformationNodeConverters.GetConfigurationSummary(this.Build, this.SolutionConfiguration, this.SolutionPlatform) ?? InformationNodeConverters.AddConfigurationSummary(this.Build, this.SolutionConfiguration, this.SolutionPlatform, null)); }
         }
 
         /// <summary>
@@ -189,15 +180,7 @@ namespace MSBuild.ExtensionPack.Tfs
         /// </summary>
         protected Regex ProjectCompilationRegex
         {
-            get
-            {
-                if (this.projectCompilationRegex == null)
-                {
-                    this.projectCompilationRegex = new Regex(@"Build started: Project: (?<Project>[^,]+), Configuration:");
-                }
-
-                return this.projectCompilationRegex;
-            }
+            get { return this.projectCompilationRegex ?? (this.projectCompilationRegex = new Regex(@"Build started: Project: (?<Project>[^,]+), Configuration:")); }
         }
 
         /// <summary>
@@ -205,15 +188,7 @@ namespace MSBuild.ExtensionPack.Tfs
         /// </summary>
         protected Regex ErrorRegex
         {
-            get
-            {
-                if (this.errorRegex == null)
-                {
-                    this.errorRegex = new Regex(@"error\s*:?\s*(?<Code>[^\s:]+)\s*:\s*(?<Text>.*)$");
-                }
-
-                return this.errorRegex;
-            }
+            get { return this.errorRegex ?? (this.errorRegex = new Regex(@"error\s*:?\s*(?<Code>[^\s:]+)\s*:\s*(?<Text>.*)$")); }
         }
 
         /// <summary>
@@ -221,15 +196,7 @@ namespace MSBuild.ExtensionPack.Tfs
         /// </summary>
         protected Regex WarningRegex
         {
-            get
-            {
-                if (this.warningRegex == null)
-                {
-                    this.warningRegex = new Regex(@"warning\s*:?\s*(?<Code>[^\s:]+)\s*:\s*(?<Text>.*)$");
-                }
-
-                return this.warningRegex;
-            }
+            get { return this.warningRegex ?? (this.warningRegex = new Regex(@"warning\s*:?\s*(?<Code>[^\s:]+)\s*:\s*(?<Text>.*)$")); }
         }
 
         /// <summary>
@@ -237,15 +204,7 @@ namespace MSBuild.ExtensionPack.Tfs
         /// </summary>
         protected Regex StaticAnalysisErrorRegex
         {
-            get
-            {
-                if (this.codeAnalysisErrorRegex == null)
-                {
-                    this.codeAnalysisErrorRegex = new Regex(@"error\s*:?\s*(?<Code>CA[^\s:]+)\s*:\s*(?<Text>.*)$");
-                }
-
-                return this.codeAnalysisErrorRegex;
-            }
+            get { return this.codeAnalysisErrorRegex ?? (this.codeAnalysisErrorRegex = new Regex(@"error\s*:?\s*(?<Code>CA[^\s:]+)\s*:\s*(?<Text>.*)$")); }
         }
 
         /// <summary>
@@ -253,15 +212,7 @@ namespace MSBuild.ExtensionPack.Tfs
         /// </summary>
         protected Regex StaticAnalysisWarningRegex
         {
-            get
-            {
-                if (this.codeAnalysisWarningRegex == null)
-                {
-                    this.codeAnalysisWarningRegex = new Regex(@"warning\s*:?\s*(?<Code>CA[^\s:]+)\s*:\s*(?<Text>.*)$");
-                }
-
-                return this.codeAnalysisWarningRegex;
-            }
+            get { return this.codeAnalysisWarningRegex ?? (this.codeAnalysisWarningRegex = new Regex(@"warning\s*:?\s*(?<Code>CA[^\s:]+)\s*:\s*(?<Text>.*)$")); }
         }
 
         /// <summary>
@@ -396,6 +347,11 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <param name="messageImportance">The importance of the message. Controllable via the StandardErrorImportance and StandardOutImportance properties.</param>
         protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
         {
+            if (string.IsNullOrEmpty(singleLine))
+            {
+                return;
+            }
+
             // Add build steps for important messages.
             if (messageImportance == MessageImportance.High)
             {

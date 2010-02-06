@@ -271,7 +271,7 @@ namespace MSBuild.ExtensionPack.Framework
 
                     object result = type.InvokeMember(this.NetMethod, BindingFlags.Default | BindingFlags.InvokeMethod, null, Activator.CreateInstance(type), arguments, CultureInfo.CurrentCulture);
 
-                    if (!(result == null))
+                    if (result != null)
                     {
                         this.Result = result.ToString();
                     }

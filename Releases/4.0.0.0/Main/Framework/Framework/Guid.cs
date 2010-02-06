@@ -118,9 +118,11 @@ namespace MSBuild.ExtensionPack.Framework
         {
             this.LogTaskMessage("Getting Cryptographically Secure GUID");
             byte[] data = new byte[16];
-            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-            rng.GetBytes(data);
-            this.internalGuid = new System.Guid(data);
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(data);
+                this.internalGuid = new System.Guid(data);
+            }
         }
     }
 }

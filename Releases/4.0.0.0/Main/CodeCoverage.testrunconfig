@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<TestRunConfiguration name="Code Coverage Test Run" id="5a8b26c2-939e-4673-b910-7d5d67ba1829" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRunConfiguration name="Code Coverage Test Run" id="5a8b26c2-939e-4673-b910-7d5d67ba1829" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <Description>Code Coverage Test Run for MSBuild Extension Pack</Description>
   <CodeCoverage enabled="true">
     <Regular>

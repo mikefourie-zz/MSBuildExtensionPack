@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.VisualStudio.Extended;
 
@@ -118,13 +119,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Building Projects Collection: {0} projects", this.Projects.Length));
-            foreach (ITaskItem project in this.Projects)
+            if (this.Projects.Any(project => !this.BuildProject(project) && this.StopOnError))
             {
-                if (!this.BuildProject(project) && this.StopOnError)
-                {
-                    this.LogTaskMessage("BuildVB6 Task Execution Failed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "] Stopped by StopOnError set on true");
-                    return;
-                }
+                this.LogTaskMessage("BuildVB6 Task Execution Failed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "] Stopped by StopOnError set on true");
+                return;
             }
 
             this.LogTaskMessage("BuildVB6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
@@ -212,8 +210,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     try
                     {
                         using (FileStream myStreamFile = new FileStream(project.ItemSpec + ".log", FileMode.Open))
-                        using (System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile))
                         {
+                            System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile);
                             string myBuffer = myStream.ReadToEnd();
                             Log.LogError(myBuffer);
                         }

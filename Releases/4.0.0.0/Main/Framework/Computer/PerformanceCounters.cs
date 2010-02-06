@@ -136,8 +136,10 @@ namespace MSBuild.ExtensionPack.Computer
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting CounterName: {0}", this.CounterName));
-                PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName);
-                this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
+                using (PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName))
+                {
+                    this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
+                }                
             }
             else
             {
@@ -156,9 +158,8 @@ namespace MSBuild.ExtensionPack.Computer
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
             
-            for (int taskCount = 0; taskCount < this.CounterList.Length; taskCount++)
+            foreach (ITaskItem counter in this.CounterList)
             {
-                ITaskItem counter = this.CounterList[taskCount];
                 string counterName = counter.GetMetadata("CounterName");
                 string counterHelp = counter.GetMetadata("CounterHelp");
                 PerformanceCounterType counterType = (PerformanceCounterType)Enum.Parse(typeof(PerformanceCounterType), counter.GetMetadata("CounterType"));

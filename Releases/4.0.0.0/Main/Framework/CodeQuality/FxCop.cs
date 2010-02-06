@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -266,26 +267,17 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             if (this.Imports != null)
             {
-                foreach (ITaskItem i in this.Imports)
-                {
-                    arguments += " /import:\"" + i.ItemSpec + "\"";
-                }
+                arguments = this.Imports.Aggregate(arguments, (current, i) => current + (" /import:\"" + i.ItemSpec + "\""));
             }
 
             if (this.Rules != null)
             {
-                foreach (ITaskItem i in this.Rules)
-                {
-                    arguments += " /rule:\"" + i.ItemSpec + "\"";
-                }
+                arguments = this.Rules.Aggregate(arguments, (current, i) => current + (" /rule:\"" + i.ItemSpec + "\""));
             }
 
             if (this.Files != null)
             {
-                foreach (ITaskItem i in this.Files)
-                {
-                    arguments += " /file:\"" + i.ItemSpec + "\"";
-                }
+                arguments = this.Files.Aggregate(arguments, (current, i) => current + (" /file:\"" + i.ItemSpec + "\""));
             }
             else if (!string.IsNullOrEmpty(this.Project))
             {

@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.Compression
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Management;
     using System.Text;
     using Microsoft.Build.Framework;
@@ -404,10 +405,7 @@ namespace MSBuild.ExtensionPack.Compression
                 }
                 else
                 {
-                    foreach (ITaskItem file in this.FilesToCab)
-                    {
-                        files += "\"" + file.ItemSpec + "\"" + " ";
-                    }
+                    files = this.FilesToCab.Aggregate(files, (current, file) => current + ("\"" + file.ItemSpec + "\"" + " "));
                 }
 
                 cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" {2}", options, this.CabFile.GetMetadata("FullPath"), files);

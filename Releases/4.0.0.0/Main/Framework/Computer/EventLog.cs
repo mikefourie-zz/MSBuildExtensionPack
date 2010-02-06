@@ -163,8 +163,10 @@ namespace MSBuild.ExtensionPack.Computer
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying EventLog: {0} on {1}", this.LogName, this.MachineName));
             if (System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
-                System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName);
-                this.ConfigureEventLog(el);
+                using (System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName))
+                {
+                    this.ConfigureEventLog(el);
+                }
             }
             else
             {
@@ -195,9 +197,10 @@ namespace MSBuild.ExtensionPack.Computer
                 EventSourceCreationData ecd = new EventSourceCreationData(this.LogName, this.LogName) { MachineName = this.MachineName };
                 System.Diagnostics.EventLog.CreateEventSource(ecd);
 
-                System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName);
-
-                this.ConfigureEventLog(el);
+                using (System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName))
+                {
+                    this.ConfigureEventLog(el);
+                }
             }
             else
             {
@@ -292,11 +295,13 @@ namespace MSBuild.ExtensionPack.Computer
                 SelectQuery query = new SelectQuery("Select * from Win32_NTEventLogFile where LogFileName='" + this.LogName + "'");
 
                 // configure the searcher and execute a get
-                ManagementObjectSearcher search = new ManagementObjectSearcher(this.Scope, query);
-                foreach (ManagementObject obj in search.Get())
+                using (ManagementObjectSearcher search = new ManagementObjectSearcher(this.Scope, query))
                 {
-                    object[] path = { this.BackupPath };
-                    obj.InvokeMethod("BackupEventLog", path);
+                    foreach (ManagementObject obj in search.Get())
+                    {
+                        object[] path = { this.BackupPath };
+                        obj.InvokeMethod("BackupEventLog", path);
+                    }
                 }
             }
             else

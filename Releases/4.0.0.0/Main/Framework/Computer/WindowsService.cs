@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.Computer
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
 
@@ -923,10 +924,7 @@ namespace MSBuild.ExtensionPack.Computer
             System.Collections.Generic.List<string> serviceDependencies = new System.Collections.Generic.List<string>();
             if (null != this.ServiceDependencies)
             {
-                foreach (ITaskItem dep in this.ServiceDependencies)
-                {
-                    serviceDependencies.Add(dep.ItemSpec);
-                }
+                serviceDependencies.AddRange(this.ServiceDependencies.Select(dep => dep.ItemSpec));
             }
 
             ServiceReturnCode ret = this.Install(this.MachineName, this.ServiceName, this.ServiceDisplayName, this.ServicePath.ToString(), ServiceStartMode.Automatic, this.User, this.Password, serviceDependencies.ToArray(), false, this.RemoteUser, this.RemoteUserPassword);
@@ -954,34 +952,35 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 string path = targetLocal ? "\\root\\CIMV2" : string.Format(CultureInfo.InvariantCulture, "\\\\{0}\\root\\CIMV2", machineName);
 
-                ManagementClass wmi = new ManagementClass(path, "Win32_Service", null);
-
-                if (!targetLocal)
+                using (ManagementClass wmi = new ManagementClass(path, "Win32_Service", null))
                 {
-                    wmi.Scope.Options.Username = installingUser;
-                    wmi.Scope.Options.Password = installingUserPassword;
+                    if (!targetLocal)
+                    {
+                        wmi.Scope.Options.Username = installingUser;
+                        wmi.Scope.Options.Password = installingUserPassword;
+                    }
+
+                    object[] paramList = new object[]
+                                             {
+                                                 name,
+                                                 displayName,
+                                                 physicalLocation,
+                                                 Convert.ToInt32(ServiceTypes.OwnProcess, CultureInfo.InvariantCulture),
+                                                 Convert.ToInt32(ServiceErrorControl.UserNotified, CultureInfo.InvariantCulture),
+                                                 startMode.ToString(),
+                                                 interactWithDesktop,
+                                                 userName,
+                                                 password,
+                                                 null,
+                                                 null,
+                                                 dependencies
+                                             };
+
+                    // Execute the method and obtain the return values.
+                    object result = wmi.InvokeMethod("Create", paramList);
+                    int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
+                    return (ServiceReturnCode) returnCode;
                 }
-
-                object[] paramList = new object[]
-                {
-                  name, 
-                  displayName, 
-                  physicalLocation, 
-                  Convert.ToInt32(ServiceTypes.OwnProcess, CultureInfo.InvariantCulture), 
-                  Convert.ToInt32(ServiceErrorControl.UserNotified, CultureInfo.InvariantCulture),
-                  startMode.ToString(), 
-                  interactWithDesktop, 
-                  userName, 
-                  password, 
-                  null, 
-                  null, 
-                  dependencies
-              };
-
-                // Execute the method and obtain the return values.
-                object result = wmi.InvokeMethod("Create", paramList);
-                int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
-                return (ServiceReturnCode)returnCode;
             }
             catch (Exception ex)
             {

@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Web
     using System;
     using System.DirectoryServices;
     using System.Globalization;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using Microsoft.Build.Framework;
 
@@ -127,14 +128,7 @@ namespace MSBuild.ExtensionPack.Web
                 Array extensionFiles = (Array) ws.CallMethod("ListExtensionFiles");
                 if (extensionFiles != null)
                 {
-                    foreach (string extension in extensionFiles)
-                    {
-                        if (extension.Trim().ToUpperInvariant() == this.Path.Trim().ToUpperInvariant())
-                        {
-                            result = true;
-                            break;
-                        }
-                    }
+                    result = extensionFiles.Cast<string>().Any(extension => extension.Trim().ToUpperInvariant() == this.Path.Trim().ToUpperInvariant());
                 }
             }
 

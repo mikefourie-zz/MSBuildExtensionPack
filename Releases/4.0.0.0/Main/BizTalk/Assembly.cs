@@ -285,14 +285,10 @@ namespace MSBuild.ExtensionPack.BizTalk
                     btsApplication.Log += this.DeploymentLog;
                     btsApplication.UILevel = 2;
 
-                    foreach (var resource in this.Resources)
+                    if (this.Resources.Any(talkResource => !btsApplication.ResourceCollection.ToList().Exists(r => r.Luid == talkResource.FullName)))
                     {
-                        BizTalkResource talkResource = resource;
-                        if (!btsApplication.ResourceCollection.ToList().Exists(r => r.Luid == talkResource.FullName))
-                        {
-                            this.Exists = false;
-                            return;
-                        }
+                        this.Exists = false;
+                        return;
                     }
 
                     this.Exists = true;
@@ -376,26 +372,28 @@ namespace MSBuild.ExtensionPack.BizTalk
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Copying Assembly from: {0} to: {1}", resource.SourcePath, resource.DeploymentPath));
                 System.IO.File.Copy(resource.SourcePath, resource.DeploymentPath);
                 this.GetManagementScope(@"\root\cimv2");
-                ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true));
-                ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
-                methodParameters["CommandLine"] = @"gacutil.exe /i " + resource.DeploymentPath;
-                ManagementBaseObject outParams = m.InvokeMethod("Create", methodParameters, null);
-
-                if (outParams != null)
+                using (ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true)))
                 {
-                    if (int.Parse(outParams["returnValue"].ToString(), CultureInfo.InvariantCulture) != 0)
+                    ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
+                    methodParameters["CommandLine"] = @"gacutil.exe /i " + resource.DeploymentPath;
+                    ManagementBaseObject outParams = m.InvokeMethod("Create", methodParameters, null);
+
+                    if (outParams != null)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Remote AddAssembly returned non-zero returnValue: {0}", outParams["returnValue"]));
+                        if (int.Parse(outParams["returnValue"].ToString(), CultureInfo.InvariantCulture) != 0)
+                        {
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Remote AddAssembly returned non-zero returnValue: {0}", outParams["returnValue"]));
+                            return;
+                        }
+
+                        this.LogTaskMessage(MessageImportance.Low, "Process ReturnValue: " + outParams["returnValue"]);
+                        this.LogTaskMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
+                    }
+                    else
+                    {
+                        this.Log.LogError("Remote Create returned null");
                         return;
                     }
-
-                    this.LogTaskMessage(MessageImportance.Low, "Process ReturnValue: " + outParams["returnValue"]);
-                    this.LogTaskMessage(MessageImportance.Low, "Process ID: " + outParams["processId"]);
-                }
-                else
-                {
-                    this.Log.LogError("Remote Create returned null");
-                    return;
                 }
             }
         }
@@ -403,36 +401,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         private void SortResources()
         {
             this.Resources.ForEach(r => r.IsProcessed = false);
-            int order = 0;
-            foreach (BizTalkResource r in this.Resources)
-            {
-                if (!r.IsProcessed)
-                {
-                    order = this.SortResourcesExecute(r, order);
-                }
-            }
-
+            this.Resources.Where(r => !r.IsProcessed).Aggregate(0, (current, r) => this.SortResourcesExecute(r, current));
             this.Resources = this.TaskAction == AddTaskAction ? this.Resources.OrderBy(r => r.Order).ToList() : this.Resources.OrderByDescending(r => r.Order).ToList();
         }
 
         private int SortResourcesExecute(BizTalkResource root, int order)
         {
-            foreach (string resourceName in root.Dependencies)
-            {
-                string name = resourceName;
-                BizTalkResource dependency = this.Resources.Find(r => r.FullName == name);
-
-                if (dependency == null)
-                {
-                    continue;
-                }
-
-                if (!dependency.IsProcessed)
-                {
-                    order = this.SortResourcesExecute(dependency, order);
-                }
-            }
-
+            order = root.Dependencies.Select(name => this.Resources.Find(r => r.FullName == name)).Where(dependency => dependency != null).Where(dependency => !dependency.IsProcessed).Aggregate(order, (current, dependency) => this.SortResourcesExecute(dependency, current));
             root.IsProcessed = true;
             root.Order = order;
             return ++order;

@@ -535,9 +535,12 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 int lengthRemaining = CommandLineMaxLength - this.SqlCmdPath.Length - baseArguments.Length - 2;
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "There are {0} characters available in the argument list for the input files.", lengthRemaining));
-                foreach (var inputFileArgs in new InputFileArgumentCollection(this, this.InputFiles, lengthRemaining))
+                using (InputFileArgumentCollection ifac = new InputFileArgumentCollection(this, this.InputFiles, lengthRemaining))
                 {
-                    this.ExecuteCommand(baseArguments + " " + inputFileArgs);
+                    foreach (var inputFileArgs in ifac)
+                    {
+                        this.ExecuteCommand(baseArguments + " " + inputFileArgs);
+                    }
                 }
             }
             else

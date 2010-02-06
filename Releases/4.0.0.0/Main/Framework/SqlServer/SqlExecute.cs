@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     using System.Data.SqlClient;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -158,7 +159,6 @@ namespace MSBuild.ExtensionPack.SqlServer
             using (StreamReader textFileReader = new StreamReader(fileName, System.Text.Encoding.Default, true))
             {
                 retValue = textFileReader.ReadToEnd();
-                textFileReader.Close();
             }
 
             return retValue;
@@ -171,12 +171,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 return sqlCommandText;
             }
 
-            foreach (ITaskItem parameter in this.Parameters)
-            {
-                sqlCommandText = sqlCommandText.Replace(parameter.GetMetadata("name"), parameter.GetMetadata("value"));
-            }
-
-            return sqlCommandText;
+            return this.Parameters.Aggregate(sqlCommandText, (current, parameter) => current.Replace(parameter.GetMetadata("name"), parameter.GetMetadata("value")));
         }
 
         private void ExecuteSql()
@@ -301,16 +296,15 @@ namespace MSBuild.ExtensionPack.SqlServer
                         }
                     }
                 }
-
-                sqlConnection.Close();
             }
         }
 
         private void ExecuteText()
         {
             using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString))
-            using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql), sqlConnection) { CommandTimeout = this.CommandTimeout })
+            using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql), sqlConnection))
             {
+                command.CommandTimeout = this.CommandTimeout;
                 this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Execute: {0}", command.CommandText));
                 sqlConnection.Open();
                 SqlTransaction sqlTransaction = null;
@@ -347,8 +341,6 @@ namespace MSBuild.ExtensionPack.SqlServer
 
                                         rows.Add(rowItem);
                                     }
-
-                                    reader.Close();
                                 }
                             }
 
@@ -389,7 +381,6 @@ namespace MSBuild.ExtensionPack.SqlServer
                     TimeSpan s = DateTime.Now - this.timer;
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Execution Time: {0} seconds", s.TotalSeconds));
                     this.timer = DateTime.Now;
-                    sqlConnection.Close();
                 }
                 catch
                 {

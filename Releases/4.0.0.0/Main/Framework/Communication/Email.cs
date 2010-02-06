@@ -128,33 +128,38 @@ namespace MSBuild.ExtensionPack.Communication
         private void Send()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Sending email: {0}", this.Subject));
-            MailMessage msg = new MailMessage { From = new MailAddress(this.MailFrom) };
-
-            foreach (ITaskItem recipient in this.MailTo)
+            using (MailMessage msg = new MailMessage())
             {
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding recipient: {0}", recipient.ItemSpec));
-                msg.To.Add(new MailAddress(recipient.ItemSpec));
-            }
-
-            if (this.Attachments != null)
-            {
-                foreach (ITaskItem file in this.Attachments)
+                msg.From = new MailAddress(this.MailFrom);
+                foreach (ITaskItem recipient in this.MailTo)
                 {
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
-                    Attachment attachment = new Attachment(file.ItemSpec);
-                    msg.Attachments.Add(attachment);
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding recipient: {0}", recipient.ItemSpec));
+                    msg.To.Add(new MailAddress(recipient.ItemSpec));
+                }
+
+                if (this.Attachments != null)
+                {
+                    foreach (ITaskItem file in this.Attachments)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
+                        Attachment attachment = new Attachment(file.ItemSpec);
+                        msg.Attachments.Add(attachment);
+                    }
+                }
+
+                msg.Subject = this.Subject ?? string.Empty;
+                msg.Body = this.Body ?? string.Empty;
+                if (this.format.ToUpperInvariant() == "HTML")
+                {
+                    msg.IsBodyHtml = true;
+                }
+
+                using (SmtpClient client = new SmtpClient(this.SmtpServer))
+                {
+                    client.UseDefaultCredentials = true;
+                    client.Send(msg);
                 }
             }
-
-            msg.Subject = this.Subject ?? string.Empty;
-            msg.Body = this.Body ?? string.Empty;
-            if (this.format.ToUpperInvariant() == "HTML")
-            {
-                msg.IsBodyHtml = true;
-            }
-
-            SmtpClient client = new SmtpClient(this.SmtpServer) { UseDefaultCredentials = true };
-            client.Send(msg);
         }
     }
 }

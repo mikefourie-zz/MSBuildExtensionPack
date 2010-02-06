@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
@@ -182,11 +183,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 subDirs = this.Recursive ? dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories) : dir.GetDirectories(this.SearchPattern, SearchOption.TopDirectoryOnly);
             }
 
-            List<ITaskItem> items = new List<ITaskItem>();
-            foreach (FileInfo fileInfo in files)
-            {
-                items.Add(new TaskItem(fileInfo.FullName));
-            }
+            List<ITaskItem> items = files.Select(fileInfo => new TaskItem(fileInfo.FullName)).Cast<ITaskItem>().ToList();
 
             foreach (DirectoryInfo dirInfo in subDirs)
             {

@@ -519,6 +519,18 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.FileSystem.RoboCopy" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="Source" use="required"/>
+                    <xs:attribute name="Destination" use="required"/>
+                    <xs:attribute name="Files" use="required"/>
+                    <xs:attribute name="Options"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.FileSystem.Share" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
@@ -830,6 +842,19 @@
                     <xs:attribute name="AssemblyName"/>
                     <xs:attribute name="Force"/>
                     <xs:attribute name="Exists"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Framework.GenericTool" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="Executable" use="required"/>
+                    <xs:attribute name="SuccessExitCodes" use="required"/>
+                    <xs:attribute name="ErrorExitCodes"/>
+                    <xs:attribute name="WarningExitCodes"/>
+                    <xs:attribute name="Parameters"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1540,6 +1565,7 @@
                     <xs:attribute name="XmlFile"/>
                     <xs:attribute name="XslTransformFile"/>
                     <xs:attribute name="Xml"/>
+                    <xs:attribute name="Conformance"/>
                     <xs:attribute name="XslTransform"/>
                     <xs:attribute name="OutputFile"/>
                     <xs:attribute name="SchemaFiles"/>

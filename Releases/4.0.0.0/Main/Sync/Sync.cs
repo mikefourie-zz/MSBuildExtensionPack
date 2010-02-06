@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Synchronization;
     using Microsoft.Synchronization.Files;
@@ -134,12 +135,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Set the sync options
             if (this.SyncOptions != null)
             {
-                FileSyncOptions fso = new FileSyncOptions();
-                foreach (ITaskItem opt in this.SyncOptions)
-                {
-                    fso |= (FileSyncOptions)Enum.Parse(typeof(FileSyncOptions), opt.ItemSpec);
-                }
-
+                FileSyncOptions fso = this.SyncOptions.Aggregate(new FileSyncOptions(), (current, opt) => current | (FileSyncOptions)Enum.Parse(typeof(FileSyncOptions), opt.ItemSpec));
                 this.syncOptions = fso;
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SyncOptions set: {0}", this.syncOptions));
             }
@@ -173,12 +169,10 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (FileStream idFile = File.Open(idFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
-                using (StreamWriter sw = new StreamWriter(idFile))
-                {
-                    replicaId = Guid.NewGuid();
-                    sw.WriteLine(replicaId.ToString("D"));
-                }
-
+                StreamWriter sw = new StreamWriter(idFile);
+                replicaId = Guid.NewGuid();
+                sw.WriteLine(replicaId.ToString("D"));
+                
                 return replicaId;
             }
         }

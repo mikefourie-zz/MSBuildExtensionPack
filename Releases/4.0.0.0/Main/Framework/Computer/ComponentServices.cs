@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Computer
     using System;
     using System.EnterpriseServices;
     using System.Globalization;
+    using System.Linq;
     using COMAdmin;
     using Microsoft.Build.Framework;
     using Microsoft.Win32;
@@ -251,13 +252,10 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", this.ApplicationName));
             COMAdminCatalogCollection appCollection = GetApplications();
-            foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
+            if (appCollection.Cast<COMAdminCatalogObject>().Any(app => app.Name.ToString() == this.ApplicationName))
             {
-                if (app.Name.ToString() == this.ApplicationName)
-                {
-                    this.Exists = true;
-                    return true;
-                }
+                this.Exists = true;
+                return true;
             }
 
             return false;

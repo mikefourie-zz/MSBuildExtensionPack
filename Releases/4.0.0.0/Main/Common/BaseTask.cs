@@ -55,6 +55,11 @@ namespace MSBuild.ExtensionPack
         /// </summary>
         public bool SuppressTaskMessages { get; set; }
 
+        /// <summary>
+        /// Set to true to error if the task has been deprecated
+        /// </summary>
+        public bool ErrorOnDeprecated { get; set; }
+
         internal ManagementScope Scope { get; set; }
 
         /// <summary>

@@ -67,53 +67,54 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         /// <returns>int</returns>
         public int Execute()
         {
-            Process sqlCmdProcess = new Process();
-            try
+            using (Process sqlCmdProcess = new Process())
             {
-                var startInfo = new ProcessStartInfo(this.Executable, this.Arguments)
+                try
                 {
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    WorkingDirectory = this.WorkingDirectory
-                };
+                    var startInfo = new ProcessStartInfo(this.Executable, this.Arguments)
+                                        {
+                                            CreateNoWindow = true,
+                                            RedirectStandardError = true,
+                                            RedirectStandardOutput = true,
+                                            UseShellExecute = false,
+                                            WorkingDirectory = this.WorkingDirectory
+                                        };
 
-                foreach (string key in this.EnvironmentVariables)
-                {
-                    startInfo.EnvironmentVariables[key] = this.EnvironmentVariables[key];
-                }
-
-                sqlCmdProcess.StartInfo = startInfo;
-
-                // Set our event handlers to asynchronously read the output and errors. If
-                // we use synchronous calls we may deadlock when the StandardOut/Error buffer
-                // gets filled (only 4k size) and the called app blocks until the buffer
-                // is flushed.  This stops the buffers from getting full and blocking.
-                sqlCmdProcess.OutputDataReceived += this.StandardOutHandler;
-                sqlCmdProcess.ErrorDataReceived += this.StandardErrorHandler;
-
-                sqlCmdProcess.Start();
-                sqlCmdProcess.BeginOutputReadLine();
-                sqlCmdProcess.BeginErrorReadLine();
-                sqlCmdProcess.WaitForExit(Int32.MaxValue);
-            }
-            finally
-            {
-                // get the exit code and release the process handle
-                if (!sqlCmdProcess.HasExited)
-                {
-                    // not exited yet within our timeout so kill the process
-                    sqlCmdProcess.Kill();
-
-                    while (!sqlCmdProcess.HasExited)
+                    foreach (string key in this.EnvironmentVariables)
                     {
-                        System.Threading.Thread.Sleep(50);
+                        startInfo.EnvironmentVariables[key] = this.EnvironmentVariables[key];
                     }
-                }
 
-                this.ExitCode = sqlCmdProcess.ExitCode;
-                sqlCmdProcess.Close();
+                    sqlCmdProcess.StartInfo = startInfo;
+
+                    // Set our event handlers to asynchronously read the output and errors. If
+                    // we use synchronous calls we may deadlock when the StandardOut/Error buffer
+                    // gets filled (only 4k size) and the called app blocks until the buffer
+                    // is flushed.  This stops the buffers from getting full and blocking.
+                    sqlCmdProcess.OutputDataReceived += this.StandardOutHandler;
+                    sqlCmdProcess.ErrorDataReceived += this.StandardErrorHandler;
+
+                    sqlCmdProcess.Start();
+                    sqlCmdProcess.BeginOutputReadLine();
+                    sqlCmdProcess.BeginErrorReadLine();
+                    sqlCmdProcess.WaitForExit(Int32.MaxValue);
+                }
+                finally
+                {
+                    // get the exit code and release the process handle
+                    if (!sqlCmdProcess.HasExited)
+                    {
+                        // not exited yet within our timeout so kill the process
+                        sqlCmdProcess.Kill();
+
+                        while (!sqlCmdProcess.HasExited)
+                        {
+                            System.Threading.Thread.Sleep(50);
+                        }
+                    }
+
+                    this.ExitCode = sqlCmdProcess.ExitCode;
+                }
             }
 
             return this.ExitCode;

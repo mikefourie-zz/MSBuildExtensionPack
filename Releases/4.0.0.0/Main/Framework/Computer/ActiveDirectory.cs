@@ -1,7 +1,6 @@
 //-----------------------------------------------------------------------
 // <copyright file="ActiveDirectory.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-
 namespace MSBuild.ExtensionPack.Computer
 {
     using System;
@@ -10,6 +9,7 @@ namespace MSBuild.ExtensionPack.Computer
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.Computer.Extended;
 
@@ -340,13 +340,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private static ContextOptions SetBindingOptions(IEnumerable<ITaskItem> value)
         {
-            ContextOptions s = new ContextOptions();
-            foreach (ITaskItem option in value)
-            {
-                s |= (ContextOptions)Enum.Parse(typeof(ContextOptions), option.ItemSpec);
-            }
-
-            return s;
+            return value.Aggregate(new ContextOptions(), (current, option) => current | (ContextOptions) Enum.Parse(typeof(ContextOptions), option.ItemSpec));
         }
 
         private static bool IsMember(DirectoryEntry entity, string name)
@@ -529,15 +523,17 @@ namespace MSBuild.ExtensionPack.Computer
                     DirectoryEntry grp;
                     if (this.groupType == ADGroupType.Local)
                     {
-                        groupDir = new DirectoryEntry("WinNT://" + this.MachineName + ",computer");
-                        try
+                        using (groupDir = new DirectoryEntry("WinNT://" + this.MachineName + ",computer"))
                         {
-                            grp = groupDir.Children.Find(g.ItemSpec, "group");
-                        }
-                        catch
-                        {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
-                            return;
+                            try
+                            {
+                                grp = groupDir.Children.Find(g.ItemSpec, "group");
+                            }
+                            catch
+                            {
+                                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                                return;
+                            }
                         }
                     }
                     else

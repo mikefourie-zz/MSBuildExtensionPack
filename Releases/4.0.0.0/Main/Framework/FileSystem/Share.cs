@@ -221,17 +221,18 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Checking whether share: {0} exists on: {1}", this.ShareName, this.MachineName));
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath fullSharePath = new ManagementPath("Win32_Share.Name='" + this.ShareName + "'");
-            ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null);
-
-            // try bind to the share to see if it exists
-            try
+            using (ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null))
             {
-                shareObject.Get();
-                this.Exists = true;
-            }
-            catch
-            {
-                this.Exists = false;
+                // try bind to the share to see if it exists
+                try
+                {
+                    shareObject.Get();
+                    this.Exists = true;
+                }
+                catch
+                {
+                    this.Exists = false;
+                }
             }
         }
 
@@ -240,26 +241,27 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Deleting share: {0} on: {1}", this.ShareName, this.MachineName));
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath fullSharePath = new ManagementPath("Win32_Share.Name='" + this.ShareName + "'");
-            ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null);
+            using (ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null))
+            {
+                // try bind to the share to see if it exists
+                try
+                {
+                    shareObject.Get();
+                }
+                catch
+                {
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                    return;
+                }
 
-            // try bind to the share to see if it exists
-            try
-            {
-                shareObject.Get();
-            }
-            catch
-            {
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
-                return;
-            }
-
-            // execute the method and check the return code
-            ManagementBaseObject outputParams = shareObject.InvokeMethod("Delete", null, null);
-            ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outputParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
-            if (returnCode != ReturnCode.Success)
-            {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to delete the share. ReturnCode: {0}.", returnCode));
-                return;
+                // execute the method and check the return code
+                ManagementBaseObject outputParams = shareObject.InvokeMethod("Delete", null, null);
+                ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outputParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                if (returnCode != ReturnCode.Success)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to delete the share. ReturnCode: {0}.", returnCode));
+                    return;
+                }
             }
         }
 
@@ -282,61 +284,62 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath path = new ManagementPath("Win32_Share");
-            ManagementClass managementClass = new ManagementClass(this.Scope, path, null);
-            
-            // Set the input parameters
-            ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");
-            inParams["Description"] = this.Description;
-            inParams["Name"] = this.ShareName;
-            inParams["Path"] = this.SharePath;
-
-            // build the access permissions
-            if (this.AllowUsers != null | this.DenyUsers != null)
+            using (ManagementClass managementClass = new ManagementClass(this.Scope, path, null))
             {
-                inParams["Access"] = this.SetAccessPermissions();
-            }
+                // Set the input parameters
+                ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");
+                inParams["Description"] = this.Description;
+                inParams["Name"] = this.ShareName;
+                inParams["Path"] = this.SharePath;
 
-            // Disk Drive
-            inParams["Type"] = 0x0;
+                // build the access permissions
+                if (this.AllowUsers != null | this.DenyUsers != null)
+                {
+                    inParams["Access"] = this.SetAccessPermissions();
+                }
 
-            if (this.MaximumAllowed > 0)
-            {
-                inParams["MaximumAllowed"] = this.MaximumAllowed;
-            }
+                // Disk Drive
+                inParams["Type"] = 0x0;
 
-            ManagementBaseObject outParams = managementClass.InvokeMethod("Create", inParams, null);
-            ReturnCode returnCode = (ReturnCode) Convert.ToUInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
-            switch (returnCode)
-            {
-                case ReturnCode.Success:
-                    break;
-                case ReturnCode.AccessDenied:
-                    this.Log.LogError("Access Denied");
-                    break;
-                case ReturnCode.UnknownFailure:
-                    this.Log.LogError("Unknown Failure");
-                    break;
-                case ReturnCode.InvalidName:
-                    this.Log.LogError("Invalid Name");
-                    break;
-                case ReturnCode.InvalidLevel:
-                    this.Log.LogError("Invalid Level");
-                    break;
-                case ReturnCode.InvalidParameter:
-                    this.Log.LogError("Invalid Parameter");
-                    break;
-                case ReturnCode.RedirectedPath:
-                    this.Log.LogError("Redirected Path");
-                    break;
-                case ReturnCode.UnknownDeviceOrDirectory:
-                    this.Log.LogError("Unknown Device or Directory");
-                    break;
-                case ReturnCode.NetNameNotFound:
-                    this.Log.LogError("Net name not found");
-                    break;
-                case ReturnCode.ShareAlreadyExists:
-                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The share already exists: {0}", this.ShareName));
-                    break;
+                if (this.MaximumAllowed > 0)
+                {
+                    inParams["MaximumAllowed"] = this.MaximumAllowed;
+                }
+
+                ManagementBaseObject outParams = managementClass.InvokeMethod("Create", inParams, null);
+                ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                switch (returnCode)
+                {
+                    case ReturnCode.Success:
+                        break;
+                    case ReturnCode.AccessDenied:
+                        this.Log.LogError("Access Denied");
+                        break;
+                    case ReturnCode.UnknownFailure:
+                        this.Log.LogError("Unknown Failure");
+                        break;
+                    case ReturnCode.InvalidName:
+                        this.Log.LogError("Invalid Name");
+                        break;
+                    case ReturnCode.InvalidLevel:
+                        this.Log.LogError("Invalid Level");
+                        break;
+                    case ReturnCode.InvalidParameter:
+                        this.Log.LogError("Invalid Parameter");
+                        break;
+                    case ReturnCode.RedirectedPath:
+                        this.Log.LogError("Redirected Path");
+                        break;
+                    case ReturnCode.UnknownDeviceOrDirectory:
+                        this.Log.LogError("Unknown Device or Directory");
+                        break;
+                    case ReturnCode.NetNameNotFound:
+                        this.Log.LogError("Net name not found");
+                        break;
+                    case ReturnCode.ShareAlreadyExists:
+                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The share already exists: {0}", this.ShareName));
+                        break;
+                }
             }
         }
 

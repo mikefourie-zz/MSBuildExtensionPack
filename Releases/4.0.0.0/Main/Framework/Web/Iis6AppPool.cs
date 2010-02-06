@@ -6,7 +6,7 @@ namespace MSBuild.ExtensionPack.Web
     using System;
     using System.DirectoryServices;
     using System.Globalization;
-    using System.Security.Permissions;
+    using System.Security;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -139,7 +139,7 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        [SecurityCritical]
         private void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Applying Property: {0}({1})", metaBasePropertyName, metaBaseProperty));
@@ -161,7 +161,7 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        [SecurityCritical]
         private void Modify()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Modifying AppPool: {0}", this.Name));
@@ -191,7 +191,7 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        [SecurityCritical]
         private bool CheckExists()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Checking AppPool Exists: {0}", this.Name));
@@ -233,7 +233,7 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        [SecurityCritical]
         private void ControlAppPool(string appPoolAction)
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "AppPool: {0} - Action: {1}", this.Name, appPoolAction));
@@ -267,7 +267,7 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        [SecurityCritical]
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating AppPool: {0}", this.Name));

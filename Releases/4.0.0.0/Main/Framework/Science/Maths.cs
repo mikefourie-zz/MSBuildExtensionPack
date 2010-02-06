@@ -366,8 +366,11 @@ namespace MSBuild.ExtensionPack.Science
         private void Evaluate()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Evaluating Expression: {0}", this.Expression));
-            DataTable dt = new DataTable { Locale = CultureInfo.CurrentCulture };
-            this.total = DecimalToSglDbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
+            using (DataTable dt = new DataTable())
+            {
+                dt.Locale = CultureInfo.CurrentCulture;
+                this.total = DecimalToSglDbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
+            }
         }
 
         private void Divide()
