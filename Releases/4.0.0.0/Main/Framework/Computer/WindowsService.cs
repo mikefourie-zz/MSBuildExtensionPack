@@ -815,15 +815,19 @@ namespace MSBuild.ExtensionPack.Computer
             string path = targetLocal ? "\\root\\CIMV2" : string.Format(CultureInfo.InvariantCulture, "\\\\{0}\\root\\CIMV2", this.MachineName);
 
             string servicePath = String.Format(CultureInfo.InvariantCulture, "Win32_Service.Name='{0}'", this.ServiceName);
-            ManagementObject wmi = new ManagementObject(path, servicePath, null);
-
-            if (!targetLocal)
+            ManagementObject wmiReturnObject;
+            using (ManagementObject wmi = new ManagementObject(path, servicePath, null))
             {
-                wmi.Scope.Options.Username = this.RemoteUser;
-                wmi.Scope.Options.Password = this.RemoteUserPassword;
+                if (!targetLocal)
+                {
+                    wmi.Scope.Options.Username = this.RemoteUser;
+                    wmi.Scope.Options.Password = this.RemoteUserPassword;
+                }
+
+                wmiReturnObject = wmi;
             }
 
-            return wmi;
+            return wmiReturnObject;
         }
 
         private ServiceState GetServiceState()

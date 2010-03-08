@@ -204,16 +204,21 @@ namespace MSBuild.ExtensionPack.FileSystem
             string sidString = (string)account.Properties["SID"].Value;
             string sidPathString = string.Format(CultureInfo.InvariantCulture, "Win32_SID.SID='{0}'", sidString);
             ManagementPath sidPath = new ManagementPath(sidPathString);
-            ManagementObject sid = new ManagementObject(sidPath);
-            try
+            ManagementObject returnSid;
+            using (ManagementObject sid = new ManagementObject(sidPath))
             {
-                sid.Get();
-                return sid;
+                try
+                {
+                    sid.Get();
+                    returnSid = sid;
+                }
+                catch (ManagementException ex)
+                {
+                    throw new Exception(string.Format(CultureInfo.InvariantCulture, @"Could not find SID '{0}' for account '{1}\{2}'.", sidString, account.Properties["Domain"].Value, account.Properties["Name"].Value), ex);
+                }
             }
-            catch (ManagementException ex)
-            {
-                throw new Exception(string.Format(CultureInfo.InvariantCulture, @"Could not find SID '{0}' for account '{1}\{2}'.", sidString, account.Properties["Domain"].Value, account.Properties["Name"].Value), ex);
-            }
+
+            return returnSid;
         }
 
         private void CheckExists()
@@ -347,12 +352,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             // build the security descriptor
             ManagementPath securityDescriptorPath = new ManagementPath("Win32_SecurityDescriptor");
-            ManagementObject securityDescriptor = new ManagementClass(this.Scope, securityDescriptorPath, null).CreateInstance();
+            ManagementObject returnSecurityDescriptor;
+            using (ManagementObject securityDescriptor = new ManagementClass(this.Scope, securityDescriptorPath, null).CreateInstance())
+            {
+                // default owner | default group | DACL present | default SACL
+                securityDescriptor.Properties["ControlFlags"].Value = 0x1U | 0x2U | 0x4U | 0x20U;
+                securityDescriptor.Properties["DACL"].Value = this.BuildAccessControlList();
+                returnSecurityDescriptor = securityDescriptor;
+            }
 
-            // default owner | default group | DACL present | default SACL
-            securityDescriptor.Properties["ControlFlags"].Value = 0x1U | 0x2U | 0x4U | 0x20U;
-            securityDescriptor.Properties["DACL"].Value = this.BuildAccessControlList();
-            return securityDescriptor;
+            return returnSecurityDescriptor;
         }
 
         private ManagementObject[] BuildAccessControlList()
@@ -397,13 +406,18 @@ namespace MSBuild.ExtensionPack.FileSystem
             ManagementObject account = this.GetAccount(domain, alias);
             ManagementObject sid = GetSecurityIdentifier(account);
             ManagementPath trusteePath = new ManagementPath("Win32_Trustee");
-            ManagementObject trustee = new ManagementClass(this.Scope, trusteePath, null).CreateInstance();
-            trustee.Properties["Domain"].Value = domain;
-            trustee.Properties["Name"].Value = alias;
-            trustee.Properties["SID"].Value = sid.Properties["BinaryRepresentation"].Value;
-            trustee.Properties["SidLength"].Value = sid.Properties["SidLength"].Value;
-            trustee.Properties["SIDString"].Value = sid.Properties["SID"].Value;
-            return trustee;
+            ManagementObject returnedTrustee;
+            using (ManagementObject trustee = new ManagementClass(this.Scope, trusteePath, null).CreateInstance())
+            {
+                trustee.Properties["Domain"].Value = domain;
+                trustee.Properties["Name"].Value = alias;
+                trustee.Properties["SID"].Value = sid.Properties["BinaryRepresentation"].Value;
+                trustee.Properties["SidLength"].Value = sid.Properties["SidLength"].Value;
+                trustee.Properties["SIDString"].Value = sid.Properties["SID"].Value;
+                returnedTrustee = trustee;
+            }
+
+            return returnedTrustee;
         }
 
         private ManagementObject GetAccount(string domain, string alias)
@@ -411,64 +425,75 @@ namespace MSBuild.ExtensionPack.FileSystem
             // get the account - try to get it by searching those on the machine first which gets local accounts
             string queryString = string.Format(CultureInfo.InvariantCulture, "select * from Win32_Account where Name = '{0}' and Domain='{1}'", alias, domain);
             ObjectQuery query = new ObjectQuery(queryString);
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
-            foreach (ManagementObject returnedAccount in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
             {
-                return returnedAccount;
+                foreach (ManagementObject returnedAccount in searcher.Get())
+                {
+                    return returnedAccount;
+                }
             }
 
             // didn't find it on the machine so we'll try to bind to it using a path - this works for domain accounts
             string accountPathString = string.Format(CultureInfo.InvariantCulture, "Win32_Account.Name='{0}',Domain='{1}'", alias, domain);
             ManagementPath accountPath = new ManagementPath(accountPathString);
-            ManagementObject account = new ManagementObject(accountPath);
-            try
+            ManagementObject returnAccount;
+            using (ManagementObject account = new ManagementObject(accountPath))
             {
-                account.Get();
-                return account;
+                try
+                {
+                    account.Get();
+                    returnAccount = account;
+                }
+                catch (ManagementException ex)
+                {
+                    throw new Exception(string.Format(CultureInfo.InvariantCulture, @"Could not find account '{0}\{1}'.", domain, alias), ex);
+                }
             }
-            catch (ManagementException ex)
-            {
-                throw new Exception(string.Format(CultureInfo.InvariantCulture, @"Could not find account '{0}\{1}'.", domain, alias), ex);
-            }
+
+            return returnAccount;
         }
 
         private ManagementObject BuildAccessControlEntry(ITaskItem user, ManagementObject trustee, bool deny)
         {
             ManagementPath acePath = new ManagementPath("Win32_ACE");
-            ManagementObject ace = new ManagementClass(this.Scope, acePath, null).CreateInstance();
-
-            string permissions = user.GetMetadata("Permission");
-
-            if (string.IsNullOrEmpty(permissions))
+            ManagementObject returnedAce;
+            using (ManagementObject ace = new ManagementClass(this.Scope, acePath, null).CreateInstance())
             {
-                // apply all permissions
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Full permission for: {0}", user.ItemSpec));
-                ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x10000U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;
-            }
-            else
-            {
-                if (permissions.IndexOf("Read", StringComparison.OrdinalIgnoreCase) >= 0)
+                string permissions = user.GetMetadata("Permission");
+
+                if (string.IsNullOrEmpty(permissions))
                 {
-                    // readonly permission
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Read permission for: {0}", user.ItemSpec));
-                    ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;  
+                    // apply all permissions
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Full permission for: {0}", user.ItemSpec));
+                    ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x10000U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;
+                }
+                else
+                {
+                    if (permissions.IndexOf("Read", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // readonly permission
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Read permission for: {0}", user.ItemSpec));
+                        ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;
+                    }
+
+                    if (permissions.IndexOf("Change", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // change permission
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Change permission for: {0}", user.ItemSpec));
+                        ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x10000U | 0x20000U | 0x40000U | 0x100000U;
+                    }
                 }
 
-                if (permissions.IndexOf("Change", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    // change permission
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Change permission for: {0}", user.ItemSpec));
-                    ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x10000U | 0x20000U | 0x40000U | 0x100000U;
-                }
+                // no flags
+                ace.Properties["AceFlags"].Value = 0x0U;
+
+                // 0 = allow, 1 = deny
+                ace.Properties["AceType"].Value = deny ? 1U : 0U;
+                ace.Properties["Trustee"].Value = trustee;
+                returnedAce = ace;
             }
 
-            // no flags
-            ace.Properties["AceFlags"].Value = 0x0U;
-
-            // 0 = allow, 1 = deny
-            ace.Properties["AceType"].Value = deny ? 1U : 0U;
-            ace.Properties["Trustee"].Value = trustee;
-            return ace;
+            return returnedAce;
         }
     }
 }

@@ -396,9 +396,14 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private SqlConnection CreateConnection(string connectionString)
         {
-            SqlConnection connection = new SqlConnection(connectionString);
-            connection.InfoMessage += this.TraceMessageEventHandler;
-            return connection;
+            SqlConnection returnedConnection;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.InfoMessage += this.TraceMessageEventHandler;
+                returnedConnection = connection;
+            }
+
+            return returnedConnection;
         }
 
         private void TraceMessageEventHandler(object sender, SqlInfoMessageEventArgs e)
