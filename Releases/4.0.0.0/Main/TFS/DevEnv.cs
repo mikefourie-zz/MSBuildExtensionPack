@@ -24,7 +24,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <?xml version="1.0" encoding="utf-8"?>
-    /// <Project DefaultTargets="DeployFiles" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="4.0" DefaultTargets="DeployFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <!-- Please be aware that the rest of the build file is ommited for brevity -->
     ///     <PropertyGroup>
     ///         <!-- Tell Team Build not to override $(OutDir), so that we can build once from MSBuild and not rebuild when DevEnv.com is executed. -->
