@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><i>Pause</i> (<b>Required: </b> Name)</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Properties)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[

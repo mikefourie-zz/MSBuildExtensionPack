@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Add</i> (<b>Required: </b> Path <b>Optional:</b> Deletable, Force Description, GroupId, Permission)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Path <b>Output: </b>Exists)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Path</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
