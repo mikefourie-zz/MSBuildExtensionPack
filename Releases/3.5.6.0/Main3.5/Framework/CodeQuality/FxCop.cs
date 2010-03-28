@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project <b>Output: </b>AnalysisFailed, OutputText)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac <b>Output: </b>AnalysisFailed, OutputText)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -99,6 +99,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
             get { return this.showSummary; }
             set { this.showSummary = value; }
         }
+
+        /// <summary>
+        /// Set to true to search the GAC for missing assembly references (/gac option). Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool SearchGac { get; set; }
 
         /// <summary>
         /// Set to true to output verbose information during analysis (/verbose option)
@@ -233,6 +239,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
             if (this.UpdateProject)
             {
                 arguments += " /update";
+            }
+
+            if (this.SearchGac)
+            {
+                arguments += " /gac";
             }
 
             if (this.ShowSummary)

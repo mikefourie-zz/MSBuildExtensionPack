@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para><b>This task requires:</b></para>
-    ///     <para>Microsoft Visual J# 2.0 Redistributable Package – Second Edition (x86)</para>
+    ///     <para>Microsoft Visual J# 2.0 Redistributable Package – Second Edition (x86) or (x64)</para>
     ///     <para/>
     ///     <para>Please note that file attributes are not maintained when using these tasks.</para>
     /// </summary>

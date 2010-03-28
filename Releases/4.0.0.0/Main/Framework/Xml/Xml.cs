@@ -317,7 +317,7 @@ namespace MSBuild.ExtensionPack.Xml
                         XDocument newxmlDoc = XDocument.Load(sr);
                         if (!string.IsNullOrEmpty(this.OutputFile))
                         {
-                            XmlWriterSettings writerSettings = new XmlWriterSettings {ConformanceLevel = this.conformanceLevel, Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true};
+                            XmlWriterSettings writerSettings = new XmlWriterSettings { ConformanceLevel = this.conformanceLevel, Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
                             using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
                             {
                                 if (xw != null)

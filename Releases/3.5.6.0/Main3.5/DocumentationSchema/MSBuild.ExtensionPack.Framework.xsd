@@ -25,6 +25,7 @@
                     <xs:attribute name="Project"/>
                     <xs:attribute name="ReportXsl"/>
                     <xs:attribute name="Rules"/>
+                    <xs:attribute name="SearchGac"/>
                     <xs:attribute name="ShowSummary" type="msb:boolean"/>
                     <xs:attribute name="Types"/>
                     <xs:attribute name="UpdateProject" type="msb:boolean"/>
@@ -513,6 +514,7 @@
                     <xs:attribute name="TargetPath"/>
                     <xs:attribute name="Force"/>
                     <xs:attribute name="Recursive"/>
+                    <xs:attribute name="RetryCount"/>
                     <xs:attribute name="Users"/>
                     <xs:attribute name="AccessType"/>
                 </xs:extension>
