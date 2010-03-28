@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.SqlServer.Extended;
 
@@ -514,10 +515,55 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Write out any errors
             this.SwitchReturnValue(returnValue, sqlCmdWrapper.StandardError.Trim());
 
-            if (this.SeverityLevel > 0 && returnValue >= this.SeverityLevel)
+            string[] stdOutLines = sqlCmdWrapper.StandardOutput == null ? new string[0] : sqlCmdWrapper.StandardOutput.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var regex = new Regex(@"^(Msg|HResult) (?<ErrorCode>(0x[0-9A-F]+)|\d+), Level (?<Level>\d+), State (?<StateID>\d+)(, Server [^,]+(, (?<ObjectName>[^,]+))?, Line (?<LineNumber>\d+))?$");
+            bool foundError = false;
+            string errorCode = string.Empty;
+            string objectName = string.Empty;
+            int lineNum = 0;
+            int severityLevel = 0;
+            bool loggingErrorsBySeverityLevel = this.SeverityLevel > 0;
+            foreach (string line in stdOutLines)
+            {
+                if (foundError)
+                {
+                    if (loggingErrorsBySeverityLevel && severityLevel >= this.SeverityLevel)
+                    {
+                        this.Log.LogError(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+                    else
+                    {
+                        this.Log.LogWarning(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+
+                    foundError = false;
+                    continue;
+                }
+
+                var match = regex.Match(line);
+                if (match.Success)
+                {
+                    var groups = match.Groups;
+                    int.TryParse(groups["LineNumber"].ToString(), out lineNum);
+                    int.TryParse(groups["Level"].ToString(), out severityLevel);
+                    errorCode = groups["ErrorCode"].ToString();
+                    objectName = groups["ObjectName"].ToString();
+                    if (loggingErrorsBySeverityLevel && severityLevel >= this.SeverityLevel)
+                    {
+                        this.Log.LogError(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+                    else
+                    {
+                        this.Log.LogWarning(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+
+                    foundError = true;
+                }
+            }
+
+            if (loggingErrorsBySeverityLevel && returnValue >= this.SeverityLevel)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SeverityLevel: {0} has been met or exceeded: {1}", this.SeverityLevel, returnValue));
-                return;
             }
         }
 
