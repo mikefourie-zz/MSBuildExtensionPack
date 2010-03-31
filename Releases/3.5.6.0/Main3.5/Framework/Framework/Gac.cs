@@ -290,7 +290,7 @@ namespace MSBuild.ExtensionPack.Framework
                     using (ManagementClass m = new ManagementClass(this.Scope, new ManagementPath("Win32_Process"), new ObjectGetOptions(null, System.TimeSpan.MaxValue, true)))
                     {
                         ManagementBaseObject methodParameters = m.GetMethodParameters("Create");
-                        methodParameters["CommandLine"] = @"gacutil.exe /i " + this.RemoteAssemblyPath;
+                        methodParameters["CommandLine"] = @"gacutil.exe /i " + "\"" + this.RemoteAssemblyPath + "\"";
                         ManagementBaseObject outParams = m.InvokeMethod("Create", methodParameters, null);
 
                         if (outParams != null)
