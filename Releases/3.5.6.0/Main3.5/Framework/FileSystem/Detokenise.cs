@@ -270,19 +270,19 @@ namespace MSBuild.ExtensionPack.FileSystem
             switch (enc)
             {
                 case "DEFAULT":
-                    return System.Text.Encoding.Default;
+                    return Encoding.Default;
                 case "ASCII":
-                    return System.Text.Encoding.ASCII;
+                    return Encoding.ASCII;
                 case "Unicode":
-                    return System.Text.Encoding.Unicode;
+                    return Encoding.Unicode;
                 case "UTF7":
-                    return System.Text.Encoding.UTF7;
+                    return Encoding.UTF7;
                 case "UTF8":
-                    return System.Text.Encoding.UTF8;
+                    return Encoding.UTF8;
                 case "UTF32":
-                    return System.Text.Encoding.UTF32;
+                    return Encoding.UTF32;
                 case "BigEndianUnicode":
-                    return System.Text.Encoding.BigEndianUnicode;
+                    return Encoding.BigEndianUnicode;
                 default:
                     if (!string.IsNullOrEmpty(enc))
                     {
@@ -426,7 +426,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 throw new ArgumentException("Review error log");
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Detokenising Collection: {0} files", this.TargetFiles.Length));
+            this.LogTaskMessage(this.analyseOnly ? string.Format(CultureInfo.CurrentCulture, "Analysing Collection: {0} files", this.TargetFiles.Length) : string.Format(CultureInfo.CurrentCulture, "Detokenising Collection: {0} files", this.TargetFiles.Length));
             foreach (ITaskItem file in this.TargetFiles)
             {
                 this.tokenMatched = false;
@@ -467,7 +467,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             string newFile = this.parseRegex.Replace(fileContent, matchEvaluator);
 
             // Only write out new content if a replacement was done or ForceWrite has been set
-            if (this.tokenMatched || this.ForceWrite)
+            if ((this.tokenMatched || this.ForceWrite) && !this.analyseOnly)
             {
                 // First make sure the file is writable.
                 bool changedAttribute = false;
@@ -481,15 +481,13 @@ namespace MSBuild.ExtensionPack.FileSystem
                     changedAttribute = true;
                 }
 
-                if (!this.analyseOnly)
+                // Write out the new file.
+                using (StreamWriter streamWriter = new StreamWriter(file, false, finalEncoding))
                 {
-                    // Write out the new file.
-                    using (StreamWriter streamWriter = new StreamWriter(file, false, finalEncoding))
+                    if (this.DisplayFiles)
                     {
-                        if (this.DisplayFiles)
-                        {
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Re-writing file content: {0}", file));
-                        }
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Re-writing file content: {0}", file));
+                    }
 
                         streamWriter.Write(newFile);
                         this.FilesDetokenised++;
@@ -499,7 +497,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                     {
                         this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
                         System.IO.File.SetAttributes(file, FileAttributes.ReadOnly);
-                    }
                 }
             }
         }
