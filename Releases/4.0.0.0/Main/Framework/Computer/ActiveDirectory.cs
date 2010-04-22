@@ -340,7 +340,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private static ContextOptions SetBindingOptions(IEnumerable<ITaskItem> value)
         {
-            return value.Aggregate(new ContextOptions(), (current, option) => current | (ContextOptions) Enum.Parse(typeof(ContextOptions), option.ItemSpec));
+            return value.Aggregate(new ContextOptions(), (current, option) => current | (ContextOptions)Enum.Parse(typeof(ContextOptions), option.ItemSpec));
         }
 
         private static bool IsMember(DirectoryEntry entity, string name)

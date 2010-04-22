@@ -1181,7 +1181,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void UpdateProperty(AssemblyInfoWrapper assemblyInfo, string propertyName)
         {
             PropertyInfo propInfo = this.GetType().GetProperty(propertyName);
-            string value = (string) propInfo.GetValue(this, null);
+            string value = (string)propInfo.GetValue(this, null);
 
             if (value != null)
             {
@@ -1226,7 +1226,7 @@ namespace MSBuild.ExtensionPack.Framework
                     DateTime now = this.UseUtc ? DateTime.UtcNow : DateTime.Now;
                     string newVersionNumber3 = now.ToString("yy", CultureInfo.InvariantCulture);
                     newVersionNumber3 += CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstDay, (DayOfWeek)Enum.Parse(typeof(DayOfWeek), this.FirstDayOfWeek));
-                    newVersionNumber3 += ((int) now.DayOfWeek).ToString(CultureInfo.InvariantCulture);
+                    newVersionNumber3 += ((int)now.DayOfWeek).ToString(CultureInfo.InvariantCulture);
                     Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber3);
                     return newVersionNumber3;
                 case IncrementMethod.ElapsedDays:
@@ -1275,7 +1275,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyVersionSettings.BuildNumberType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyBuildNumberType);
+                this.assemblyVersionSettings.BuildNumberType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyBuildNumberType);
             }
 
             // Handle AssemblyRevisionNumberType
@@ -1292,7 +1292,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyVersionSettings.RevisionType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyRevisionType);
+                this.assemblyVersionSettings.RevisionType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyRevisionType);
             }
 
             // Handle AssemblyFileBuildNumberType
@@ -1309,7 +1309,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyFileVersionSettings.BuildNumberType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyFileBuildNumberType);
+                this.assemblyFileVersionSettings.BuildNumberType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyFileBuildNumberType);
             }
 
             // Handle AssemblyFileRevisionType
@@ -1326,7 +1326,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyFileVersionSettings.RevisionType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyFileRevisionType);
+                this.assemblyFileVersionSettings.RevisionType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyFileRevisionType);
             }
 
             return true;

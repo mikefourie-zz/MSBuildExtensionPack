@@ -99,7 +99,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 if (Enum.IsDefined(typeof(EnvironmentVariableTarget), value))
                 {
-                    this.target = (EnvironmentVariableTarget) Enum.Parse(typeof(EnvironmentVariableTarget), value);
+                    this.target = (EnvironmentVariableTarget)Enum.Parse(typeof(EnvironmentVariableTarget), value);
                 }
                 else
                 {

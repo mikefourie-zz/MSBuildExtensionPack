@@ -175,7 +175,7 @@ namespace MSBuild.ExtensionPack.Web
                 string propertyTypeName;
                 using (DirectoryEntry di = new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName))
                 {
-                    propertyTypeName = (string) di.Properties["Syntax"].Value;
+                    propertyTypeName = (string)di.Properties["Syntax"].Value;
                 }
 
                 if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
@@ -351,12 +351,12 @@ namespace MSBuild.ExtensionPack.Web
                     this.websiteEntry = new DirectoryEntry(parentPath);
                     try
                     {
-                        vdirEntry = (DirectoryEntry) this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
+                        vdirEntry = (DirectoryEntry)this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
                     }
                     catch (TargetInvocationException tie)
                     {
                         Exception e = tie.InnerException;
-                        COMException ce = (COMException) e;
+                        COMException ce = (COMException)e;
                         if (ce != null)
                         {
                             // HRESULT 0x800700B7, "Cannot create a file when that file already exists. "

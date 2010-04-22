@@ -983,7 +983,7 @@ namespace MSBuild.ExtensionPack.Computer
                     // Execute the method and obtain the return values.
                     object result = wmi.InvokeMethod("Create", paramList);
                     int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
-                    return (ServiceReturnCode) returnCode;
+                    return (ServiceReturnCode)returnCode;
                 }
             }
             catch (Exception ex)

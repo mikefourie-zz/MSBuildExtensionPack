@@ -351,7 +351,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                             this.ReaderResult = new ITaskItem[rows.Count];
                             for (int i = 0; i < rows.Count; i++)
                             {
-                                this.ReaderResult[i] = (ITaskItem) rows[i];
+                                this.ReaderResult[i] = (ITaskItem)rows[i];
                             }
 
                             break;

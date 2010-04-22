@@ -269,7 +269,7 @@ namespace MSBuild.ExtensionPack.Management
                             // sometimes the properties might be arrays.....
                             try
                             {
-                                string[] propertiesArray = (string[]) m[prop.ItemSpec];
+                                string[] propertiesArray = (string[])m[prop.ItemSpec];
                                 value = propertiesArray.Aggregate(value, (current, arrValue) => current + (arrValue + "~~~"));
                                 value = value.Remove(value.Length - 3, 3);
                             }

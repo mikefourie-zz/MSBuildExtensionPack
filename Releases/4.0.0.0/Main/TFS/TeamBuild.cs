@@ -188,7 +188,7 @@ namespace MSBuild.ExtensionPack.Tfs
         {
             using (this.tfs = new TeamFoundationServer(this.TeamFoundationServerUrl))
             {
-                this.buildServer = (IBuildServer) this.tfs.GetService(typeof(IBuildServer));
+                this.buildServer = (IBuildServer)this.tfs.GetService(typeof(IBuildServer));
 
                 switch (this.TaskAction)
                 {

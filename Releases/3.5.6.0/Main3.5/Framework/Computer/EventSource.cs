@@ -77,7 +77,7 @@ namespace MSBuild.ExtensionPack.Computer
         public string LogType
         {
             get { return this.logType.ToString(); }
-            set { this.logType = (System.Diagnostics.EventLogEntryType) Enum.Parse(typeof(System.Diagnostics.EventLogEntryType), value); }
+            set { this.logType = (System.Diagnostics.EventLogEntryType)Enum.Parse(typeof(System.Diagnostics.EventLogEntryType), value); }
         }
 
         /// <summary>

@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack.Web
         public string Permission
         { 
             get { return this.permission.ToString(); }
-            set { this.permission = (ExtensionPermission) Enum.Parse(typeof(ExtensionPermission), value); }
+            set { this.permission = (ExtensionPermission)Enum.Parse(typeof(ExtensionPermission), value); }
         }
 
             /// <summary>
@@ -124,7 +124,7 @@ namespace MSBuild.ExtensionPack.Web
             using (DirectoryEntry web = new DirectoryEntry("IIS://" + this.MachineName + "/W3SVC"))
             {
                 ComWrapper ws = new ComWrapper(web.NativeObject);
-                Array extensionFiles = (Array) ws.CallMethod("ListExtensionFiles");
+                Array extensionFiles = (Array)ws.CallMethod("ListExtensionFiles");
                 if (extensionFiles != null)
                 {
                     foreach (string extension in extensionFiles)

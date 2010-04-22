@@ -305,7 +305,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             ManagementBaseObject outParams = managementClass.InvokeMethod("Create", inParams, null);
-            ReturnCode returnCode = (ReturnCode) Convert.ToUInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+            ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
             switch (returnCode)
             {
                 case ReturnCode.Success:

@@ -500,7 +500,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         else
                         {
                             // it's a share, so we need to manually check all file attributes and delete
-                            this.DelTree((DirectoryInfo) i);
+                            this.DelTree((DirectoryInfo)i);
                             try
                             {
                                 Directory.Delete(i.FullName, true);
