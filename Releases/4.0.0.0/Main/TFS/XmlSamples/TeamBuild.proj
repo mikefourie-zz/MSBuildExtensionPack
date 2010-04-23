@@ -48,7 +48,7 @@
         <Message Text="TestStatus: %(BuildInfo.TestStatus)"/>
         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
         <!-- Queue a new build -->
-        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="QueueBuild" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
+        <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="Queue" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
         <!-- Retrieve Changesets associated with a given build -->
         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
             <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
