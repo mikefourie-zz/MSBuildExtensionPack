@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/7a6bc9b8-0852-8ade-d496-d3fbe3d3f94b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/7a6bc9b8-0852-8ade-d496-d3fbe3d3f94b.htm")]
     public class Iis7Binding : BaseTask
     {
         private const string AddTaskAction = "Add";
