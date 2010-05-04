@@ -501,20 +501,9 @@ namespace MSBuild.ExtensionPack.Computer
                 this.ServiceDisplayName = this.ServiceName;
             }
 
-            if (!this.TargetingLocalMachine(RemoteExecutionAvailable) &&
-                (string.IsNullOrEmpty(this.RemoteUser) || string.IsNullOrEmpty(this.RemoteUserPassword)))
+            if (!this.TargetingLocalMachine(RemoteExecutionAvailable) && (string.IsNullOrEmpty(this.RemoteUser) || string.IsNullOrEmpty(this.RemoteUserPassword)))
             {
-                if (string.IsNullOrEmpty(this.RemoteUser))
-                {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Attempting to manage windows services on remote machine [{0}] but the RemoteUser is missing.", this.MachineName));
-                }
-
-                if (string.IsNullOrEmpty(this.RemoteUserPassword))
-                {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Attempting to manage windows services on remote machine [{0}] but the RemoteUserPassword is missing.", this.MachineName));
-                }
-
-                return;
+                this.LogTaskMessage(MessageImportance.Low, "No RemoteUser or RemoteUserPassword supplied. Attempting Integrated Security.");
             }
 
             if (this.ServiceDoesExist() == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction)
