@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
     /// <para><i>ModifyPath</i> (<b>Required: </b> Name, Path <b>Output: </b>SiteId)</para>
@@ -147,7 +147,14 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the app pool.
         /// </summary>
+        [TaskAction(CreateTaskAction, false)]
         public string AppPool { get; set; }
+
+        /// <summary>
+        /// Sets the Enabled Protocols for the website
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string EnabledProtocols { get; set; }
 
         /// <summary>
         /// Sets the port.
@@ -369,6 +376,11 @@ namespace MSBuild.ExtensionPack.Web
             if (this.VirtualDirectories != null)
             {
                 this.ProcessVirtualDirectories();
+            }
+
+            if (!string.IsNullOrEmpty(this.EnabledProtocols))
+            {
+               this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
             }
 
             this.iisServerManager.CommitChanges();

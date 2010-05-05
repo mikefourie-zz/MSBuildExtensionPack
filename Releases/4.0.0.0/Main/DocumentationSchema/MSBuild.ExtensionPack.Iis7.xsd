@@ -100,6 +100,7 @@
                     </xs:attribute>
                     <xs:attribute name="Applications"/>
                     <xs:attribute name="AppPool"/>
+                    <xs:attribute name="EnabledProtocols"/>
                     <xs:attribute name="Force" type="msb:boolean"/>
                     <xs:attribute name="Name" use="required"/>
                     <xs:attribute name="Path"/>
