@@ -33,7 +33,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/c4794935-065a-008d-4270-70c58451a3a6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/c4794935-065a-008d-4270-70c58451a3a6.htm")]
     public class Iis6ServiceExtensionFile : BaseTask
     {
         private const string AddTaskAction = "Add";

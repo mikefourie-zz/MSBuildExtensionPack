@@ -61,7 +61,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
     public class BizTalkHostInstance : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";

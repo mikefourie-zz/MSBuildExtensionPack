@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
     public class Iis6AppPool : BaseTask
     {
         private const string CreateTaskAction = "Create";

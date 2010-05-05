@@ -28,7 +28,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
     public class WshShell : BaseTask
     {
         private const string CreateShortcutTaskAction = "CreateShortcut";

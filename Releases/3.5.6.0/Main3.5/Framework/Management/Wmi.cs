@@ -87,7 +87,7 @@ namespace MSBuild.ExtensionPack.Management
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
     public class Wmi : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
