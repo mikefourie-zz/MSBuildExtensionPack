@@ -21,6 +21,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para><i>Replace</i> (<b>Required: </b> OldString, OldValue, NewValue <b> Output: </b> NewString)</para>
     /// <para><i>Split</i> (<b>Required: </b> String1, String2 <b> Optional: </b> StartIndex <b>Output: </b>Strings, NewString)</para>
     /// <para><i>StartsWith</i> (<b>Required: </b> String1, String2<b> Optional: </b> IgnoreCase <b>Output: </b>Result)</para>
+    /// <para><i>Substring</i> (<b>Required: </b> OldString<b> Optional: </b> StartIndex, Count <b>Output: </b>NewString)</para>
     /// <para><i>ToLower</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>ToUpper</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
     /// <para><i>Trim</i> (<b>Required: </b> OldString<b> Output: </b> NewString)</para>
@@ -105,8 +106,13 @@ namespace MSBuild.ExtensionPack.Framework
     ///             <Output PropertyName="TheResult" TaskParameter="Result"/>
     ///         </MSBuild.ExtensionPack.Framework.TextString>
     ///         <Message Text="The Result: $(TheResult)"/>
-    ///         <!-- Replace the contents off a string -->
+    ///         <!-- Replace the contents of a string -->
     ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Replace" OldString="Hello" OldValue="llo" NewValue="XYZ">
+    ///             <Output PropertyName="out" TaskParameter="NewString"/>
+    ///         </MSBuild.ExtensionPack.Framework.TextString>
+    ///         <Message Text="The Result: $(out)"/>
+    ///         <!-- Substring the contents of a string -->
+    ///         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Substring" OldString="Hello" StartIndex="1" Count="2">
     ///             <Output PropertyName="out" TaskParameter="NewString"/>
     ///         </MSBuild.ExtensionPack.Framework.TextString>
     ///         <Message Text="The Result: $(out)"/>
@@ -131,6 +137,7 @@ namespace MSBuild.ExtensionPack.Framework
         private const string ToLowerTaskAction = "ToLower";
         private const string ToUpperTaskAction = "ToUpper";
         private const string TrimTaskAction = "Trim";
+        private const string SubstringTaskAction = "Substring";
         
         private bool ignoreCase = true;
         private StringComparison stringCom = StringComparison.OrdinalIgnoreCase;
@@ -149,6 +156,7 @@ namespace MSBuild.ExtensionPack.Framework
         [DropdownValue(ToLowerTaskAction)]
         [DropdownValue(ToUpperTaskAction)]
         [DropdownValue(TrimTaskAction)]
+        [DropdownValue(SubstringTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -161,6 +169,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(InsertTaskAction, true)]
         [TaskAction(RemoveTaskAction, true)]
         [TaskAction(SplitTaskAction, false)]
+        [TaskAction(SubstringTaskAction, false)]
         public int StartIndex { get; set; }
 
         /// <summary>
@@ -169,6 +178,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(PadLeftTaskAction, false)]
         [TaskAction(PadRightTaskAction, false)]
         [TaskAction(RemoveTaskAction, false)]
+        [TaskAction(SubstringTaskAction, false)]
         public int Count { get; set; }
 
         /// <summary>
@@ -234,6 +244,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(ToLowerTaskAction, true)]
         [TaskAction(ToUpperTaskAction, true)]
         [TaskAction(TrimTaskAction, true)]
+        [TaskAction(SubstringTaskAction, true)]
         public string OldString { get; set; }
 
         /// <summary>
@@ -285,13 +296,13 @@ namespace MSBuild.ExtensionPack.Framework
 
             switch (this.TaskAction)
             {
-                case "Compare":
+                case CompareTaskAction:
                     this.Compare();
                     break;
-                case "Split":
+                case SplitTaskAction:
                     this.SplitString();
                     break;
-                case "EndsWith":
+                case EndsWithTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether: {0} ends with: {1}", this.String1, this.String2));
                     this.Result = this.String1.EndsWith(this.String2, this.stringCom);
                     break;
@@ -299,45 +310,49 @@ namespace MSBuild.ExtensionPack.Framework
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Formatting: {0}", this.String1));
                     this.NewString = string.Format(CultureInfo.CurrentCulture, this.String1, this.Strings);
                     break;
-                case "StartsWith":
+                case StartsWithTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether: {0} starts with: {1}", this.String1, this.String2));
                     this.Result = this.String1.StartsWith(this.String2, this.stringCom);
                     break;
-                case "Replace":
+                case ReplaceTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Replacing String: {0}", this.OldString));
                     this.NewString = this.OldString.Replace(this.OldValue, this.NewValue);
                     break;
-                case "Trim":
+                case TrimTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Trimming String: {0}", this.OldString));
                     this.NewString = this.OldString.Trim();
                     break;
-                case "ToLower":
+                case ToLowerTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Lower casing: {0}", this.OldString));
                     this.NewString = this.OldString.ToLower(CultureInfo.CurrentUICulture);
                     break;
-                case "ToUpper":
+                case ToUpperTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Upper casing: {0}", this.OldString));
                     this.NewString = this.OldString.ToUpper(CultureInfo.CurrentUICulture);
                     break;
-                case "Remove":
+                case RemoveTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing String: {0}", this.OldString));
                     this.NewString = this.Count > 0 ? this.OldString.Remove(this.StartIndex, this.Count) : this.OldString.Remove(this.StartIndex);
                     break;
-                case "GetLength":
+                case GetLengthTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Get Length of: {0}", this.OldString));
                     this.NewString = this.OldString.Length.ToString(CultureInfo.CurrentCulture);
                     break;
-                case "Insert":
+                case InsertTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Inserting: {0} into: {1}", this.String1, this.OldString));
                     this.NewString = this.OldString.Insert(this.StartIndex, this.String1);
                     break;
-                case "PadLeft":
+                case PadLeftTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Padding: {0} left with: {1}", this.OldString, this.String1[0]));
                     this.NewString = this.OldString.PadLeft(this.Count, this.String1[0]);
                     break;
-                case "PadRight":
+                case PadRightTaskAction:
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Padding: {0} right with: {1}", this.OldString, this.String1[0]));
                     this.NewString = this.OldString.PadRight(this.Count, this.String1[0]);
+                    break;
+                case SubstringTaskAction:
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Substring: {0}", this.OldString));
+                    this.NewString = this.Count > 0 ? this.OldString.Substring(this.StartIndex, this.Count) : this.OldString.Substring(this.StartIndex);
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));

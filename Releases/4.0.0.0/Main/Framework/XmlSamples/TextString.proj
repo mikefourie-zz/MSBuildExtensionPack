@@ -75,8 +75,13 @@
             <Output PropertyName="TheResult" TaskParameter="Result"/>
         </MSBuild.ExtensionPack.Framework.TextString>
         <Message Text="The Result: $(TheResult)"/>
-        <!-- Replace the contents off a string -->
+        <!-- Replace the contents of a string -->
         <MSBuild.ExtensionPack.Framework.TextString TaskAction="Replace" OldString="Hello" OldValue="llo" NewValue="XYZ">
+            <Output PropertyName="out" TaskParameter="NewString"/>
+        </MSBuild.ExtensionPack.Framework.TextString>
+        <Message Text="The Result: $(out)"/>
+        <!-- Substring the contents of a string -->
+        <MSBuild.ExtensionPack.Framework.TextString TaskAction="Substring" OldString="Hello" StartIndex="1" Count="2">
             <Output PropertyName="out" TaskParameter="NewString"/>
         </MSBuild.ExtensionPack.Framework.TextString>
         <Message Text="The Result: $(out)"/>
