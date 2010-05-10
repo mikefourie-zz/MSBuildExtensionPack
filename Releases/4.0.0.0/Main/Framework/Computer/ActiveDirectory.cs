@@ -1,5 +1,6 @@
 //-----------------------------------------------------------------------
 // <copyright file="ActiveDirectory.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// Portions of this task are based on the http://www.codeplex.com/sdctasks. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Computer
 {
@@ -10,6 +11,8 @@ namespace MSBuild.ExtensionPack.Computer
     using System.DirectoryServices.AccountManagement;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Text;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.Computer.Extended;
 
@@ -31,6 +34,74 @@ namespace MSBuild.ExtensionPack.Computer
         Universal = 0x00000008
     }
 
+    internal enum PrivilegeType
+    {
+        /// <summary>
+        /// SeInteractiveLogonRight
+        /// </summary>
+        SeInteractiveLogonRight,
+
+        /// <summary>
+        /// SeNetworkLogonRight
+        /// </summary>
+        SeNetworkLogonRight,
+
+        /// <summary>
+        /// SeBatchLogonRight
+        /// </summary>
+        SeBatchLogonRight,
+
+        /// <summary>
+        /// SeServiceLogonRight
+        /// </summary>
+        SeServiceLogonRight,
+
+        /// <summary>
+        /// SeDenyInteractiveLogonRight
+        /// </summary>
+        SeDenyInteractiveLogonRight,
+
+        /// <summary>
+        /// SeDenyNetworkLogonRight
+        /// </summary>
+        SeDenyNetworkLogonRight,
+
+        /// <summary>
+        /// SeDenyBatchLogonRight
+        /// </summary>
+        SeDenyBatchLogonRight,
+
+        /// <summary>
+        /// SeDenyServiceLogonRight
+        /// </summary>
+        SeDenyServiceLogonRight,
+
+        /// <summary>
+        /// SeRemoteInteractiveLogonRight
+        /// </summary>
+        SeRemoteInteractiveLogonRight,
+
+        /// <summary>
+        /// SeDenyRemoteInteractiveLogonRight
+        /// </summary>
+        SeDenyRemoteInteractiveLogonRight,
+
+        /// <summary>
+        /// SeIncreaseQuotaPrivilege
+        /// </summary>
+        SeIncreaseQuotaPrivilege,
+
+        /// <summary>
+        /// SeAuditPrivilege
+        /// </summary>
+        SeAuditPrivilege,
+
+        /// <summary>
+        /// SeAssignPrimaryTokenPrivilege
+        /// </summary>
+        SeAssignPrimaryTokenPrivilege
+    }
+
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddUser</i> (<b>Required: </b> User <b>Optional: </b>Domain, FullName, Description, Password, PasswordExpired, PasswordNeverExpires)</para>
@@ -43,70 +114,73 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>DeleteGroup</i> (<b>Required: </b> Group)</para>
     /// <para><i>DeleteUserFromGroup</i> (<b>Required: </b> User, Group)</para>
     /// <para><i>GetUserPassword</i> (<b>Required: </b>User  <b>Optional: </b>BindingContextOptions, ContextTypeStore, Domain <b>Output:</b> Password)</para>
+    /// <para><i>GrantPrivilege</i> (<b>Required: </b>User, Privilege  <b>Optional: </b>Domain)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///   <PropertyGroup>
-    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///   </PropertyGroup>
-    ///   <Import Project="$(TPath)"/>
-    ///   <Target Name="Default">
-    ///     <!-- Check a user Exists -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
-    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///     </MSBuild.ExtensionPack.Computer.ActiveDirectory>
-    ///     <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
-    ///     <!-- Add local Users -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS2" Description="Elgnt" PasswordNeverExpires="true"/>
-    ///     <!-- Check a user Exists -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
-    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///     </MSBuild.ExtensionPack.Computer.ActiveDirectory>
-    ///     <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
-    ///     <!-- Check a Group Exists -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
-    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///     </MSBuild.ExtensionPack.Computer.ActiveDirectory>
-    ///     <Message Text="NewGroup1 Exists: $(DoesExist)"/>
-    ///     <!-- Add local Groups -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
-    ///     <!-- Check a Group Exists -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
-    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///     </MSBuild.ExtensionPack.Computer.ActiveDirectory>
-    ///     <Message Text="NewGroup1 Exists: $(DoesExist)"/>
-    ///     <!-- Add the users to the Groups -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJS1;JudgeJS2" Group="NewGroup1;NewGroup2"/>
-    ///     <!-- Delete Users from Groups -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJS1" Group="NewGroup1;NewGroup2"/>
-    ///     <!-- Delete local Users -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUser" User="JudgeJS1;JudgeJS2"/>
-    ///     <!-- Delete local Groups -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteGroup" Group="NewGroup1;NewGroup2"/>
-    ///     <!-- Add a remote User -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" MachineName="D420-7" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
-    ///     <!-- Add a remote Group -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="RemoteGroup1" MachineName="D420-7" Description="na"/>
-    ///     <!-- Add a Domain User -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Domain="mydomain" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
-    ///     <!-- Add a Domain Group -->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="DomainGroup1" Domain="mydomain" Description="na"/>
-    ///     <!-- Get a user's password-->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="GetUserPassword" User="Michael" ContextTypeStore="Machine">
-    ///       <Output TaskParameter="Password" PropertyName="Pass"/>
-    ///     </MSBuild.ExtensionPack.Computer.ActiveDirectory>
-    ///     <Message Text="User Password: $(Pass)"/>
-    ///     <!-- Check a user's password-->
-    ///     <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserPassword" User="Michael" ContextTypeStore="Machine" Password="$(Pass)">
-    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///     </MSBuild.ExtensionPack.Computer.ActiveDirectory>
-    ///     <Message Text="User Exists: $(DoesExist)"/>
-    ///   </Target>
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <!-- Check a user Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
+    ///         <!-- Add local Users -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS2" Description="Elgnt" PasswordNeverExpires="true"/>
+    ///         <!-- Grant a user a privilege local Users -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="GrantPrivilege" User="JudgeJS1" Privilege="SeServiceLogonRight"/>
+    ///         <!-- Check a user Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserExists" User="JudgeJS1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
+    ///         <!-- Check a Group Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
+    ///         <!-- Add local Groups -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
+    ///         <!-- Check a Group Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
+    ///         <!-- Add the users to the Groups -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJS1;JudgeJS2" Group="NewGroup1;NewGroup2"/>
+    ///         <!-- Delete Users from Groups -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJS1" Group="NewGroup1;NewGroup2"/>
+    ///         <!-- Delete local Users -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUser" User="JudgeJS1;JudgeJS2"/>
+    ///         <!-- Delete local Groups -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteGroup" Group="NewGroup1;NewGroup2"/>
+    ///         <!-- Add a remote User -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" MachineName="D420-7" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    ///         <!-- Add a remote Group -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="RemoteGroup1" MachineName="D420-7" Description="na"/>
+    ///         <!-- Add a Domain User -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUser" User="JudgeJS1" Domain="mydomain" Description="Elgnt" Password="123546fdfdRERF$" PasswordNeverExpires="true"/>
+    ///         <!-- Add a Domain Group -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="DomainGroup1" Domain="mydomain" Description="na"/>
+    ///         <!-- Get a user's password-->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="GetUserPassword" User="Michael" ContextTypeStore="Machine">
+    ///             <Output TaskParameter="Password" PropertyName="Pass"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="User Password: $(Pass)"/>
+    ///         <!-- Check a user's password-->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckUserPassword" User="Michael" ContextTypeStore="Machine" Password="$(Pass)">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+    ///         <Message Text="User Exists: $(DoesExist)"/>
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -123,6 +197,8 @@ namespace MSBuild.ExtensionPack.Computer
         private const string DeleteUserTaskAction = "DeleteUser";
         private const string DeleteGroupTaskAction = "DeleteGroup";
         private const string DeleteUserFromGroupTaskAction = "DeleteUserFromGroup";
+        private const string GrantPrivilegeTaskAction = "GrantPrivilege";
+        private const string RemovePrivilegeTaskAction = "RemovePrivilege";
         private string target;
         private string domain;
         private int passwordExpired;
@@ -130,6 +206,7 @@ namespace MSBuild.ExtensionPack.Computer
         private ADGroupType groupType;
         private ContextOptions bindingContextOptions = ContextOptions.Negotiate;
         private ContextType contextType = ContextType.Domain;
+        private PrivilegeType privilege;
         
         [DropdownValue(AddUserTaskAction)]
         [DropdownValue(AddGroupTaskAction)]
@@ -141,6 +218,7 @@ namespace MSBuild.ExtensionPack.Computer
         [DropdownValue(DeleteUserTaskAction)]
         [DropdownValue(DeleteGroupTaskAction)]
         [DropdownValue(DeleteUserFromGroupTaskAction)]
+        [DropdownValue(GrantPrivilegeTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -170,6 +248,7 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(DeleteUserTaskAction, true)]
         [TaskAction(DeleteUserFromGroupTaskAction, true)]
         [TaskAction(GetUserPasswordTaskAction, true)]
+        [TaskAction(GrantPrivilegeTaskAction, true)]
         public ITaskItem[] User { get; set; }
 
         /// <summary>
@@ -262,6 +341,15 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
+        /// The Privilege to grant. See http://msdn.microsoft.com/en-us/library/bb545671(VS.85).aspx
+        /// </summary>
+        public string Privilege
+        {
+            get { return this.privilege.ToString(); }
+            set { this.privilege = (PrivilegeType)Enum.Parse(typeof(PrivilegeType), value); }
+        }
+
+        /// <summary>
         /// Gets whether the User or Group exists
         /// </summary>
         [Output]
@@ -331,11 +419,36 @@ namespace MSBuild.ExtensionPack.Computer
                     case CheckGroupExistsTaskAction:
                         this.CheckExists("group");
                         break;
+                    case GrantPrivilegeTaskAction:
+                        this.GrantUserPrivilege();
+                        break;
+                    case RemovePrivilegeTaskAction:
+                        // Not implemented this.RemoveUserPrivilege();
+                        break;
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
                 }
             }
+        }
+
+        private static LSA_UNICODE_STRING CreateLsaString(string inputString)
+        {
+            LSA_UNICODE_STRING lsaString = new LSA_UNICODE_STRING();
+            if (inputString == null)
+            {
+                lsaString.Buffer = IntPtr.Zero;
+                lsaString.Length = 0;
+                lsaString.MaximumLength = 0;
+            }
+            else
+            {
+                lsaString.Buffer = Marshal.StringToHGlobalAuto(inputString);
+                lsaString.Length = (ushort)(inputString.Length * UnicodeEncoding.CharSize);
+                lsaString.MaximumLength = (ushort)((inputString.Length + 1) * UnicodeEncoding.CharSize);
+            }
+
+            return lsaString;
         }
 
         private static ContextOptions SetBindingOptions(IEnumerable<ITaskItem> value)
@@ -381,6 +494,65 @@ namespace MSBuild.ExtensionPack.Computer
             catch
             {
                 // ignore exceptions on invoke
+            }
+        }
+
+        private void GrantUserPrivilege()
+        {
+            if (this.User == null)
+            {
+                Log.LogError("User is required");
+                return;
+            }
+
+            if (this.Privilege == null)
+            {
+                Log.LogError("Privilege is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Granting Privilege to User: {0} - {1}", this.User[0].ItemSpec, this.Privilege));
+
+            int sidInt = 0;
+            IntPtr sid = IntPtr.Zero;
+            int domainNameInt = 0;
+            int use = 0;
+            IntPtr policyHandle = new IntPtr();
+
+            try
+            {
+                StringBuilder domainNameInternal = new StringBuilder(this.Domain);
+                ActiveDirectoryNativeMethods.LookupAccountName(this.MachineName, this.User[0].ItemSpec, sid, ref sidInt, domainNameInternal, ref domainNameInt, ref use);
+                domainNameInternal = new StringBuilder(domainNameInt);
+                sid = Marshal.AllocHGlobal(sidInt);
+                int returnValue = ActiveDirectoryNativeMethods.LookupAccountName(this.MachineName, this.User[0].ItemSpec, sid, ref sidInt, domainNameInternal, ref domainNameInt, ref use);
+                if (returnValue == 0)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error looking up account name: {0}", returnValue));
+                    return;
+                }
+
+                LSA_OBJECT_ATTRIBUTES objectAttributes = new LSA_OBJECT_ATTRIBUTES { Length = 0, RootDirectory = IntPtr.Zero, Attributes = 0, SecurityDescriptor = IntPtr.Zero, SecurityQualityOfService = IntPtr.Zero };
+                LSA_UNICODE_STRING machineNameLSA = CreateLsaString(this.MachineName);
+                uint result = ActiveDirectoryNativeMethods.LsaOpenPolicy(ref machineNameLSA, ref objectAttributes, ActiveDirectoryNativeMethods.POLICY_CREATE_SECRET, out policyHandle);
+                if (result != 0)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error running LsaOpenPolicy: {0}", returnValue));
+                    return;
+                }
+
+                LSA_UNICODE_STRING privilegeString = CreateLsaString(this.Privilege);
+                result = ActiveDirectoryNativeMethods.LsaAddAccountRights(policyHandle, sid, ref privilegeString, 1);
+                if (result != 0)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error running LsaAddAccountRights: {0}", returnValue));
+                    return;
+                }
+            }
+            finally
+            {
+                ActiveDirectoryNativeMethods.LsaClose(policyHandle);
+                Marshal.FreeHGlobal(sid);
             }
         }
 

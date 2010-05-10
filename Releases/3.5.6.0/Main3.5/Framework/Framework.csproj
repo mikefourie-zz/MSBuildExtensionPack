@@ -173,6 +173,7 @@
     </Compile>
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
+    <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
     <Compile Include="Computer\WshShell.cs" />
     <Compile Include="Computer\GetPasswordForm.cs">
       <SubType>Form</SubType>
