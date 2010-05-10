@@ -1396,6 +1396,20 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.VisualStudio.VSDevEnv" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="FilePath" use="required"/>
+                    <xs:attribute name="Configuration"/>
+                    <xs:attribute name="Version"/>
+                    <xs:attribute name="Rebuild"/>
+                    <xs:attribute name="OutputFile"/>
+                    <xs:attribute name="OutputFolder"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Web.HttpWebRequest" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>

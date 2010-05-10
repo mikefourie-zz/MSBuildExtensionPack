@@ -203,6 +203,7 @@
       <DependentUpon>ConfirmForm.cs</DependentUpon>
     </Compile>
     <Compile Include="VisualStudio\VBPProject.cs" />
+    <Compile Include="VisualStudio\VSDevEnv.cs" />
     <Compile Include="Web\WebClient.cs" />
     <Compile Include="Web\HttpWebRequest.cs" />
     <Compile Include="FileSystem\Share.cs" />
@@ -353,6 +354,7 @@
     <None Include="XmlSamples\GenericTool.proj" />
     <None Include="XmlSamples\RoboCopy.proj" />
     <None Include="XmlSamples\SqlCmd.proj" />
+    <None Include="XmlSamples\VSDevEnv.proj" />
     <None Include="XmlSamples\Xml.proj" />
     <None Include="XmlSamples\Iis6ServiceExtensionFile.proj" />
     <None Include="XmlSamples\Iis6VirtualDirectory.proj" />

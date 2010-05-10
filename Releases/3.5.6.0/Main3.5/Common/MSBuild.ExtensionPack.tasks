@@ -38,7 +38,7 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Guid"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Metadata"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.MSBuildHelper"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.UpdateMetadata"/>    
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.UpdateMetadata"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Signing"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.TextString"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Framework.Thread"/>
@@ -56,6 +56,7 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.TfsSourceAdmin"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.TfsVersion"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.VB6"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.VSDevEnv"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Web.HttpWebRequest"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Web.Iis6AppPool"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Web.Iis6ServiceExtensionFile"/>
@@ -77,11 +78,11 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkReceivePort"/>
 
-    
+
     <!-- ============== HyperV ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.HyperV.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.HyperV"/>
-    
-    
+
+
     <!-- ============== Iis7 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Application"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7AppPool"/>
@@ -115,8 +116,8 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.DevEnv"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.TeamBuild"/>
 
-    
+
     <!-- ============== Windows Virtual PC ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.WindowsVirtualPC.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.VirtualPc"/>
-    
+
 </Project>

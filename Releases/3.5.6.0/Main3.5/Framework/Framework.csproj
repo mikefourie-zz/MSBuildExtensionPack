@@ -197,6 +197,7 @@
     <Compile Include="UI\ConfirmForm.Designer.cs">
       <DependentUpon>ConfirmForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="VisualStudio\VSDevEnv.cs" />
     <Compile Include="VisualStudio\VBPProject.cs" />
     <Compile Include="Web\WebClient.cs" />
     <Compile Include="Web\HttpWebRequest.cs" />
@@ -381,6 +382,7 @@
     </None>
     <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\ActiveDirectory.proj" />
+    <None Include="XmlSamples\VSDevEnv.proj" />
     <None Include="XmlSamples\GenericTool.proj" />
     <None Include="XmlSamples\RoboCopy.proj" />
     <None Include="XmlSamples\FileVersion.proj" />
