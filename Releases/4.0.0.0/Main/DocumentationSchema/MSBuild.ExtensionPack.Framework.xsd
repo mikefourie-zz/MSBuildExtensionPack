@@ -1562,6 +1562,8 @@
           <xs:attribute name="Key"/>
           <xs:attribute name="Value"/>
           <xs:attribute name="File"/>
+                    <xs:attribute name="XPath"/>
+                    <xs:attribute name="Namespaces"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
