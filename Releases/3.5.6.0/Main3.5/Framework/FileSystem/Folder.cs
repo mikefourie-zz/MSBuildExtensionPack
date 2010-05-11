@@ -591,8 +591,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                     try
                     {
-                        DirectoryInfo f = new DirectoryInfo(i.FullName);
-                        if (f.Exists)
+                        if (i.Exists)
                         {
                             System.IO.File.Delete(i.FullName);
                         }
@@ -609,8 +608,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             count++;
                             try
                             {
-                                DirectoryInfo f = new DirectoryInfo(i.FullName);
-                                if (f.Exists)
+                                if (i.Exists)
                                 {
                                     System.IO.File.Delete(i.FullName);
                                 }
