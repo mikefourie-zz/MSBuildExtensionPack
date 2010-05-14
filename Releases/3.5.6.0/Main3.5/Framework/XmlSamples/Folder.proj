@@ -12,7 +12,23 @@
             <Users Include="AChangeUser">
                 <Permission>FullControl</Permission>
             </Users>
+            <FoldersToPermission Include="c:\az">
+                <Account>Performance Log Users</Account>
+                <Permission>Read,Write,Modify,Delete</Permission>
+                <AccessType>Allow</AccessType>
+            </FoldersToPermission>
+            <FoldersToPermission Include="c:\az">
+                <Account>AChangeUser</Account>
+                <Permission>Read,Write,Modify,Delete</Permission>
+                <AccessType>Allow</AccessType>
+            </FoldersToPermission>
+            <FoldersToRemovePermissions Include="c:\az">
+                <Account>Performance Log Users</Account>
+                <Permission>Read,Write,Modify,Delete</Permission>
+            </FoldersToRemovePermissions>
         </ItemGroup>
+        <Microsoft.Build.Tasks.MakeDir Directories="c:\Demo2;c:\Demo1;c:\ddd"/>
+        <Microsoft.Build.Tasks.RemoveDir Directories="C:\adeeeee"/>
         <!-- Add security for users -->
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" Path="c:\Demo2" Users="@(Users)"/>
         <!-- Remove security for users -->
@@ -25,6 +41,8 @@
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="DeleteAll" Path="c:\Demo2" Match="_svn"/>
         <!-- Remove all content from a folder whilst maintaining the target folder -->
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" AccessType="%(FoldersToPermission.AccessType)" Path="%(FoldersToPermission.Identity)" Users="%(FoldersToPermission.Account)" Permission="%(FoldersToPermission.Permission)"/>
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" AccessType="%(FoldersToRemovePermissions.AccessType)" Path="%(FoldersToRemovePermissions.Identity)" Users="%(FoldersToRemovePermissions.Account)" Permission="%(FoldersToRemovePermissions.Permission)"/>
         <!-- Move a folder -->
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
         <!-- Lets copy a selection of folders to multiple locations -->

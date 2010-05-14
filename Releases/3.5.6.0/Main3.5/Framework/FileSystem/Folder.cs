@@ -39,7 +39,23 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///             <Users Include="AChangeUser">
     ///                 <Permission>FullControl</Permission>
     ///             </Users>
+    ///             <FoldersToPermission Include="c:\az">
+    ///                 <Account>Performance Log Users</Account>
+    ///                 <Permission>Read,Write,Modify,Delete</Permission>
+    ///                 <AccessType>Allow</AccessType>
+    ///             </FoldersToPermission>
+    ///             <FoldersToPermission Include="c:\az">
+    ///                 <Account>AChangeUser</Account>
+    ///                 <Permission>Read,Write,Modify,Delete</Permission>
+    ///                 <AccessType>Allow</AccessType>
+    ///             </FoldersToPermission>
+    ///             <FoldersToRemovePermissions Include="c:\az">
+    ///                 <Account>Performance Log Users</Account>
+    ///                 <Permission>Read,Write,Modify,Delete</Permission>
+    ///             </FoldersToRemovePermissions>
     ///         </ItemGroup>
+    ///         <Microsoft.Build.Tasks.MakeDir Directories="c:\Demo2;c:\Demo1;c:\ddd"/>
+    ///         <Microsoft.Build.Tasks.RemoveDir Directories="C:\adeeeee"/>
     ///         <!-- Add security for users -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" Path="c:\Demo2" Users="@(Users)"/>
     ///         <!-- Remove security for users -->
@@ -52,6 +68,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="DeleteAll" Path="c:\Demo2" Match="_svn"/>
     ///         <!-- Remove all content from a folder whilst maintaining the target folder -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" AccessType="%(FoldersToPermission.AccessType)" Path="%(FoldersToPermission.Identity)" Users="%(FoldersToPermission.Account)" Permission="%(FoldersToPermission.Permission)"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" AccessType="%(FoldersToRemovePermissions.AccessType)" Path="%(FoldersToRemovePermissions.Identity)" Users="%(FoldersToRemovePermissions.Account)" Permission="%(FoldersToRemovePermissions.Permission)"/>
     ///         <!-- Move a folder -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
     ///         <!-- Lets copy a selection of folders to multiple locations -->
@@ -135,6 +153,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(AddSecurityTaskAction, true)]
         [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem[] Users { get; set; }
+
+        /// <summary>
+        /// Separate pemissions with a comma.
+        /// </summary>
+        [TaskAction(AddSecurityTaskAction, false)]
+        [TaskAction(RemoveSecurityTaskAction, false)]
+        public string Permission { get; set; }
 
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
@@ -367,14 +392,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                 foreach (ITaskItem user in this.Users)
                 {
                     string userName = user.ItemSpec;
-                    if (!userName.Contains(@"\"))
-                    {
-                        // default to local user
-                        userName = Environment.MachineName + @"\" + userName;
-                    }
-
                     FileSystemRights userRights = new FileSystemRights();
-                    string[] permissions = user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] permissions = string.IsNullOrEmpty(this.Permission) ? user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : this.Permission.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
                     foreach (string s in permissions)
                     {
                         userRights |= (FileSystemRights)Enum.Parse(typeof(FileSystemRights), s);
@@ -388,7 +408,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                     else
                     {
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing security for user: {0} on {1}", userName, this.Path));
-                        currentSecurity.RemoveAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                        if (permissions.Length == 0)
+                        {
+                            currentSecurity.RemoveAccessRuleAll(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                        }
+                        else
+                        {
+                            currentSecurity.RemoveAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                        }
                     }
                 }
             }

@@ -517,6 +517,7 @@
           <xs:attribute name="RetryCount"/>
           <xs:attribute name="Users"/>
           <xs:attribute name="AccessType"/>
+                    <xs:attribute name="Permission"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
