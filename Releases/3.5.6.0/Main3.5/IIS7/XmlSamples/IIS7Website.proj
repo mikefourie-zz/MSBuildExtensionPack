@@ -23,6 +23,11 @@
             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
         </MSBuild.ExtensionPack.Web.Iis7Website>
         <Message Text="NewSite SiteId: $(NewSiteId)"/>
+        <!-- Check whether the virtual directory exists -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
+            <Output TaskParameter="Exists" PropertyName="VDirExists"/>
+        </MSBuild.ExtensionPack.Web.Iis7Website>
+        <Message Text="VDirExists Exists: $(VDirExists)"/>
         <!-- Start a site -->
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="NewSite2"/>
         <!-- Check if the site exists -->

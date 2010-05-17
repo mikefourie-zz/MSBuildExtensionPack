@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.Web
 {
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.Web.Administration;
@@ -14,6 +15,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
+    /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
@@ -49,6 +51,11 @@ namespace MSBuild.ExtensionPack.Web
     ///             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
     ///         </MSBuild.ExtensionPack.Web.Iis7Website>
     ///         <Message Text="NewSite SiteId: $(NewSiteId)"/>
+    ///         <!-- Check whether the virtual directory exists -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
+    ///             <Output TaskParameter="Exists" PropertyName="VDirExists"/>
+    ///         </MSBuild.ExtensionPack.Web.Iis7Website>
+    ///         <Message Text="VDirExists Exists: $(VDirExists)"/>
     ///         <!-- Start a site -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="NewSite2"/>
     ///         <!-- Check if the site exists -->
@@ -87,6 +94,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string ModifyPathTaskAction = "ModifyPath";
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
+        private const string CheckVirtualDirectoryExistsTaskAction = "CheckVirtualDirectoryExists";
 
         private ServerManager iisServerManager;
         private Site website;
@@ -103,6 +111,7 @@ namespace MSBuild.ExtensionPack.Web
         [DropdownValue(ModifyPathTaskAction)]
         [DropdownValue(StartTaskAction)]
         [DropdownValue(StopTaskAction)]
+        [DropdownValue(CheckVirtualDirectoryExistsTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -122,6 +131,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(ModifyPathTaskAction, true)]
         [TaskAction(StartTaskAction, true)]
         [TaskAction(StopTaskAction, true)]
+        [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -136,6 +146,7 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         [TaskAction(AddVirtualDirectoryTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
+        [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
         public ITaskItem[] VirtualDirectories { get; set; }
 
         /// <summary>
@@ -206,29 +217,32 @@ namespace MSBuild.ExtensionPack.Web
 
                 switch (this.TaskAction)
                 {
-                    case "AddApplication":
+                    case AddApplicationTaskAction:
                         this.AddApplication();
                         break;
-                    case "AddVirtualDirectory":
+                    case AddVirtualDirectoryTaskAction:
                         this.AddVirtualDirectory();
                         break;
-                    case "Create":
+                    case CreateTaskAction:
                         this.Create();
                         break;
-                    case "ModifyPath":
+                    case ModifyPathTaskAction:
                         this.ModifyPath();
                         break;
-                    case "GetInfo":
+                    case GetInfoTaskAction:
                         this.GetInfo();
                         break;
-                    case "Delete":
+                    case DeleteTaskAction:
                         this.Delete();
                         break;
-                    case "CheckExists":
+                    case CheckExistsTaskAction:
                         this.CheckExists();
                         break;
-                    case "Start":
-                    case "Stop":
+                    case CheckVirtualDirectoryExistsTaskAction:
+                        this.CheckVirtualDirectoryExists();
+                        break;
+                    case StartTaskAction:
+                    case StopTaskAction:
                         this.ControlWebsite();
                         break;
                     default:
@@ -241,6 +255,28 @@ namespace MSBuild.ExtensionPack.Web
                 if (this.iisServerManager != null)
                 {
                     this.iisServerManager.Dispose();
+                }
+            }
+        }
+
+        private void CheckVirtualDirectoryExists()
+        {
+            if (!this.SiteExists())
+            {
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            if (this.VirtualDirectories != null)
+            {
+                foreach (ITaskItem virDir in this.VirtualDirectories)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether VirtualDirectory: {0} exists on: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
+                    if (this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path == virDir.ItemSpec))
+                    {
+                        this.Exists = true;
+                        return;
+                    }
                 }
             }
         }

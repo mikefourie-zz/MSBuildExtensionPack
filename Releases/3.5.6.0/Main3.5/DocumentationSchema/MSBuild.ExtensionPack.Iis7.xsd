@@ -92,6 +92,7 @@
                                 <xs:enumeration value="ModifyPath"/>
                                 <xs:enumeration value="Delete"/>
                                 <xs:enumeration value="CheckExists"/>
+                                <xs:enumeration value="CheckVirtualDirectoryExists"/>
                                 <xs:enumeration value="GetInfo"/>
                                 <xs:enumeration value="Start"/>
                                 <xs:enumeration value="Stop"/>
