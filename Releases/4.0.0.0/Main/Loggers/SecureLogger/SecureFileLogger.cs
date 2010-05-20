@@ -50,14 +50,23 @@ namespace MSBuild.ExtensionPack.Loggers
             eventSource.BuildFinished += this.BuildFinished;
             eventSource.BuildStarted += this.BuildStarted;
             eventSource.ErrorRaised += this.ErrorRaised;
-            eventSource.MessageRaised += this.MessageRaised;
-            eventSource.ProjectStarted += this.ProjectStarted;
-            eventSource.TargetStarted += this.TargetStarted;
             eventSource.WarningRaised += this.WarningRaised;
+
+            if (Verbosity != LoggerVerbosity.Quiet)
+            {
+                eventSource.MessageRaised += this.MessageRaised;
+                eventSource.ProjectStarted += this.ProjectStarted;
+                eventSource.ProjectFinished += this.ProjectFinished;
+            }
+
+            if (IsVerbosityAtLeast(LoggerVerbosity.Normal))
+            {
+                eventSource.TargetStarted += this.TargetStarted;
+                eventSource.TargetFinished += this.TargetFinished;
+            }
+
             if (IsVerbosityAtLeast(LoggerVerbosity.Detailed))
             {
-                eventSource.ProjectFinished += this.ProjectFinished;
-                eventSource.TargetFinished += this.TargetFinished;
                 eventSource.TaskStarted += this.TaskStarted;
                 eventSource.TaskFinished += this.TaskFinished;
             }
