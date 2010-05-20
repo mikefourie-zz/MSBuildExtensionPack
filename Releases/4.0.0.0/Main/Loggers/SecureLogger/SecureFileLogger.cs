@@ -11,6 +11,7 @@ namespace MSBuild.ExtensionPack.Loggers
     using System.IO;
     using System.Linq;
     using System.Security;
+    using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -22,24 +23,18 @@ namespace MSBuild.ExtensionPack.Loggers
     public class SecureFileLogger : Logger
     {
         private const char SecureChar = '#';
+        private static readonly char[] fileLoggerParameterDelimiters = new[] { ';' };
+        private static readonly char[] fileLoggerParameterValueSplitCharacter = new[] { '=' };
         private readonly ICollection<string> regExRules = new Collection<string>();
-        private StreamWriter streamWriter;
+        private StreamWriter fileWriter;
+        private string logFileName;
+        private string ruleFileName;
+        private bool append;
+        private Encoding encoding;
         private int indent;
         private int warnings;
         private int errors;
         private DateTime startTime;
-
-        /// <summary>
-        /// Shutdown() is guaranteed to be called by MSBuild at the end of the build, after all 
-        /// events have been raised.
-        /// </summary>
-        public override void Shutdown()
-        {
-            if (this.streamWriter != null)
-            {
-                this.streamWriter.Close();
-            }
-        }
 
         /// <summary>
         /// Initialize Override
@@ -47,72 +42,10 @@ namespace MSBuild.ExtensionPack.Loggers
         /// <param name="eventSource">IEventSource</param>
         public override void Initialize(IEventSource eventSource)
         {
-            if (null == Parameters)
-            {
-                throw new LoggerException("Parameters not supplied.");
-            }
+            this.logFileName = "securemsbuild.log";
+            this.encoding = Encoding.Default;
 
-            string[] parameters = Parameters.Split(';');
-            if (parameters.Length > 3)
-            {
-                throw new LoggerException("Too many parameters passed.");
-            }
-
-            if (String.IsNullOrEmpty(parameters[0]))
-            {
-                throw new LoggerException("Log file was not set.");
-            }
-
-            if (String.IsNullOrEmpty(parameters[1]))
-            {
-                throw new LoggerException("Rule file was not set.");
-            }
-
-            if (parameters.Length > 2)
-            {
-                this.Verbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), parameters[2]);
-            }
-
-            FileInfo logFile = new FileInfo(parameters[0]);
-            FileInfo ruleFile = new FileInfo(parameters[1]);
-            
-            if (!ruleFile.Exists)
-            {
-                throw new LoggerException("Rule file does not exist.");
-            }
-
-            using (StreamReader r = new StreamReader(ruleFile.FullName))
-            {
-                string line;
-                while ((line = r.ReadLine()) != null)
-                {
-                    this.regExRules.Add(line);
-                }
-            }
-
-            try
-            {
-                this.streamWriter = new StreamWriter(logFile.FullName);
-                this.streamWriter.AutoFlush = true;
-            }
-            catch (Exception ex)
-            {
-                if
-                (ex is UnauthorizedAccessException
-                    || ex is ArgumentNullException
-                    || ex is PathTooLongException
-                    || ex is DirectoryNotFoundException
-                    || ex is NotSupportedException
-                    || ex is ArgumentException
-                    || ex is SecurityException
-                    || ex is IOException)
-                {
-                    throw new LoggerException("Failed to create log file: " + ex.Message);
-                }
-
-                // Unexpected failure
-                throw;
-            }
+            this.InitializeFileLogger();
 
             eventSource.BuildFinished += this.BuildFinished;
             eventSource.BuildStarted += this.BuildStarted;
@@ -127,6 +60,127 @@ namespace MSBuild.ExtensionPack.Loggers
                 eventSource.TargetFinished += this.TargetFinished;
                 eventSource.TaskStarted += this.TaskStarted;
                 eventSource.TaskFinished += this.TaskFinished;
+            }
+        }
+
+        /// <summary>
+        /// Shutdown() is guaranteed to be called by MSBuild at the end of the build, after all 
+        /// events have been raised.
+        /// </summary>
+        public override void Shutdown()
+        {
+            if (this.fileWriter != null)
+            {
+                this.fileWriter.Close();
+            }
+        }
+
+        private static bool NotExpectedException(Exception e)
+        {
+            return ((!(e is UnauthorizedAccessException) && !(e is ArgumentNullException)) && (!(e is PathTooLongException) && !(e is DirectoryNotFoundException))) && ((!(e is NotSupportedException) && !(e is ArgumentException)) && (!(e is SecurityException) && !(e is IOException)));
+        }
+
+        private void ParseFileLoggerParameters()
+        {
+            if (this.Parameters != null)
+            {
+                string[] strArray = this.Parameters.Split(fileLoggerParameterDelimiters);
+                foreach (string[] strArray2 in from t in strArray where t.Length > 0 select t.Split(fileLoggerParameterValueSplitCharacter))
+                {
+                    this.ApplyFileLoggerParameter(strArray2[0], strArray2.Length > 1 ? strArray2[1] : null);
+                }
+            }
+        }
+
+        private void ApplyFileLoggerParameter(string parameterName, string parameterValue)
+        {
+            switch (parameterName.ToUpperInvariant())
+            {
+                case "LOGFILE":
+                    this.logFileName = parameterValue;
+                    break;
+                case "RULEFILE":
+                    this.ruleFileName = parameterValue;
+                    break;
+                case "VERBOSITY":
+                    this.Verbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), parameterValue);
+                    break;
+                case "APPEND":
+                    this.append = Convert.ToBoolean(parameterValue, CultureInfo.InvariantCulture);
+                    break;
+                case "ENCODING":
+                    try
+                    {
+                        this.encoding = Encoding.GetEncoding(parameterValue);
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        throw new LoggerException(exception.Message, exception.InnerException, "MSB4128", null);
+                    }
+
+                    break;
+                case null:
+                    return;
+            }
+        }
+
+        private void InitializeFileLogger()
+        {
+            string parameters = this.Parameters;
+            if (parameters != null)
+            {
+                this.Parameters = "FORCENOALIGN;" + parameters;
+            }
+            else
+            {
+                this.Parameters = "FORCENOALIGN;";
+            }
+
+            this.ParseFileLoggerParameters();
+
+            try
+            {
+                // if no rule file is supplied we add a single generic password regex
+                if (string.IsNullOrEmpty(this.ruleFileName))
+                {
+                    this.regExRules.Add("(?i:.*password.*)");
+                }
+                else
+                {
+                    FileInfo ruleFile = new FileInfo(this.ruleFileName);
+
+                    if (!ruleFile.Exists)
+                    {
+                        throw new LoggerException("Rule file does not exist.");
+                    }
+
+                    using (StreamReader r = new StreamReader(ruleFile.FullName))
+                    {
+                        string line;
+                        while ((line = r.ReadLine()) != null)
+                        {
+                            this.regExRules.Add(line);
+                        }
+                    }
+                }
+
+                this.fileWriter = new StreamWriter(this.logFileName, this.append, this.encoding);
+                this.fileWriter.AutoFlush = true;
+            }
+            catch (Exception exception)
+            {
+                if (NotExpectedException(exception))
+                {
+                    throw;
+                }
+
+                string message = string.Format(CultureInfo.InvariantCulture, "Invalid File Logger File {0}. {1}", this.logFileName, exception.Message);
+                if (this.fileWriter != null)
+                {
+                    this.fileWriter.Close();
+                }
+
+                throw new LoggerException(message, exception.InnerException);
             }
         }
 
@@ -238,10 +292,10 @@ namespace MSBuild.ExtensionPack.Loggers
         {
             for (int i = this.indent; i > 0; i--)
             {
-                this.streamWriter.Write("\t");
+                this.fileWriter.Write("\t");
             }
 
-            this.streamWriter.WriteLine(line);
+            this.fileWriter.WriteLine(line);
         }
 
         private string ProcessLine(string line)
