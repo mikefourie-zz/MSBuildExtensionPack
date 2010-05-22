@@ -198,6 +198,18 @@ namespace MSBuild.ExtensionPack.Computer
                 return bytes.ToString(0, bytes.Length - 1);
             }
 
+            if (valueKind == RegistryValueKind.MultiString && v is string[])
+            {
+                var itemList = new StringBuilder();
+                foreach (string item in (string[])v)
+                {
+                    itemList.Append(item);
+                    itemList.Append(',');
+                }
+
+                return itemList.ToString(0, itemList.Length - 1);
+            }
+
             return v.ToString();
         }
 
@@ -308,10 +320,9 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            object v = subKey.GetValue(this.Value);
-            if (v == null)
+            if (subKey.GetValue(this.Value) == null)
             {
-                this.Log.LogError(string.IsNullOrEmpty(this.Value) ? string.Format(CultureInfo.CurrentCulture, "A Default value was not found for the Registry Key: {0}", this.Key) : string.Format(CultureInfo.CurrentCulture, "The Registry value provided is not valid: {0}", this.Value));
+                this.LogTaskMessage(string.IsNullOrEmpty(this.Value) ? string.Format(CultureInfo.CurrentCulture, "A Default value was not found for the Registry Key: {0}", this.Key) : string.Format(CultureInfo.CurrentCulture, "The Registry value provided is not valid: {0}", this.Value));
                 return;
             }
 
