@@ -12,9 +12,9 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CheckExists</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, Default)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, DatabaseServer, Database<b>Output: </b>Exists)</para>
+    /// <para><i>Create</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, Default, DatabaseServer, Database, CustomCfg, Force)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
