@@ -544,6 +544,7 @@
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Create"/>
                                 <xs:enumeration value="Delete"/>
+                                <xs:enumeration value="SetPermissions"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>

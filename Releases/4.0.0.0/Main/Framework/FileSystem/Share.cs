@@ -16,6 +16,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>CheckExists</i> (<b>Required: </b> ShareName <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> ShareName, SharePath <b>Optional: </b>Description, MaximumAllowed, CreateSharePath, AllowUsers, DenyUsers)</para>
     /// <para><i>Delete</i> (<b>Required: </b> ShareName)</para>
+    /// <para><i>SetPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -53,6 +54,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string CheckExistsTaskAction = "CheckExists";
         private const string DeleteTaskAction = "Delete";
         private const string CreateTaskAction = "Create";
+        private const string SetPermissionsTaskAction = "SetPermissions";
 
         #region enums
         private enum ReturnCode : uint
@@ -112,6 +114,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(CreateTaskAction)]
         [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(SetPermissionsTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -131,6 +134,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(SetPermissionsTaskAction, true)]
         public string ShareName { get; set; }
 
         /// <summary>
@@ -168,12 +172,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// ]]></code>    
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
+        [TaskAction(SetPermissionsTaskAction, false)]
         public ITaskItem[] AllowUsers { get; set; }
 
         /// <summary>
         /// Sets a collection of users not allowed to access the share
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
+        [TaskAction(SetPermissionsTaskAction, false)]
         public ITaskItem[] DenyUsers { get; set; }
 
         /// <summary>
@@ -183,14 +189,17 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             switch (this.TaskAction)
             {
-                case "Create":
+                case CreateTaskAction:
                     this.Create();
                     break;
-                case "Delete":
+                case DeleteTaskAction:
                     this.Delete();
                     break;
-                case "CheckExists":
+                case CheckExistsTaskAction:
                     this.CheckExists();
+                    break;
+                case SetPermissionsTaskAction:
+                    this.SetPermissions();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -270,6 +279,39 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
+        private void SetPermissions()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Set Permissions for share: {0} on: {1}", this.ShareName, this.MachineName));
+            this.GetManagementScope(@"\root\cimv2");
+            ManagementPath fullSharePath = new ManagementPath("Win32_Share.Name='" + this.ShareName + "'");
+            using (ManagementObject shareObject = new ManagementObject(this.Scope, fullSharePath, null))
+            {
+                // try bind to the share to see if it exists
+                try
+                {
+                    shareObject.Get();
+                }
+                catch
+                {
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                    return;
+                }
+
+                // Set the input parameters
+                ManagementBaseObject inParams = shareObject.GetMethodParameters("SetShareInfo");
+                inParams["Access"] = this.SetAccessPermissions();
+
+                // execute the method and check the return code
+                ManagementBaseObject outputParams = shareObject.InvokeMethod("SetShareInfo", inParams, null);
+                ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outputParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                if (returnCode != ReturnCode.Success)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to delete the share. ReturnCode: {0}.", returnCode));
+                    return;
+                }
+            }
+        }
+        
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating share: {0} on: {1}", this.ShareName, this.MachineName));

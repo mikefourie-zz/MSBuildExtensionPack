@@ -893,3 +893,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.ActiveDirectoryNativeMethods.#LsaClose(System.IntPtr)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XmlFile", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#GetNamespaceManagerForDoc()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ReturnCode", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.Share.#SetPermissions()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.Share.#SetPermissions()")]
