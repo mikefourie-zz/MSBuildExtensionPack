@@ -103,7 +103,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <param name="parameterGroup">IDictionary</param>
         /// <param name="taskBody">The Task body</param>
         /// <param name="taskFactoryLoggingHost">IBuildEngine</param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public bool Initialize(string taskName, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
         {
             Contract.Requires(!string.IsNullOrEmpty(taskName));
@@ -145,7 +145,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <summary>
         /// Get the Task Parameters
         /// </summary>
-        /// <returns></returns>
+        /// <returns>TaskPropertyInfo</returns>
         public TaskPropertyInfo[] GetTaskParameters()
         {
             return this.paramGroup.Values.ToArray();

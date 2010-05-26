@@ -18,7 +18,15 @@ namespace MSBuild.ExtensionPack.Loggers
     using MSBuild.ExtensionPack.Loggers.Extended;
 
     /// <summary>
-    /// SecureFileLogger
+    /// <para>This logger can be used to replace text that is logged with hashes (#) based on a set of Regular Expression matches</para>
+    /// <para><b>Syntax: </b></para>
+    /// <para>     /l:SecureFileLogger,MSBuild.ExtensionPack.Loggers.dll;logfile=YOURLOGFILE;rulefile=YOURRULEFILE;append=BOOL;verbosity=YOURVERBOSITY;encoding=YOURENCODING</para>
+    /// <para><b>Parameters: </b></para>
+    /// <para>Logfile: A optional parameter that specifies the file in which to store the log information. Defaults to securemsbuild.log</para>
+    /// <para>RuleFile: A optional parameter that specifies the file in which to read regular expressions from. Use one Regular Expression per line. Defaults to (?i:.*password.*)</para>
+    /// <para>Append: An optional boolean parameter that indicates whether or not to append the log to the specified file: true to add the log to the text already present in the file; false to overwrite the contents of the file. The default is false.</para>
+    /// <para>Verbosity: An optional parameter that overrides the global verbosity setting for this file logger only. This enables you to log to several loggers, each with a different verbosity.</para>
+    /// <para>Encoding: An optional parameter that specifies the encoding for the file, for example, UTF-8.</para>
     /// </summary>
     public class SecureFileLogger : Logger
     {
