@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0"
+         DefaultTargets="Build"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask
+    TaskName="HelloWorld"
+    TaskFactory="DlrTaskFactory"
+    AssemblyFile="$(TaskFactoryPath)MSBuild.ExtensionPack.TaskFactory.Dlr.dll">
+    <ParameterGroup>
+      <Name Required="true"/>
+      <TaskMessage Output="true"/>
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment"
+            Language="rb">
+        <![CDATA[
+        self.task_message = "Hello #{name} from Ruby".to_clr_string
+        log.log_message(task_message);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <PropertyGroup>
+    <YourName Condition=" '$(YourName)'=='' ">World</YourName>
+  </PropertyGroup>
+
+  <Target Name="Build">
+    <HelloWorld Name="$(YourName)">
+      <Output PropertyName="RubyOut"
+              TaskParameter="TaskMessage"/>
+    </HelloWorld>
+    <Message Text="Message from task: $(RubyOut)"
+             Importance="high" />
+  </Target>
+</Project>

@@ -4,6 +4,9 @@
     <Recognized>
       <Word>Changesets</Word>
     </Recognized>
+    <Recognized>
+      <Word>Dlr</Word>
+    </Recognized>
     <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->

@@ -69,9 +69,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Loggers", "Loggers", "{A384
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loggers", "Loggers\SecureLogger\Loggers.csproj", "{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlrTaskFactory", "TaskFactories\DlrTaskFactory\DlrTaskFactory.csproj", "{9C416E27-110F-460A-B088-84735F430078}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 14
+		SccNumberOfProjects = 15
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs08.codeplex.com/
 		SccLocalPath0 = .
@@ -127,6 +129,10 @@ Global
 		SccProjectTopLevelParentUniqueName13 = MainSolution.sln
 		SccProjectName13 = Loggers/SecureLogger
 		SccLocalPath13 = Loggers\\SecureLogger
+		SccProjectUniqueName14 = TaskFactories\\DlrTaskFactory\\DlrTaskFactory.csproj
+		SccProjectTopLevelParentUniqueName14 = MainSolution.sln
+		SccProjectName14 = TaskFactories/DlrTaskFactory
+		SccLocalPath14 = TaskFactories\\DlrTaskFactory
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
@@ -186,6 +192,10 @@ Global
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C416E27-110F-460A-B088-84735F430078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C416E27-110F-460A-B088-84735F430078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C416E27-110F-460A-B088-84735F430078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C416E27-110F-460A-B088-84735F430078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,6 +213,7 @@ Global
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{E6255821-7BC4-4617-AC16-A620A51C9962} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{5F67BB68-03E1-4666-971E-821951885E9F} = {147B0947-7CB4-4F4C-BCB3-57CE32115453}
+		{9C416E27-110F-460A-B088-84735F430078} = {147B0947-7CB4-4F4C-BCB3-57CE32115453}
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15} = {A3842673-8A5B-4EA7-972F-7A723BF24450}
 	EndGlobalSection
 EndGlobal
