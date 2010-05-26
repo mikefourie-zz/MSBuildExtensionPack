@@ -376,6 +376,7 @@
                     <xs:attribute name="FilePath" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Name" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Description"/>
+                    <xs:attribute name="Arguments"/>
                     <xs:attribute name="IconLocation"/>
                     <xs:attribute name="ShortcutPath"/>
                     <xs:attribute name="WorkingDirectory"/>
