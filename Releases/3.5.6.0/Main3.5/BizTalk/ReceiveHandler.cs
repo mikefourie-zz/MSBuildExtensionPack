@@ -116,7 +116,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         public string HostName { get; set; }
 
         /// <summary>
-        /// Sets the CustomCfg for the ReceiveHandler
+        /// Sets the CustomCfg for the ReceiveHandler. See <a href="http://msdn.microsoft.com/en-us/library/aa559911(v=BTS.20).aspx">Configuration Properties for Integrated BizTalk Adapters</a>
         /// </summary>
         public string CustomCfg { get; set; }
 
