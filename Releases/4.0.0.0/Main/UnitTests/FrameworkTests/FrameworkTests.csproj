@@ -90,7 +90,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Framework.csproj">
       <Project>{1C780E39-26D5-4E6F-9533-91D867C1136C}</Project>
-      <Name>Framework</Name>
+      <Name>Framework %28Tasks\Framework%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

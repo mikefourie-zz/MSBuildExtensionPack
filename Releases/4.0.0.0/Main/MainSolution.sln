@@ -67,9 +67,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tasks", "Tasks", "{7DF43C7D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Loggers", "Loggers", "{A3842673-8A5B-4EA7-972F-7A723BF24450}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loggers", "Loggers\SecureLogger\Loggers.csproj", "{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlrTaskFactory", "TaskFactories\DlrTaskFactory\DlrTaskFactory.csproj", "{9C416E27-110F-460A-B088-84735F430078}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "Loggers\Framework\Framework.csproj", "{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -125,14 +125,14 @@ Global
 		SccProjectTopLevelParentUniqueName12 = MainSolution.sln
 		SccProjectName12 = TaskFactories/PowershellTaskFactory
 		SccLocalPath12 = TaskFactories\\PowershellTaskFactory
-		SccProjectUniqueName13 = Loggers\\SecureLogger\\Loggers.csproj
+		SccProjectUniqueName13 = TaskFactories\\DlrTaskFactory\\DlrTaskFactory.csproj
 		SccProjectTopLevelParentUniqueName13 = MainSolution.sln
-		SccProjectName13 = Loggers/SecureLogger
-		SccLocalPath13 = Loggers\\SecureLogger
-		SccProjectUniqueName14 = TaskFactories\\DlrTaskFactory\\DlrTaskFactory.csproj
+		SccProjectName13 = TaskFactories/DlrTaskFactory
+		SccLocalPath13 = TaskFactories\\DlrTaskFactory
+		SccProjectUniqueName14 = Loggers\\Framework\\Framework.csproj
 		SccProjectTopLevelParentUniqueName14 = MainSolution.sln
-		SccProjectName14 = TaskFactories/DlrTaskFactory
-		SccLocalPath14 = TaskFactories\\DlrTaskFactory
+		SccProjectName14 = Loggers/Framework
+		SccLocalPath14 = Loggers\\Framework
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
@@ -188,14 +188,14 @@ Global
 		{5F67BB68-03E1-4666-971E-821951885E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F67BB68-03E1-4666-971E-821951885E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F67BB68-03E1-4666-971E-821951885E9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9C416E27-110F-460A-B088-84735F430078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C416E27-110F-460A-B088-84735F430078}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C416E27-110F-460A-B088-84735F430078}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C416E27-110F-460A-B088-84735F430078}.Release|Any CPU.Build.0 = Release|Any CPU
+		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
