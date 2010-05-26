@@ -1,37 +1,30 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SecureFileLogger.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="XmlFileLogger.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Loggers
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Security;
     using System.Text;
-    using System.Text.RegularExpressions;
+    using System.Xml;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
-    using MSBuild.ExtensionPack.Loggers.Extended;
 
     /// <summary>
-    /// SecureFileLogger
+    /// XmlFileLogger
     /// </summary>
-    public class SecureFileLogger : Logger
+    public class XmlFileLogger : Logger
     {
-        private const char SecureChar = '#';
         private static readonly char[] fileLoggerParameterDelimiters = new[] { ';' };
         private static readonly char[] fileLoggerParameterValueSplitCharacter = new[] { '=' };
-        private readonly ICollection<string> regExRules = new Collection<string>();
-        private StreamWriter fileWriter;
+        private XmlTextWriter xmlWriter;
         private string logFileName;
-        private string ruleFileName;
-        private bool append;
         private Encoding encoding;
-        private int indent;
         private int warnings;
         private int errors;
         private DateTime startTime;
@@ -42,7 +35,7 @@ namespace MSBuild.ExtensionPack.Loggers
         /// <param name="eventSource">IEventSource</param>
         public override void Initialize(IEventSource eventSource)
         {
-            this.logFileName = "securemsbuild.log";
+            this.logFileName = "msbuild.xml";
             this.encoding = Encoding.Default;
 
             this.InitializeFileLogger();
@@ -55,6 +48,7 @@ namespace MSBuild.ExtensionPack.Loggers
             if (Verbosity != LoggerVerbosity.Quiet)
             {
                 eventSource.MessageRaised += this.MessageRaised;
+                eventSource.CustomEventRaised += this.CustomBuildEventRaised;
                 eventSource.ProjectStarted += this.ProjectStarted;
                 eventSource.ProjectFinished += this.ProjectFinished;
             }
@@ -78,9 +72,9 @@ namespace MSBuild.ExtensionPack.Loggers
         /// </summary>
         public override void Shutdown()
         {
-            if (this.fileWriter != null)
+            if (this.xmlWriter != null)
             {
-                this.fileWriter.Close();
+                this.xmlWriter.Close();
             }
         }
 
@@ -108,14 +102,8 @@ namespace MSBuild.ExtensionPack.Loggers
                 case "LOGFILE":
                     this.logFileName = parameterValue;
                     break;
-                case "RULEFILE":
-                    this.ruleFileName = parameterValue;
-                    break;
                 case "VERBOSITY":
                     this.Verbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), parameterValue);
-                    break;
-                case "APPEND":
-                    this.append = Convert.ToBoolean(parameterValue, CultureInfo.InvariantCulture);
                     break;
                 case "ENCODING":
                     try
@@ -135,45 +123,14 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void InitializeFileLogger()
         {
-            string parameters = this.Parameters;
-            if (parameters != null)
-            {
-                this.Parameters = "FORCENOALIGN;" + parameters;
-            }
-            else
-            {
-                this.Parameters = "FORCENOALIGN;";
-            }
-
             this.ParseFileLoggerParameters();
             try
             {
-                // if no rule file is supplied we add a single generic password regex
-                if (string.IsNullOrEmpty(this.ruleFileName))
-                {
-                    this.regExRules.Add("(?i:.*password.*)");
-                }
-                else
-                {
-                    FileInfo ruleFile = new FileInfo(this.ruleFileName);
-
-                    if (!ruleFile.Exists)
-                    {
-                        throw new LoggerException("Rule file does not exist.");
-                    }
-
-                    using (StreamReader r = new StreamReader(ruleFile.FullName))
-                    {
-                        string line;
-                        while ((line = r.ReadLine()) != null)
-                        {
-                            this.regExRules.Add(line);
-                        }
-                    }
-                }
-
-                this.fileWriter = new StreamWriter(this.logFileName, this.append, this.encoding);
-                this.fileWriter.AutoFlush = true;
+                this.xmlWriter = new XmlTextWriter(this.logFileName, this.encoding);
+                this.xmlWriter.Formatting = Formatting.Indented;
+                this.xmlWriter.WriteStartDocument();
+                this.xmlWriter.WriteStartElement("build");
+                this.xmlWriter.Flush();                
             }
             catch (Exception exception)
             {
@@ -183,9 +140,9 @@ namespace MSBuild.ExtensionPack.Loggers
                 }
 
                 string message = string.Format(CultureInfo.InvariantCulture, "Invalid File Logger File {0}. {1}", this.logFileName, exception.Message);
-                if (this.fileWriter != null)
+                if (this.xmlWriter != null)
                 {
-                    this.fileWriter.Close();
+                    this.xmlWriter.Close();
                 }
 
                 throw new LoggerException(message, exception.InnerException);
@@ -194,53 +151,53 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void BuildFinished(object sender, BuildFinishedEventArgs e)
         {
-            this.WriteLine(e.Message);
-            this.WriteLine(String.Format(CultureInfo.InvariantCulture, "{0} Warning(s) ", this.warnings));
-            this.WriteLine(String.Format(CultureInfo.InvariantCulture, "{0} Error(s) ", this.errors) + Environment.NewLine + Environment.NewLine);
-
+            this.xmlWriter.WriteStartElement("warnings");
+            this.xmlWriter.WriteValue(this.warnings);
+            this.xmlWriter.WriteEndElement();
+            this.xmlWriter.WriteStartElement("errors");
+            this.xmlWriter.WriteValue(this.errors);
+            this.xmlWriter.WriteEndElement();
+            this.xmlWriter.WriteStartElement("starttime");
+            this.xmlWriter.WriteValue(this.startTime.ToString());
+            this.xmlWriter.WriteEndElement();
+            this.xmlWriter.WriteStartElement("endtime");
+            this.xmlWriter.WriteValue(DateTime.UtcNow.ToString());
+            this.xmlWriter.WriteEndElement();
+            this.xmlWriter.WriteStartElement("timeelapsed");
             TimeSpan s = DateTime.UtcNow - this.startTime;
-            this.WriteLine(String.Format(CultureInfo.InvariantCulture, "Time Elapsed {0}", s));
+            this.xmlWriter.WriteValue(String.Format(CultureInfo.InvariantCulture, "{0}", s));
+            this.xmlWriter.WriteEndElement();
+            this.LogFinished();
         }
 
         private void BuildStarted(object sender, BuildStartedEventArgs e)
         {
             this.startTime = DateTime.UtcNow;
-            string line = String.Format(CultureInfo.InvariantCulture, "{0} {1}", e.Message, e.Timestamp);
-            this.WriteLine(line);
-            this.WriteLine("__________________________________________________");
+            this.LogStarted("build", string.Empty, string.Empty);
         }
 
         private void ErrorRaised(object sender, BuildErrorEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "ERROR {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
-            this.WriteLine(this.ProcessLine(line));
             this.errors++;
+            this.LogErrorOrWarning("error", e.Message, e.Code, e.File, e.LineNumber, e.ColumnNumber);
         }
 
         private void MessageRaised(object sender, BuildMessageEventArgs e)
         {
-            if ((e.Importance == MessageImportance.High && IsVerbosityAtLeast(LoggerVerbosity.Minimal)) || (e.Importance == MessageImportance.Normal && IsVerbosityAtLeast(LoggerVerbosity.Normal)) || (e.Importance == MessageImportance.Low && IsVerbosityAtLeast(LoggerVerbosity.Detailed)))
-            {
-                this.WriteLine(this.ProcessLine(e.Message));
-            }
+            this.LogMessage("message", e.Message, e.Importance);
         }
 
         private void ProjectFinished(object sender, ProjectFinishedEventArgs e)
         {
-            this.indent--;
-            this.WriteLine(e.Message);
+            this.LogFinished();
         }
 
         private void ProjectStarted(object sender, ProjectStartedEventArgs e)
         {
-            string targets = string.IsNullOrEmpty(e.TargetNames) ? "default" : e.TargetNames;
-            string line = String.Format(CultureInfo.InvariantCulture, "Project \"{0}\" ({1} target(s)):", e.ProjectFile, targets);
-            this.WriteLine(line + Environment.NewLine);
-
+            this.LogStarted("project", e.TargetNames, e.ProjectFile);
             if (IsVerbosityAtLeast(LoggerVerbosity.Diagnostic))
             {
-                this.WriteLine("Initial Properties:");
-
+                this.xmlWriter.WriteStartElement("InitialProperties");
                 SortedDictionary<string, string> sortedProperties = new SortedDictionary<string, string>();
                 foreach (DictionaryEntry k in e.Properties.Cast<DictionaryEntry>())
                 {
@@ -249,72 +206,144 @@ namespace MSBuild.ExtensionPack.Loggers
 
                 foreach (var p in sortedProperties)
                 {
-                    bool matched = this.regExRules.Select(s => new Regex(s)).Select(r => r.Match(p.Key)).Any(m => m.Success);
-
-                    if (matched)
-                    {
-                        this.WriteLine(p.Key + "\t = " + SecureChar.Repeat(p.Value.Length));
-                    }
-                    else
-                    {
-                        this.WriteLine(p.Key + "\t = " + p.Value);
-                    }
+                    this.xmlWriter.WriteStartElement(p.Key);
+                    this.xmlWriter.WriteCData(p.Value);
+                    this.xmlWriter.WriteEndElement();
                 }
+
+                this.xmlWriter.WriteEndElement();
             }
         }
 
         private void TargetFinished(object sender, TargetFinishedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "Done building target \"{0}\" in project \"{1}\"", e.TargetName, e.ProjectFile);
-            this.indent--;
-            this.WriteLine(line);
+            this.LogFinished();
         }
 
         private void TargetStarted(object sender, TargetStartedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "Target {0}:", e.TargetName);
-            this.WriteLine(line);
-            this.indent++;
+            this.LogStarted("target", e.TargetName, string.Empty);
         }
 
         private void TaskFinished(object sender, TaskFinishedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "{0}", e.Message);
-            this.WriteLine(line);
+            this.LogFinished();
         }
 
         private void TaskStarted(object sender, TaskStartedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "{0}", e.Message);
-            this.WriteLine(line);
+            this.LogStarted("task", e.TaskName, e.ProjectFile);
         }
 
         private void WarningRaised(object sender, BuildWarningEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "Warning {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
-            this.WriteLine(this.ProcessLine(line));
             this.warnings++;
+            this.LogErrorOrWarning("warning", e.Message, e.Code, e.File, e.LineNumber, e.ColumnNumber);
         }
 
-        private void WriteLine(string line)
+        private void CustomBuildEventRaised(object sender, CustomBuildEventArgs e)
         {
-            for (int i = this.indent; i > 0; i--)
-            {
-                this.fileWriter.Write("\t");
-            }
-
-            this.fileWriter.WriteLine(line);
+            this.LogMessage("custom", e.Message, MessageImportance.Normal);
         }
 
-        private string ProcessLine(string line)
+        private void LogStarted(string elementName, string stageName, string file)
         {
-            foreach (string s in this.regExRules)
+            if (elementName != "build")
             {
-                Regex r = new Regex(s);
-                line = r.Replace(line, SecureChar.Repeat(s.Length));
+                this.xmlWriter.WriteStartElement(elementName);
             }
 
-            return line;
+            this.SetAttribute(elementName == "project" ? "targets" : "name", stageName);
+            this.SetAttribute("file", file);
+            this.SetAttribute("started", DateTime.UtcNow);
+            this.xmlWriter.Flush();
+        }
+
+        private void LogFinished()
+        {
+            this.xmlWriter.WriteEndElement();
+            this.xmlWriter.Flush();
+        }
+
+        private void LogErrorOrWarning(string messageType, string message, string code, string file, int line, int column)
+        {
+            this.xmlWriter.WriteStartElement(messageType);
+            this.SetAttribute("code", code);
+            this.SetAttribute("file", file);
+            this.SetAttribute("line", line);
+            this.SetAttribute("column", column);
+            this.WriteMessage(message, code != "Properties");
+            this.xmlWriter.WriteEndElement();
+        }
+
+        private void LogMessage(string messageType, string message, MessageImportance importance)
+        {
+            if (importance == MessageImportance.Low && Verbosity != LoggerVerbosity.Detailed && Verbosity != LoggerVerbosity.Diagnostic)
+            {
+                return;
+            }
+
+            if (importance == MessageImportance.Normal && (Verbosity == LoggerVerbosity.Minimal || Verbosity == LoggerVerbosity.Quiet))
+            {
+                return;
+            }
+
+            this.xmlWriter.WriteStartElement(messageType);
+            this.SetAttribute("importance", importance);
+            this.WriteMessage(message, false);
+            this.xmlWriter.WriteEndElement();
+        }
+
+        private void WriteMessage(string message, bool escape)
+        {
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+
+            message = message.Replace("&", "&amp;");
+            if (escape)
+            {
+                message = message.Replace("<", "&lt;");
+                message = message.Replace(">", "&gt;");
+            }
+
+            this.xmlWriter.WriteCData(message);
+        }
+
+        private void SetAttribute(string name, object value)
+        {
+            if (value == null)
+            {
+                return;
+            }
+
+            Type t = value.GetType();
+            if (t == typeof(int))
+            {
+                int number;
+                if (Int32.TryParse(value.ToString(), out number))
+                {
+                    this.xmlWriter.WriteAttributeString(name, number.ToString(CultureInfo.InvariantCulture));
+                }
+            }
+            else if (t == typeof(bool))
+            {
+                this.xmlWriter.WriteAttributeString(name, value.ToString());
+            }
+            else if (t == typeof(MessageImportance))
+            {
+                MessageImportance importance = (MessageImportance)value;
+                this.xmlWriter.WriteAttributeString(name, importance.ToString());
+            }
+            else
+            {
+                string text = value.ToString();
+                if (!String.IsNullOrEmpty(text))
+                {
+                    this.xmlWriter.WriteAttributeString(name, text);
+                }
+            }
         }
     }
 }

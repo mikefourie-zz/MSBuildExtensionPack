@@ -64,6 +64,7 @@
     <Compile Include="SecureFileLogger.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="XmlFileLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XmlSamples\SecureFileLogger.proj" />
