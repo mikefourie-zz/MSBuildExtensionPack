@@ -14,11 +14,45 @@ namespace MSBuild.ExtensionPack.TaskFactory
     /// <summary>
     /// A task factory that enables inline scripts to execute as part of an MSBuild-based build.
     /// </summary>
-    /// <remarks>
-    /// A more complete example of a task factory, that allows for Windows PowerShell scripts
-    /// inside project files, can be found on MSDN Code Gallery:
-    /// http://code.msdn.microsoft.com/PowershellFactory
-    /// </remarks>
+    /// <example>
+    /// <code lang="xml"><![CDATA[
+    /// <?xml version="1.0" encoding="utf-8"?>
+    /// <Project ToolsVersion="4.0"
+    ///          DefaultTargets="Build"
+    ///          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///   <UsingTask
+    ///     TaskName="HelloWorld"
+    ///     TaskFactory="DlrTaskFactory"
+    ///     AssemblyFile="$(TaskFactoryPath)MSBuild.ExtensionPack.TaskFactory.Dlr.dll">
+    ///     <ParameterGroup>
+    ///       <Name Required="true"/>
+    ///       <TaskMessage Output="true"/>
+    ///     </ParameterGroup>
+    ///     <Task>
+    ///       <Code Type="Fragment"
+    ///             Language="rb">
+    ///            <!-- Make this a proper CDATA section before running. -->
+    ///         [CDATA[
+    ///         self.task_message = "Hello #{name} from Ruby".to_clr_string
+    ///         log.log_message(task_message);
+    ///         ]
+    ///       </Code>
+    ///     </Task>
+    ///   </UsingTask>
+    ///   <PropertyGroup>
+    ///     <YourName Condition=" '$(YourName)'=='' ">World</YourName>
+    ///   </PropertyGroup>
+    ///   <Target Name="Build">
+    ///     <HelloWorld Name="$(YourName)">
+    ///       <Output PropertyName="RubyOut"
+    ///               TaskParameter="TaskMessage"/>
+    ///     </HelloWorld>
+    ///     <Message Text="Message from task: $(RubyOut)"
+    ///              Importance="high" />
+    ///   </Target>
+    /// </Project>
+    /// ]]></code>
+    /// </example>
     public class DlrTaskFactory : ITaskFactory
     {
         /// <summary>
