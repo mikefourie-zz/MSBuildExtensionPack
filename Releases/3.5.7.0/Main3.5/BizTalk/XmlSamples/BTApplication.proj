@@ -1,0 +1,36 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Apps Include="An Application"/>
+            <NewApps Include="NewExtensionPackApp">
+                <!--<Default>true</Default>-->
+                <Description>New ExtensionPack App</Description>
+            </NewApps>
+            <Reference Include="Another Application"/>
+        </ItemGroup>
+        <!-- Get a list of BizTalk Applications -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Get">
+            <Output TaskParameter="Applications" ItemName="ApplicationList"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkApplication>
+        <Message Text="%(ApplicationList.Identity)"/>
+        <!-- Add a Reference -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
+        <!-- Remove a Reference -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
+        <!-- Check if the Applications in the Apps collection exist -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
+        <!-- Execute a StartAll on the Apps Application collection -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="StartAll" Applications="@(Apps)"/>
+        <!-- Execute a StopAll on the Apps Application collection -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="StopAll" Applications="@(Apps)"/>
+        <!-- Force the creation of the Applications in the NewApps collection -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Create" Applications="@(NewApps)" Force="true"/>
+        <!-- Delete the Applications in the NewApps collection-->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Delete" Applications="@(NewApps)"/>
+    </Target>
+</Project>

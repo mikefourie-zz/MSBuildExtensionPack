@@ -1,0 +1,451 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1C780E39-26D5-4E6F-9533-91D867C1136C}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MSBuild.ExtensionPack</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MSBuild.ExtensionPack</RootNamespace>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Common\ExtensionPack.public.snk</AssemblyOriginatorKeyFile>
+    <AssemblyKeyProviderName>
+    </AssemblyKeyProviderName>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <DelaySign>true</DelaySign>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\BuildBinaries\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\BuildBinaries\MSBuild.ExtensionPack.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <IncrementalBuild>true</IncrementalBuild>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+    <CodeAnalysisRuleSet>Migrated rules for Framework.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\BuildBinaries\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\BuildBinaries\MSBuild.ExtensionPack.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <IncrementalBuild>false</IncrementalBuild>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+    <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
+    <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.DirectoryServices">
+      <Name>System.DirectoryServices</Name>
+    </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices">
+      <Name>System.EnterpriseServices</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Messaging">
+      <Name>System.Messaging</Name>
+    </Reference>
+    <Reference Include="System.Security">
+      <Name>System.Security</Name>
+    </Reference>
+    <Reference Include="System.ServiceProcess">
+      <Name>System.ServiceProcess</Name>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\Attributes.cs">
+      <Link>Attributes.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\BaseAppDomainIsolatedTask.cs">
+      <Link>BaseAppDomainIsolatedTask.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\BaseTask.cs">
+      <Link>BaseTask.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\StringExtension.cs">
+      <Link>StringExtension.cs</Link>
+    </Compile>
+    <Compile Include="Communication\Twitter.cs" />
+    <Compile Include="Computer\ActiveDirectory.cs" />
+    <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
+    <Compile Include="Computer\WshShell.cs" />
+    <Compile Include="Computer\GetPasswordForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Computer\GetPasswordForm.Designer.cs">
+      <DependentUpon>GetPasswordForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileSystem\FileVersion.cs" />
+    <Compile Include="FileSystem\FindUnder.cs" />
+    <Compile Include="FileSystem\RoboCopy.cs" />
+    <Compile Include="Framework\DynamicExecute.cs" />
+    <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="SqlServer\ExecuteEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SqlServer\SqlExecute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\ConfirmForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ConfirmForm.Designer.cs">
+      <DependentUpon>ConfirmForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisualStudio\VBPProject.cs" />
+    <Compile Include="VisualStudio\VSDevEnv.cs" />
+    <Compile Include="Web\WebClient.cs" />
+    <Compile Include="Web\HttpWebRequest.cs" />
+    <Compile Include="FileSystem\Share.cs" />
+    <Compile Include="Framework\Metadata.cs" />
+    <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
+    <Compile Include="Framework\AssemblyInfo\AssemblyInfoWrapper.cs" />
+    <Compile Include="Framework\AssemblyInfo\Version.cs" />
+    <Compile Include="SqlServer\SqlVersionDataClass.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlVersionDataClass.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="SqlServer\SqlVersion.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Certificate.cs" />
+    <Compile Include="Computer\ComponentServices.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SqlServer\SqlCmd.cs" />
+    <Compile Include="SqlServer\SqlCmdWrapper.cs" />
+    <Compile Include="UI\Console.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Computer\SystemDrive.cs" />
+    <Compile Include="Computer\EventLog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Computer\EventSource.cs" />
+    <Compile Include="FileSystem\Detokenise.cs" />
+    <Compile Include="FileSystem\Folder.cs" />
+    <Compile Include="Framework\Gac.cs" />
+    <Compile Include="Framework\GacNativeMethods.cs" />
+    <Compile Include="Science\Maths.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileSystem\File.cs" />
+    <Compile Include="Framework\Assembly.cs" />
+    <Compile Include="Compression\Cab.cs" />
+    <Compile Include="Framework\Signing.cs" />
+    <Compile Include="Framework\DateAndTime.cs" />
+    <Compile Include="Computer\EnvironmentVariable.cs" />
+    <Compile Include="Communication\Email.cs" />
+    <Compile Include="Computer\PerformanceCounters.cs" />
+    <Compile Include="CodeQuality\FxCop.cs" />
+    <Compile Include="Multimedia\Sound.cs" />
+    <Compile Include="Computer\Network.cs" />
+    <Compile Include="Computer\Registry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Computer\RegistryNativeMethods.cs" />
+    <Compile Include="Computer\WindowsService.cs" />
+    <Compile Include="ShellWrapper.cs" />
+    <Compile Include="UI\PromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PromptForm.Designer.cs">
+      <DependentUpon>PromptForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialog.cs" />
+    <Compile Include="UI\MessageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MessageForm.Designer.cs">
+      <DependentUpon>MessageForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisualStudio\SourceSafe.cs" />
+    <Compile Include="VisualStudio\TFSSource.cs" />
+    <Compile Include="VisualStudio\TFSVersion.cs" />
+    <Compile Include="VisualStudio\TFSSourceAdmin.cs" />
+    <Compile Include="VisualStudio\VB6.cs" />
+    <Compile Include="Framework\Guid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Framework\Thread.cs" />
+    <Compile Include="Framework\MsBuildHelper.cs" />
+    <Compile Include="Properties\ExtraAssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Framework\TextString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Management\Wmi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\ComWrapper.cs" />
+    <Compile Include="Web\Iis6AppPool.cs" />
+    <Compile Include="Web\IIs6VirtualDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\Iis6Website.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Web\Iis6ServiceExtensionFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xml.cs" />
+    <Compile Include="Xml\XmlFile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="My Application\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.VisualBasic.PowerPacks.10.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft Visual Basic PowerPacks 10.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SqlServer\SqlVersionDataClass.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="XmlSamples\Console.proj" />
+    <None Include="XmlSamples\Cab.proj" />
+    <None Include="XmlSamples\Assembly.proj" />
+    <None Include="XmlSamples\GenericTool.proj" />
+    <None Include="XmlSamples\RoboCopy.proj" />
+    <None Include="XmlSamples\SqlCmd.proj" />
+    <None Include="XmlSamples\VSDevEnv.proj" />
+    <None Include="XmlSamples\Xml.proj" />
+    <None Include="XmlSamples\Iis6ServiceExtensionFile.proj" />
+    <None Include="XmlSamples\Iis6VirtualDirectory.proj" />
+    <None Include="XmlSamples\Iis6Website.proj" />
+    <None Include="XmlSamples\Iis6AppPool.proj" />
+    <None Include="XmlSamples\Share.proj" />
+    <None Include="XmlSamples\Dialog.proj" />
+    <None Include="XmlSamples\VB6.proj" />
+    <None Include="XmlSamples\Certificate.proj" />
+    <None Include="XmlSamples\FxCop.proj" />
+    <None Include="XmlSamples\Gac.proj" />
+    <None Include="XmlSamples\Signing.proj" />
+    <None Include="XmlSamples\Sound.proj" />
+    <None Include="XmlSamples\Email.proj" />
+    <None Include="XmlSamples\ComponentServices.proj" />
+    <None Include="XmlSamples\PerformanceCounters.proj" />
+    <None Include="XmlSamples\Network.proj" />
+    <None Include="XmlSamples\WindowsService.proj" />
+    <None Include="XmlSamples\EventSource.proj" />
+    <None Include="XmlSamples\Registry.proj" />
+    <None Include="XmlSamples\Detokenise.proj" />
+    <None Include="XmlSamples\DateAndTime.proj" />
+    <None Include="XmlSamples\EnvironmentVariable.proj" />
+    <None Include="XmlSamples\SourceSafe.proj" />
+    <None Include="XmlSamples\TFSSourceAdmin.proj" />
+    <None Include="XmlSamples\TFSSource.proj" />
+    <None Include="XmlSamples\TFSVersion.proj" />
+    <None Include="XmlSamples\SystemDrive.proj" />
+    <None Include="XmlSamples\EventLog.proj" />
+    <None Include="XmlSamples\Folder.proj" />
+    <None Include="XmlSamples\Guid.proj" />
+    <None Include="XmlSamples\Maths.proj" />
+    <None Include="XmlSamples\MsBuildHelper.proj" />
+    <None Include="XmlSamples\File.proj" />
+    <None Include="XmlSamples\TextString.proj" />
+    <None Include="XmlSamples\Thread.proj" />
+    <None Include="XmlSamples\Wmi.proj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets" />
+    <None Include="SqlServer\SqlVersionDataClass.dbml.layout">
+      <DependentUpon>SqlVersionDataClass.dbml</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="XmlSamples\AssemblyInfo.proj" />
+    <None Include="XmlSamples\ActiveDirectory.proj" />
+    <None Include="XmlSamples\FileVersion.proj" />
+    <None Include="XmlSamples\SqlExecute.proj" />
+    <None Include="XmlSamples\WshShell.proj" />
+    <None Include="XmlSamples\WebClient.proj" />
+    <None Include="XmlSamples\FindUnder.proj" />
+    <None Include="XmlSamples\HttpWebRequest.proj" />
+    <None Include="XmlSamples\Metadata.proj" />
+    <None Include="XmlSamples\Twitter.proj" />
+    <None Include="XmlSamples\SqlVersion.proj" />
+    <None Include="XmlSamples\XmlFile.proj" />
+    <EmbeddedResource Include="Computer\GetPasswordForm.resx">
+      <DependentUpon>GetPasswordForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ConfirmForm.resx">
+      <DependentUpon>ConfirmForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PromptForm.resx">
+      <DependentUpon>PromptForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MessageForm.resx">
+      <DependentUpon>MessageForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
+    <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,25 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Allow Include="ADomain\ADomainUser"/>
+            <Allow Include="AMachine\ALocalReadUser">
+                <Permission>Read</Permission>
+            </Allow>
+            <Allow Include="AMachine\ALocalChangeUser">
+                <Permission>Change</Permission>
+            </Allow>
+        </ItemGroup>
+        <!-- Delete shares -->
+        <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Delete" ShareName="MSBEPS1"/>
+        <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Delete" ShareName="MSBEPS2"/>
+        <!-- Create a share and specify users. The share path will be created if it doesnt exist. -->
+        <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" AllowUsers="@(Allow)" CreateSharePath="true" SharePath="C:\fff1" ShareName="MSBEPS1" Description="A Description of MSBEPS1"/>
+        <!-- Create a share. Defaults to full permission for Everyone. -->
+        <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" SharePath="C:\fffd" ShareName="MSBEPS2" Description="A Description of MSBEPS2"/>
+    </Target>
+</Project>

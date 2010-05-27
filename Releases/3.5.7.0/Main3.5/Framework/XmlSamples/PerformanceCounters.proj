@@ -1,0 +1,31 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <!-- Configure some perf counters -->
+            <CounterList Include="foobar.A">
+                <CounterName>ACounter</CounterName>
+                <CounterHelp>A Custom Counter</CounterHelp>
+                <CounterType>CounterTimer</CounterType>
+            </CounterList>
+            <CounterList Include="foobar.A">
+                <CounterName>AnotherCounter</CounterName>
+                <CounterHelp>Another Custom Counter</CounterHelp>
+                <CounterType>CounterTimer</CounterType>
+            </CounterList>
+        </ItemGroup>
+        <!-- Add a Performance Counter -->
+        <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="Add" CategoryName="YourCustomCategory" CategoryHelp="This is a custom performance counter category" CounterList="@(CounterList)" MultiInstance="true" />
+        <!-- Remove a Performance Counter -->
+        <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="Remove" CategoryName="YourCustomCategory"/>
+        <!-- Get a Performance Counter value-->
+        <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="GetValue" CategoryName="Memory" CounterName="Available MBytes">
+            <Output PropertyName="TheValue" TaskParameter="Value"/>
+        </MSBuild.ExtensionPack.Computer.PerformanceCounters>
+        <Message Text="Available MBytes: $(TheValue)"/>
+    </Target>
+</Project>

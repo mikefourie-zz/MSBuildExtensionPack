@@ -1,0 +1,21 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+      <ItemGroup>
+            <BizTalkAssemblies Include="YOURASSEMBLY">
+        </ItemGroup>
+        <!-- Add the Assemblies -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAssembly TaskAction="Add" Force="true" Gac="true" MachineName="$(COMPUTERNAME)" Application="BizTalk Application 1" Assemblies="@(BizTalkAssemblies)" />
+        <!-- Check an Assembly Exists -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAssembly TaskAction="CheckExists" MachineName="$(COMPUTERNAME)" Application="BizTalk Application 1" Assemblies="@(BizTalkAssemblies)">
+            <Output TaskParameter="Exists" PropertyName="AssemblyExists" />
+        </MSBuild.ExtensionPack.BizTalk.BizTalkAssembly>
+        <Message Text="ASSEMBLY EXISTS: $(AssemblyExists)"/>
+        <!-- Remove the Assemblies -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAssembly TaskAction="Remove" MachineName="$(COMPUTERNAME)" Application="BizTalk Application 1" Assemblies="@(BizTalkAssemblies)" />
+    </Target>
+</Project>
