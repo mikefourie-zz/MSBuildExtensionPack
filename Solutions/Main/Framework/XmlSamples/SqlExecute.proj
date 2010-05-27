@@ -1,0 +1,33 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <Files Include="C:\a\Proc1.sql"/>
+        <Files Include="C:\a\Proc2.sql"/>
+        <Files Include="C:\a\Proc3.sql"/>
+        <File2s Include="C:\a\SQLQuery1.sql"/>
+        <File2s Include="C:\a\SQLQuery2.sql"/>
+    </ItemGroup>
+    <Target Name="Default">
+        <!-- Execute SQL and return a scalar -->
+        <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteScalar" UseTransaction="true" Sql="Select GETDATE()" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+            <Output PropertyName="ScResult" TaskParameter="ScalarResult"/>
+        </MSBuild.ExtensionPack.SqlServer.SqlExecute>
+        <Message Text="$(ScResult)"/>
+        <!-- Execute SQL and return the result in raw text form -->
+        <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteRawReader" UseTransaction="true" Sql="Select * from sys.tables" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+            <Output PropertyName="RawResult" TaskParameter="RawReaderResult"/>
+        </MSBuild.ExtensionPack.SqlServer.SqlExecute>
+        <Message Text="$(RawResult)"/>
+        <!-- Execute SQL and return the result in an Item. Each column is available as metadata -->
+        <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteReader" Sql="Select * from sys.tables" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+            <Output ItemName="RResult" TaskParameter="ReaderResult"/>
+        </MSBuild.ExtensionPack.SqlServer.SqlExecute>
+        <Message Text="%(RResult.Identity) - %(RResult.object_id)"/>
+        <!-- Execute some sql files -->
+        <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Retry="true" UseTransaction="true" Files="@(Files)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True"/>
+    </Target>
+</Project>
