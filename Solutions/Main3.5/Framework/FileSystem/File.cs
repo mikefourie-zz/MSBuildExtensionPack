@@ -96,7 +96,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
         private const string CountLinesTaskAction = "CountLines";
@@ -472,10 +472,11 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Checksum for file: {0}", this.Path));
             using (FileStream fs = System.IO.File.OpenRead(this.Path.GetMetadata("FullPath")))
             {
-                MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider();
-                byte[] hash = csp.ComputeHash(fs);
-                this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpperInvariant();
-                fs.Close();
+                using (MD5CryptoServiceProvider csp = new MD5CryptoServiceProvider())
+                {
+                    byte[] hash = csp.ComputeHash(fs);
+                    this.Checksum = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpperInvariant();
+                }
             }
         }
 

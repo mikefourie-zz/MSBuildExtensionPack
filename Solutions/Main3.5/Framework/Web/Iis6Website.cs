@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><i>Pause</i> (<b>Required: </b> Name)</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -51,7 +51,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -172,7 +172,12 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
+                string propertyTypeName;
+                using (DirectoryEntry di = new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName))
+                {
+                    propertyTypeName = (string)di.Properties["Syntax"].Value;
+                }
+
                 if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];

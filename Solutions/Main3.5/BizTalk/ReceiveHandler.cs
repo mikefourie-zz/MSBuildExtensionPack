@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using System.Management;
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
@@ -12,9 +13,9 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CheckExists</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, DatabaseServer, Database<b>Output: </b>Exists)</para>
+    /// <para><i>Create</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, DatabaseServer, Database, CustomCfg, Force)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>HostName, AdapterName <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -44,7 +45,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/d68a23c3-2b99-3d68-ae8d-cbbfdee0b984.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/d68a23c3-2b99-3d68-ae8d-cbbfdee0b984.htm")]
     public class BizTalkReceiveHandler : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -115,7 +116,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         public string HostName { get; set; }
 
         /// <summary>
-        /// Sets the CustomCfg for the ReceiveHandler
+        /// Sets the CustomCfg for the ReceiveHandler. See <a href="http://msdn.microsoft.com/en-us/library/aa559911(v=BTS.20).aspx">Configuration Properties for Integrated BizTalk Adapters</a>
         /// </summary>
         public string CustomCfg { get; set; }
 
@@ -146,24 +147,27 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
 
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.DatabaseServer, this.Database));
-            this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.DatabaseServer, this.Database) };
-            this.GetManagementScope(WmiBizTalkNamespace);
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} {1} ReceiveHandler for: {2} on {3}", this.TaskAction, this.AdapterName, this.HostName, this.MachineName));
- 
-            switch (this.TaskAction)
+            using (this.explorer = new BtsCatalogExplorer())
             {
-                case CreateTaskAction:
-                    this.Create();
-                    break;
-                case CheckExistsTaskAction:
-                    this.CheckExists();
-                    break;
-                case DeleteTaskAction:
-                    this.Delete();
-                    break;
-                default:
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
-                    return;
+                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.DatabaseServer, this.Database);
+                this.GetManagementScope(WmiBizTalkNamespace);
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} {1} ReceiveHandler for: {2} on {3}", this.TaskAction, this.AdapterName, this.HostName, this.MachineName));
+
+                switch (this.TaskAction)
+                {
+                    case CreateTaskAction:
+                        this.Create();
+                        break;
+                    case CheckExistsTaskAction:
+                        this.CheckExists();
+                        break;
+                    case DeleteTaskAction:
+                        this.Delete();
+                        break;
+                    default:
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                        return;
+                }
             }
         }
 
@@ -171,13 +175,12 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             string queryString = string.Format(CultureInfo.InvariantCulture, "SELECT * FROM MSBTS_ReceiveHandler WHERE AdapterName = '{0}'", this.AdapterName);
             ObjectQuery query = new ObjectQuery(queryString);
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query, null);
-            ManagementObjectCollection objects = searcher.Get();
-            if (objects.Count > 0)
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query, null))
             {
-                foreach (ManagementObject obj in objects)
+                ManagementObjectCollection objects = searcher.Get();
+                if (objects.Count > 0)
                 {
-                    if (string.Compare(obj["HostName"].ToString(), this.HostName, StringComparison.OrdinalIgnoreCase) == 0)
+                    foreach (ManagementObject obj in objects.Cast<ManagementObject>().Where(obj => string.Compare(obj["HostName"].ToString(), this.HostName, StringComparison.OrdinalIgnoreCase) == 0))
                     {
                         this.Exists = true;
                         this.receiveHandler = obj;
@@ -205,21 +208,23 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
 
             PutOptions options = new PutOptions { Type = PutType.CreateOnly };
-            ManagementClass instance = new ManagementClass(this.Scope, new ManagementPath("MSBTS_ReceiveHandler"), null);
-            ManagementObject btsHostSetting = instance.CreateInstance();
-            if (btsHostSetting == null)
+            using (ManagementClass instance = new ManagementClass(this.Scope, new ManagementPath("MSBTS_ReceiveHandler"), null))
             {
-                Log.LogError("There was a failure creating the MSBTS_ReceiveHandler instance");
-                return;
+                ManagementObject btsHostSetting = instance.CreateInstance();
+                if (btsHostSetting == null)
+                {
+                    Log.LogError("There was a failure creating the MSBTS_ReceiveHandler instance");
+                    return;
+                }
+
+                btsHostSetting["HostName"] = this.HostName;
+                btsHostSetting["AdapterName"] = this.AdapterName;
+                btsHostSetting["CustomCfg"] = this.CustomCfg;
+                btsHostSetting["MgmtDbServerOverride"] = this.DatabaseServer;
+
+                btsHostSetting.Put(options);
+                this.explorer.SaveChanges();
             }
-
-            btsHostSetting["HostName"] = this.HostName;
-            btsHostSetting["AdapterName"] = this.AdapterName;
-            btsHostSetting["CustomCfg"] = this.CustomCfg;
-            btsHostSetting["MgmtDbServerOverride"] = this.DatabaseServer;
-
-            btsHostSetting.Put(options);
-            this.explorer.SaveChanges();
         }
 
         private void Delete()

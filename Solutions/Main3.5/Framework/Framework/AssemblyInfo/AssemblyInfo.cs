@@ -35,7 +35,17 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Format the current date as the two digit year and the day of the year, and use that as the number, i.e. the revision number for 7/03/2009 is 09184
         /// </summary>
-        Julian = 3
+        Julian = 3,
+
+        /// <summary>
+        /// Format the current date as YYWWDW where YY is the year, WW is the week number and DW is the day of the week e.g. 2 Feb 2010 would be 10062. 15 March 2010 will be 10121 and 19 December 2010 10475.
+        /// </summary>
+        YearWeekDay = 4,
+
+        /// <summary>
+        /// Calculate the number of days elapsed since a given StartDate. Take note of the StartDate, PaddingCount and PaddingDigit parameters.
+        /// </summary>
+        ElapsedDays = 5
     }
 
     /// <summary>
@@ -72,7 +82,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <para/>
     /// <b>For use with Team Foundation Server, see this blog post: </b><a href="http://blogs.msdn.com/aaronhallberg/archive/2007/06/08/team-build-and-the-assemblyinfo-task.aspx">Team Build and the AssemblyInfo Task</a><para/>
     /// <para/><b>How To: Auto-Increment Version Numbers for a Project</b>
-    /// The most common way to use the AssemblyInfo task is to add a reference to the Microsoft.VersionNumber.Targets file to any project file whose AssemblyInfo you want to manage.
+    /// The most common way to use the AssemblyInfo task is to add a reference to the MSBuild.ExtensionPack.VersionNumber.targets file to any project file whose AssemblyInfo you want to manage.
     /// <para/>
     /// For standard .csproj, .vbproj, and .vjsproj files do the following:
     /// <para/>
@@ -81,11 +91,11 @@ namespace MSBuild.ExtensionPack.Framework
     /// Right-click on the project in Solution Explorer and select Edit [project file]
     /// If the AssemblyInfoTask was installed into the Global Assembly Cache add the following line at the end of the project file after the last &lt;Import&gt; tag:
     /// <para/>
-    /// &lt;Import Project="$(MSBuildExtensionsPath)\Microsoft\AssemblyInfoTask\Microsoft.VersionNumber.Targets"/&gt;
+    /// &lt;Import Project="$(MSBuildExtensionsPath)\Microsoft\AssemblyInfoTask\MSBuild.ExtensionPack.VersionNumber.targets"/&gt;
     /// <para/>
     /// If the AssemblyInfoTask was installed into the user's Application Data folder add the following line at the end of the project file after the last &lt;Import&gt; tag:
     /// <para/>
-    /// &lt;Import Project="$(APPDATA)\Microsoft\MSBuild\AssemblyInfoTask\Microsoft.VersionNumber.Targets"/&gt;
+    /// &lt;Import Project="$(APPDATA)\Microsoft\MSBuild\AssemblyInfoTask\MSBuild.ExtensionPack.VersionNumber.targets"/&gt;
     /// Save and close the project file 
     /// Right-click on the project in Solution Explorer and select Reload Project
     /// With these project file modifications all builds will have auto-incrementing assembly and file versions of the following format:
@@ -101,7 +111,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// Note: All AssemblyInfo.* files must have have entries with a starting value of "1.0.0.0" for AssemblyVersion and AssemblyFileVersion so the AssemblyInfoTask will work correctly. If these entries are missing from the files a build error will be generated.
     /// <para/>
     /// Overriding the Default Version Number Behaviour
-    /// In some situations the desired version number behaviour may be different than the defaults offered by the Microsoft.VersionNumber.Targets file.
+    /// In some situations the desired version number behaviour may be different than the defaults offered by the MSBuild.ExtensionPack.VersionNumber.targets file.
     /// <para/>
     /// To set the assembly and file versions to specific numbers add the appropriate property to your project file. For example, to set the major version to 8, add the following two properties:
     /// <para/>
@@ -123,14 +133,21 @@ namespace MSBuild.ExtensionPack.Framework
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <ItemGroup>
-    ///             <AssemblyInfoFiles Include="C:\AssemblyInfo.cs"/>
+    ///             <AssemblyInfoFiles Include="C:\a\CommonAssemblyInfo.cs"/>
+    ///             <AssemblyInfoFiles1 Include="C:\a\CommonAssemblyInfo1.cs"/>
+    ///             <AssemblyInfoFiles2 Include="C:\a\CommonAssemblyInfo2.cs"/>
     ///         </ItemGroup>
-    ///         <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyConfiguration="DEBUG" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+    ///         <!-- Update an attribute and don't do any versioning -->
+    ///         <MSBuild.ExtensionPack.Framework.AssemblyInfo ComVisible="true" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+    ///         <!-- Version using YearWeekDay and set the start of the week as a Sunday -->
+    ///         <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles1)" AssemblyBuildNumberType="YearWeekDay" FirstDayOfWeek="Sunday"/>
+    ///         <!-- Version using the number of days elapsed since a given start date-->
+    ///         <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles2)" StartDate="1 Jan 1976" AssemblyBuildNumberType="ElapsedDays"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {
         private AssemblyVersionSettings assemblyFileVersionSettings;
@@ -138,6 +155,7 @@ namespace MSBuild.ExtensionPack.Framework
         private string maxAssemblyFileVersion;
         private string maxAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
+        private string firstDayOfWeek = "Monday";
 
         /// <summary>
         /// The major version of the assembly.
@@ -909,6 +927,30 @@ namespace MSBuild.ExtensionPack.Framework
         public bool UseUtc { get; set; }
 
         /// <summary>
+        /// Set the first day of the week for IncrementMethod.YearWeekDay. Defaults to Monday
+        /// </summary>
+        public string FirstDayOfWeek
+        {
+            get { return this.firstDayOfWeek; }
+            set { this.firstDayOfWeek = value; }
+        }
+
+        /// <summary>
+        /// Sets the number of padding digits to use, e.g. 4
+        /// </summary>
+        public int PaddingCount { get; set; }
+
+        /// <summary>
+        /// Sets the padding digit to use, e.g. 0
+        /// </summary>
+        public char PaddingDigit { get; set; }
+
+        /// <summary>
+        /// Sets the start date to use when using IncrementMethod.ElapsedDays
+        /// </summary>
+        public DateTime StartDate { get; set; }
+
+        /// <summary>
         /// The encoding to write the new file in. The default is UTF8
         /// </summary>
         public string TextEncoding { get; set; }
@@ -1008,7 +1050,6 @@ namespace MSBuild.ExtensionPack.Framework
                     using (StreamWriter writer = new StreamWriter(writerInfo.OpenWrite(), this.fileEncoding))
                     {
                         assemblyInfo.Write(writer);
-                        writer.Close();
                     }
 
                     bool changedAttribute = false;
@@ -1140,7 +1181,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void UpdateProperty(AssemblyInfoWrapper assemblyInfo, string propertyName)
         {
             PropertyInfo propInfo = this.GetType().GetProperty(propertyName);
-            string value = (string) propInfo.GetValue(this, null);
+            string value = (string)propInfo.GetValue(this, null);
 
             if (value != null)
             {
@@ -1181,6 +1222,17 @@ namespace MSBuild.ExtensionPack.Framework
                     newVersionNumber2 += DateTime.Now.DayOfYear.ToString("000", CultureInfo.InvariantCulture);
                     this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber2);
                     return newVersionNumber2;
+                case IncrementMethod.YearWeekDay:
+                    DateTime now = this.UseUtc ? DateTime.UtcNow : DateTime.Now;
+                    string newVersionNumber3 = now.ToString("yy", CultureInfo.InvariantCulture);
+                    newVersionNumber3 += CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstDay, (DayOfWeek)Enum.Parse(typeof(DayOfWeek), this.FirstDayOfWeek));
+                    newVersionNumber3 += ((int)now.DayOfWeek).ToString(CultureInfo.InvariantCulture);
+                    Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber3);
+                    return newVersionNumber3;
+                case IncrementMethod.ElapsedDays:
+                    DateTime now2 = this.UseUtc ? DateTime.UtcNow : DateTime.Now;
+                    TimeSpan elapsed = now2 - Convert.ToDateTime(this.StartDate);
+                    return elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
                 default:
                     return string.Empty;
             }
@@ -1223,7 +1275,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyVersionSettings.BuildNumberType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyBuildNumberType);
+                this.assemblyVersionSettings.BuildNumberType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyBuildNumberType);
             }
 
             // Handle AssemblyRevisionNumberType
@@ -1240,7 +1292,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyVersionSettings.RevisionType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyRevisionType);
+                this.assemblyVersionSettings.RevisionType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyRevisionType);
             }
 
             // Handle AssemblyFileBuildNumberType
@@ -1257,7 +1309,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyFileVersionSettings.BuildNumberType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyFileBuildNumberType);
+                this.assemblyFileVersionSettings.BuildNumberType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyFileBuildNumberType);
             }
 
             // Handle AssemblyFileRevisionType
@@ -1274,7 +1326,7 @@ namespace MSBuild.ExtensionPack.Framework
                     return false;
                 }
 
-                this.assemblyFileVersionSettings.RevisionType = (IncrementMethod) Enum.Parse(typeof(IncrementMethod), this.AssemblyFileRevisionType);
+                this.assemblyFileVersionSettings.RevisionType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyFileRevisionType);
             }
 
             return true;

@@ -128,7 +128,7 @@ namespace MSBuild.ExtensionPack.Science
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
     public class Maths : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -366,8 +366,11 @@ namespace MSBuild.ExtensionPack.Science
         private void Evaluate()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Evaluating Expression: {0}", this.Expression));
-            DataTable dt = new DataTable { Locale = CultureInfo.CurrentCulture };
-            this.total = DecimalToSglDbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
+            using (DataTable dt = new DataTable())
+            {
+                dt.Locale = CultureInfo.CurrentCulture;
+                this.total = DecimalToSglDbl(Convert.ToDecimal(dt.Compute(this.Expression, string.Empty).ToString(), CultureInfo.CurrentCulture));
+            }
         }
 
         private void Divide()

@@ -37,7 +37,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
     public class BizTalkHost : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -181,25 +181,28 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
 
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.DatabaseServer, this.Database));
-            this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.DatabaseServer, this.Database) };
-            this.GetManagementScope(WmiBizTalkNamespace);
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} Host: {1} on: {2}", this.TaskAction, this.HostName, this.MachineName));
-
-            switch (this.TaskAction)
+            using (this.explorer = new BtsCatalogExplorer())
             {
-                case CreateTaskAction:
-                case UpdateTaskAction:
-                    this.CreateOrUpdate();
-                    break;
-                case CheckExistsTaskAction:
-                    this.CheckExists();
-                    break;
-                case DeleteTaskAction:
-                    this.Delete();
-                    break;
-                default:
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
-                    return;
+                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.DatabaseServer, this.Database);
+                this.GetManagementScope(WmiBizTalkNamespace);
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} Host: {1} on: {2}", this.TaskAction, this.HostName, this.MachineName));
+
+                switch (this.TaskAction)
+                {
+                    case CreateTaskAction:
+                    case UpdateTaskAction:
+                        this.CreateOrUpdate();
+                        break;
+                    case CheckExistsTaskAction:
+                        this.CheckExists();
+                        break;
+                    case DeleteTaskAction:
+                        this.Delete();
+                        break;
+                    default:
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                        return;
+                }
             }
         }
 
@@ -207,15 +210,17 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             string queryString = string.Format(CultureInfo.InvariantCulture, "SELECT * FROM MSBTS_HostSetting WHERE Name = '{0}'", this.HostName);
             ObjectQuery query = new ObjectQuery(queryString);
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query, null);
-            ManagementObjectCollection objects = searcher.Get();
-            if (objects.Count > 0)
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query, null))
             {
-                this.Exists = true;
-                foreach (ManagementObject obj in objects)
+                ManagementObjectCollection objects = searcher.Get();
+                if (objects.Count > 0)
                 {
-                    this.host = obj;
-                    return true;
+                    this.Exists = true;
+                    foreach (ManagementObject obj in objects)
+                    {
+                        this.host = obj;
+                        return true;
+                    }
                 }
             }
 
@@ -231,29 +236,31 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
             
             PutOptions options = new PutOptions { Type = PutType.UpdateOrCreate };
-            ManagementClass instance = new ManagementClass(this.Scope, new ManagementPath("MSBTS_HostSetting"), null);
-            ManagementObject btsHostSetting = instance.CreateInstance();
-            if (btsHostSetting == null)
+            using (ManagementClass instance = new ManagementClass(this.Scope, new ManagementPath("MSBTS_HostSetting"), null))
             {
-                Log.LogError("There was a failure creating the MSBTS_HostSetting instance");
-                return;
+                ManagementObject btsHostSetting = instance.CreateInstance();
+                if (btsHostSetting == null)
+                {
+                    Log.LogError("There was a failure creating the MSBTS_HostSetting instance");
+                    return;
+                }
+
+                btsHostSetting["Name"] = this.HostName;
+                btsHostSetting["HostType"] = this.hostType;
+                btsHostSetting["NTGroupName"] = this.WindowsGroup;
+                btsHostSetting["AuthTrusted"] = this.Trusted;
+                btsHostSetting["MgmtDbServerOverride"] = this.DatabaseServer;
+                btsHostSetting["IsHost32BitOnly"] = this.Use32BitHostOnly;
+
+                if (this.hostType == BizTalkHostType.InProcess)
+                {
+                    btsHostSetting.SetPropertyValue("HostTracking", this.Tracking);
+                    btsHostSetting.SetPropertyValue("IsDefault", this.Default);
+                }
+
+                btsHostSetting.Put(options);
+                this.explorer.SaveChanges();
             }
-
-            btsHostSetting["Name"] = this.HostName;
-            btsHostSetting["HostType"] = this.hostType;
-            btsHostSetting["NTGroupName"] = this.WindowsGroup;
-            btsHostSetting["AuthTrusted"] = this.Trusted;
-            btsHostSetting["MgmtDbServerOverride"] = this.DatabaseServer;
-            btsHostSetting["IsHost32BitOnly"] = this.Use32BitHostOnly;
-
-            if (this.hostType == BizTalkHostType.InProcess)
-            {
-                btsHostSetting.SetPropertyValue("HostTracking", this.Tracking);
-                btsHostSetting.SetPropertyValue("IsDefault", this.Default);
-            }
-
-            btsHostSetting.Put(options);
-            this.explorer.SaveChanges();
         }
 
         private void Delete()

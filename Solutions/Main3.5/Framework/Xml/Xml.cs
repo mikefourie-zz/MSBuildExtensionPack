@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Xml
 {
+    using System;
     using System.Globalization;
     using System.IO;
     using System.Text;
@@ -14,7 +15,7 @@ namespace MSBuild.ExtensionPack.Xml
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
+    /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Conformance, Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
     /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Output: </b>IsValid, Output)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -93,7 +94,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
         private const string TransformTaskAction = "Transform";
@@ -101,6 +102,7 @@ namespace MSBuild.ExtensionPack.Xml
 
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
+        private ConformanceLevel conformanceLevel;
 
         [DropdownValue(TransformTaskAction)]
         [DropdownValue(ValidateTaskAction)]
@@ -171,6 +173,15 @@ namespace MSBuild.ExtensionPack.Xml
         }
 
         /// <summary>
+        /// Sets the ConformanceLevel. Supports Auto, Document and Fragment. Default is ConformanceLevel.Document
+        /// </summary>
+        public string Conformance
+        {
+            get { return this.conformanceLevel.ToString(); }
+            set { this.conformanceLevel = (ConformanceLevel)Enum.Parse(typeof(ConformanceLevel), value); }
+        }
+
+        /// <summary>
         /// Gets whether an XmlFile is valid xml
         /// </summary>
         [Output]
@@ -211,7 +222,10 @@ namespace MSBuild.ExtensionPack.Xml
             {
                 // Load the Xml
                 this.LogTaskMessage(MessageImportance.Low, "Loading Xml");
-                this.xmlDoc = XDocument.Load(new StringReader(this.Xml));
+                using (StringReader sr = new StringReader(this.Xml))
+                {
+                    this.xmlDoc = XDocument.Load(sr);
+                }
             }
             else
             {
@@ -253,56 +267,68 @@ namespace MSBuild.ExtensionPack.Xml
             {
                 // Load the XslTransform
                 this.LogTaskMessage(MessageImportance.Low, "Loading XslTransform");
-                xslDoc = XDocument.Load(new StringReader(this.XslTransform));
+                using (StringReader sr = new StringReader(this.XslTransform))
+                {
+                    xslDoc = XDocument.Load(sr);
+                }
             }
             else
             {
                 this.Log.LogError("XslTransform or XslTransformFile must be specified");
                 return;
             }
-            
-            XDocument tempxmlDoc = new XDocument();
-            XslCompiledTransform xslt;
-            using (XmlWriter writer = tempxmlDoc.CreateWriter())
+
+            // Load the style sheet.
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            XsltSettings settings = new XsltSettings { EnableScript = true };
+            using (StringReader sr = new StringReader(xslDoc.ToString()))
             {
-                // Load the style sheet.
-                xslt = new XslCompiledTransform();
-                XsltSettings settings = new XsltSettings { EnableScript = true };
-                xslt.Load(XmlReader.Create(new StringReader(xslDoc.ToString())), settings, null);
+                xslt.Load(XmlReader.Create(sr), settings, null);
+                StringBuilder builder = new StringBuilder();
+                using (XmlWriter writer = XmlWriter.Create(builder, xslt.OutputSettings))
+                {
+                    this.LogTaskMessage(MessageImportance.Low, "Running XslTransform");
 
-                // Execute the transform and output the results to a writer.
-                xslt.Transform(this.xmlDoc.CreateReader(), writer);
+                    // Execute the transform and output the results to a writer.
+                    xslt.Transform(this.xmlDoc.CreateReader(), writer);
+                }
+
+                this.Output = builder.ToString();
             }
-
-            this.Output = tempxmlDoc.ToString();
 
             if (!string.IsNullOrEmpty(this.OutputFile))
             {
                 if (xslt.OutputSettings.OutputMethod == XmlOutputMethod.Text)
                 {
+                    this.LogTaskMessage(MessageImportance.Low, "Writing using text method");
                     using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
-                    using (StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default))
                     {
-                            // Execute the transform and output the results to a writer.
-                            xslt.Transform(this.xmlDoc.CreateReader(), null, streamWriter);
+                        StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default);
+
+                        // Output the results to a writer.
+                        streamWriter.Write(this.Output);
                     }
                 }
                 else
                 {
-                    XDocument newxmlDoc = XDocument.Load(new StringReader(this.Output));
-                    if (!string.IsNullOrEmpty(this.OutputFile))
+                    this.LogTaskMessage(MessageImportance.Low, "Writing using XML method");
+                    using (StringReader sr = new StringReader(this.Output))
                     {
-                        XmlWriterSettings writerSettings = new XmlWriterSettings { Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
-                        using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
+                        XDocument newxmlDoc = XDocument.Load(sr);
+                        if (!string.IsNullOrEmpty(this.OutputFile))
                         {
-                            if (xw != null)
+                            XmlWriterSettings writerSettings = new XmlWriterSettings { ConformanceLevel = this.conformanceLevel, Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
+                            using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
                             {
-                                newxmlDoc.WriteTo(xw);
-                            }
-                            else
-                            {
-                                Log.LogError("There was an error creating the XmlWriter for the OutputFile");
-                                return;
+                                if (xw != null)
+                                {
+                                    newxmlDoc.WriteTo(xw);
+                                }
+                                else
+                                {
+                                    Log.LogError("There was an error creating the XmlWriter for the OutputFile");
+                                    return;
+                                }
                             }
                         }
                     }
@@ -312,15 +338,7 @@ namespace MSBuild.ExtensionPack.Xml
 
         private void Validate()
         {
-            if (!string.IsNullOrEmpty(this.XmlFile))
-            {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Validating: {0}", this.XmlFile));
-            }
-            else
-            {
-                this.LogTaskMessage("Validating Xml");
-            }
-
+            this.LogTaskMessage(!string.IsNullOrEmpty(this.XmlFile) ? string.Format(CultureInfo.CurrentCulture, "Validating: {0}", this.XmlFile) : "Validating Xml");           
             XmlSchemaSet schemas = new XmlSchemaSet();
             foreach (ITaskItem i in this.SchemaFiles)
             {

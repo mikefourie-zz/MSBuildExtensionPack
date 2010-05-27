@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Add</i> (<b>Required: </b> Path <b>Optional:</b> Deletable, Force Description, GroupId, Permission)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Path <b>Output: </b>Exists)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Path</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -33,7 +33,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/c4794935-065a-008d-4270-70c58451a3a6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/c4794935-065a-008d-4270-70c58451a3a6.htm")]
     public class Iis6ServiceExtensionFile : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack.Web
         public string Permission
         { 
             get { return this.permission.ToString(); }
-            set { this.permission = (ExtensionPermission) Enum.Parse(typeof(ExtensionPermission), value); }
+            set { this.permission = (ExtensionPermission)Enum.Parse(typeof(ExtensionPermission), value); }
         }
 
             /// <summary>
@@ -124,7 +124,7 @@ namespace MSBuild.ExtensionPack.Web
             using (DirectoryEntry web = new DirectoryEntry("IIS://" + this.MachineName + "/W3SVC"))
             {
                 ComWrapper ws = new ComWrapper(web.NativeObject);
-                Array extensionFiles = (Array) ws.CallMethod("ListExtensionFiles");
+                Array extensionFiles = (Array)ws.CallMethod("ListExtensionFiles");
                 if (extensionFiles != null)
                 {
                     foreach (string extension in extensionFiles)

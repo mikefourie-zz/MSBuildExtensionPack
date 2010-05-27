@@ -60,7 +60,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
@@ -198,6 +198,18 @@ namespace MSBuild.ExtensionPack.Computer
                 return bytes.ToString(0, bytes.Length - 1);
             }
 
+            if (valueKind == RegistryValueKind.MultiString && v is string[])
+            {
+                var itemList = new StringBuilder();
+                foreach (string item in (string[])v)
+                {
+                    itemList.Append(item);
+                    itemList.Append(',');
+                }
+
+                return itemList.ToString(0, itemList.Length - 1);
+            }
+
             return v.ToString();
         }
 
@@ -308,18 +320,9 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            object v = subKey.GetValue(this.Value);
-            if (v == null)
+            if (subKey.GetValue(this.Value) == null)
             {
-                if (string.IsNullOrEmpty(this.Value))
-                {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "A Default value was not found for the Registry Key: {0}", this.Key));
-                }
-                else
-                {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The Registry value provided is not valid: {0}", this.Value));
-                }
-
+                this.LogTaskMessage(string.IsNullOrEmpty(this.Value) ? string.Format(CultureInfo.CurrentCulture, "A Default value was not found for the Registry Key: {0}", this.Key) : string.Format(CultureInfo.CurrentCulture, "The Registry value provided is not valid: {0}", this.Value));
                 return;
             }
 
@@ -331,23 +334,27 @@ namespace MSBuild.ExtensionPack.Computer
         private void DeleteKeyTree()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKeyTree(this.Key);
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            {
+                r.DeleteSubKeyTree(this.Key);
+            }
         }
 
         private void DeleteKey()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).DeleteSubKey(this.Key, false);
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            {
+                r.DeleteSubKey(this.Key, false);
+            }
         }
 
         private void CreateKey()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName).CreateSubKey(this.Key);
-
-            if (this.registryKey != null)
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            using (RegistryKey r2 = r.CreateSubKey(this.Key))
             {
-                this.registryKey.Close();
             }
         }
     }

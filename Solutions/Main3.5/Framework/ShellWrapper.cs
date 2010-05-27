@@ -6,7 +6,6 @@ namespace MSBuild.ExtensionPack
     using System;
     using System.Collections.Specialized;
     using System.Diagnostics;
-    using System.Text;
 
     /// <summary>
     /// ShellExecute.
@@ -115,7 +114,6 @@ namespace MSBuild.ExtensionPack
                 }
 
                 this.ExitCode = proc.ExitCode;
-                proc.Close();
             }
 
             return this.ExitCode;

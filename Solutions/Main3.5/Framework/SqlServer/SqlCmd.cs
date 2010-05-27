@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.SqlServer.Extended;
 
@@ -49,7 +50,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
@@ -514,10 +515,55 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Write out any errors
             this.SwitchReturnValue(returnValue, sqlCmdWrapper.StandardError.Trim());
 
-            if (this.SeverityLevel > 0 && returnValue >= this.SeverityLevel)
+            string[] stdOutLines = sqlCmdWrapper.StandardOutput == null ? new string[0] : sqlCmdWrapper.StandardOutput.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var regex = new Regex(@"^(Msg|HResult) (?<ErrorCode>(0x[0-9A-F]+)|\d+), Level (?<Level>\d+), State (?<StateID>\d+)(, Server [^,]+(, (?<ObjectName>[^,]+))?, Line (?<LineNumber>\d+))?$");
+            bool foundError = false;
+            string errorCode = string.Empty;
+            string objectName = string.Empty;
+            int lineNum = 0;
+            int severityLevel = 0;
+            bool loggingErrorsBySeverityLevel = this.SeverityLevel > 0;
+            foreach (string line in stdOutLines)
+            {
+                if (foundError)
+                {
+                    if (loggingErrorsBySeverityLevel && severityLevel >= this.SeverityLevel)
+                    {
+                        this.Log.LogError(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+                    else
+                    {
+                        this.Log.LogWarning(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+
+                    foundError = false;
+                    continue;
+                }
+
+                var match = regex.Match(line);
+                if (match.Success)
+                {
+                    var groups = match.Groups;
+                    int.TryParse(groups["LineNumber"].ToString(), out lineNum);
+                    int.TryParse(groups["Level"].ToString(), out severityLevel);
+                    errorCode = groups["ErrorCode"].ToString();
+                    objectName = groups["ObjectName"].ToString();
+                    if (loggingErrorsBySeverityLevel && severityLevel >= this.SeverityLevel)
+                    {
+                        this.Log.LogError(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+                    else
+                    {
+                        this.Log.LogWarning(string.Empty, errorCode, string.Empty, objectName, lineNum, 0, 0, 0, line);
+                    }
+
+                    foundError = true;
+                }
+            }
+
+            if (loggingErrorsBySeverityLevel && returnValue >= this.SeverityLevel)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SeverityLevel: {0} has been met or exceeded: {1}", this.SeverityLevel, returnValue));
-                return;
             }
         }
 
@@ -535,9 +581,12 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 int lengthRemaining = CommandLineMaxLength - this.SqlCmdPath.Length - baseArguments.Length - 2;
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "There are {0} characters available in the argument list for the input files.", lengthRemaining));
-                foreach (var inputFileArgs in new InputFileArgumentCollection(this, this.InputFiles, lengthRemaining))
+                using (InputFileArgumentCollection ifac = new InputFileArgumentCollection(this, this.InputFiles, lengthRemaining))
                 {
-                    this.ExecuteCommand(baseArguments + " " + inputFileArgs);
+                    foreach (var inputFileArgs in ifac)
+                    {
+                        this.ExecuteCommand(baseArguments + " " + inputFileArgs);
+                    }
                 }
             }
             else

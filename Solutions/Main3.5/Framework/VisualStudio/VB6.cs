@@ -39,7 +39,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
     public class VB6 : BaseTask
     {
         private const string BuildTaskAction = "Build";
@@ -212,8 +212,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     try
                     {
                         using (FileStream myStreamFile = new FileStream(project.ItemSpec + ".log", FileMode.Open))
-                        using (System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile))
                         {
+                            System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile);
                             string myBuffer = myStream.ReadToEnd();
                             Log.LogError(myBuffer);
                         }

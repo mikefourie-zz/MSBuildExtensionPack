@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
     public class Signing : BaseTask
     {
         private const string CAddSkipVerificationTaskAction = "AddSkipVerification";
@@ -180,28 +180,34 @@ namespace MSBuild.ExtensionPack.Framework
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "sn.exe not found: {0}", fileName));
                 return;
             }
-            
-            Process proc = new Process { StartInfo = { FileName = fileName, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true } };
-            proc.StartInfo.Arguments = args;
-            this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
-            proc.Start();
-            string outputStream = proc.StandardOutput.ReadToEnd();
-            if (outputStream.Length > 0)
-            {
-                this.LogTaskMessage(MessageImportance.Low, outputStream);
-            }
 
-            string errorStream = proc.StandardError.ReadToEnd();
-            if (errorStream.Length > 0)
+            using (Process proc = new Process())
             {
-                this.Log.LogError(errorStream);
-            }
+                proc.StartInfo.FileName = fileName;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.Arguments = args;
+                this.LogTaskMessage(MessageImportance.Low, "Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+                proc.Start();
+                string outputStream = proc.StandardOutput.ReadToEnd();
+                if (outputStream.Length > 0)
+                {
+                    this.LogTaskMessage(MessageImportance.Low, outputStream);
+                }
 
-            proc.WaitForExit();
-            if (proc.ExitCode != 0)
-            {
-                this.Log.LogError("Non-zero exit code from sn.exe: " + proc.ExitCode);
-                return;
+                string errorStream = proc.StandardError.ReadToEnd();
+                if (errorStream.Length > 0)
+                {
+                    this.Log.LogError(errorStream);
+                }
+
+                proc.WaitForExit();
+                if (proc.ExitCode != 0)
+                {
+                    this.Log.LogError("Non-zero exit code from sn.exe: " + proc.ExitCode);
+                    return;
+                }
             }
         }
     }

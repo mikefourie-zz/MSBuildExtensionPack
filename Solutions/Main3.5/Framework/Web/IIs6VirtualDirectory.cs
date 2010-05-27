@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Properties)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -36,7 +36,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
         private const string CreateTaskAction = "Create";
@@ -172,7 +172,12 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (metaBaseProperty.IndexOf('|') == -1)
             {
-                string propertyTypeName = (string) new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName).Properties["Syntax"].Value;
+                string propertyTypeName;
+                using (DirectoryEntry di = new DirectoryEntry(entry.SchemaEntry.Parent.Path + "/" + metaBasePropertyName))
+                {
+                    propertyTypeName = (string)di.Properties["Syntax"].Value;
+                }
+
                 if (string.Compare(propertyTypeName, "binary", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     object[] metaBasePropertyBinaryFormat = new object[metaBaseProperty.Length / 2];
@@ -341,12 +346,12 @@ namespace MSBuild.ExtensionPack.Web
                     this.websiteEntry = new DirectoryEntry(parentPath);
                     try
                     {
-                        vdirEntry = (DirectoryEntry) this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
+                        vdirEntry = (DirectoryEntry)this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
                     }
                     catch (TargetInvocationException tie)
                     {
                         Exception e = tie.InnerException;
-                        COMException ce = (COMException) e;
+                        COMException ce = (COMException)e;
                         if (ce != null)
                         {
                             // HRESULT 0x800700B7, "Cannot create a file when that file already exists. "

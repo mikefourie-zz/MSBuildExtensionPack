@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/4e3ff893-f5d5-0182-7f2f-f760868aea61.htm")]
     public class DevEnv : ToolTask
     {
         private IBuildDetail build;
@@ -396,6 +396,11 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <param name="messageImportance">The importance of the message. Controllable via the StandardErrorImportance and StandardOutImportance properties.</param>
         protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
         {
+            if (string.IsNullOrEmpty(singleLine))
+            {
+                return;
+            }
+
             // Add build steps for important messages.
             if (messageImportance == MessageImportance.High)
             {

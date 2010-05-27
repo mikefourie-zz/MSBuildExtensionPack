@@ -40,7 +40,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
@@ -112,12 +112,11 @@ namespace MSBuild.ExtensionPack.Web
                         this.Response.SetMetadata("ResponseText", responseReader.ReadToEnd());
                         this.Status = response.StatusDescription;
                         this.Response.SetMetadata("StatusDescription", response.StatusDescription);
-                        this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentUICulture));
+                        this.Response.SetMetadata("StatusCode", code.ToString(CultureInfo.CurrentCulture));
                         this.Response.SetMetadata("CharacterSet", response.CharacterSet);
                         this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
                         this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
                         this.Response.SetMetadata("Server", response.Server);
-                        response.Close();
                     }
                 }
                 catch (WebException ex)

@@ -84,7 +84,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
     public class VirtualPc : BaseTask
     {
         private const string AddHardDiskConnectionTaskAction = "AddHardDiskConnection";
@@ -393,22 +393,24 @@ namespace MSBuild.ExtensionPack.Virtualisation
             {
                 object thumbnailObject = display.Thumbnail;
                 object[] thumbnail = (object[])thumbnailObject;
-                Bitmap bmp = new Bitmap(64, 48, PixelFormat.Format32bppRgb);
-                for (int y = 0; y < bmp.Height; y++)
+                using (Bitmap bmp = new Bitmap(64, 48, PixelFormat.Format32bppRgb))
                 {
-                    for (int x = 0; x < bmp.Width; x++)
+                    for (int y = 0; y < bmp.Height; y++)
                     {
-                        uint pixel = (uint)thumbnail[(y * bmp.Width) + x];
+                        for (int x = 0; x < bmp.Width; x++)
+                        {
+                            uint pixel = (uint)thumbnail[(y * bmp.Width) + x];
 
-                        int b = (int)((pixel & 0xff000000) >> 24);
-                        int g = (int)((pixel & 0x00ff0000) >> 16);
-                        int r = (int)((pixel & 0x0000ff00) >> 8);
+                            int b = (int)((pixel & 0xff000000) >> 24);
+                            int g = (int)((pixel & 0x00ff0000) >> 16);
+                            int r = (int)((pixel & 0x0000ff00) >> 8);
 
-                        bmp.SetPixel(x, y, Color.FromArgb(r, g, b));
+                            bmp.SetPixel(x, y, Color.FromArgb(r, g, b));
+                        }
                     }
-                }
 
-                bmp.Save(this.FileName.ItemSpec);
+                    bmp.Save(this.FileName.ItemSpec);
+                }
             }
         }
 

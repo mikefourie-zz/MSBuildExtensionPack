@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
 
@@ -60,7 +61,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
     public class BizTalkHostInstance : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -262,22 +263,24 @@ namespace MSBuild.ExtensionPack.BizTalk
             ManagementObject host = this.CreateHost();
             host.InvokeMethod("Map", null);
 
-            ManagementClass instance = new ManagementClass(this.Scope, new ManagementPath("MSBTS_HostInstance"), null);
-            ManagementObject hostInstanceSettings = instance.CreateInstance();
-            if (hostInstanceSettings == null)
+            using (ManagementClass instance = new ManagementClass(this.Scope, new ManagementPath("MSBTS_HostInstance"), null))
             {
-                Log.LogError("There was a failure creating the MSBTS_HostInstance instance");
-                return;
+                ManagementObject hostInstanceSettings = instance.CreateInstance();
+                if (hostInstanceSettings == null)
+                {
+                    Log.LogError("There was a failure creating the MSBTS_HostInstance instance");
+                    return;
+                }
+
+                string hostInstanceName = string.Format(CultureInfo.CurrentCulture, "Microsoft BizTalk Server {0} {1}", this.HostName, this.MachineName);
+                hostInstanceSettings["Name"] = hostInstanceName;
+
+                object[] args = new object[2];
+                args[0] = this.AccountName;
+                args[1] = this.AccountPassword;
+
+                hostInstanceSettings.InvokeMethod("Install", args);
             }
-
-            string hostInstanceName = string.Format(CultureInfo.CurrentCulture, "Microsoft BizTalk Server {0} {1}", this.HostName, this.MachineName);
-            hostInstanceSettings["Name"] = hostInstanceName;
-
-            object[] args = new object[2];
-            args[0] = this.AccountName;
-            args[1] = this.AccountPassword;
-
-            hostInstanceSettings.InvokeMethod("Install", args);
         }
 
         private bool CheckExists()
@@ -299,11 +302,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             EnumerationOptions wmiEnumerationOptions = new EnumerationOptions { ReturnImmediately = false };
             ObjectQuery wmiQuery = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_HostInstance WHERE HostName = '{0}'", this.HostName));
-            ManagementObjectSearcher wmiSearcher = new ManagementObjectSearcher(this.Scope, wmiQuery, wmiEnumerationOptions);
-            ManagementObjectCollection hostInstanceCollection = wmiSearcher.Get();
-            foreach (ManagementObject instance in hostInstanceCollection)
+            using (ManagementObjectSearcher wmiSearcher = new ManagementObjectSearcher(this.Scope, wmiQuery, wmiEnumerationOptions))
             {
-                if (instance["Name"].ToString().IndexOf(this.MachineName, StringComparison.OrdinalIgnoreCase) > 0)
+                ManagementObjectCollection hostInstanceCollection = wmiSearcher.Get();
+                foreach (ManagementObject instance in hostInstanceCollection.Cast<ManagementObject>().Where(instance => instance["Name"].ToString().IndexOf(this.MachineName, StringComparison.OrdinalIgnoreCase) > 0))
                 {
                     this.hostInstance = instance;
                     return true;
@@ -315,18 +317,20 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private ManagementObject CreateHost()
         {
-            ManagementClass hostFactory = new ManagementClass(this.Scope, new ManagementPath("MSBTS_ServerHost"), null);
-            ManagementObject host = hostFactory.CreateInstance();
-            if (host == null)
+            using (ManagementClass hostFactory = new ManagementClass(this.Scope, new ManagementPath("MSBTS_ServerHost"), null))
             {
-                Log.LogError("There was a failure creating the MSBTS_ServerHost instance");
-                throw new Exception("There was a failure creating the MSBTS_ServerHost instance");
+                ManagementObject host = hostFactory.CreateInstance();
+                if (host == null)
+                {
+                    Log.LogError("There was a failure creating the MSBTS_ServerHost instance");
+                    throw new Exception("There was a failure creating the MSBTS_ServerHost instance");
+                }
+
+                host["ServerName"] = this.MachineName;
+                host["HostName"] = this.HostName;
+
+                return host;
             }
-
-            host["ServerName"] = this.MachineName;
-            host["HostName"] = this.HostName;
-
-            return host;
         }
     }
 }

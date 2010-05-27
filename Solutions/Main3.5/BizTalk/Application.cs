@@ -73,7 +73,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";
@@ -246,48 +246,50 @@ namespace MSBuild.ExtensionPack.BizTalk
         protected override void InternalExecute()
         {
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
-            this.explorer = new BtsCatalogExplorer { ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database) };
-
-            switch (this.TaskAction)
+            using (this.explorer = new BtsCatalogExplorer())
             {
-                case "Create":
-                    this.Create();
-                    break;
-                case "Get":
-                    this.GetApplications();
-                    break;
-                case "CheckExists":
-                    this.CheckApplicationExists();
-                    break;
-                case "StartAll":
-                case "EnableAllReceiveLocations":
-                case "StartAllOrchestrations":
-                case "StartAllSendPortGroups":
-                case "StartAllSendPorts":
-                case "StartReferencedApplications":
-                    this.StartApplication();
-                    break;
-                case "StopAll":
-                case "DisableAllReceiveLocations":
-                case "UndeployAllPolicies":
-                case "UnenlistAllOrchestrations":
-                case "UnenlistAllSendPortGroups":
-                case "UnenlistAllSendPorts":
-                case "StopReferencedApplications":
-                    this.StopApplication();
-                    break;
-                case "Delete":
-                    this.Delete();
-                    break;
-                case "RemoveReference":
-                    this.ConfigureReference();
-                    break;
-                case "AddReference":
-                    this.ConfigureReference();
-                    break;
-                default:
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
-                    return;
+                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database);
+                switch (this.TaskAction)
+                {
+                    case "Create":
+                        this.Create();
+                        break;
+                    case "Get":
+                        this.GetApplications();
+                        break;
+                    case "CheckExists":
+                        this.CheckApplicationExists();
+                        break;
+                    case "StartAll":
+                    case "EnableAllReceiveLocations":
+                    case "StartAllOrchestrations":
+                    case "StartAllSendPortGroups":
+                    case "StartAllSendPorts":
+                    case "StartReferencedApplications":
+                        this.StartApplication();
+                        break;
+                    case "StopAll":
+                    case "DisableAllReceiveLocations":
+                    case "UndeployAllPolicies":
+                    case "UnenlistAllOrchestrations":
+                    case "UnenlistAllSendPortGroups":
+                    case "UnenlistAllSendPorts":
+                    case "StopReferencedApplications":
+                        this.StopApplication();
+                        break;
+                    case "Delete":
+                        this.Delete();
+                        break;
+                    case "RemoveReference":
+                        this.ConfigureReference();
+                        break;
+                    case "AddReference":
+                        this.ConfigureReference();
+                        break;
+                    default:
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                        return;
+                }
             }
         }
 

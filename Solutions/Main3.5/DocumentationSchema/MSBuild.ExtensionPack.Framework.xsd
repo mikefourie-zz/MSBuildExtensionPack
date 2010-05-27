@@ -25,6 +25,7 @@
                     <xs:attribute name="Project"/>
                     <xs:attribute name="ReportXsl"/>
                     <xs:attribute name="Rules"/>
+                    <xs:attribute name="SearchGac"/>
                     <xs:attribute name="ShowSummary" type="msb:boolean"/>
                     <xs:attribute name="Types"/>
                     <xs:attribute name="UpdateProject" type="msb:boolean"/>
@@ -375,6 +376,7 @@
                     <xs:attribute name="FilePath" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Name" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Description"/>
+                    <xs:attribute name="Arguments"/>
                     <xs:attribute name="IconLocation"/>
                     <xs:attribute name="ShortcutPath"/>
                     <xs:attribute name="WorkingDirectory"/>
@@ -513,8 +515,22 @@
                     <xs:attribute name="TargetPath"/>
                     <xs:attribute name="Force"/>
                     <xs:attribute name="Recursive"/>
+                    <xs:attribute name="RetryCount"/>
                     <xs:attribute name="Users"/>
                     <xs:attribute name="AccessType"/>
+                    <xs:attribute name="Permission"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.FileSystem.RoboCopy" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="Source" use="required"/>
+                    <xs:attribute name="Destination" use="required"/>
+                    <xs:attribute name="Files" use="required"/>
+                    <xs:attribute name="Options"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -529,6 +545,7 @@
                                 <xs:enumeration value="CheckExists"/>
                                 <xs:enumeration value="Create"/>
                                 <xs:enumeration value="Delete"/>
+                                <xs:enumeration value="SetPermissions"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -830,6 +847,19 @@
                     <xs:attribute name="AssemblyName"/>
                     <xs:attribute name="Force"/>
                     <xs:attribute name="Exists"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.Framework.GenericTool" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="Executable" use="required"/>
+                    <xs:attribute name="SuccessExitCodes" use="required"/>
+                    <xs:attribute name="ErrorExitCodes"/>
+                    <xs:attribute name="WarningExitCodes"/>
+                    <xs:attribute name="Parameters"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1369,6 +1399,20 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="MSBuild.ExtensionPack.VisualStudio.VSDevEnv" substitutionGroup="msb:Task">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="msb:TaskType">
+                    <xs:attribute name="FilePath" use="required"/>
+                    <xs:attribute name="Configuration"/>
+                    <xs:attribute name="Version"/>
+                    <xs:attribute name="Rebuild"/>
+                    <xs:attribute name="OutputFile"/>
+                    <xs:attribute name="OutputFolder"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="MSBuild.ExtensionPack.Web.HttpWebRequest" substitutionGroup="msb:Task">
         <xs:complexType>
             <xs:complexContent>
@@ -1521,6 +1565,8 @@
                     <xs:attribute name="Key"/>
                     <xs:attribute name="Value"/>
                     <xs:attribute name="File"/>
+                    <xs:attribute name="XPath"/>
+                    <xs:attribute name="Namespaces"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1540,6 +1586,7 @@
                     <xs:attribute name="XmlFile"/>
                     <xs:attribute name="XslTransformFile"/>
                     <xs:attribute name="Xml"/>
+                    <xs:attribute name="Conformance"/>
                     <xs:attribute name="XslTransform"/>
                     <xs:attribute name="OutputFile"/>
                     <xs:attribute name="SchemaFiles"/>

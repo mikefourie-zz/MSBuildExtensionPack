@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.Computer
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
 
@@ -357,7 +358,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
     public class WindowsService : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -500,20 +501,9 @@ namespace MSBuild.ExtensionPack.Computer
                 this.ServiceDisplayName = this.ServiceName;
             }
 
-            if (!this.TargetingLocalMachine(RemoteExecutionAvailable) &&
-                (string.IsNullOrEmpty(this.RemoteUser) || string.IsNullOrEmpty(this.RemoteUserPassword)))
+            if (!this.TargetingLocalMachine(RemoteExecutionAvailable) && (string.IsNullOrEmpty(this.RemoteUser) || string.IsNullOrEmpty(this.RemoteUserPassword)))
             {
-                if (string.IsNullOrEmpty(this.RemoteUser))
-                {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Attempting to manage windows services on remote machine [{0}] but the RemoteUser is missing.", this.MachineName));
-                }
-
-                if (string.IsNullOrEmpty(this.RemoteUserPassword))
-                {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Attempting to manage windows services on remote machine [{0}] but the RemoteUserPassword is missing.", this.MachineName));
-                }
-
-                return;
+                this.LogTaskMessage(MessageImportance.Low, "No RemoteUser or RemoteUserPassword supplied. Attempting Integrated Security.");
             }
 
             if (this.ServiceDoesExist() == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction)
@@ -923,10 +913,7 @@ namespace MSBuild.ExtensionPack.Computer
             System.Collections.Generic.List<string> serviceDependencies = new System.Collections.Generic.List<string>();
             if (null != this.ServiceDependencies)
             {
-                foreach (ITaskItem dep in this.ServiceDependencies)
-                {
-                    serviceDependencies.Add(dep.ItemSpec);
-                }
+                serviceDependencies.AddRange(this.ServiceDependencies.Select(dep => dep.ItemSpec));
             }
 
             ServiceReturnCode ret = this.Install(this.MachineName, this.ServiceName, this.ServiceDisplayName, this.ServicePath.ToString(), ServiceStartMode.Automatic, this.User, this.Password, serviceDependencies.ToArray(), false, this.RemoteUser, this.RemoteUserPassword);
@@ -954,34 +941,35 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 string path = targetLocal ? "\\root\\CIMV2" : string.Format(CultureInfo.InvariantCulture, "\\\\{0}\\root\\CIMV2", machineName);
 
-                ManagementClass wmi = new ManagementClass(path, "Win32_Service", null);
-
-                if (!targetLocal)
+                using (ManagementClass wmi = new ManagementClass(path, "Win32_Service", null))
                 {
-                    wmi.Scope.Options.Username = installingUser;
-                    wmi.Scope.Options.Password = installingUserPassword;
+                    if (!targetLocal)
+                    {
+                        wmi.Scope.Options.Username = installingUser;
+                        wmi.Scope.Options.Password = installingUserPassword;
+                    }
+
+                    object[] paramList = new object[]
+                                             {
+                                                 name,
+                                                 displayName,
+                                                 physicalLocation,
+                                                 Convert.ToInt32(ServiceTypes.OwnProcess, CultureInfo.InvariantCulture),
+                                                 Convert.ToInt32(ServiceErrorControl.UserNotified, CultureInfo.InvariantCulture),
+                                                 startMode.ToString(),
+                                                 interactWithDesktop,
+                                                 userName,
+                                                 password,
+                                                 null,
+                                                 null,
+                                                 dependencies
+                                             };
+
+                    // Execute the method and obtain the return values.
+                    object result = wmi.InvokeMethod("Create", paramList);
+                    int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
+                    return (ServiceReturnCode)returnCode;
                 }
-
-                object[] paramList = new object[]
-                {
-                  name, 
-                  displayName, 
-                  physicalLocation, 
-                  Convert.ToInt32(ServiceTypes.OwnProcess, CultureInfo.InvariantCulture), 
-                  Convert.ToInt32(ServiceErrorControl.UserNotified, CultureInfo.InvariantCulture),
-                  startMode.ToString(), 
-                  interactWithDesktop, 
-                  userName, 
-                  password, 
-                  null, 
-                  null, 
-                  dependencies
-              };
-
-                // Execute the method and obtain the return values.
-                object result = wmi.InvokeMethod("Create", paramList);
-                int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
-                return (ServiceReturnCode)returnCode;
             }
             catch (Exception ex)
             {

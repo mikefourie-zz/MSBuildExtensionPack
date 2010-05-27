@@ -10,7 +10,7 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CreateShortcut</i> (<b>Required: </b> Name, FilePath <b>Optional: </b>ShortcutPath, Description, WorkingDirectory, IconLocation)</para>
+    /// <para><i>CreateShortcut</i> (<b>Required: </b> Name, FilePath <b>Optional: </b>Arguments, ShortcutPath, Description, WorkingDirectory, IconLocation)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -28,7 +28,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
     public class WshShell : BaseTask
     {
         private const string CreateShortcutTaskAction = "CreateShortcut";
@@ -69,6 +69,12 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         [TaskAction(CreateShortcutTaskAction, true)]
         public string Description { get; set; }
+
+        /// <summary>
+        /// Sets the Arguments for the shortcut
+        /// </summary>
+        [TaskAction(CreateShortcutTaskAction, true)]
+        public string Arguments { get; set; }
 
         /// <summary>
         /// Sets the WorkingDirectory
@@ -141,6 +147,12 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 shortcutToCreate.TargetPath = this.FilePath;
                 shortcutToCreate.Description = this.Description;
+                
+                if (!string.IsNullOrEmpty(this.Arguments))                   
+                {
+                    shortcutToCreate.Arguments = this.Arguments;
+                }
+
                 if (!string.IsNullOrEmpty(this.IconLocation))
                 {
                     if (!System.IO.File.Exists(this.IconLocation))

@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
-    /// <para><b>Remote Execution Support:</b> Yes</para>
+    /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
     public class Iis6AppPool : BaseTask
     {
         private const string CreateTaskAction = "Create";

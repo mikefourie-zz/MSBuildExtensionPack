@@ -46,7 +46,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/7badb83c-0162-f8c7-afd0-969f571268fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/7badb83c-0162-f8c7-afd0-969f571268fe.htm")]
     public class PerformanceCounters : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -136,8 +136,10 @@ namespace MSBuild.ExtensionPack.Computer
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting CounterName: {0}", this.CounterName));
-                PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName);
-                this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
+                using (PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName))
+                {
+                    this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
+                }                
             }
             else
             {

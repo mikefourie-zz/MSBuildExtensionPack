@@ -19,7 +19,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>DeleteAll</i> (<b>Required: </b> Path, Match)</para>
     /// <para><i>Get</i> (<b>Required: </b> Path <b>Optional:</b> Match, Recursive)</para>
     /// <para><i>Move</i> (<b>Required: </b> Path, TargetPath)</para>
-    /// <para><i>RemoveContent</i> (<b>Required: </b> Path <b>Optional: </b>Force)</para>
+    /// <para><i>RemoveContent</i> (<b>Required: </b> Path <b>Optional: </b>Force, RetryCount)</para>
     /// <para><i>RemoveSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
@@ -39,7 +39,23 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///             <Users Include="AChangeUser">
     ///                 <Permission>FullControl</Permission>
     ///             </Users>
+    ///             <FoldersToPermission Include="c:\az">
+    ///                 <Account>Performance Log Users</Account>
+    ///                 <Permission>Read,Write,Modify,Delete</Permission>
+    ///                 <AccessType>Allow</AccessType>
+    ///             </FoldersToPermission>
+    ///             <FoldersToPermission Include="c:\az">
+    ///                 <Account>AChangeUser</Account>
+    ///                 <Permission>Read,Write,Modify,Delete</Permission>
+    ///                 <AccessType>Allow</AccessType>
+    ///             </FoldersToPermission>
+    ///             <FoldersToRemovePermissions Include="c:\az">
+    ///                 <Account>Performance Log Users</Account>
+    ///                 <Permission>Read,Write,Modify,Delete</Permission>
+    ///             </FoldersToRemovePermissions>
     ///         </ItemGroup>
+    ///         <Microsoft.Build.Tasks.MakeDir Directories="c:\Demo2;c:\Demo1;c:\ddd"/>
+    ///         <Microsoft.Build.Tasks.RemoveDir Directories="C:\adeeeee"/>
     ///         <!-- Add security for users -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" Path="c:\Demo2" Users="@(Users)"/>
     ///         <!-- Remove security for users -->
@@ -52,6 +68,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="DeleteAll" Path="c:\Demo2" Match="_svn"/>
     ///         <!-- Remove all content from a folder whilst maintaining the target folder -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="c:\Demo"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="AddSecurity" AccessType="%(FoldersToPermission.AccessType)" Path="%(FoldersToPermission.Identity)" Users="%(FoldersToPermission.Account)" Permission="%(FoldersToPermission.Permission)"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveSecurity" AccessType="%(FoldersToRemovePermissions.AccessType)" Path="%(FoldersToRemovePermissions.Identity)" Users="%(FoldersToRemovePermissions.Account)" Permission="%(FoldersToRemovePermissions.Permission)"/>
     ///         <!-- Move a folder -->
     ///         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="c:\Demo1" TargetPath="C:\adeeeee"/>
     ///         <!-- Lets copy a selection of folders to multiple locations -->
@@ -70,7 +88,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
         private const string AddSecurityTaskAction = "AddSecurity";
@@ -81,6 +99,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string RemoveSecurityTaskAction = "RemoveSecurity";
         private List<string> foldersFound;
         private AccessControlType accessType = AccessControlType.Allow;
+        private int retryCount = 5;
 
         [DropdownValue(AddSecurityTaskAction)]
         [DropdownValue(DeleteAllTaskAction)]
@@ -136,6 +155,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
+        /// Separate pemissions with a comma.
+        /// </summary>
+        [TaskAction(AddSecurityTaskAction, false)]
+        [TaskAction(RemoveSecurityTaskAction, false)]
+        public string Permission { get; set; }
+
+        /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
         [TaskAction(AddSecurityTaskAction, false)]
@@ -144,6 +170,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             get { return this.accessType.ToString(); }
             set { this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value); }
+        }
+
+        /// <summary>
+        /// Sets a value indicating how many times to retry removing the content, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
+        /// </summary>
+        [TaskAction(RemoveContentTaskAction, false)]
+        public int RetryCount
+        {
+            get { return this.retryCount; }
+            set { this.retryCount = value; }
         }
 
         /// <summary>
@@ -203,7 +239,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
         }
 
-        private static void DelTree(DirectoryInfo root)
+        private void DelTree(DirectoryInfo root)
         {
             // Delete all files in current folder.
             foreach (FileInfo i in root.GetFiles())
@@ -216,14 +252,81 @@ namespace MSBuild.ExtensionPack.FileSystem
                 {
                     System.IO.File.SetAttributes(i.FullName, fileAttributes ^ FileAttributes.ReadOnly);
                 }
+                
+                try
+                {
+                    DirectoryInfo f = new DirectoryInfo(i.FullName);
+                    if (f.Exists)
+                    {
+                        System.IO.File.Delete(i.FullName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.LogTaskWarning(ex.Message);
+                    bool deleted = false;
+                    int count = 1;
+                    while (!deleted && count <= this.RetryCount)
+                    {
+                        this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Delete failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                        System.Threading.Thread.Sleep(5000);
+                        count++;
+                        try
+                        {
+                            DirectoryInfo f = new DirectoryInfo(i.FullName);
+                            if (f.Exists)
+                            {
+                                System.IO.File.Delete(i.FullName);
+                            }
 
-                System.IO.File.Delete(i.FullName);
+                            deleted = true;
+                        }
+                        catch
+                        {
+                            this.LogTaskMessage(ex.Message);
+                        }
+                    }
+
+                    if (deleted != true)
+                    {
+                        throw;
+                    }
+                }
             }
 
             foreach (DirectoryInfo d in root.GetDirectories())
             {
-                DelTree(d);
-                Directory.Delete(d.FullName);
+                this.DelTree(d);
+                try
+                {
+                    Directory.Delete(d.FullName);
+                }
+                catch (Exception ex)
+                {
+                    this.LogTaskWarning(ex.Message);
+                    bool deleted = false;
+                    int count = 1;
+                    while (!deleted && count <= this.RetryCount)
+                    {
+                        this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Delete failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                        System.Threading.Thread.Sleep(5000);
+                        count++;
+                        try
+                        {
+                            Directory.Delete(d.FullName);
+                            deleted = true;
+                        }
+                        catch
+                        {
+                            this.LogTaskMessage(ex.Message);
+                        }
+                    }
+
+                    if (deleted != true)
+                    {
+                        throw;
+                    }
+                }
             }
         }
 
@@ -289,14 +392,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                 foreach (ITaskItem user in this.Users)
                 {
                     string userName = user.ItemSpec;
-                    if (!userName.Contains(@"\"))
-                    {
-                        // default to local user
-                        userName = Environment.MachineName + @"\" + userName;
-                    }
-
                     FileSystemRights userRights = new FileSystemRights();
-                    string[] permissions = user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] permissions = string.IsNullOrEmpty(this.Permission) ? user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : this.Permission.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
                     foreach (string s in permissions)
                     {
                         userRights |= (FileSystemRights)Enum.Parse(typeof(FileSystemRights), s);
@@ -310,7 +408,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                     else
                     {
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing security for user: {0} on {1}", userName, this.Path));
-                        currentSecurity.RemoveAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                        if (permissions.Length == 0)
+                        {
+                            currentSecurity.RemoveAccessRuleAll(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                        }
+                        else
+                        {
+                            currentSecurity.RemoveAccessRule(new FileSystemAccessRule(userName, userRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, this.accessType));
+                        }
                     }
                 }
             }
@@ -344,8 +449,37 @@ namespace MSBuild.ExtensionPack.FileSystem
                 if (m.Success)
                 {
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing: {0}", child.FullName));
-                    DelTree(child);
-                    Directory.Delete(child.FullName);
+                    this.DelTree(child);
+                    try
+                    {
+                        Directory.Delete(child.FullName);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.LogTaskWarning(ex.Message);
+                        bool deleted = false;
+                        int count = 1;
+                        while (!deleted && count <= this.RetryCount)
+                        {
+                            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Delete failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                            System.Threading.Thread.Sleep(5000);
+                            count++;
+                            try
+                            {
+                                Directory.Delete(child.FullName);
+                                deleted = true;
+                            }
+                            catch
+                            {
+                                this.LogTaskMessage(ex.Message);
+                            }
+                        }
+
+                        if (deleted != true)
+                        {
+                            throw;
+                        }
+                    }
                 }
                 else
                 {
@@ -357,7 +491,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         private void RemoveContent(DirectoryInfo dir)
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Content from Folder: {0}", dir.FullName));
-
             FileSystemInfo[] infos = dir.GetFileSystemInfos("*");
             foreach (FileSystemInfo i in infos)
             {
@@ -394,13 +527,79 @@ namespace MSBuild.ExtensionPack.FileSystem
                         else
                         {
                             // it's a share, so we need to manually check all file attributes and delete
-                            DelTree((DirectoryInfo) i);
-                            Directory.Delete(i.FullName, true);
+                            this.DelTree((DirectoryInfo)i);
+                            try
+                            {
+                                Directory.Delete(i.FullName, true);
+                            }
+                            catch (Exception ex)
+                            {
+                                this.LogTaskWarning(ex.Message);
+                                bool deleted = false;
+                                int count = 1;
+                                while (!deleted && count <= this.RetryCount)
+                                {
+                                    this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Delete failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                                    System.Threading.Thread.Sleep(5000);
+                                    count++;
+                                    try
+                                    {
+                                        if (Directory.Exists(i.FullName))
+                                        {
+                                            Directory.Delete(i.FullName, true);
+                                        }
+
+                                        deleted = true;
+                                    }
+                                    catch
+                                    {
+                                        this.LogTaskMessage(ex.Message);
+                                    }
+                                }
+
+                                if (deleted != true)
+                                {
+                                    throw;
+                                }
+                            }
                         }
                     }
                     else
                     {
-                        Directory.Delete(i.FullName, true);
+                        try
+                        {
+                            Directory.Delete(i.FullName, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            this.LogTaskWarning(ex.Message);
+                            bool deleted = false;
+                            int count = 1;
+                            while (!deleted && count <= this.RetryCount)
+                            {
+                                this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Delete failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                                System.Threading.Thread.Sleep(5000);
+                                count++;
+                                try
+                                {
+                                    if (Directory.Exists(i.FullName))
+                                    {
+                                        Directory.Delete(i.FullName, true);
+                                    }
+
+                                    deleted = true;
+                                }
+                                catch
+                                {
+                                    this.LogTaskMessage(ex.Message);
+                                }
+                            }
+
+                            if (deleted != true)
+                            {
+                                throw;
+                            }
+                        }
                     }
                 }
                 else if (i is FileInfo)
@@ -417,7 +616,43 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                     }
 
-                    System.IO.File.Delete(i.FullName);
+                    try
+                    {
+                        if (i.Exists)
+                        {
+                            System.IO.File.Delete(i.FullName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.LogTaskWarning(ex.Message);
+                        bool deleted = false;
+                        int count = 1;
+                        while (!deleted && count <= this.RetryCount)
+                        {
+                            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Delete failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                            System.Threading.Thread.Sleep(5000);
+                            count++;
+                            try
+                            {
+                                if (i.Exists)
+                                {
+                                    System.IO.File.Delete(i.FullName);
+                                }
+
+                                deleted = true;
+                            }
+                            catch
+                            {
+                                this.LogTaskMessage(ex.Message);
+                            }
+                        }
+
+                        if (deleted != true)
+                        {
+                            throw;
+                        }
+                    }
                 }
             }
         }

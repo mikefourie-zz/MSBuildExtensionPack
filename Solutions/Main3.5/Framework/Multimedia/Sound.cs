@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.Multimedia
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/d5ecc508-4437-dc9d-569d-2eb066a29c81.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/d5ecc508-4437-dc9d-569d-2eb066a29c81.htm")]
     public class Sound : BaseTask
     {
         private const string PlayTaskAction = "Play";
@@ -129,11 +129,15 @@ namespace MSBuild.ExtensionPack.Multimedia
             if (!string.IsNullOrEmpty(this.SoundFile))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Playing Sound: {0}", this.SoundFile));
-                SoundPlayer player = new SoundPlayer { LoadTimeout = 5000, SoundLocation = this.SoundFile };
-                for (int i = 1; i <= this.Repeat; i++)
+                using (SoundPlayer player = new SoundPlayer())
                 {
-                    player.PlaySync();
-                    Thread.Sleep(this.Interval);
+                    player.LoadTimeout = 5000;
+                    player.SoundLocation = this.SoundFile;
+                    for (int i = 1; i <= this.Repeat; i++)
+                    {
+                        player.PlaySync();
+                        Thread.Sleep(this.Interval);
+                    }
                 }
 
                 return;

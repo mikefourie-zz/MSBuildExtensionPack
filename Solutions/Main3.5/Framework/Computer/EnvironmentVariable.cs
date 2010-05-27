@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
     public class EnvironmentVariable : BaseTask
     {
         private const string GetTaskAction = "Get";
@@ -99,7 +99,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 if (Enum.IsDefined(typeof(EnvironmentVariableTarget), value))
                 {
-                    this.target = (EnvironmentVariableTarget) Enum.Parse(typeof(EnvironmentVariableTarget), value);
+                    this.target = (EnvironmentVariableTarget)Enum.Parse(typeof(EnvironmentVariableTarget), value);
                 }
                 else
                 {
@@ -176,13 +176,15 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 this.GetManagementScope(@"\root\cimv2");
                 ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM Win32_Environment WHERE Name = '{0}'", this.Variable));
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query);
-                ManagementObjectCollection moc = searcher.Get();
-                foreach (ManagementObject mo in moc)
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
                 {
-                    if (mo["VariableValue"] != null)
+                    ManagementObjectCollection moc = searcher.Get();
+                    foreach (ManagementObject mo in moc)
                     {
-                        this.Value = mo["VariableValue"].ToString().Split(';');
+                        if (mo["VariableValue"] != null)
+                        {
+                            this.Value = mo["VariableValue"].ToString().Split(';');
+                        }
                     }
                 }
             }

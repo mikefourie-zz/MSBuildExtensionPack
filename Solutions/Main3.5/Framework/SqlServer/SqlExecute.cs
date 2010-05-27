@@ -58,7 +58,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
         private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -158,7 +158,6 @@ namespace MSBuild.ExtensionPack.SqlServer
             using (StreamReader textFileReader = new StreamReader(fileName, System.Text.Encoding.Default, true))
             {
                 retValue = textFileReader.ReadToEnd();
-                textFileReader.Close();
             }
 
             return retValue;
@@ -301,16 +300,15 @@ namespace MSBuild.ExtensionPack.SqlServer
                         }
                     }
                 }
-
-                sqlConnection.Close();
             }
         }
 
         private void ExecuteText()
         {
             using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString))
-            using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql), sqlConnection) { CommandTimeout = this.CommandTimeout })
+            using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql), sqlConnection))
             {
+                command.CommandTimeout = this.CommandTimeout;
                 this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Execute: {0}", command.CommandText));
                 sqlConnection.Open();
                 SqlTransaction sqlTransaction = null;
@@ -347,15 +345,13 @@ namespace MSBuild.ExtensionPack.SqlServer
 
                                         rows.Add(rowItem);
                                     }
-
-                                    reader.Close();
                                 }
                             }
 
                             this.ReaderResult = new ITaskItem[rows.Count];
                             for (int i = 0; i < rows.Count; i++)
                             {
-                                this.ReaderResult[i] = (ITaskItem) rows[i];
+                                this.ReaderResult[i] = (ITaskItem)rows[i];
                             }
 
                             break;
@@ -389,7 +385,6 @@ namespace MSBuild.ExtensionPack.SqlServer
                     TimeSpan s = DateTime.Now - this.timer;
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Execution Time: {0} seconds", s.TotalSeconds));
                     this.timer = DateTime.Now;
-                    sqlConnection.Close();
                 }
                 catch
                 {

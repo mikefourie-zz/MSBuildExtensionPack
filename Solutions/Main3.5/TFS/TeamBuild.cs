@@ -71,7 +71,7 @@ namespace MSBuild.ExtensionPack.Tfs
     ///         <Message Text="TestStatus: %(BuildInfo.TestStatus)"/>
     ///         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
     ///         <!-- Queue a new build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="QueueBuild" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
+    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="Queue" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
     ///         <!-- Retrieve Changesets associated with a given build -->
     ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.5.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
     public class TeamBuild : BaseTask
     {
         private const string GetLatestTaskAction = "GetLatest";
@@ -188,7 +188,7 @@ namespace MSBuild.ExtensionPack.Tfs
         {
             using (this.tfs = new TeamFoundationServer(this.TeamFoundationServerUrl))
             {
-                this.buildServer = (IBuildServer) this.tfs.GetService(typeof(IBuildServer));
+                this.buildServer = (IBuildServer)this.tfs.GetService(typeof(IBuildServer));
 
                 switch (this.TaskAction)
                 {
@@ -313,9 +313,9 @@ namespace MSBuild.ExtensionPack.Tfs
                 ibuildDef.SetMetadata("BuildAgentDescription", this.buildDetails.BuildAgent.Description ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentFullPath", this.buildDetails.BuildAgent.FullPath ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentMachineName", this.buildDetails.BuildAgent.MachineName ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentMaxProcesses", this.buildDetails.BuildAgent.MaxProcesses.ToString(CultureInfo.CurrentUICulture) ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentMaxProcesses", this.buildDetails.BuildAgent.MaxProcesses.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentName", this.buildDetails.BuildAgent.Name ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentPort", this.buildDetails.BuildAgent.Port.ToString(CultureInfo.CurrentUICulture) ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentPort", this.buildDetails.BuildAgent.Port.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentUri", this.buildDetails.BuildAgentUri.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("BuildDefinitionUri", this.buildDetails.BuildDefinitionUri.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("BuildFinished", this.buildDetails.BuildFinished.ToString() ?? string.Empty);

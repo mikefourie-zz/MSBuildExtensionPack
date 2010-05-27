@@ -6,8 +6,15 @@
     <Import Project="$(TPath)"/>
     <Target Name="Default">
         <ItemGroup>
-            <AssemblyInfoFiles Include="C:\CommonAssemblyInfo.cs"/>
+            <AssemblyInfoFiles Include="C:\a\CommonAssemblyInfo.cs"/>
+            <AssemblyInfoFiles1 Include="C:\a\CommonAssemblyInfo1.cs"/>
+            <AssemblyInfoFiles2 Include="C:\a\CommonAssemblyInfo2.cs"/>
         </ItemGroup>
+        <!-- Update an attribute and don't do any versioning -->
         <MSBuild.ExtensionPack.Framework.AssemblyInfo ComVisible="true" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+        <!-- Version using YearWeekDay and set the start of the week as a Sunday -->
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles1)" AssemblyBuildNumberType="YearWeekDay" FirstDayOfWeek="Sunday"/>
+        <!-- Version using the number of days elapsed since a given start date-->
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles2)" StartDate="1 Jan 2000" AssemblyBuildNumberType="ElapsedDays"/>
     </Target>
 </Project>
