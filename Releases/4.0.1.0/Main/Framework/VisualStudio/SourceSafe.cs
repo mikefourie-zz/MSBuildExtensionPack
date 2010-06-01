@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// Please be aware that this is a very light wrapper for ss.exe<para/>
     /// See the Command Line Reference on MSDN (http://msdn.microsoft.com/en-us/library/003ssz4z(VS.80).aspx) for full details.
     /// <para/>
-    /// <b>Valid TaskActions are:</b>
+    /// <b>Sample TaskActions are as follows, HOWEVER use the URL above for full guidance and additional TaskActions:</b>
     /// <para><i>Checkout</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
     /// <para><i>Checkin</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
     /// <para><i>Cloak</i> (<b>Required: </b> FilePath <b>Optional: </b>Arguments, Database, SSVersion, SuppressI)</para>
