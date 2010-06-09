@@ -407,6 +407,7 @@
                     <xs:attribute name="TargetFiles"/>
                     <xs:attribute name="TargetPath"/>
                     <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TokenExtractionPattern"/>
                     <xs:attribute name="TokenPattern"/>
                 </xs:extension>
             </xs:complexContent>

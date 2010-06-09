@@ -16,8 +16,8 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed)</para>
+    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
     /// <para><i>Report</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TokenPattern <b>Output: </b>FilesProcessed, TokenReport)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string AnalyseTaskAction = "Analyse";
         private const string DetokeniseTaskAction = "Detokenise";
         private const string ReportTaskAction = "Report";
-        private const string ParseRegexPatternExtract = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
+        private string tokenExtractionPattern = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
         private string tokenPattern = @"\$\([0-9a-zA-Z-._]+\)";
         private Project project;
         private Encoding fileEncoding = Encoding.UTF8;
@@ -129,7 +129,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public bool DisplayFiles { get; set; }
 
         /// <summary>
-        /// Specifies the format of the token to look for. The default pattern is $(token)
+        /// Specifies the regular expression format of the token to look for. The default pattern is \$\([0-9a-zA-Z-._]+\) which equates to $(token)
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
@@ -139,6 +139,17 @@ namespace MSBuild.ExtensionPack.FileSystem
             set { this.tokenPattern = value; }
         }
 
+        /// <summary>
+        /// Specifies the regular expression to use to extract the token name from the TokenPattern provided. The default pattern is (?&lt;=\$\()[0-9a-zA-Z-._]+(?=\)), i.e it will extract token from $(token)
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
+        public string TokenExtractionPattern
+        {
+            get { return this.tokenExtractionPattern; }
+            set { this.tokenExtractionPattern = value; }
+        }
+        
         /// <summary>
         /// Sets the replacement values.
         /// </summary>
@@ -507,7 +518,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             string propertyFound = regexMatch.Captures[0].ToString();
 
             // Extract the keyword from the match.
-            string extractedProperty = Regex.Match(propertyFound, ParseRegexPatternExtract).Captures[0].ToString();
+            string extractedProperty = Regex.Match(propertyFound, this.TokenExtractionPattern).Captures[0].ToString();
 
             // Find the replacement property
             if (this.collectionMode)
