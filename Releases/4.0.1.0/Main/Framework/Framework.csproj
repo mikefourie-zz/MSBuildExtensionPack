@@ -197,6 +197,7 @@
     <Compile Include="SqlServer\SqlExecute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SqlServer\SqlScriptLoader.cs" />
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
     </Compile>
