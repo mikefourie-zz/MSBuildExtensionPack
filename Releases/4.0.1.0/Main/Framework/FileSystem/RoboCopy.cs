@@ -64,14 +64,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         protected override string GenerateCommandLineCommands()
         {
             CommandLineBuilder builder = new CommandLineBuilder();
+            builder.AppendFileNameIfNotNull(this.Source);
+            builder.AppendFileNameIfNotNull(this.Destination);
+            builder.AppendFileNamesIfNotNull(this.Files, " ");
             if (!string.IsNullOrEmpty(this.Options))
             {
                 builder.AppendSwitch(this.Options);
             }
 
-            builder.AppendFileNameIfNotNull(this.Source);
-            builder.AppendFileNameIfNotNull(this.Destination);
-            builder.AppendFileNamesIfNotNull(this.Files, " ");
             return builder.ToString();
         }
 
