@@ -169,10 +169,21 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (FileStream idFile = File.Open(idFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
-                StreamWriter sw = new StreamWriter(idFile);
-                replicaId = Guid.NewGuid();
-                sw.WriteLine(replicaId.ToString("D"));
-                
+                StreamWriter sw = null;
+                try
+                {
+                    sw = new StreamWriter(idFile);
+                    replicaId = Guid.NewGuid();
+                    sw.WriteLine(replicaId.ToString("D"));
+                }
+                finally
+                {
+                    if (sw != null)
+                    {
+                        sw.Close();
+                    }
+                }
+
                 return replicaId;
             }
         }

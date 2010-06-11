@@ -303,10 +303,21 @@ namespace MSBuild.ExtensionPack.Xml
                     this.LogTaskMessage(MessageImportance.Low, "Writing using text method");
                     using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
                     {
-                        StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default);
+                        StreamWriter streamWriter = null;
+                        try
+                        {
+                            streamWriter = new StreamWriter(stream, Encoding.Default);
 
-                        // Output the results to a writer.
-                        streamWriter.Write(this.Output);
+                            // Output the results to a writer.
+                            streamWriter.Write(this.Output);
+                        }
+                        finally
+                        {
+                            if (streamWriter != null)
+                            {
+                                streamWriter.Close();
+                            }
+                        }
                     }
                 }
                 else
