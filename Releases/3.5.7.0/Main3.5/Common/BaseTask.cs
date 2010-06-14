@@ -15,6 +15,7 @@ namespace MSBuild.ExtensionPack
     public abstract class BaseTask : Task
     {
         private string machineName;
+        private AuthenticationLevel authenticationLevel = System.Management.AuthenticationLevel.Default;
 
         /// <summary>
         /// Sets the TaskAction.
@@ -44,6 +45,15 @@ namespace MSBuild.ExtensionPack
         /// Sets the authority to be used to authenticate the specified user.
         /// </summary>
         public string Authority { get; set; }
+
+        /// <summary>
+        /// Sets the authentication level to be used to connect to WMI. Default is Default. Also supports: Call, Connect, None, Packet, PacketIntegrity, PacketPrivacy, Unchanged
+        /// </summary>
+        public string AuthenticationLevel
+        {
+            get { return this.authenticationLevel.ToString(); }
+            set { this.authenticationLevel = (AuthenticationLevel)Enum.Parse(typeof(AuthenticationLevel), value); }
+        }
 
         /// <summary>
         /// Set to true to log the full Exception Stack to the console.
@@ -152,7 +162,8 @@ namespace MSBuild.ExtensionPack
             {
                 ConnectionOptions options = new ConnectionOptions
                 {
-                    Username = this.UserName,
+                    Authentication = this.authenticationLevel,
+                    Username = this.UserName, 
                     Password = this.UserPassword,
                     Authority = this.Authority
                 };
@@ -163,14 +174,7 @@ namespace MSBuild.ExtensionPack
         internal void GetManagementScope(string wmiNamespace, ConnectionOptions options)
         {
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "ManagementScope Set: {0}", "\\\\" + this.MachineName + wmiNamespace));
-            if (string.Compare(this.MachineName, Environment.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace, options);
-            }
-            else
-            {
-                this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace, options);
-            }
+            this.Scope = new ManagementScope("\\\\" + this.MachineName + wmiNamespace, options);
         }
 
         /// <summary>
