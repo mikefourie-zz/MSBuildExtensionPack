@@ -448,6 +448,12 @@
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />
+    <Content Include="XmlSamples\MotorData\Cars\Dodge.txt" />
+    <Content Include="XmlSamples\MotorData\Cars\lexus.txt" />
+    <Content Include="XmlSamples\MotorData\rootfile1.txt" />
+    <Content Include="XmlSamples\MotorData\rootfile2.txt" />
+    <Content Include="XmlSamples\MotorData\Trucks\BigTruck.txt" />
+    <Content Include="XmlSamples\MotorData\Trucks\SmallTruck.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <PropertyGroup>
