@@ -401,11 +401,21 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private SqlConnection CreateConnection(string connectionString)
         {
-            SqlConnection returnedConnection;
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            SqlConnection returnedConnection = null;
+            SqlConnection connection = null;
+            try
             {
+                connection = new SqlConnection(connectionString);
                 connection.InfoMessage += this.TraceMessageEventHandler;
                 returnedConnection = connection;
+                connection = null;
+            }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
             }
 
             return returnedConnection;
