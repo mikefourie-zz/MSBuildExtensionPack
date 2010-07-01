@@ -83,7 +83,7 @@ namespace MSBuild.ExtensionPack.UI
         }
 
         /// <summary>
-        /// Sets the height of the form. Default is 400
+        /// Sets the height of the form. Default is 180
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
@@ -95,7 +95,7 @@ namespace MSBuild.ExtensionPack.UI
         }
 
         /// <summary>
-        /// Sets the width of the form. Default is 180
+        /// Sets the width of the form. Default is 400
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
