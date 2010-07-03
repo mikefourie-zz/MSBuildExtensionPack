@@ -303,6 +303,7 @@
                     <xs:attribute name="Data"/>
                     <xs:attribute name="Value"/>
                     <xs:attribute name="RegistryHive" type="msb:non_empty_string" use="required"/>
+                    <xs:attribute name="RegistryView"/>
                     <xs:attribute name="Key" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Empty"/>
                 </xs:extension>

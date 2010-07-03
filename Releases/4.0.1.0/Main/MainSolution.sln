@@ -19,6 +19,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "DocumentationSchema", "{27FF4005-D504-48A9-A0C0-40C32F21F324}"
 	ProjectSection(SolutionItems) = preProject
 		DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd = DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd
+		DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd = DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd = DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd = DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd
 		DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd
