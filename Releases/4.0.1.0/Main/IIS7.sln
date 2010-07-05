@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS7", "IIS7\IIS7.csproj", "{A2B689B5-516B-4E6F-87D6-0EE111E0F049}"
 EndProject
 Global
