@@ -10,10 +10,10 @@ namespace MSBuild.ExtensionPack.Xml
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value)</para>
-    /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key)</para>
-    /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath)</para>
+    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces)</para>
+    /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces)</para>
+    /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -99,6 +99,24 @@ namespace MSBuild.ExtensionPack.Xml
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" File="%(XMLConfigElementsToAdd.Identity)" Key="%(XMLConfigElementsToAdd.KeyAttributeName)" Value="%(XMLConfigElementsToAdd.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd.Name)" XPath="%(XMLConfigElementsToAdd.XPath)" Condition="'%(XMLConfigElementsToAdd.Identity)'!=''"/>
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddAttribute" File="%(XMLConfigAttributesToAdd.Identity)" Key="%(XMLConfigAttributesToAdd.Name)" Value="%(XMLConfigAttributesToAdd.Value)" XPath="%(XMLConfigAttributesToAdd.XPath)" Condition="'%(XMLConfigAttributesToAdd.Identity)'!=''"/>
     ///     </Target>
+    ///     <!-- The following illustrates Namespace usage -->
+    ///     <ItemGroup>
+    ///         <Namespaces Include="Mynamespace">
+    ///             <Prefix>me</Prefix>
+    ///             <Uri>http://mynamespace</Uri>
+    ///         </Namespaces>
+    ///         <XMLConfigElementsToDelete1 Include="c:\test.xml">
+    ///             <XPath>//me:MyNodes/sources</XPath>
+    ///         </XMLConfigElementsToDelete1>
+    ///         <XMLConfigElementsToAdd1 Include="c:\test.xml">
+    ///             <XPath>//me:MyNodes</XPath>
+    ///             <Name>sources</Name>
+    ///         </XMLConfigElementsToAdd1>
+    ///     </ItemGroup>
+    ///     <Target Name="DefaultWithNameSpace">
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToDelete1.Identity)" XPath="%(XMLConfigElementsToDelete1.XPath)" Condition="'%(XMLConfigElementsToDelete1.Identity)'!=''"/>
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToAdd1.Identity)" Key="%(XMLConfigElementsToAdd1.KeyAttributeName)" Value="%(XMLConfigElementsToAdd1.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd1.Name)" XPath="%(XMLConfigElementsToAdd1.XPath)" Condition="'%(XMLConfigElementsToAdd1.Identity)'!=''"/>
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -165,11 +183,19 @@ namespace MSBuild.ExtensionPack.Xml
         /// <summary>
         /// Specifies the XPath to be used
         /// </summary>
+        [TaskAction(AddAttributeTaskAction, false)]
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(RemoveAttributeTaskAction, false)]
+        [TaskAction(RemoveElementTaskAction, false)]
         public string XPath { get; set; }
 
         /// <summary>
         /// TaskItems specifiying "Prefix" and "Uri" attributes for use with the specified XPath
         /// </summary>
+        [TaskAction(AddAttributeTaskAction, false)]
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(RemoveAttributeTaskAction, false)]
+        [TaskAction(RemoveElementTaskAction, false)]
         public ITaskItem[] Namespaces { get; set; }
 
         /// <summary>
