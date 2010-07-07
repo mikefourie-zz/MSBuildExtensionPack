@@ -140,6 +140,7 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
+                    <xs:attribute name="AdditionalHostSettings"/>
                     <xs:attribute name="MachineName"/>
                     <xs:attribute name="DatabaseServer"/>
                     <xs:attribute name="Database"/>
