@@ -11,6 +11,7 @@ namespace MSBuild.ExtensionPack.Compression
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path. Does not support Password protected files)</para>
     /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -20,7 +21,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///   <PropertyGroup>
     ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -76,6 +77,7 @@ namespace MSBuild.ExtensionPack.Compression
     {
         private const string CreateTaskAction = "Create";
         private const string ExtractTaskAction = "Extract";
+        private const string AddFilesTaskAction = "AddFiles";
         private Ionic.Zlib.CompressionLevel compressionLevel = Ionic.Zlib.CompressionLevel.Default;
 
         /// <summary>
@@ -83,6 +85,7 @@ namespace MSBuild.ExtensionPack.Compression
         /// </summary>
         [DropdownValue(CreateTaskAction)]
         [DropdownValue(ExtractTaskAction)]
+        [DropdownValue(AddFilesTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -107,6 +110,7 @@ namespace MSBuild.ExtensionPack.Compression
         [Required]
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(ExtractTaskAction, true)]
+        [TaskAction(AddFilesTaskAction, true)]
         public ITaskItem ZipFileName { get; set; }
 
         /// <summary>
@@ -144,15 +148,55 @@ namespace MSBuild.ExtensionPack.Compression
 
             switch (this.TaskAction)
             {
-                case "Create":
+                case CreateTaskAction:
                     this.Create();
                     break;
-                case "Extract":
+                case ExtractTaskAction:
                     this.Extract();
+                    break;
+                case AddFilesTaskAction:
+                    this.AddFiles();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void AddFiles()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding files to ZipFile: {0}", this.ZipFileName));
+            if (this.CompressFiles != null)
+            {
+                using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
+                {
+                    zip.CompressionLevel = this.compressionLevel;
+                    if (!string.IsNullOrEmpty(this.Password))
+                    {
+                        zip.Password = this.Password;
+                    }
+
+                    foreach (ITaskItem f in this.CompressFiles)
+                    {
+                        zip.AddFile(f.GetMetadata("FullPath"));
+                    }
+
+                    zip.Save();
+                }
+            }
+            else if (this.CompressPath != null)
+            {
+                using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
+                {
+                    zip.CompressionLevel = this.compressionLevel;
+                    zip.AddDirectory(this.CompressPath.ItemSpec);
+                    zip.Save();
+                }
+            }
+            else
+            {
+                Log.LogError("CompressFiles or CompressPath must be specified");
+                return;
             }
         }
 
@@ -181,6 +225,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.CompressionLevel = this.compressionLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
