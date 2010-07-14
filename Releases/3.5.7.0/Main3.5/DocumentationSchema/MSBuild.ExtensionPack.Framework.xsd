@@ -53,6 +53,7 @@
                     <xs:attribute name="Body"/>
                     <xs:attribute name="Format"/>
                     <xs:attribute name="Attachments"/>
+                    <xs:attribute name="UseDefaultCredentials"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
