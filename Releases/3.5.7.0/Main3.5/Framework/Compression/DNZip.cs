@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Compression
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path. Does not support Password protected files)</para>
+    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password) Existing files will be updated</para>
     /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -178,7 +178,7 @@ namespace MSBuild.ExtensionPack.Compression
 
                     foreach (ITaskItem f in this.CompressFiles)
                     {
-                        zip.AddFile(f.GetMetadata("FullPath"));
+                        zip.UpdateFile(f.GetMetadata("FullPath"));
                     }
 
                     zip.Save();
@@ -189,7 +189,12 @@ namespace MSBuild.ExtensionPack.Compression
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
                     zip.CompressionLevel = this.compressionLevel;
-                    zip.AddDirectory(this.CompressPath.ItemSpec);
+                    if (!string.IsNullOrEmpty(this.Password))
+                    {
+                        zip.Password = this.Password;
+                    }
+
+                    zip.UpdateDirectory(this.CompressPath.ItemSpec);
                     zip.Save();
                 }
             }
