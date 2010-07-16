@@ -4,16 +4,17 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Xml
 {
+    using System;
     using System.Globalization;
     using System.Xml;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces)</para>
-    /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces)</para>
-    /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces)</para>
+    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount)</para>
+    /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -130,6 +131,7 @@ namespace MSBuild.ExtensionPack.Xml
         private XmlDocument xmlFileDoc;
         private XmlNamespaceManager namespaceManager;
         private XmlNodeList elements;
+        private int retryCount = 5;
 
         [DropdownValue(AddAttributeTaskAction)]
         [DropdownValue(AddElementTaskAction)]
@@ -199,6 +201,19 @@ namespace MSBuild.ExtensionPack.Xml
         public ITaskItem[] Namespaces { get; set; }
 
         /// <summary>
+        /// Sets a value indicating how many times to retry saving the file, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
+        /// </summary>
+        [TaskAction(AddAttributeTaskAction, false)]
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(RemoveAttributeTaskAction, false)]
+        [TaskAction(RemoveElementTaskAction, false)]
+        public int RetryCount
+        {
+            get { return this.retryCount; }
+            set { this.retryCount = value; }
+        }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -210,7 +225,38 @@ namespace MSBuild.ExtensionPack.Xml
             }
 
             this.xmlFileDoc = new XmlDocument();
-            this.xmlFileDoc.Load(this.File.ItemSpec);
+
+            try
+            {
+                this.xmlFileDoc.Load(this.File.ItemSpec);
+            }
+            catch (Exception ex)
+            {
+                this.LogTaskWarning(ex.Message);
+                bool loaded = false;
+                int count = 1;
+                while (!loaded && count <= this.RetryCount)
+                {
+                    this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Load failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                    System.Threading.Thread.Sleep(5000);
+                    count++;
+                    try
+                    {
+                        this.xmlFileDoc.Load(this.File.ItemSpec);
+                        loaded = true;
+                    }
+                    catch
+                    {
+                        this.LogTaskWarning(ex.Message);
+                    }
+                }
+
+                if (loaded != true)
+                {
+                    throw;
+                }
+            }
+
             if (!string.IsNullOrEmpty(this.XPath))
             {
                 this.namespaceManager = this.GetNamespaceManagerForDoc();
@@ -254,7 +300,7 @@ namespace MSBuild.ExtensionPack.Xml
                 if (attNode != null)
                 {
                     elementNode.Attributes.Remove(attNode);
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
             else
@@ -268,11 +314,9 @@ namespace MSBuild.ExtensionPack.Xml
                         if (attNode != null)
                         {
                             element.Attributes.Remove(attNode);
-                            this.xmlFileDoc.Save(this.File.ItemSpec);
+                            this.TrySave();
                         }
                     }
-
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
                 }
             }
         }
@@ -301,7 +345,7 @@ namespace MSBuild.ExtensionPack.Xml
                     attNode.Value = this.Value;
                 }
 
-                this.xmlFileDoc.Save(this.File.ItemSpec);
+                this.TrySave();
             }
             else
             {
@@ -314,7 +358,7 @@ namespace MSBuild.ExtensionPack.Xml
                         attrib.Value = this.Value;
                     }
 
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
         }
@@ -366,7 +410,7 @@ namespace MSBuild.ExtensionPack.Xml
                     }
 
                     parentNode.AppendChild(newNode);
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
             else
@@ -389,7 +433,7 @@ namespace MSBuild.ExtensionPack.Xml
                         element.AppendChild(newNode);
                     }
 
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
         }
@@ -410,7 +454,7 @@ namespace MSBuild.ExtensionPack.Xml
                 if (nodeToRemove != null)
                 {
                     parentNode.RemoveChild(nodeToRemove);
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
             else
@@ -423,7 +467,41 @@ namespace MSBuild.ExtensionPack.Xml
                         element.ParentNode.RemoveChild(element);
                     }
 
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
+                }
+            }
+        }
+
+        private void TrySave()
+        {
+            try
+            {
+                this.xmlFileDoc.Save(this.File.ItemSpec);
+            }
+            catch (Exception ex)
+            {
+                this.LogTaskWarning(ex.Message);
+                bool saved = false;
+                int count = 1;
+                while (!saved && count <= this.RetryCount)
+                {
+                    this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Save failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                    System.Threading.Thread.Sleep(5000);
+                    count++;
+                    try
+                    {
+                        this.xmlFileDoc.Save(this.File.ItemSpec);
+                        saved = true;
+                    }
+                    catch
+                    {
+                        this.LogTaskWarning(ex.Message);
+                    }
+                }
+
+                if (saved != true)
+                {
+                    throw;
                 }
             }
         }

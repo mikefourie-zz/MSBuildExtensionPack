@@ -1571,6 +1571,7 @@
                     <xs:attribute name="File"/>
                     <xs:attribute name="XPath"/>
                     <xs:attribute name="Namespaces"/>
+                    <xs:attribute name="RetryCount"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

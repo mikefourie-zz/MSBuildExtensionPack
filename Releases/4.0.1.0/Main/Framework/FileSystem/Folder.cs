@@ -283,7 +283,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                         catch
                         {
-                            this.LogTaskMessage(ex.Message);
+                            this.LogTaskWarning(ex.Message);
                         }
                     }
 
@@ -318,7 +318,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                         catch
                         {
-                            this.LogTaskMessage(ex.Message);
+                            this.LogTaskWarning(ex.Message);
                         }
                     }
 
@@ -471,7 +471,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             }
                             catch
                             {
-                                this.LogTaskMessage(ex.Message);
+                                this.LogTaskWarning(ex.Message);
                             }
                         }
 
@@ -553,7 +553,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                                     }
                                     catch
                                     {
-                                        this.LogTaskMessage(ex.Message);
+                                        this.LogTaskWarning(ex.Message);
                                     }
                                 }
 
@@ -591,7 +591,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                                 }
                                 catch
                                 {
-                                    this.LogTaskMessage(ex.Message);
+                                    this.LogTaskWarning(ex.Message);
                                 }
                             }
 
@@ -644,7 +644,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             }
                             catch
                             {
-                                this.LogTaskMessage(ex.Message);
+                                this.LogTaskWarning(ex.Message);
                             }
                         }
 
