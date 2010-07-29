@@ -135,12 +135,6 @@ namespace MSBuild.ExtensionPack.Computer
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Shortcut: {0}", Path.Combine(this.ShortcutPath, this.Name)));
-            if (!System.IO.File.Exists(this.FilePath))
-            {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "FilePath: {0} does not exist.", this.FilePath));
-                return;
-            }
-
             WshShellClass shell = new WshShellClass();
             IWshShortcut shortcutToCreate = shell.CreateShortcut(Path.Combine(this.ShortcutPath, this.Name)) as IWshShortcut;
             if (shortcutToCreate != null)
