@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText)</para>
     /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -144,7 +144,7 @@ namespace MSBuild.ExtensionPack.Xml
         }
 
         /// <summary>
-        /// Sets the element.
+        /// Sets the element. For AddElement, if the element exists, it's InnerText will be updated
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         [TaskAction(AddElementTaskAction, true)]
@@ -153,6 +153,12 @@ namespace MSBuild.ExtensionPack.Xml
         public string Element { get; set; }
 
         /// <summary>
+        /// Sets the InnerText.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, true)]
+        public string InnerText { get; set; }
+        
+        /// <summary>
         /// Sets the parent element.
         /// </summary>
         [TaskAction(AddElementTaskAction, true)]
@@ -160,14 +166,14 @@ namespace MSBuild.ExtensionPack.Xml
         public string ParentElement { get; set; }
 
         /// <summary>
-        /// Sets the key.
+        /// Sets the Attribute key.
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         [TaskAction(RemoveAttributeTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
-        /// Sets the key value.
+        /// Sets the Attribute key value.
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         public string Value { get; set; }
@@ -399,6 +405,10 @@ namespace MSBuild.ExtensionPack.Xml
                 if (newNode == null)
                 {
                     newNode = this.xmlFileDoc.CreateElement(this.Element);
+                    if (!string.IsNullOrEmpty(this.InnerText))
+                    {
+                        newNode.InnerText = this.InnerText;    
+                    }
 
                     if (!string.IsNullOrEmpty(this.Key))
                     {
@@ -412,6 +422,14 @@ namespace MSBuild.ExtensionPack.Xml
                     parentNode.AppendChild(newNode);
                     this.TrySave();
                 }
+                else
+                {
+                    if (!string.IsNullOrEmpty(this.InnerText))
+                    {
+                        newNode.InnerText = this.InnerText;
+                        this.TrySave();
+                    }
+                }
             }
             else
             {
@@ -421,6 +439,11 @@ namespace MSBuild.ExtensionPack.Xml
                     foreach (XmlNode element in this.elements)
                     {
                         XmlNode newNode = this.xmlFileDoc.CreateElement(this.Element);
+                        if (!string.IsNullOrEmpty(this.InnerText))
+                        {
+                            newNode.InnerText = this.InnerText;
+                        }
+
                         if (!string.IsNullOrEmpty(this.Key))
                         {
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Attribute: {0} to: {1}", this.Key, this.Element));

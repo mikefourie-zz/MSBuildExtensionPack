@@ -1565,6 +1565,7 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="Element"/>
+                    <xs:attribute name="InnerText"/>
                     <xs:attribute name="ParentElement"/>
                     <xs:attribute name="Key"/>
                     <xs:attribute name="Value"/>
