@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/e1e7dbf1-68b9-11a1-2b69-10b920ff101e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/e1e7dbf1-68b9-11a1-2b69-10b920ff101e.htm")]
     public class Gac : BaseTask
     {
         private const string AddAssemblyTaskAction = "AddAssembly";
