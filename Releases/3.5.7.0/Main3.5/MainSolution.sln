@@ -1,12 +1,11 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06FDB13A-E163-49EE-AC60-4EF4085DADC5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{269F9D77-D538-4980-BA64-61C914AE9D77}"
 	ProjectSection(SolutionItems) = preProject
 		Common\Attributes.cs = Common\Attributes.cs
 		Common\BaseAppDomainIsolatedTask.cs = Common\BaseAppDomainIsolatedTask.cs
 		Common\BaseTask.cs = Common\BaseTask.cs
 		Common\CodeAnalysis.Dictionary.xml = Common\CodeAnalysis.Dictionary.xml
-		CodeCoverage.testrunconfig = CodeCoverage.testrunconfig
 		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
 		Common\ExtensionPack.public.snk = Common\ExtensionPack.public.snk
 		MainSolution.vsmdi = MainSolution.vsmdi
@@ -63,7 +62,7 @@ Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs08.codeplex.com/
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = BizTalk\\BizTalk.csproj
 		SccProjectName1 = BizTalk

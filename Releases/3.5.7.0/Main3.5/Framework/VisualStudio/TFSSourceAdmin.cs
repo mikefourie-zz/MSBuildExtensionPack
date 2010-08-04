@@ -33,7 +33,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/3a47a393-8a00-ad50-a5e7-55b3f131a724.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/3a47a393-8a00-ad50-a5e7-55b3f131a724.htm")]
     public class TfsSourceAdmin : BaseTask
     {
         private const string BranchTaskAction = "Branch";
