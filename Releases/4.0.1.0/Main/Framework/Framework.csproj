@@ -180,6 +180,13 @@
     <Compile Include="..\Common\StringExtension.cs">
       <Link>StringExtension.cs</Link>
     </Compile>
+    <Compile Include="Communication\Ftp.cs" />
+    <Compile Include="Communication\FTP\Extensions.cs" />
+    <Compile Include="Communication\FTP\FtpConnection.cs" />
+    <Compile Include="Communication\FTP\FtpDirectoryInfo.cs" />
+    <Compile Include="Communication\FTP\FtpException.cs" />
+    <Compile Include="Communication\FTP\FtpFileInfo.cs" />
+    <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\DNZip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
@@ -359,6 +366,7 @@
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
     <None Include="XmlSamples\DNZip.proj" />
+    <None Include="XmlSamples\Ftp.proj" />
     <None Include="XmlSamples\GenericTool.proj" />
     <None Include="XmlSamples\RoboCopy.proj" />
     <None Include="XmlSamples\SqlCmd.proj" />
