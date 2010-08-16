@@ -201,6 +201,7 @@
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="FileSystem\RoboCopy.cs" />
+    <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
@@ -365,6 +366,9 @@
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
+    <None Include="XmlSamples\CommandLine.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\DNZip.proj" />
     <None Include="XmlSamples\Ftp.proj" />
     <None Include="XmlSamples\GenericTool.proj" />
