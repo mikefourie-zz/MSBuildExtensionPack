@@ -193,6 +193,7 @@
     <Compile Include="FileSystem\RoboCopy.cs" />
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
+    <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
@@ -393,6 +394,7 @@
     </None>
     <None Include="XmlSamples\AssemblyInfo.proj" />
     <None Include="XmlSamples\ActiveDirectory.proj" />
+    <None Include="XmlSamples\CommandLine.proj" />
     <None Include="XmlSamples\Ftp.proj" />
     <None Include="XmlSamples\VSDevEnv.proj" />
     <None Include="XmlSamples\GenericTool.proj" />
