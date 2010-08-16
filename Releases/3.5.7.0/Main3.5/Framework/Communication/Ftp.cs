@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.Communication
     using System.IO;
     using System.Linq;
     using Microsoft.Build.Framework;
+    using MSBuild.ExtensionPack.Communication.Extended;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
