@@ -371,6 +371,7 @@
     </None>
     <None Include="XmlSamples\DNZip.proj" />
     <None Include="XmlSamples\Ftp.proj" />
+    <None Include="XmlSamples\FxCop.FxCop" />
     <None Include="XmlSamples\GenericTool.proj" />
     <None Include="XmlSamples\RoboCopy.proj" />
     <None Include="XmlSamples\SqlCmd.proj" />

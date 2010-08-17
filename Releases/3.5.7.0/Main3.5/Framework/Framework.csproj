@@ -396,6 +396,7 @@
     <None Include="XmlSamples\ActiveDirectory.proj" />
     <None Include="XmlSamples\CommandLine.proj" />
     <None Include="XmlSamples\Ftp.proj" />
+    <None Include="XmlSamples\FxCop.FxCop" />
     <None Include="XmlSamples\VSDevEnv.proj" />
     <None Include="XmlSamples\GenericTool.proj" />
     <None Include="XmlSamples\RoboCopy.proj" />
