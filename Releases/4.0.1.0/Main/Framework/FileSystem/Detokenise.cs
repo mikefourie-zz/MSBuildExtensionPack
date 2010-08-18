@@ -313,10 +313,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                     this.collectionMode = false;
 
                     // Read the project file to get the tokens
-                    this.project = new Project();
                     string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
-                    this.project = new Project(projectFile);
+                    this.project = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFile).FirstOrDefault();
+                    if (this.project == null)
+                    {
+                        ProjectCollection.GlobalProjectCollection.LoadProject(projectFile);
+                        this.project = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFile).FirstOrDefault();
+                    }
                 }
                 else if (!string.IsNullOrEmpty(this.CommandLineValues))
                 {
