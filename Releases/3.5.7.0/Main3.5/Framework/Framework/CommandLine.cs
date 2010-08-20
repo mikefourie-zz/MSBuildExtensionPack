@@ -81,7 +81,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/324b0e31-5ff0-baac-40ae-bf26297e5821.htm")]
     public class CommandLine : Task
     {
         /// <summary>
