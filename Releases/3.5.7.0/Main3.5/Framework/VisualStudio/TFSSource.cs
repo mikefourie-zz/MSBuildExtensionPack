@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System.IO;
     using System.Text;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// AutoArg enumeration
@@ -55,7 +56,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <para><i>GetChangeset</i> (<b>Required: </b>VersionSpec <b>Optional: </b>Server, WorkingDirectory <b>Output:</b> ExitCode, Changeset)</para>
     /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
     /// <para><i>Resolve</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Recursive, Version, Auto, NewName)</para>
-    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode)</para>
+    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode, PendingChangesExistItem)</para>
     /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -79,6 +80,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///         </MSBuild.ExtensionPack.VisualStudio.TfsSource>
     ///         <Message Text="Pending Changes Report: $(PendingChangesText)"/>
     ///         <Message Text="Pending Changes Exist: $(DoChangesExist)"/>
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/ADifferentPath" WorkingDirectory="C:\Projects\SpeedCMMI">
+    ///             <Output TaskParameter="PendingChangesExistItem" ItemName="PendingChangesExistItem3" />
+    ///         </MSBuild.ExtensionPack.VisualStudio.TfsSource>
+    ///         <!-- Get a summary of whether changes exist using the PendingChangesExistItem -->
+    ///         <Message Text="%(PendingChangesExistItem3.Identity) = %(PendingChangesExistItem3.PendingChangesExist)"/>
     ///         <!-- Perfrom various other source control operations -->
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemPath="C:\projects\SpeedCMMI\Demo1" Version="2008" WorkingDirectory="C:\projects\SpeedCMMI"/>
     ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Demo1" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="Code reviewer=buildrobot" OverrideText="Justdoit" />
@@ -323,6 +329,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [Output]
         public int ExitCode { get; set; }
 
+        /// <summary>
+        /// Task Item stores whether changes exist for the given ItemPath. Identity stores the path, PendingChangesExist metadata stores boolean.
+        /// </summary>
+        [Output]
+        [TaskAction(GetPendingChangesTaskAction, false)]
+        public ITaskItem[] PendingChangesExistItem { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -394,10 +407,19 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             this.ExecuteCommand("status", string.Empty, "/Format:detailed /user:* /recursive");
             this.PendingChanges = this.returnOutput;
+            this.PendingChangesExistItem = new TaskItem[1];
+            ITaskItem t = new TaskItem(this.ItemPath);
             if (this.returnOutput.IndexOf("There are no pending changes", StringComparison.OrdinalIgnoreCase) < 0)
             {
                 this.PendingChangesExist = true;
+                t.SetMetadata("PendingChangesExist", "true");
             }
+            else
+            {
+                t.SetMetadata("PendingChangesExist", "false");
+            }
+
+            this.PendingChangesExistItem[0] = t;
         }
 
         private void GetFiles()

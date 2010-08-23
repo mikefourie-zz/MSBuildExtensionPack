@@ -15,6 +15,11 @@
         </MSBuild.ExtensionPack.VisualStudio.TfsSource>
         <Message Text="Pending Changes Report: $(PendingChangesText)"/>
         <Message Text="Pending Changes Exist: $(DoChangesExist)"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/ADifferentPath" WorkingDirectory="C:\Projects\SpeedCMMI">
+            <Output TaskParameter="PendingChangesExistItem" ItemName="PendingChangesExistItem3" />
+        </MSBuild.ExtensionPack.VisualStudio.TfsSource>
+        <!-- Get a summary of whether changes exist using the PendingChangesExistItem -->
+        <Message Text="%(PendingChangesExistItem3.Identity) = %(PendingChangesExistItem3.PendingChangesExist)"/>
         <!-- Perfrom various other source control operations -->
         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemPath="C:\projects\SpeedCMMI\Demo1" Version="2008" WorkingDirectory="C:\projects\SpeedCMMI"/>
         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemPath="C:\projects\SpeedCMMI\Demo1" WorkingDirectory="C:\projects\SpeedCMMI" Comments="Testing" Notes="Code reviewer=buildrobot" OverrideText="Justdoit" />
