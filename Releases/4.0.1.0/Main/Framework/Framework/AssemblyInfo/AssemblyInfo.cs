@@ -1260,9 +1260,9 @@ namespace MSBuild.ExtensionPack.Framework
                 string tempFileName = Path.GetTempFileName();
                 myFileInfo = new FileInfo(tempFileName) { Attributes = FileAttributes.Temporary };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.Log.LogError("Unable to create temporary file: {0}", e.Message);
+                this.Log.LogError("Unable to create temporary file: {0}", ex.Message);
                 return null;
             }
 

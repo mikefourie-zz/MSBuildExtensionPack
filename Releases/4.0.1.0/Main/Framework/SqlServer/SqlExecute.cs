@@ -260,9 +260,9 @@ namespace MSBuild.ExtensionPack.SqlServer
 
                             this.OnScriptFileExecuted(new ExecuteEventArgs(new FileInfo(fileInfo.ItemSpec)));
                         }
-                        catch (SqlException se)
+                        catch (SqlException ex)
                         {
-                            lastException = new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "{0}. {1}", fileInfo.ItemSpec, se.Message), se);
+                            lastException = new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "{0}. {1}", fileInfo.ItemSpec, ex.Message), ex);
                             if (!this.Retry)
                             {
                                 throw lastException;
@@ -270,7 +270,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
                             failures[errorNo] = fileInfo;
                             errorNo++;
-                            this.OnScriptFileExecuted(new ExecuteEventArgs(new FileInfo(fileInfo.ItemSpec), se));
+                            this.OnScriptFileExecuted(new ExecuteEventArgs(new FileInfo(fileInfo.ItemSpec), ex));
                         }
                     }
 

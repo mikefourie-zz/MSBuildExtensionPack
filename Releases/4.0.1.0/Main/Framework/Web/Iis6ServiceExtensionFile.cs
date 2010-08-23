@@ -148,9 +148,9 @@ namespace MSBuild.ExtensionPack.Web
                     {
                         ws.CallMethod("DeleteExtensionFileRecord", new object[] { this.Path });
                     }
-                    catch (COMException e)
+                    catch (COMException ex)
                     {
-                        throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to delete web service extension of '{0}'", this.Path), e);
+                        throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to delete web service extension of '{0}'", this.Path), ex);
                     }
                 }
             }
@@ -198,9 +198,9 @@ namespace MSBuild.ExtensionPack.Web
                 {
                     ws.CallMethod("AddExtensionFile", new object[] { this.Path, this.permission == ExtensionPermission.Allowed, this.GroupId, this.Deletable, this.Description });
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to create the extension: {0}", this.Path), e);
+                    throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to create the extension: {0}", this.Path), ex);
                 }
             }
         }

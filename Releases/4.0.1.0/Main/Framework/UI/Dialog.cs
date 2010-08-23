@@ -68,7 +68,7 @@ namespace MSBuild.ExtensionPack.UI
         private string title = "Message";
         private int height = 180;
         private int width = 400;
-        private string button1Text = "Ok";
+        private string button1Text = "OK";
         private string errorTitle = "Error";
         private string errorText = "The supplied values do not match";
         private string confirmText = "Confirm";

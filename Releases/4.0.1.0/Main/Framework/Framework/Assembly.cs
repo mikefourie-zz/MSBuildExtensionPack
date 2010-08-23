@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Framework
         private const string GetMethodInfoTaskAction = "GetMethodInfo";
         private const string InvokeTaskAction = "Invoke";
         
-        private System.Reflection.Assembly assembly;
+        private System.Reflection.Assembly loadedAssembly;
         private List<ITaskItem> outputItems;
 
         [DropdownValue(GetInfoTaskAction)]
@@ -165,7 +165,7 @@ namespace MSBuild.ExtensionPack.Framework
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Assembly: {0}", this.NetAssembly.GetMetadata("FullPath")));
-            this.assembly = System.Reflection.Assembly.LoadFrom(this.NetAssembly.GetMetadata("FullPath"));
+            this.loadedAssembly = System.Reflection.Assembly.LoadFrom(this.NetAssembly.GetMetadata("FullPath"));
 
             switch (this.TaskAction)
             {
@@ -186,13 +186,13 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void GetInfo()
         {
-            if (this.assembly != null)
+            if (this.loadedAssembly != null)
             {
                 this.outputItems = new List<ITaskItem>();
                 ITaskItem t = new TaskItem(this.NetAssembly.GetMetadata("FileName"));
 
                 // get the PublicKeyToken
-                byte[] pt = this.assembly.GetName().GetPublicKeyToken();
+                byte[] pt = this.loadedAssembly.GetName().GetPublicKeyToken();
                 StringBuilder s = new System.Text.StringBuilder();
                 for (int i = 0; i < pt.GetLength(0); i++)
                 {
@@ -201,13 +201,13 @@ namespace MSBuild.ExtensionPack.Framework
 
                 // set some other metadata items
                 t.SetMetadata("PublicKeyToken", s.ToString());
-                t.SetMetadata("FullName", this.assembly.GetName().FullName);
-                t.SetMetadata("Culture", this.assembly.GetName().CultureInfo.Name);
-                t.SetMetadata("CultureDisplayName", this.assembly.GetName().CultureInfo.DisplayName);
-                t.SetMetadata("AssemblyVersion", this.assembly.GetName().Version.ToString());
+                t.SetMetadata("FullName", this.loadedAssembly.GetName().FullName);
+                t.SetMetadata("Culture", this.loadedAssembly.GetName().CultureInfo.Name);
+                t.SetMetadata("CultureDisplayName", this.loadedAssembly.GetName().CultureInfo.DisplayName);
+                t.SetMetadata("AssemblyVersion", this.loadedAssembly.GetName().Version.ToString());
 
                 // get the assembly file version
-                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(this.assembly.Location);
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(this.loadedAssembly.Location);
                 System.Version v = new System.Version(versionInfo.FileMajorPart, versionInfo.FileMinorPart, versionInfo.FileBuildPart, versionInfo.FilePrivatePart);
                 t.SetMetadata("FileVersion", v.ToString());              
                 this.outputItems.Add(t);
@@ -218,7 +218,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting MethodInfo for: {0}", this.NetAssembly.GetMetadata("FullPath")));
             this.outputItems = new List<ITaskItem>();
-            foreach (Type type in this.assembly.GetTypes())
+            foreach (Type type in this.loadedAssembly.GetTypes())
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found Type: {0}", this.NetClass));
                 ITaskItem t = new TaskItem(type.Name);
@@ -242,7 +242,7 @@ namespace MSBuild.ExtensionPack.Framework
         private void Invoke()
         {
             bool typeFound = false;
-            foreach (Type type in this.assembly.GetTypes())
+            foreach (Type type in this.loadedAssembly.GetTypes())
             {
                 if (type.IsClass && type.Name == this.NetClass)
                 {

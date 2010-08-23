@@ -78,7 +78,7 @@ namespace MSBuild.ExtensionPack.Compression
         private const string CreateTaskAction = "Create";
         private const string ExtractTaskAction = "Extract";
         private const string AddFilesTaskAction = "AddFiles";
-        private Ionic.Zlib.CompressionLevel compressionLevel = Ionic.Zlib.CompressionLevel.Default;
+        private Ionic.Zlib.CompressionLevel compressLevel = Ionic.Zlib.CompressionLevel.Default;
 
         /// <summary>
         /// Sets the TaskAction.
@@ -132,8 +132,8 @@ namespace MSBuild.ExtensionPack.Compression
         [TaskAction(CreateTaskAction, true)]
         public string CompressionLevel
         {
-            get { return this.compressionLevel.ToString(); }
-            set { this.compressionLevel = (Ionic.Zlib.CompressionLevel)Enum.Parse(typeof(Ionic.Zlib.CompressionLevel), value); }
+            get { return this.compressLevel.ToString(); }
+            set { this.compressLevel = (Ionic.Zlib.CompressionLevel)Enum.Parse(typeof(Ionic.Zlib.CompressionLevel), value); }
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
@@ -188,7 +188,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
@@ -212,7 +212,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
@@ -230,7 +230,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;

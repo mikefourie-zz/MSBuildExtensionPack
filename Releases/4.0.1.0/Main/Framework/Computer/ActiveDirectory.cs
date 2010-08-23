@@ -591,9 +591,9 @@ namespace MSBuild.ExtensionPack.Computer
                     this.Exists = pcontext.ValidateCredentials(this.User[0].ItemSpec, this.Password, this.bindingContextOptions);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.LogTaskMessage(e.ToString());
+                this.LogTaskMessage(ex.ToString());
                 this.Exists = false;
             }
         }

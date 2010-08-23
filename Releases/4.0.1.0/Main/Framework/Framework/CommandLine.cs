@@ -384,10 +384,10 @@ namespace MSBuild.ExtensionPack.Framework
                 {
                     process.StandardErrorEncoding = Encoding.GetEncoding(standardErrorEncoding);
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException ex)
                 {
                     this.Comment("Non-fatal exception caught: invalid encoding specified for standard error stream: {0}", standardErrorEncoding);
-                    this.Log.LogWarningFromException(e);
+                    this.Log.LogWarningFromException(ex);
                 }
             }
 
@@ -397,10 +397,10 @@ namespace MSBuild.ExtensionPack.Framework
                 {
                     process.StandardOutputEncoding = Encoding.GetEncoding(standardOutputEncoding);
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException ex)
                 {
                     this.Comment("Non-fatal exception caught: invalid encoding specified for standard output stream: {0}", standardOutputEncoding);
-                    this.Log.LogWarningFromException(e);
+                    this.Log.LogWarningFromException(ex);
                 }
             }
 

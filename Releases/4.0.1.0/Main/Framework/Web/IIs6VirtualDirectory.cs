@@ -353,9 +353,9 @@ namespace MSBuild.ExtensionPack.Web
                     {
                         vdirEntry = (DirectoryEntry)this.websiteEntry.Invoke("Create", this.DirectoryType, this.Name);
                     }
-                    catch (TargetInvocationException tie)
+                    catch (TargetInvocationException ex)
                     {
-                        Exception e = tie.InnerException;
+                        Exception e = ex.InnerException;
                         COMException ce = (COMException)e;
                         if (ce != null)
                         {
