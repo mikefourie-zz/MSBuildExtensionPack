@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{269F9D77-D538-4980-BA64-61C914AE9D77}"
 	ProjectSection(SolutionItems) = preProject
 		Common\Attributes.cs = Common\Attributes.cs
@@ -16,10 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Common\StringExtension.cs = Common\StringExtension.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizTalk", "BizTalk\BizTalk.csproj", "{E6255821-7BC4-4617-AC16-A620A51C9962}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop", "StyleCop\StyleCop.csproj", "{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "DocumentationSchema", "{27FF4005-D504-48A9-A0C0-40C32F21F324}"
 	ProjectSection(SolutionItems) = preProject
 		DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd = DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd
@@ -35,6 +31,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "Docu
 		DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd = DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{5909040A-8319-49A2-858B-BD3A1A9EE7B0}"
+	ProjectSection(SolutionItems) = preProject
+		UnitTests\MockBuildEngine.cs = UnitTests\MockBuildEngine.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizTalk", "BizTalk\BizTalk.csproj", "{E6255821-7BC4-4617-AC16-A620A51C9962}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop", "StyleCop\StyleCop.csproj", "{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2005", "Sql2005\Sql2005.csproj", "{42F6A494-5D2C-4D6D-8B42-CCB704303840}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2008", "Sql2008\Sql2008.csproj", "{FB484536-C3A1-4DA1-8464-C2A5E92A6333}"
@@ -48,11 +53,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS", "TFS\TFS.csproj", "{51FAA268-396F-4226-AED8-0F08657453F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync", "Sync\Sync.csproj", "{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{5909040A-8319-49A2-858B-BD3A1A9EE7B0}"
-	ProjectSection(SolutionItems) = preProject
-		UnitTests\MockBuildEngine.cs = UnitTests\MockBuildEngine.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkTests", "UnitTests\FrameworkTests\FrameworkTests.csproj", "{ABACCC22-B8B3-4B17-9464-789E093A3503}"
 EndProject
@@ -144,9 +144,7 @@ Global
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU

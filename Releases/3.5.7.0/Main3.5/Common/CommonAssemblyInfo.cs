@@ -9,8 +9,6 @@ using System.Security.Permissions;
 [assembly:AssemblyVersion("3.5.0.0")]
 [assembly:AssemblyFileVersion("3.5.7.0")]
 [assembly:AssemblyInformationalVersion("3.5.0.0")]
-[assembly:PermissionSet(SecurityAction.RequestMinimum, Name = "FullTrust")]
-[assembly:PermissionSet(SecurityAction.RequestOptional, Name = "Nothing")]
 [assembly:AssemblyCompany("http://www.MSBuildExtensionPack.com")]
 [assembly:AssemblyCopyright("Copyright © 2010 http://www.MSBuildExtensionPack.com")]
 [assembly:AssemblyTrademark("Mike Fourie")]
