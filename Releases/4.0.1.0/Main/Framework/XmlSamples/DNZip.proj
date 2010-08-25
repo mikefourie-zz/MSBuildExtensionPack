@@ -12,7 +12,7 @@
     </ItemGroup>
     <!-- Create a zip file based on the FilesToZip collection -->
     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFile.zip"/>
-    <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFileBestCompression.zip"/>
+    <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" CompressFiles="@(FilesToZip)" RemoveRoot="C:\Patches" ZipFileName="C:\newZipByFileBestCompression.zip"/>
     <!-- Create a zip file based on a Path -->
     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressPath="C:\Patches" ZipFileName="C:\newZipByPath.zip"/>
     <!-- Extract a zip file-->

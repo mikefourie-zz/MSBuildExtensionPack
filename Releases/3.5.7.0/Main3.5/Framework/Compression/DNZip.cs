@@ -11,8 +11,8 @@ namespace MSBuild.ExtensionPack.Compression
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password) Existing files will be updated</para>
-    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password)</para>
+    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot) Existing files will be updated</para>
+    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para/>
@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.Compression
     ///     </ItemGroup>
     ///     <!-- Create a zip file based on the FilesToZip collection -->
     ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFile.zip"/>
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFileBestCompression.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" RemoveRoot="C:\Patches" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFileBestCompression.zip"/>
     ///     <!-- Create a zip file based on a Path -->
     ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressPath="C:\Patches" ZipFileName="C:\newZipByPath.zip"/>
     ///     <!-- Extract a zip file-->
@@ -78,7 +78,7 @@ namespace MSBuild.ExtensionPack.Compression
         private const string CreateTaskAction = "Create";
         private const string ExtractTaskAction = "Extract";
         private const string AddFilesTaskAction = "AddFiles";
-        private Ionic.Zlib.CompressionLevel compressionLevel = Ionic.Zlib.CompressionLevel.Default;
+        private Ionic.Zlib.CompressionLevel compressLevel = Ionic.Zlib.CompressionLevel.Default;
 
         /// <summary>
         /// Sets the TaskAction.
@@ -91,6 +91,12 @@ namespace MSBuild.ExtensionPack.Compression
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
         }
+
+        /// <summary>
+        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName. Only Applies to CompressFiles
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public ITaskItem RemoveRoot { get; set; }
 
         /// <summary>
         /// Sets the files to Compress
@@ -132,8 +138,8 @@ namespace MSBuild.ExtensionPack.Compression
         [TaskAction(CreateTaskAction, true)]
         public string CompressionLevel
         {
-            get { return this.compressionLevel.ToString(); }
-            set { this.compressionLevel = (Ionic.Zlib.CompressionLevel)Enum.Parse(typeof(Ionic.Zlib.CompressionLevel), value); }
+            get { return this.compressLevel.ToString(); }
+            set { this.compressLevel = (Ionic.Zlib.CompressionLevel)Enum.Parse(typeof(Ionic.Zlib.CompressionLevel), value); }
         }
 
         /// <summary>
@@ -170,7 +176,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
@@ -178,7 +184,15 @@ namespace MSBuild.ExtensionPack.Compression
 
                     foreach (ITaskItem f in this.CompressFiles)
                     {
-                        zip.UpdateFile(f.GetMetadata("FullPath"));
+                        if (this.RemoveRoot != null)
+                        {
+                            string location = (f.GetMetadata("RootDir") + f.GetMetadata("Directory")).Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
+                            zip.UpdateFile(f.GetMetadata("FullPath"), location);
+                        }
+                        else
+                        {
+                            zip.UpdateFile(f.GetMetadata("FullPath"));
+                        }
                     }
 
                     zip.Save();
@@ -188,7 +202,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
@@ -212,7 +226,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
@@ -220,7 +234,15 @@ namespace MSBuild.ExtensionPack.Compression
 
                     foreach (ITaskItem f in this.CompressFiles)
                     {
-                        zip.AddFile(f.GetMetadata("FullPath"));
+                        if (this.RemoveRoot != null)
+                        {
+                            string location = (f.GetMetadata("RootDir") + f.GetMetadata("Directory")).Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
+                            zip.AddFile(f.GetMetadata("FullPath"), location);
+                        }
+                        else
+                        {
+                            zip.AddFile(f.GetMetadata("FullPath"));
+                        }
                     }
 
                     zip.Save(this.ZipFileName.ItemSpec);
@@ -230,7 +252,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
-                    zip.CompressionLevel = this.compressionLevel;
+                    zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
                         zip.Password = this.Password;
