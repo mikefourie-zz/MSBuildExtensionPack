@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -196,6 +196,18 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(RemoveAttributeTaskAction, false)]
         [TaskAction(RemoveElementTaskAction, false)]
         public string XPath { get; set; }
+        
+        /// <summary>
+        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to singel node.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, false)]
+        public string InsertBeforeXPath { get; set; }
+
+        /// <summary>
+        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to singel node.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, false)]
+        public string InsertAfterXPath { get; set; }
 
         /// <summary>
         /// TaskItems specifiying "Prefix" and "Uri" attributes for use with the specified XPath
@@ -419,7 +431,19 @@ namespace MSBuild.ExtensionPack.Xml
                         newNode.Attributes.Append(attNode);
                     }
 
-                    parentNode.AppendChild(newNode);
+                    if (string.IsNullOrEmpty(this.InsertAfterXPath) && string.IsNullOrEmpty(this.InsertBeforeXPath))
+                    {
+                        parentNode.AppendChild(newNode);
+                    }
+                    else if (!string.IsNullOrEmpty(this.InsertAfterXPath))
+                    {
+                        parentNode.InsertAfter(newNode, parentNode.SelectSingleNode(this.InsertAfterXPath));
+                    }
+                    else if (!string.IsNullOrEmpty(this.InsertBeforeXPath))
+                    {
+                        parentNode.InsertBefore(newNode, parentNode.SelectSingleNode(this.InsertBeforeXPath));
+                    }
+
                     this.TrySave();
                 }
                 else
