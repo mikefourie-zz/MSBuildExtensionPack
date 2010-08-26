@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/581fb9b8-67dd-ec9d-8c61-77e0d202993c.htm")]
     public class BuildDeploymentManifest : Task
     {
         private bool allowConfigurationChanges = true;
