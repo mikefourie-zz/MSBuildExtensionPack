@@ -201,6 +201,7 @@
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -355,6 +356,7 @@
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\BuildDeploymentManifest.proj" />
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />

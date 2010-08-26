@@ -204,6 +204,7 @@
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -369,6 +370,7 @@
     <None Include="XmlSamples\CommandLine.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\BuildDeploymentManifest.proj" />
     <None Include="XmlSamples\DNZip.proj" />
     <None Include="XmlSamples\Ftp.proj" />
     <None Include="XmlSamples\FxCop.FxCop" />
