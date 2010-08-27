@@ -80,7 +80,8 @@ namespace MSBuild.ExtensionPack.Web
         }
 
         /// <summary>
-        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
+        /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
+        /// Some properties may be split within the semi colon, e.g. to set multiple server bindings you could use Properties="ServerBindings=:80:first.host.header|:80:second.host.header"
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
