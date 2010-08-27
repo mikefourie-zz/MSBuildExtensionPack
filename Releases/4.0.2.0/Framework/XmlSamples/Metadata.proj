@@ -1,0 +1,30 @@
+﻿<!--
+  Sample project file demonstrating the use of the Metadata task.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Demo">
+
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+
+  
+  <ItemGroup>
+    <Server Include="dev01;dev02;dev03">
+      <DbServer>dev-db01</DbServer>
+    </Server>
+  </ItemGroup>
+  
+  <Target Name="Demo">
+    <MSBuild.ExtensionPack.Framework.Metadata TaskAction="Add" Items="@(Server)"
+                  NewMetadata="Source=server01;Dest=server02">
+      <!-- No way to change the existing item, only to make a new one. -->
+      <Output ItemName="Server2" TaskParameter="ResultItems"/>
+    </MSBuild.ExtensionPack.Framework.Metadata>
+
+    <Message Text="Result:%0d%0a@(Server2->'%(Identity)=Source: %(Source) Dest: %(Dest) DbServer: %(DbServer)','%0d%0a')"/>
+    
+  </Target>
+
+</Project>
