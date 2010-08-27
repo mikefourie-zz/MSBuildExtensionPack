@@ -18,6 +18,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
+    /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
     /// <para><i>ModifyPath</i> (<b>Required: </b> Name, Path <b>Output: </b>SiteId)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
@@ -82,7 +83,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
@@ -95,6 +96,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
         private const string CheckVirtualDirectoryExistsTaskAction = "CheckVirtualDirectoryExists";
+        private const string DeleteVirtualDirectoryTaskAction = "DeleteVirtualDirectory";
 
         private ServerManager iisServerManager;
         private Site website;
@@ -112,6 +114,7 @@ namespace MSBuild.ExtensionPack.Web
         [DropdownValue(StartTaskAction)]
         [DropdownValue(StopTaskAction)]
         [DropdownValue(CheckVirtualDirectoryExistsTaskAction)]
+        [DropdownValue(DeleteVirtualDirectoryTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -132,6 +135,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(StartTaskAction, true)]
         [TaskAction(StopTaskAction, true)]
         [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
+        [TaskAction(DeleteVirtualDirectoryTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -147,6 +151,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(AddVirtualDirectoryTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
+        [TaskAction(DeleteVirtualDirectoryTaskAction, true)]
         public ITaskItem[] VirtualDirectories { get; set; }
 
         /// <summary>
@@ -241,6 +246,9 @@ namespace MSBuild.ExtensionPack.Web
                     case CheckVirtualDirectoryExistsTaskAction:
                         this.CheckVirtualDirectoryExists();
                         break;
+                    case DeleteVirtualDirectoryTaskAction:
+                        this.DeleteVirtualDirectory();
+                        break;
                     case StartTaskAction:
                     case StopTaskAction:
                         this.ControlWebsite();
@@ -277,6 +285,26 @@ namespace MSBuild.ExtensionPack.Web
                         this.Exists = true;
                         return;
                     }
+                }
+            }
+        }
+
+        private void DeleteVirtualDirectory()
+        {
+            if (!this.SiteExists())
+            {
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            if (this.VirtualDirectories != null)
+            {
+                foreach (ITaskItem virDir in this.VirtualDirectories.Where(virDir => this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path == virDir.ItemSpec)))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing VirtualDirectory: {0} from: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
+                    this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Remove(this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories[virDir.ItemSpec]);
+                    this.iisServerManager.CommitChanges();
+                    break;
                 }
             }
         }

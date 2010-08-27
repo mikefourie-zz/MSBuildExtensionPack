@@ -28,7 +28,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
     public class WshShell : BaseTask
     {
         private const string CreateShortcutTaskAction = "CreateShortcut";
@@ -135,12 +135,6 @@ namespace MSBuild.ExtensionPack.Computer
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Shortcut: {0}", Path.Combine(this.ShortcutPath, this.Name)));
-            if (!System.IO.File.Exists(this.FilePath))
-            {
-                Log.LogError(string.Format(CultureInfo.InvariantCulture, "FilePath: {0} does not exist.", this.FilePath));
-                return;
-            }
-
             WshShellClass shell = new WshShellClass();
             IWshShortcut shortcutToCreate = shell.CreateShortcut(Path.Combine(this.ShortcutPath, this.Name)) as IWshShortcut;
             if (shortcutToCreate != null)

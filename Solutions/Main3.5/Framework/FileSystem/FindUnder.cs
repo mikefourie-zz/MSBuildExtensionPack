@@ -3,17 +3,19 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>FindFiles</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
-    /// <para><i>FindDirectories</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
-    /// <para><i>FindFilesAndDirectories</i> (<b>Required: </b> Path <b>Optional: </b>Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
+    /// <para><i>FindFiles</i> (<b>Required: </b> Path <b>Optional: </b>ModifiedAfterDate, ModifiedBeforeDate, Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
+    /// <para><i>FindDirectories</i> (<b>Required: </b> Path <b>Optional: </b>ModifiedAfterDate, ModifiedBeforeDate, Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
+    /// <para><i>FindFilesAndDirectories</i> (<b>Required: </b> Path <b>Optional: </b>ModifiedAfterDate, ModifiedBeforeDate, Recursive, SearchPattern <b>Output: </b>FoundItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -53,7 +55,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
     public class FindUnder : BaseTask
     {
         private const string FindFilesTaskAction = "FindFiles";
@@ -61,6 +63,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string FindFilesAndDirectoriesTaskAction = "FindFilesAndDirectories";
         private string searchPattern = "*";
         private bool recursive = true;
+        private List<ITaskItem> items = new List<ITaskItem>();
 
         [Required]
         [DropdownValue(FindFilesTaskAction)]
@@ -82,6 +85,20 @@ namespace MSBuild.ExtensionPack.FileSystem
             get { return this.recursive; }
             set { this.recursive = value; }
         }
+
+        /// <summary>
+        /// Set to only return files or folders modified after the given value
+        /// </summary>
+        [TaskAction(FindFilesTaskAction, false)]
+        [TaskAction(FindFilesAndDirectoriesTaskAction, false)]
+        public DateTime ModifiedAfterDate { get; set; }
+
+        /// <summary>
+        /// Set to only return files or folders modified before the given value
+        /// </summary>
+        [TaskAction(FindFilesTaskAction, false)]
+        [TaskAction(FindFilesAndDirectoriesTaskAction, false)]
+        public DateTime ModifiedBeforeDate { get; set; }
 
         /// <summary>
         /// The path that the <c>FindUnder</c> will be executed against.
@@ -132,7 +149,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         /// <value><c>true</c> if directories should be included in the find result; otherwise, <c>false</c>.</value>
         protected bool FindDirectories { get; set; }
-        
+
         protected override void InternalExecute()
         {
             switch (this.TaskAction)
@@ -154,6 +171,12 @@ namespace MSBuild.ExtensionPack.FileSystem
                     return;
             }
 
+            if (!this.FindFiles && !this.FindDirectories)
+            {
+                Log.LogError("Either FindFiles or FindDirectories must be true");
+                return;
+            }
+
             string fullPath = this.Path.GetMetadata("Fullpath");
             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
             if (string.IsNullOrEmpty(fullPath) || !Directory.Exists(fullPath))
@@ -162,40 +185,91 @@ namespace MSBuild.ExtensionPack.FileSystem
                 return;
             }
 
-            if (!this.FindFiles && !this.FindDirectories)
-            {
-                Log.LogError("Either FindFiles or FindDirectories must be true");
-                return;
-            }
-
             DirectoryInfo dir = new DirectoryInfo(fullPath);
             FileInfo[] files = new FileInfo[0];
-            DirectoryInfo[] subDirs = new DirectoryInfo[0];
 
             if (this.FindFiles)
             {
-                files = this.Recursive ? dir.GetFiles(this.SearchPattern, SearchOption.AllDirectories) : dir.GetFiles(this.SearchPattern, SearchOption.TopDirectoryOnly);
+                this.FindMatchingFiles(dir, files);
             }
 
             if (this.FindDirectories)
             {
-                subDirs = this.Recursive ? dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories) : dir.GetDirectories(this.SearchPattern, SearchOption.TopDirectoryOnly);
+                this.FindMatchingDirectories(dir);
             }
 
-            List<ITaskItem> items = new List<ITaskItem>();
-            foreach (FileInfo fileInfo in files)
+            this.FoundItems = this.items.ToArray();
+        }
+
+        private void FindMatchingDirectories(DirectoryInfo dir)
+        {
+            DirectoryInfo[] subDirs = this.Recursive ? dir.GetDirectories(this.SearchPattern, SearchOption.AllDirectories) : dir.GetDirectories(this.SearchPattern, SearchOption.TopDirectoryOnly);
+            DirectoryInfo[] tempdirs = new DirectoryInfo[1];
+
+            if (this.ModifiedAfterDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
-                items.Add(new TaskItem(fileInfo.FullName));
+                tempdirs = (from f in subDirs
+                            where f.LastWriteTime > this.ModifiedAfterDate
+                            select f).ToArray();
             }
 
-            foreach (DirectoryInfo dirInfo in subDirs)
+            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                tempdirs = (from f in subDirs
+                            where f.LastWriteTime < this.ModifiedBeforeDate
+                            select f).ToArray();
+            }
+
+            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedAfterDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                tempdirs = (from f in subDirs
+                            where f.LastWriteTime < this.ModifiedBeforeDate & f.LastWriteTime > this.ModifiedAfterDate
+                            select f).ToArray();
+            }
+
+            if (this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedAfterDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                tempdirs = subDirs;
+            }
+
+            foreach (DirectoryInfo dirInfo in tempdirs)
             {
                 TaskItem item = new TaskItem(dirInfo.FullName);
                 item.SetMetadata("DirectoryName", dirInfo.Name);
-                items.Add(item);
+                this.items.Add(item);
+            }
+        }
+
+        private void FindMatchingFiles(DirectoryInfo dir, FileInfo[] files)
+        {
+            FileInfo[] tempfiles = this.Recursive ? dir.GetFiles(this.SearchPattern, SearchOption.AllDirectories) : dir.GetFiles(this.SearchPattern, SearchOption.TopDirectoryOnly);
+            if (this.ModifiedAfterDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                files = (from f in tempfiles
+                         where f.LastWriteTime > this.ModifiedAfterDate
+                         select f).ToArray();
             }
 
-            this.FoundItems = items.ToArray();
+            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                files = (from f in tempfiles
+                         where f.LastWriteTime < this.ModifiedBeforeDate
+                         select f).ToArray();
+            }
+
+            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedAfterDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                files = (from f in tempfiles
+                         where f.LastWriteTime < this.ModifiedBeforeDate & f.LastWriteTime > this.ModifiedAfterDate
+                         select f).ToArray();
+            }
+
+            if (this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedAfterDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            {
+                files = tempfiles;
+            }
+
+            this.items = files.Select(fileInfo => new TaskItem(fileInfo.FullName)).Cast<ITaskItem>().ToList();
         }
     }
 }

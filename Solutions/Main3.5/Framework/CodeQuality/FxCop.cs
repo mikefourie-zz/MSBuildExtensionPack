@@ -6,13 +6,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac <b>Output: </b>AnalysisFailed, OutputText)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac <b>Output: </b>AnalysisFailed, OutputText)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -27,20 +28,20 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///         <!--- Need to add to the dependencies because MSBuild.ExtensionPack.CodeQuality.StyleCop.dll references StyleCop -->
     ///         <DependencyDirectories Include="c:\Program Files (x86)\MSBuild\Microsoft\StyleCop\v4.3"/>
     ///         <!-- Define a bespoke set of rules to run. Prefix the Rules path with ! to treat warnings as errors -->
-    ///         <Rules Include="c:\Program Files (x86)\Microsoft FxCop 1.36\Rules\DesignRules.dll"/>
-    ///         <Files Include="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll"/>
-    ///     </ItemGroup>
+    ///     <Rules Include="C:\Program Files (x86)\Microsoft Fxcop 10.0\Rules\DesignRules.dll"/>
+    ///     <Files Include="C:\Projects\MSBuildExtensionPack\Releases\4.0.1.0\Main\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll"/>
+    ///   </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Call the task using a collection of files and all default rules -->
     ///         <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Files="@(Files)" OutputFile="c:\fxcoplog1.txt">
     ///             <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>
     ///         </MSBuild.ExtensionPack.CodeQuality.FxCop>
-    ///         <Message Text="CA1 Failed: $(Result)"/>
-    ///         <!-- Call the task using a project file -->        
-    ///         <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Project="c:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\MSBuildFramework\XmlSamples\FXCop.FxCop" DependencyDirectories="@(DependencyDirectories)" OutputFile="c:\fxcoplog2.txt">
-    ///             <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>            
-    ///         </MSBuild.ExtensionPack.CodeQuality.FxCop>
-    ///         <Message Text="CA2 Failed: $(Result)"/>
+    ///     <Message Text="CA1 Failed: $(Result)"/>
+    ///     <!-- Call the task using a project file -->
+    ///     <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Files="@(Files)" Project="C:\Projects\MSBuildExtensionPack\Releases\4.0.1.0\Main\Framework\XmlSamples\FXCop.FxCop" DependencyDirectories="@(DependencyDirectories)" OutputFile="c:\fxcoplog2.txt">
+    ///       <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>
+    ///     </MSBuild.ExtensionPack.CodeQuality.FxCop>
+    ///     <Message Text="CA2 Failed: $(Result)"/>
     ///         <!-- Call the task using a collection of files and bespoke rules. We can access the exact failure message using OutputText -->
     ///         <MSBuild.ExtensionPack.CodeQuality.FxCop TaskAction="Analyse" Rules="@(Rules)" Files="@(Files)"  OutputFile="c:\fxcoplog3.txt" LogToConsole="true">
     ///             <Output TaskParameter="AnalysisFailed" PropertyName="Result"/>
@@ -52,7 +53,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
     public class FxCop : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
@@ -199,9 +200,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 {
                     this.FxCopPath = programFilePath + @"\Microsoft FxCop 1.36\FxCopCmd.exe";
                 }
+                else if (System.IO.File.Exists(programFilePath + @"\Microsoft FxCop 10.0\FxCopCmd.exe"))
+                {
+                    this.FxCopPath = programFilePath + @"\Microsoft FxCop 10.0\FxCopCmd.exe";
+                }
                 else
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "FxCopCmd.exe was not found in the default location. Use FxCopPath to specify it. Searched at: {0}", programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "FxCopCmd.exe was not found in the default location. Use FxCopPath to specify it. Searched at: {0}", programFilePath + @"\Microsoft FxCop 1.36 and \Microsoft FxCop 10.0"));
                     return;
                 }
             }
@@ -277,35 +282,28 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             if (this.Imports != null)
             {
-                foreach (ITaskItem i in this.Imports)
-                {
-                    arguments += " /import:\"" + i.ItemSpec + "\"";
-                }
+                arguments = this.Imports.Aggregate(arguments, (current, i) => current + (" /import:\"" + i.ItemSpec + "\""));
             }
 
             if (this.Rules != null)
             {
-                foreach (ITaskItem i in this.Rules)
-                {
-                    arguments += " /rule:\"" + i.ItemSpec + "\"";
-                }
+                arguments = this.Rules.Aggregate(arguments, (current, i) => current + (" /rule:\"" + i.ItemSpec + "\""));
+            }
+
+            if (string.IsNullOrEmpty(this.Project) && this.Files == null)
+            {
+                Log.LogError("A Project and / or Files collection must be passed.");
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(this.Project))
+            {
+                arguments += " /project:\"" + this.Project + "\"";
             }
 
             if (this.Files != null)
             {
-                foreach (ITaskItem i in this.Files)
-                {
-                    arguments += " /file:\"" + i.ItemSpec + "\"";
-                }
-            }
-            else if (!string.IsNullOrEmpty(this.Project))
-            {
-                arguments += " /project:\"" + this.Project + "\"";
-            }
-            else
-            {
-                Log.LogError("A Project or Files collection must be passed.");
-                return;
+                arguments = this.Files.Aggregate(arguments, (current, i) => current + (" /file:\"" + i.ItemSpec + "\""));
             }
 
             arguments += " /out:\"" + this.OutputFile + "\"";

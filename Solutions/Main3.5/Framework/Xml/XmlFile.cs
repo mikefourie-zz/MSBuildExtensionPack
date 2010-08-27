@@ -4,16 +4,19 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Xml
 {
+    using System;
     using System.Globalization;
     using System.Xml;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value)</para>
-    /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key)</para>
-    /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath)</para>
+    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText, InsertBeforeXPath / InsertAfterXPath)</para>
+    /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>UpdateAttribute</i> (<b>Required: </b>File, XPath, Key <b>Optional:</b> Namespaces, Value, RetryCount)</para>
+    /// <para><i>UpdateElement</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces, InnerText, RetryCount)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -98,25 +101,50 @@ namespace MSBuild.ExtensionPack.Xml
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" File="%(XMLConfigElementsToDelete.Identity)" XPath="%(XMLConfigElementsToDelete.XPath)" Condition="'%(XMLConfigElementsToDelete.Identity)'!=''"/>
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" File="%(XMLConfigElementsToAdd.Identity)" Key="%(XMLConfigElementsToAdd.KeyAttributeName)" Value="%(XMLConfigElementsToAdd.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd.Name)" XPath="%(XMLConfigElementsToAdd.XPath)" Condition="'%(XMLConfigElementsToAdd.Identity)'!=''"/>
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddAttribute" File="%(XMLConfigAttributesToAdd.Identity)" Key="%(XMLConfigAttributesToAdd.Name)" Value="%(XMLConfigAttributesToAdd.Value)" XPath="%(XMLConfigAttributesToAdd.XPath)" Condition="'%(XMLConfigAttributesToAdd.Identity)'!=''"/>
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateElement" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" InnerText="NewValue"/>
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateAttribute" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" Key="SomeAttribute" Value="NewValue"/>
+    ///     </Target>
+    ///     <!-- The following illustrates Namespace usage -->
+    ///     <ItemGroup>
+    ///         <Namespaces Include="Mynamespace">
+    ///             <Prefix>me</Prefix>
+    ///             <Uri>http://mynamespace</Uri>
+    ///         </Namespaces>
+    ///         <XMLConfigElementsToDelete1 Include="c:\test.xml">
+    ///             <XPath>//me:MyNodes/sources</XPath>
+    ///         </XMLConfigElementsToDelete1>
+    ///         <XMLConfigElementsToAdd1 Include="c:\test.xml">
+    ///             <XPath>//me:MyNodes</XPath>
+    ///             <Name>sources</Name>
+    ///         </XMLConfigElementsToAdd1>
+    ///     </ItemGroup>
+    ///     <Target Name="DefaultWithNameSpace">
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToDelete1.Identity)" XPath="%(XMLConfigElementsToDelete1.XPath)" Condition="'%(XMLConfigElementsToDelete1.Identity)'!=''"/>
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToAdd1.Identity)" Key="%(XMLConfigElementsToAdd1.KeyAttributeName)" Value="%(XMLConfigElementsToAdd1.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd1.Name)" XPath="%(XMLConfigElementsToAdd1.XPath)" Condition="'%(XMLConfigElementsToAdd1.Identity)'!=''"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
     public class XmlFile : BaseTask
     {
         private const string AddAttributeTaskAction = "AddAttribute";
         private const string AddElementTaskAction = "AddElement";
         private const string RemoveAttributeTaskAction = "RemoveAttribute";
         private const string RemoveElementTaskAction = "RemoveElement";
+        private const string UpdateAttributeTaskAction = "UpdateAttribute";
+        private const string UpdateElementTaskAction = "UpdateElement";
         private XmlDocument xmlFileDoc;
         private XmlNamespaceManager namespaceManager;
         private XmlNodeList elements;
+        private int retryCount = 5;
 
         [DropdownValue(AddAttributeTaskAction)]
         [DropdownValue(AddElementTaskAction)]
         [DropdownValue(RemoveAttributeTaskAction)]
         [DropdownValue(RemoveElementTaskAction)]
+        [DropdownValue(UpdateAttributeTaskAction)]
+        [DropdownValue(UpdateElementTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -124,7 +152,7 @@ namespace MSBuild.ExtensionPack.Xml
         }
 
         /// <summary>
-        /// Sets the element.
+        /// Sets the element. For AddElement, if the element exists, it's InnerText will be updated
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         [TaskAction(AddElementTaskAction, true)]
@@ -133,6 +161,13 @@ namespace MSBuild.ExtensionPack.Xml
         public string Element { get; set; }
 
         /// <summary>
+        /// Sets the InnerText.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, true)]
+        [TaskAction(UpdateElementTaskAction, false)]
+        public string InnerText { get; set; }
+        
+        /// <summary>
         /// Sets the parent element.
         /// </summary>
         [TaskAction(AddElementTaskAction, true)]
@@ -140,16 +175,18 @@ namespace MSBuild.ExtensionPack.Xml
         public string ParentElement { get; set; }
 
         /// <summary>
-        /// Sets the key.
+        /// Sets the Attribute key.
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         [TaskAction(RemoveAttributeTaskAction, true)]
+        [TaskAction(UpdateAttributeTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
-        /// Sets the key value.
+        /// Sets the Attribute key value.
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
+        [TaskAction(UpdateAttributeTaskAction, false)]
         public string Value { get; set; }
 
         /// <summary>
@@ -165,12 +202,50 @@ namespace MSBuild.ExtensionPack.Xml
         /// <summary>
         /// Specifies the XPath to be used
         /// </summary>
+        [TaskAction(AddAttributeTaskAction, false)]
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(RemoveAttributeTaskAction, false)]
+        [TaskAction(RemoveElementTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
         public string XPath { get; set; }
+
+        /// <summary>
+        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to single node.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, false)]
+        public string InsertBeforeXPath { get; set; }
+
+        /// <summary>
+        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to single node.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, false)]
+        public string InsertAfterXPath { get; set; }
 
         /// <summary>
         /// TaskItems specifiying "Prefix" and "Uri" attributes for use with the specified XPath
         /// </summary>
+        [TaskAction(AddAttributeTaskAction, false)]
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(RemoveAttributeTaskAction, false)]
+        [TaskAction(RemoveElementTaskAction, false)]
+        [TaskAction(UpdateAttributeTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
         public ITaskItem[] Namespaces { get; set; }
+
+        /// <summary>
+        /// Sets a value indicating how many times to retry saving the file, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
+        /// </summary>
+        [TaskAction(AddAttributeTaskAction, false)]
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(RemoveAttributeTaskAction, false)]
+        [TaskAction(RemoveElementTaskAction, false)]
+        [TaskAction(UpdateAttributeTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
+        public int RetryCount
+        {
+            get { return this.retryCount; }
+            set { this.retryCount = value; }
+        }
 
         /// <summary>
         /// Performs the action of this task.
@@ -184,7 +259,38 @@ namespace MSBuild.ExtensionPack.Xml
             }
 
             this.xmlFileDoc = new XmlDocument();
-            this.xmlFileDoc.Load(this.File.ItemSpec);
+
+            try
+            {
+                this.xmlFileDoc.Load(this.File.ItemSpec);
+            }
+            catch (Exception ex)
+            {
+                this.LogTaskWarning(ex.Message);
+                bool loaded = false;
+                int count = 1;
+                while (!loaded && count <= this.RetryCount)
+                {
+                    this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Load failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                    System.Threading.Thread.Sleep(5000);
+                    count++;
+                    try
+                    {
+                        this.xmlFileDoc.Load(this.File.ItemSpec);
+                        loaded = true;
+                    }
+                    catch
+                    {
+                        this.LogTaskWarning(ex.Message);
+                    }
+                }
+
+                if (loaded != true)
+                {
+                    throw;
+                }
+            }
+
             if (!string.IsNullOrEmpty(this.XPath))
             {
                 this.namespaceManager = this.GetNamespaceManagerForDoc();
@@ -206,9 +312,65 @@ namespace MSBuild.ExtensionPack.Xml
                 case RemoveElementTaskAction:
                     this.RemoveElement();
                     break;
+                case UpdateElementTaskAction:
+                    this.UpdateElement();
+                    break;
+                case UpdateAttributeTaskAction:
+                    this.UpdateAttribute();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void UpdateElement()
+        {
+            if (string.IsNullOrEmpty(this.XPath))
+            {
+                this.Log.LogError("XPath is Required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerText: {1}", this.XPath, this.InnerText));
+            if (this.elements != null && this.elements.Count > 0)
+            {
+                foreach (XmlNode element in this.elements)
+                {
+                    element.InnerText = this.InnerText;
+                }
+
+                this.TrySave();
+            }
+        }
+
+        private void UpdateAttribute()
+        {
+            if (string.IsNullOrEmpty(this.XPath))
+            {
+                this.Log.LogError("XPath is Required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.Key))
+            {
+                this.Log.LogError("Key is Required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Attribute: {0} @ {1}. Value: {2}", this.Key, this.XPath, this.Value));
+            if (this.elements != null && this.elements.Count > 0)
+            {
+                foreach (XmlNode element in this.elements)
+                {
+                    XmlAttribute attNode = element.Attributes.GetNamedItem(this.Key) as XmlAttribute;
+                    if (attNode != null)
+                    {
+                        attNode.Value = this.Value;
+                    }
+                }
+
+                this.TrySave();
             }
         }
 
@@ -228,7 +390,7 @@ namespace MSBuild.ExtensionPack.Xml
                 if (attNode != null)
                 {
                     elementNode.Attributes.Remove(attNode);
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
             else
@@ -242,11 +404,9 @@ namespace MSBuild.ExtensionPack.Xml
                         if (attNode != null)
                         {
                             element.Attributes.Remove(attNode);
-                            this.xmlFileDoc.Save(this.File.ItemSpec);
+                            this.TrySave();
                         }
                     }
-
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
                 }
             }
         }
@@ -275,7 +435,7 @@ namespace MSBuild.ExtensionPack.Xml
                     attNode.Value = this.Value;
                 }
 
-                this.xmlFileDoc.Save(this.File.ItemSpec);
+                this.TrySave();
             }
             else
             {
@@ -288,7 +448,7 @@ namespace MSBuild.ExtensionPack.Xml
                         attrib.Value = this.Value;
                     }
 
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
         }
@@ -329,6 +489,10 @@ namespace MSBuild.ExtensionPack.Xml
                 if (newNode == null)
                 {
                     newNode = this.xmlFileDoc.CreateElement(this.Element);
+                    if (!string.IsNullOrEmpty(this.InnerText))
+                    {
+                        newNode.InnerText = this.InnerText;    
+                    }
 
                     if (!string.IsNullOrEmpty(this.Key))
                     {
@@ -339,8 +503,28 @@ namespace MSBuild.ExtensionPack.Xml
                         newNode.Attributes.Append(attNode);
                     }
 
-                    parentNode.AppendChild(newNode);
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    if (string.IsNullOrEmpty(this.InsertAfterXPath) && string.IsNullOrEmpty(this.InsertBeforeXPath))
+                    {
+                        parentNode.AppendChild(newNode);
+                    }
+                    else if (!string.IsNullOrEmpty(this.InsertAfterXPath))
+                    {
+                        parentNode.InsertAfter(newNode, parentNode.SelectSingleNode(this.InsertAfterXPath));
+                    }
+                    else if (!string.IsNullOrEmpty(this.InsertBeforeXPath))
+                    {
+                        parentNode.InsertBefore(newNode, parentNode.SelectSingleNode(this.InsertBeforeXPath));
+                    }
+
+                    this.TrySave();
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(this.InnerText))
+                    {
+                        newNode.InnerText = this.InnerText;
+                        this.TrySave();
+                    }
                 }
             }
             else
@@ -351,6 +535,11 @@ namespace MSBuild.ExtensionPack.Xml
                     foreach (XmlNode element in this.elements)
                     {
                         XmlNode newNode = this.xmlFileDoc.CreateElement(this.Element);
+                        if (!string.IsNullOrEmpty(this.InnerText))
+                        {
+                            newNode.InnerText = this.InnerText;
+                        }
+
                         if (!string.IsNullOrEmpty(this.Key))
                         {
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Attribute: {0} to: {1}", this.Key, this.Element));
@@ -363,7 +552,7 @@ namespace MSBuild.ExtensionPack.Xml
                         element.AppendChild(newNode);
                     }
 
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
         }
@@ -384,7 +573,7 @@ namespace MSBuild.ExtensionPack.Xml
                 if (nodeToRemove != null)
                 {
                     parentNode.RemoveChild(nodeToRemove);
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
                 }
             }
             else
@@ -397,7 +586,41 @@ namespace MSBuild.ExtensionPack.Xml
                         element.ParentNode.RemoveChild(element);
                     }
 
-                    this.xmlFileDoc.Save(this.File.ItemSpec);
+                    this.TrySave();
+                }
+            }
+        }
+
+        private void TrySave()
+        {
+            try
+            {
+                this.xmlFileDoc.Save(this.File.ItemSpec);
+            }
+            catch (Exception ex)
+            {
+                this.LogTaskWarning(ex.Message);
+                bool saved = false;
+                int count = 1;
+                while (!saved && count <= this.RetryCount)
+                {
+                    this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Save failed, trying again in 5 seconds. Attempt {0} of {1}", count, this.RetryCount));
+                    System.Threading.Thread.Sleep(5000);
+                    count++;
+                    try
+                    {
+                        this.xmlFileDoc.Save(this.File.ItemSpec);
+                        saved = true;
+                    }
+                    catch
+                    {
+                        this.LogTaskWarning(ex.Message);
+                    }
+                }
+
+                if (saved != true)
+                {
+                    throw;
                 }
             }
         }

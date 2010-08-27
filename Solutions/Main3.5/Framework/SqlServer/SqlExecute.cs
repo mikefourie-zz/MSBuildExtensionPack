@@ -58,7 +58,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
         private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -157,7 +157,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             string retValue;
             using (StreamReader textFileReader = new StreamReader(fileName, System.Text.Encoding.Default, true))
             {
-                retValue = textFileReader.ReadToEnd();
+                retValue = new SqlScriptLoader(textFileReader).ReadToEnd();
             }
 
             return retValue;
@@ -218,8 +218,10 @@ namespace MSBuild.ExtensionPack.SqlServer
 
                         try
                         {
+                            this.LogTaskMessage(MessageImportance.Low, "Loading {0}.", new[] { fileInfo.ItemSpec });
                             sqlCommandText = this.SubstituteParameters(LoadScript(fileInfo.ItemSpec)) + Environment.NewLine;
                             string[] batches = splitter.Split(sqlCommandText);
+                            this.LogTaskMessage(MessageImportance.Low, "Split {0} into {1} batches.", new object[] { fileInfo.ItemSpec, batches.Length });
                             SqlTransaction sqlTransaction = null;
                             SqlCommand command = sqlConnection.CreateCommand();
                             if (this.UseTransaction)
@@ -229,6 +231,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
                             try
                             {
+                                int batchNum = 1;
                                 foreach (string batchText in batches)
                                 {
                                     sqlCommandText = batchText.Trim();
@@ -238,6 +241,8 @@ namespace MSBuild.ExtensionPack.SqlServer
                                         command.CommandTimeout = this.CommandTimeout;
                                         command.Connection = sqlConnection;
                                         command.Transaction = sqlTransaction;
+                                        this.LogTaskMessage(MessageImportance.Low, "Executing Batch {0}", new object[] { batchNum++ });
+                                        this.LogTaskMessage(MessageImportance.Low, sqlCommandText);
                                         command.ExecuteNonQuery();
                                     }
                                 }

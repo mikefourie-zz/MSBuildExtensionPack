@@ -88,7 +88,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
         private const string AddSecurityTaskAction = "AddSecurity";
@@ -283,7 +283,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                         catch
                         {
-                            this.LogTaskMessage(ex.Message);
+                            this.LogTaskWarning(ex.Message);
                         }
                     }
 
@@ -318,7 +318,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                         catch
                         {
-                            this.LogTaskMessage(ex.Message);
+                            this.LogTaskWarning(ex.Message);
                         }
                     }
 
@@ -471,7 +471,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             }
                             catch
                             {
-                                this.LogTaskMessage(ex.Message);
+                                this.LogTaskWarning(ex.Message);
                             }
                         }
 
@@ -553,7 +553,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                                     }
                                     catch
                                     {
-                                        this.LogTaskMessage(ex.Message);
+                                        this.LogTaskWarning(ex.Message);
                                     }
                                 }
 
@@ -591,7 +591,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                                 }
                                 catch
                                 {
-                                    this.LogTaskMessage(ex.Message);
+                                    this.LogTaskWarning(ex.Message);
                                 }
                             }
 
@@ -644,7 +644,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             }
                             catch
                             {
-                                this.LogTaskMessage(ex.Message);
+                                this.LogTaskWarning(ex.Message);
                             }
                         }
 

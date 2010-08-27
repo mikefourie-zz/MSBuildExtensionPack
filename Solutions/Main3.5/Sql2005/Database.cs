@@ -96,7 +96,7 @@ namespace MSBuild.ExtensionPack.Sql2005
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/2b1ebce5-3d34-c41b-5fcf-a942f14c9b51.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/2b1ebce5-3d34-c41b-5fcf-a942f14c9b51.htm")]
     public class Database : BaseTask
     {
         private const string BackupTaskAction = "Backup";

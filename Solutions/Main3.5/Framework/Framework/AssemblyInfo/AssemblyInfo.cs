@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {
         private AssemblyVersionSettings assemblyFileVersionSettings;
@@ -792,6 +792,14 @@ namespace MSBuild.ExtensionPack.Framework
         /// </example>
         public string AssemblyTrademark { get; set; }
 
+        /// <summary>Defines additional version information for an assembly manifest.</summary>
+        /// <remarks>
+        ///     <para>The attribute defined by this class attaches additional version information to an assembly. If this attribute is applied to an assembly, the string it specifies can be obtained at run time by using the Application.ProductVersion property. </para>
+        ///     <para>The string is also used in the path and registry key provided by the Application.UserAppDataPath property and the Application.UserAppDataRegistry property. If the AssemblyInformationalVersionAttribute is not applied to an assembly, the version number specified by the AssemblyVersionAttribute attribute is used instead.</para>
+        ///     <para>Although you can specify any text, a warning message appears on compilation if the string is not in the format used by the assembly version number, or if it is in that format but contains wildcard characters. This warning is harmless.</para>
+        /// </remarks>
+        public bool UpdateAssemblyInformationalVersion { get; set; }
+
         /// <summary>The culture information for the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
@@ -1003,9 +1011,15 @@ namespace MSBuild.ExtensionPack.Framework
                     Version versionToUpdate = new Version(assemblyInfo["AssemblyVersion"]);
                     this.UpdateAssemblyVersion(versionToUpdate, this.assemblyVersionSettings);
                     assemblyInfo["AssemblyVersion"] = versionToUpdate.ToString();
-
+                    if (this.UpdateAssemblyInformationalVersion)
+                    {
+                        if (this.ValidateFileEntry("AssemblyInformationalVersion", assemblyInfo, "AssemblyInformationalVersion", item.ItemSpec))
+                        {
+                            assemblyInfo["AssemblyInformationalVersion"] = versionToUpdate.ToString();
+                        }
+                    }
+                    
                     UpdateMaxVersion(ref this.maxAssemblyVersion, assemblyInfo["AssemblyVersion"]);
-
                     versionToUpdate = new Version(assemblyInfo["AssemblyFileVersion"]);
                     this.UpdateAssemblyVersion(versionToUpdate, this.assemblyFileVersionSettings);
                     assemblyInfo["AssemblyFileVersion"] = versionToUpdate.ToString();

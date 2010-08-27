@@ -8,36 +8,35 @@ namespace MSBuild.ExtensionPack.BizTalk
     using System.Management;
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
-    using OM = Microsoft.BizTalk.ExplorerOM;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, Database <b>Output: </b>Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default)</para>
+    /// <para><i>Create</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
     /// <para><i>Delete</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Update</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default)</para>
+    /// <para><i>Update</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
+    ///  <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///   <PropertyGroup>
+    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///   </PropertyGroup>
+    ///   <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Create a Host -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Create" HostName="MSBEPTESTHOST" Tracking="true" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false"/>
     ///         <!-- Update a Host -->
-    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Update" HostName="MSBEPTESTHOST" Tracking="false" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false"/>
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Update" HostName="MSBEPTESTHOST" Tracking="false" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false" AdditionalHostSettings="MessageDeliverySampleSpaceSize=123;ProcessMemoryThreshold=31"/>
     ///         <!-- Delete a Host -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Delete" HostName="MSBEPTESTHOST"/>   
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
     public class BizTalkHost : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -125,7 +124,14 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(UpdateTaskAction, false)]
         public bool Use32BitHostOnly { get; set; }
-        
+
+        /// <summary>
+        /// An optional semi-colon delimited list of name value pairs to set additional Host settings, e.g. MessagePublishSampleSpaceSize=1;MessagePublishOverdriveFactor=100. For available settings, see: http://msdn.microsoft.com/en-us/library/aa560307(BTS.10).aspx
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(UpdateTaskAction, false)]
+        public string AdditionalHostSettings { get; set; }
+
         /// <summary>
         /// Gets whether the Application exists
         /// </summary>
@@ -256,6 +262,16 @@ namespace MSBuild.ExtensionPack.BizTalk
                 {
                     btsHostSetting.SetPropertyValue("HostTracking", this.Tracking);
                     btsHostSetting.SetPropertyValue("IsDefault", this.Default);
+                }
+
+                if (!string.IsNullOrEmpty(this.AdditionalHostSettings))
+                {
+                    string[] additionalproperties = this.AdditionalHostSettings.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string s in additionalproperties)
+                    {
+                        string[] property = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                        btsHostSetting[property[0]] = property[1];
+                    }
                 }
 
                 btsHostSetting.Put(options);

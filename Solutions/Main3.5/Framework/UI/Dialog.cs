@@ -58,7 +58,7 @@ namespace MSBuild.ExtensionPack.UI
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/35220eaf-ab0c-7bec-9a02-8d6ffde55632.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/35220eaf-ab0c-7bec-9a02-8d6ffde55632.htm")]
     public class Dialog : BaseTask
     {
         private const string ShowTaskAction = "Show";
@@ -83,7 +83,7 @@ namespace MSBuild.ExtensionPack.UI
         }
 
         /// <summary>
-        /// Sets the height of the form. Default is 400
+        /// Sets the height of the form. Default is 180
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
@@ -95,7 +95,7 @@ namespace MSBuild.ExtensionPack.UI
         }
 
         /// <summary>
-        /// Sets the width of the form. Default is 180
+        /// Sets the width of the form. Default is 400
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]

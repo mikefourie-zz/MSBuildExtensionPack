@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/7b39151a-52da-890b-dc46-21c84b886e02.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/7b39151a-52da-890b-dc46-21c84b886e02.htm")]
     public class FileVersion : BaseTask
     {
         private const string IncrementTaskAction = "Increment";

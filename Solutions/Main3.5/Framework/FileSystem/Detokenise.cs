@@ -16,14 +16,14 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding ,ForceWrite, ReplacementValues, Separator, TokenPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
-    /// <para><i>Report</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TokenPattern <b>Output: </b>FilesProcessed, TokenReport)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed)</para>
+    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Report</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TokenPattern, ReportUnusedTokens <b>Output: </b>FilesProcessed, TokenReport, UnusedTokens)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default;Report" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -33,7 +33,10 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <PathToDetokenise>C:\Demo\*</PathToDetokenise>
     ///         <CPHome>www.codeplex.com/MSBuildExtensionPack</CPHome>
     ///         <Title>A New Title</Title>
-    ///         <clv>hello=hello#~#hello1=how#~#hello2=are</clv>
+    ///         <clv>hello=hello#~#hello1=how#~#hello2=are#~#Configuration=debug</clv>
+    ///         <Configuration>debug</Configuration>
+    ///         <Platform>x86</Platform>
+    ///         <HiImAnUnsedToken>TheReportWillFindMe</HiImAnUnsedToken>
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <ItemGroup>
@@ -78,20 +81,22 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <Message Text="%(Report1.Files)"/>
     ///     </Target>
     ///     <Target Name="GetFiles">
-    ///         <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Report" TargetPath="C:\MyFiles*" DisplayFiles="false">
+    ///         <MSBuild.ExtensionPack.FileSystem.Detokenise TaskAction="Report" TargetPath="C:\Demo1*"  DisplayFiles="true" ReportUnusedTokens="true">
     ///             <Output TaskParameter="TokenReport" ItemName="Report1"/>
+    ///             <Output TaskParameter="UnusedTokens" ItemName="Unused"/>
     ///         </MSBuild.ExtensionPack.FileSystem.Detokenise>
+    ///         <Message Text="Unused Token - %(Unused.Identity)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.6.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
         private const string DetokeniseTaskAction = "Detokenise";
         private const string ReportTaskAction = "Report";
-        private const string ParseRegexPatternExtract = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
+        private string tokenExtractionPattern = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
         private string tokenPattern = @"\$\([0-9a-zA-Z-._]+\)";
         private Project project;
         private Encoding fileEncoding = Encoding.UTF8;
@@ -100,6 +105,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private string separator = "#~#";
         private Dictionary<string, string> commandLineDictionary;
         private SortedDictionary<string, string> tokenDictionary;
+        private SortedDictionary<string, string> unusedTokens;
         private string activeFile;
 
         // this bool is used to indicate what mode we are in.
@@ -129,7 +135,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public bool DisplayFiles { get; set; }
 
         /// <summary>
-        /// Specifies the format of the token to look for. The default pattern is $(token)
+        /// Specifies the regular expression format of the token to look for. The default pattern is \$\([0-9a-zA-Z-._]+\) which equates to $(token)
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
@@ -139,6 +145,17 @@ namespace MSBuild.ExtensionPack.FileSystem
             set { this.tokenPattern = value; }
         }
 
+        /// <summary>
+        /// Specifies the regular expression to use to extract the token name from the TokenPattern provided. The default pattern is (?&lt;=\$\()[0-9a-zA-Z-._]+(?=\)), i.e it will extract token from $(token)
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        [TaskAction(DetokeniseTaskAction, false)]
+        public string TokenExtractionPattern
+        {
+            get { return this.tokenExtractionPattern; }
+            set { this.tokenExtractionPattern = value; }
+        }
+        
         /// <summary>
         /// Sets the replacement values.
         /// </summary>
@@ -219,8 +236,23 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(DetokeniseTaskAction, false)]
         public int FilesDetokenised { get; set; }
 
+        /// <summary>
+        /// ItemGroup containing the Tokens (Identity) and Files metadata containing all the files in which the token can be found.
+        /// </summary>
         [Output]
         public ITaskItem[] TokenReport { get; set; }
+
+        /// <summary>
+        /// Itemgroup containing the tokens which have been provided but not found in the files scanned. ReportUnusedTokens must be set to true to use this.
+        /// </summary>
+        [Output]
+        public ITaskItem[] UnusedTokens { get; set; }
+
+        /// <summary>
+        /// Set to true when running a Report to see which tokens are not used in any files scanned. Default is false.
+        /// </summary>
+        [TaskAction(ReportTaskAction, false)]
+        public bool ReportUnusedTokens { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -261,6 +293,57 @@ namespace MSBuild.ExtensionPack.FileSystem
                     t.SetMetadata("Files", s.Value);
                     this.TokenReport[i] = t;
                     i++;
+                }
+
+                if (this.ReportUnusedTokens)
+                {
+                    this.unusedTokens = new SortedDictionary<string, string>();
+
+                    // Find unused tokens.
+                    if (this.collectionMode)
+                    {
+                        if (this.ReplacementValues != null)
+                        {
+                            // we need to look in the ReplacementValues for a match
+                            foreach (ITaskItem token in this.ReplacementValues)
+                            {
+                                if (!this.tokenDictionary.ContainsKey(token.ToString()) && !this.unusedTokens.ContainsKey(token.ToString()))
+                                {
+                                    this.unusedTokens.Add(token.ToString(), string.Empty);
+                                }
+                            }
+                        }
+
+                        if (this.commandLineDictionary != null)
+                        {
+                            foreach (string s in this.commandLineDictionary.Keys)
+                            {
+                                if (!this.tokenDictionary.ContainsKey(s) && !this.unusedTokens.ContainsKey(s))
+                                {
+                                    this.unusedTokens.Add(s, string.Empty);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (BuildProperty pp in this.project.EvaluatedProperties)
+                        {
+                            if (!this.tokenDictionary.ContainsKey(pp.Name) && !this.unusedTokens.ContainsKey(pp.Name))
+                            {
+                                this.unusedTokens.Add(pp.Name, string.Empty);
+                            }
+                        }
+                    }
+                    
+                    this.UnusedTokens = new TaskItem[this.unusedTokens.Count];
+                    i = 0;
+                    foreach (var s in this.unusedTokens)
+                    {
+                        ITaskItem t = new TaskItem(s.Key);
+                        this.UnusedTokens[i] = t;
+                        i++;
+                    }
                 }
             }
         }
@@ -507,7 +590,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             string propertyFound = regexMatch.Captures[0].ToString();
 
             // Extract the keyword from the match.
-            string extractedProperty = Regex.Match(propertyFound, ParseRegexPatternExtract).Captures[0].ToString();
+            string extractedProperty = Regex.Match(propertyFound, this.TokenExtractionPattern).Captures[0].ToString();
 
             // Find the replacement property
             if (this.collectionMode)
