@@ -210,13 +210,13 @@ namespace MSBuild.ExtensionPack.Xml
         public string XPath { get; set; }
 
         /// <summary>
-        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to singel node.
+        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to single node.
         /// </summary>
         [TaskAction(AddElementTaskAction, false)]
         public string InsertBeforeXPath { get; set; }
 
         /// <summary>
-        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to singel node.
+        /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to single node.
         /// </summary>
         [TaskAction(AddElementTaskAction, false)]
         public string InsertAfterXPath { get; set; }
