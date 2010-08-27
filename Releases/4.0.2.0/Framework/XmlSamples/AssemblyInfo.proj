@@ -1,0 +1,20 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <AssemblyInfoFiles Include="C:\a\CommonAssemblyInfo.cs"/>
+            <AssemblyInfoFiles1 Include="C:\a\CommonAssemblyInfo1.cs"/>
+            <AssemblyInfoFiles2 Include="C:\a\CommonAssemblyInfo2.cs"/>
+        </ItemGroup>
+        <!-- Update an attribute and don't do any versioning -->
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo ComVisible="true" AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true"/>
+        <!-- Version using YearWeekDay and set the start of the week as a Sunday -->
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles1)" AssemblyBuildNumberType="YearWeekDay" FirstDayOfWeek="Sunday"/>
+        <!-- Version using the number of days elapsed since a given start date-->
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles2)" StartDate="1 Jan 2000" AssemblyBuildNumberType="ElapsedDays"/>
+    </Target>
+</Project>
