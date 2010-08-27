@@ -1,0 +1,13 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+      <MSBuild.ExtensionPack.VisualStudio.VSDevEnv FilePath="C:\a New Folder\WindowsFormsApplication1.sln" Configuration="Debug|Any CPU" Rebuild="true">
+        <Output TaskParameter="ExitCode" PropertyName="Exit" />
+      </MSBuild.ExtensionPack.VisualStudio.VSDevEnv>
+      <Message Text="ExitCode: $(Exit)"/>
+    </Target>
+</Project>

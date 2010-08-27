@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="UserData" Class="SqlVersionDataClass" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=TFS2008SVR;Initial Catalog=UserData;Integrated Security=True" SettingsObjectName="MSBuild.ExtensionPack.Properties.Settings" SettingsPropertyName="UserDataConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.BuildNumbers" Member="BuildNumbers">
+    <Type Name="BuildNumber">
+      <Column Name="SequenceName" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Major" Type="System.Int32" DbType="Int" CanBeNull="false" />
+      <Column Name="Minor" Type="System.Int32" DbType="Int" CanBeNull="false" />
+      <Column Name="Build" Type="System.Int32" DbType="Int" CanBeNull="false" />
+      <Column Name="Increment" Type="System.Int32" DbType="Int" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>
