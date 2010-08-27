@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
     public class EnvironmentVariable : BaseTask
     {
         private const string GetTaskAction = "Get";

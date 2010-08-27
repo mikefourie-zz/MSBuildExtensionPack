@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
         private const string TransformTaskAction = "Transform";
@@ -303,10 +303,21 @@ namespace MSBuild.ExtensionPack.Xml
                     this.LogTaskMessage(MessageImportance.Low, "Writing using text method");
                     using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
                     {
-                        StreamWriter streamWriter = new StreamWriter(stream, Encoding.Default);
+                        StreamWriter streamWriter = null;
+                        try
+                        {
+                            streamWriter = new StreamWriter(stream, Encoding.Default);
 
-                        // Output the results to a writer.
-                        streamWriter.Write(this.Output);
+                            // Output the results to a writer.
+                            streamWriter.Write(this.Output);
+                        }
+                        finally
+                        {
+                            if (streamWriter != null)
+                            {
+                                streamWriter.Close();
+                            }
+                        }
                     }
                 }
                 else

@@ -7,7 +7,8 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 [assembly:AssemblyVersion("4.0.0.0")]
-[assembly:AssemblyFileVersion("4.0.0.0")]
+[assembly:AssemblyFileVersion("4.0.1.0")]
+[assembly:AssemblyInformationalVersion("4.0.0.0")]
 [assembly:AssemblyCompany("http://www.MSBuildExtensionPack.com")]
 [assembly:AssemblyCopyright("Copyright © 2010 http://www.MSBuildExtensionPack.com")]
 [assembly:AssemblyTrademark("Mike Fourie")]

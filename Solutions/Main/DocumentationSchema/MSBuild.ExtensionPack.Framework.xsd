@@ -53,6 +53,7 @@
                     <xs:attribute name="Body"/>
                     <xs:attribute name="Format"/>
                     <xs:attribute name="Attachments"/>
+                    <xs:attribute name="UseDefaultCredentials"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -303,6 +304,7 @@
                     <xs:attribute name="Data"/>
                     <xs:attribute name="Value"/>
                     <xs:attribute name="RegistryHive" type="msb:non_empty_string" use="required"/>
+                    <xs:attribute name="RegistryView"/>
                     <xs:attribute name="Key" type="msb:non_empty_string" use="required"/>
                     <xs:attribute name="Empty"/>
                 </xs:extension>
@@ -407,6 +409,7 @@
                     <xs:attribute name="TargetFiles"/>
                     <xs:attribute name="TargetPath"/>
                     <xs:attribute name="TextEncoding"/>
+                    <xs:attribute name="TokenExtractionPattern"/>
                     <xs:attribute name="TokenPattern"/>
                 </xs:extension>
             </xs:complexContent>
@@ -1425,6 +1428,7 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="Timeout"/>
+                    <xs:attribute name="SkipSslCertificateValidation"/>
                     <xs:attribute name="Url" type="msb:non_empty_string" use="required"/>
                 </xs:extension>
             </xs:complexContent>
@@ -1561,12 +1565,14 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="Element"/>
+                    <xs:attribute name="InnerText"/>
                     <xs:attribute name="ParentElement"/>
                     <xs:attribute name="Key"/>
                     <xs:attribute name="Value"/>
                     <xs:attribute name="File"/>
                     <xs:attribute name="XPath"/>
                     <xs:attribute name="Namespaces"/>
+                    <xs:attribute name="RetryCount"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

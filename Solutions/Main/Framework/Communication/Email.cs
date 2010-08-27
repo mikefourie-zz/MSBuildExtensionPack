@@ -9,7 +9,7 @@ namespace MSBuild.ExtensionPack.Communication
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Send</i> (<b>Required: </b> SmtpServer, MailFrom, MailTo, Subject  <b>Optional: </b> Priority, Body, Format, Attachments)</para>
+    /// <para><i>Send</i> (<b>Required: </b> SmtpServer, MailFrom, MailTo, Subject  <b>Optional: </b> Priority, Body, Format, Attachments, UseDefaultCredentials, UserName, UserPassword)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -34,11 +34,11 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
     public class Email : BaseTask
     {
         private const string SendTaskAction = "Send";
-        
+        private bool useDefaultCredentials = true;
         private string format = "HTML";
         private string priority = "Normal";
 
@@ -104,6 +104,18 @@ namespace MSBuild.ExtensionPack.Communication
         }
 
         /// <summary>
+        /// Gets or sets a Boolean value that controls whether the DefaultCredentials are sent with requests. DefaultCredentials represents the system credentials for the current security context in which the application is running. Default is true.
+        /// <para>If UserName and UserPassword is supplied, this is set to false. If UserName and UserPassword are not supplied and this is set to false then mail is sent to the server anonymously.</para>
+        /// <para><b>If you provide credentials for basic authentication, they are sent to the server in clear text. This can present a security issue because your credentials can be seen, and then used by others.</b></para>
+        /// </summary>
+        [TaskAction(SendTaskAction, false)]
+        public bool UseDefaultCredentials
+        {
+            get { return this.useDefaultCredentials; }
+            set { this.useDefaultCredentials = value; }
+        }
+
+        /// <summary>
         /// An Item Collection of full paths of files to attach to the email.
         /// </summary>
         [TaskAction(SendTaskAction, false)]
@@ -156,7 +168,16 @@ namespace MSBuild.ExtensionPack.Communication
 
                 using (SmtpClient client = new SmtpClient(this.SmtpServer))
                 {
-                    client.UseDefaultCredentials = true;
+                    if (!string.IsNullOrEmpty(this.UserName))
+                    {
+                        client.Credentials = new System.Net.NetworkCredential(this.UserName, this.UserPassword);
+                        client.UseDefaultCredentials = false;
+                    }
+                    else
+                    {
+                        client.UseDefaultCredentials = this.UseDefaultCredentials;
+                    }
+
                     client.Send(msg);
                 }
             }

@@ -46,6 +46,7 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
@@ -60,6 +61,7 @@
     <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="SqlLogger.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="SecureFileLogger.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />

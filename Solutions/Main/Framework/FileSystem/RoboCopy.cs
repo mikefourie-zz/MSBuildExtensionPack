@@ -25,7 +25,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
     public class RoboCopy : ToolTask
     {
         /// <summary>
@@ -64,14 +64,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         protected override string GenerateCommandLineCommands()
         {
             CommandLineBuilder builder = new CommandLineBuilder();
+            builder.AppendFileNameIfNotNull(this.Source);
+            builder.AppendFileNameIfNotNull(this.Destination);
+            builder.AppendFileNamesIfNotNull(this.Files, " ");
             if (!string.IsNullOrEmpty(this.Options))
             {
                 builder.AppendSwitch(this.Options);
             }
 
-            builder.AppendFileNameIfNotNull(this.Source);
-            builder.AppendFileNameIfNotNull(this.Destination);
-            builder.AppendFileNamesIfNotNull(this.Files, " ");
             return builder.ToString();
         }
 

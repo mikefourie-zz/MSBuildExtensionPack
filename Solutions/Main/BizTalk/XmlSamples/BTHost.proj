@@ -5,11 +5,10 @@
   </PropertyGroup>
   <Import Project="$(TPath)"/>
     <Target Name="Default">
-      <Message Text="PATH : $(TPath)"/>
         <!-- Create a Host -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Create" HostName="MSBEPTESTHOST" Tracking="true" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false"/>
         <!-- Update a Host -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Update" HostName="MSBEPTESTHOST" Tracking="false" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false"/>
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Update" HostName="MSBEPTESTHOST" Tracking="false" WindowsGroup="$(ComputerName)\BizTalk Application Users" HostType="InProcess" Use32BitHostOnly="false" AdditionalHostSettings="MessageDeliverySampleSpaceSize=123;ProcessMemoryThreshold=31"/>
         <!-- Delete a Host -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkHost TaskAction="Delete" HostName="MSBEPTESTHOST"/>   
     </Target>

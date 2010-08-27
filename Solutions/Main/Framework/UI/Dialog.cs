@@ -58,7 +58,7 @@ namespace MSBuild.ExtensionPack.UI
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/35220eaf-ab0c-7bec-9a02-8d6ffde55632.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/35220eaf-ab0c-7bec-9a02-8d6ffde55632.htm")]
     public class Dialog : BaseTask
     {
         private const string ShowTaskAction = "Show";
@@ -68,7 +68,7 @@ namespace MSBuild.ExtensionPack.UI
         private string title = "Message";
         private int height = 180;
         private int width = 400;
-        private string button1Text = "Ok";
+        private string button1Text = "OK";
         private string errorTitle = "Error";
         private string errorText = "The supplied values do not match";
         private string confirmText = "Confirm";
@@ -83,7 +83,7 @@ namespace MSBuild.ExtensionPack.UI
         }
 
         /// <summary>
-        /// Sets the height of the form. Default is 400
+        /// Sets the height of the form. Default is 180
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]
@@ -95,7 +95,7 @@ namespace MSBuild.ExtensionPack.UI
         }
 
         /// <summary>
-        /// Sets the width of the form. Default is 180
+        /// Sets the width of the form. Default is 400
         /// </summary>
         [TaskAction(ShowTaskAction, false)]
         [TaskAction(PromptTaskAction, false)]

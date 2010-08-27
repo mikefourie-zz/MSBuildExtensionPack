@@ -63,6 +63,7 @@
     <CodeAnalysisRules>
     </CodeAnalysisRules>
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
@@ -96,6 +97,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Database.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>

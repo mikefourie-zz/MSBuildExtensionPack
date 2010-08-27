@@ -7,12 +7,13 @@ namespace MSBuild.ExtensionPack.Web
     using System.Globalization;
     using System.IO;
     using System.Net;
+    using System.Net.Security;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
-
+    
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout <b>Output:</b> Response, Status)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout, SkipSslCertificateValidation <b>Output:</b> Response, Status)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -40,7 +41,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
@@ -69,6 +70,12 @@ namespace MSBuild.ExtensionPack.Web
         [Required]
         [TaskAction(GetResponseTaskAction, true)]
         public string Url { get; set; }
+
+        /// <summary>
+        /// Set to true to accept all SSL certificates.
+        /// </summary>
+        [TaskAction(GetResponseTaskAction, true)]
+        public bool SkipSslCertificateValidation { get; set; }
 
         [Output]
         public ITaskItem Response { get; set; }
@@ -102,6 +109,11 @@ namespace MSBuild.ExtensionPack.Web
             if (request != null)
             {
                 request.Timeout = this.Timeout;
+                if (this.SkipSslCertificateValidation)
+                {
+                    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((sender, certificate, chain, sslPolicyErrors) => true);
+                }
+
                 try
                 {
                     using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())

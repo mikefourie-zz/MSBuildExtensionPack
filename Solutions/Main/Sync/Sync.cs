@@ -40,7 +40,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
     public class Sync : BaseTask
     {
         private const string SyncFoldersTaskAction = "SyncFolders";
@@ -169,10 +169,21 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (FileStream idFile = File.Open(idFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
-                StreamWriter sw = new StreamWriter(idFile);
-                replicaId = Guid.NewGuid();
-                sw.WriteLine(replicaId.ToString("D"));
-                
+                StreamWriter sw = null;
+                try
+                {
+                    sw = new StreamWriter(idFile);
+                    replicaId = Guid.NewGuid();
+                    sw.WriteLine(replicaId.ToString("D"));
+                }
+                finally
+                {
+                    if (sw != null)
+                    {
+                        sw.Close();
+                    }
+                }
+
                 return replicaId;
             }
         }

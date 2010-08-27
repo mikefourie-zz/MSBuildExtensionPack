@@ -11,12 +11,12 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CheckEmpty</i> (<b>Required: </b> RegistryHive, Key <b>Output: </b>Empty)</para>
-    /// <para><i>CreateKey</i> (<b>Required: </b> RegistryHive, Key)</para>
-    /// <para><i>DeleteKey</i> (<b>Required: </b> RegistryHive, Key)</para>
-    /// <para><i>DeleteKeyTree</i> (<b>Required: </b> RegistryHive, Key)</para>
-    /// <para><i>Get</i> (<b>Required: </b> RegistryHive, Key, Value <b>Output: </b>Data)</para>
-    /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value)</para>
+    /// <para><i>CheckEmpty</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView <b>Output: </b>Empty)</para>
+    /// <para><i>CreateKey</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView)</para>
+    /// <para><i>DeleteKey</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView)</para>
+    /// <para><i>DeleteKeyTree</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView )</para>
+    /// <para><i>Get</i> (<b>Required: </b> RegistryHive, Key, Value  <b>Optional:</b> RegistryView <b>Output: </b>Data)</para>
+    /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value <b>Optional:</b> RegistryView)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -60,7 +60,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
@@ -71,6 +71,7 @@ namespace MSBuild.ExtensionPack.Computer
         private const string SetTaskAction = "Set";
         private RegistryKey registryKey;
         private RegistryHive hive;
+        private RegistryView view = Microsoft.Win32.RegistryView.Default;
 
         [DropdownValue(CheckEmptyTaskAction)]
         [DropdownValue(CreateKeyTaskAction)]
@@ -104,7 +105,7 @@ namespace MSBuild.ExtensionPack.Computer
         public string Value { get; set; }
 
         /// <summary>
-        /// Sets the registry hive.
+        /// Sets the Registry Hive. Supports ClassesRoot, CurrentUser, LocalMachine, Users, PerformanceData, CurrentConfig, DynData
         /// </summary>
         [Required]
         [TaskAction(CheckEmptyTaskAction, true)]
@@ -113,7 +114,40 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(DeleteKeyTreeTaskAction, true)]
         [TaskAction(GetTaskAction, true)]
         [TaskAction(SetTaskAction, true)]
-        public string RegistryHive { get; set; }
+        public string RegistryHive
+        {
+            get
+            {
+                return this.hive.ToString();
+            }
+
+            set
+            {
+                this.hive = (RegistryHive)Enum.Parse(typeof(RegistryHive), value);
+            }
+        }
+
+        /// <summary>
+        /// Sets the Registry View. Supports Registry32, Registry64 and Default. Defaults to Default
+        /// </summary>
+        [TaskAction(CheckEmptyTaskAction, true)]
+        [TaskAction(CreateKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTaskAction, true)]
+        [TaskAction(DeleteKeyTreeTaskAction, true)]
+        [TaskAction(GetTaskAction, true)]
+        [TaskAction(SetTaskAction, true)]
+        public string RegistryView
+        {
+            get
+            {
+                return this.view.ToString();
+            }
+
+            set
+            {
+                this.view = (RegistryView)Enum.Parse(typeof(RegistryView), value);
+            }
+        }
 
         /// <summary>
         /// Sets the key.
@@ -141,8 +175,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             try
             {
-                this.hive = (Microsoft.Win32.RegistryHive)Enum.Parse(typeof(Microsoft.Win32.RegistryHive), this.RegistryHive, true);
-                this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName);
+                this.registryKey = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName, this.view);
             }
             catch (System.ArgumentException)
             {
@@ -218,7 +251,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         private void CheckEmpty()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Key: {0} is empty in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Key: {0} is empty in Hive: {1}, View: {2} on: {3}", this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
             {
@@ -233,13 +266,13 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Registry Key: {0} not found in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Registry Key: {0} not found in Hive: {1}, View: {2} on: {3}", this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
             }
         }
 
         private void Set()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Registry Value: {0} for Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Registry Value: {0} for Key: {1} in Hive: {2}, View: {3} on: {4}", this.Value, this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
             bool changed = false;
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
             if (subKey != null)
@@ -295,7 +328,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Registry Key: {0} not found in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Registry Key: {0} not found in Hive: {1}, View: {2} on: {3}", this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
             }
 
             if (changed)
@@ -312,7 +345,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Get()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Registry value: {0} from Key: {1} in Hive: {2}, View: {3} on: {4}", this.Value, this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
             if (subKey == null)
             {
@@ -333,8 +366,8 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void DeleteKeyTree()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Key Tree: {0} in Hive: {1}, View: {2} on: {3}", this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName, this.view))
             {
                 r.DeleteSubKeyTree(this.Key);
             }
@@ -342,8 +375,8 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void DeleteKey()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry Key: {0} in Hive: {1}, View: {2} on: {3}", this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName, this.view))
             {
                 r.DeleteSubKey(this.Key, false);
             }
@@ -351,8 +384,8 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void CreateKey()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1} on: {2}", this.Key, this.RegistryHive, this.MachineName));
-            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName))
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Registry Key: {0} in Hive: {1}, View: {2} on: {3}", this.Key, this.RegistryHive, this.RegistryView, this.MachineName));
+            using (RegistryKey r = RegistryKey.OpenRemoteBaseKey(this.hive, this.MachineName, this.view))
             using (RegistryKey r2 = r.CreateSubKey(this.Key))
             {
             }

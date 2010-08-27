@@ -184,7 +184,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.0.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
     public class ActiveDirectory : BaseTask
     {
         private const string AddUserTaskAction = "AddUser";
@@ -591,9 +591,9 @@ namespace MSBuild.ExtensionPack.Computer
                     this.Exists = pcontext.ValidateCredentials(this.User[0].ItemSpec, this.Password, this.bindingContextOptions);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.LogTaskMessage(e.ToString());
+                this.LogTaskMessage(ex.ToString());
                 this.Exists = false;
             }
         }

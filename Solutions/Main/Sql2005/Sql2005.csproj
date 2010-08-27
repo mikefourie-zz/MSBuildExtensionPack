@@ -63,6 +63,7 @@
     </CodeAnalysisRules>
     <DocumentationFile>..\BuildBinaries\MSBuild.ExtensionPack.Sql2005.xml</DocumentationFile>
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
@@ -95,6 +96,7 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
     <Compile Include="Database.cs" />
