@@ -15,6 +15,8 @@ namespace MSBuild.ExtensionPack.Xml
     /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Element or XPath, Key <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>UpdateAttribute</i> (<b>Required: </b>File, XPath, Key <b>Optional:</b> Namespaces, Value, RetryCount)</para>
+    /// <para><i>UpdateElement</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces, InnerText, RetryCount)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -99,6 +101,8 @@ namespace MSBuild.ExtensionPack.Xml
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" File="%(XMLConfigElementsToDelete.Identity)" XPath="%(XMLConfigElementsToDelete.XPath)" Condition="'%(XMLConfigElementsToDelete.Identity)'!=''"/>
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" File="%(XMLConfigElementsToAdd.Identity)" Key="%(XMLConfigElementsToAdd.KeyAttributeName)" Value="%(XMLConfigElementsToAdd.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd.Name)" XPath="%(XMLConfigElementsToAdd.XPath)" Condition="'%(XMLConfigElementsToAdd.Identity)'!=''"/>
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddAttribute" File="%(XMLConfigAttributesToAdd.Identity)" Key="%(XMLConfigAttributesToAdd.Name)" Value="%(XMLConfigAttributesToAdd.Value)" XPath="%(XMLConfigAttributesToAdd.XPath)" Condition="'%(XMLConfigAttributesToAdd.Identity)'!=''"/>
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateElement" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" InnerText="NewValue"/>
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateAttribute" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" Key="SomeAttribute" Value="NewValue"/>
     ///     </Target>
     ///     <!-- The following illustrates Namespace usage -->
     ///     <ItemGroup>
@@ -128,6 +132,8 @@ namespace MSBuild.ExtensionPack.Xml
         private const string AddElementTaskAction = "AddElement";
         private const string RemoveAttributeTaskAction = "RemoveAttribute";
         private const string RemoveElementTaskAction = "RemoveElement";
+        private const string UpdateAttributeTaskAction = "UpdateAttribute";
+        private const string UpdateElementTaskAction = "UpdateElement";
         private XmlDocument xmlFileDoc;
         private XmlNamespaceManager namespaceManager;
         private XmlNodeList elements;
@@ -137,6 +143,8 @@ namespace MSBuild.ExtensionPack.Xml
         [DropdownValue(AddElementTaskAction)]
         [DropdownValue(RemoveAttributeTaskAction)]
         [DropdownValue(RemoveElementTaskAction)]
+        [DropdownValue(UpdateAttributeTaskAction)]
+        [DropdownValue(UpdateElementTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -156,6 +164,7 @@ namespace MSBuild.ExtensionPack.Xml
         /// Sets the InnerText.
         /// </summary>
         [TaskAction(AddElementTaskAction, true)]
+        [TaskAction(UpdateElementTaskAction, false)]
         public string InnerText { get; set; }
         
         /// <summary>
@@ -170,12 +179,14 @@ namespace MSBuild.ExtensionPack.Xml
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         [TaskAction(RemoveAttributeTaskAction, true)]
+        [TaskAction(UpdateAttributeTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
         /// Sets the Attribute key value.
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
+        [TaskAction(UpdateAttributeTaskAction, false)]
         public string Value { get; set; }
 
         /// <summary>
@@ -195,6 +206,7 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(AddElementTaskAction, false)]
         [TaskAction(RemoveAttributeTaskAction, false)]
         [TaskAction(RemoveElementTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
         public string XPath { get; set; }
         
         /// <summary>
@@ -216,6 +228,8 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(AddElementTaskAction, false)]
         [TaskAction(RemoveAttributeTaskAction, false)]
         [TaskAction(RemoveElementTaskAction, false)]
+        [TaskAction(UpdateAttributeTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
         public ITaskItem[] Namespaces { get; set; }
 
         /// <summary>
@@ -225,6 +239,8 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(AddElementTaskAction, false)]
         [TaskAction(RemoveAttributeTaskAction, false)]
         [TaskAction(RemoveElementTaskAction, false)]
+        [TaskAction(UpdateAttributeTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
         public int RetryCount
         {
             get { return this.retryCount; }
@@ -295,9 +311,65 @@ namespace MSBuild.ExtensionPack.Xml
                 case RemoveElementTaskAction:
                     this.RemoveElement();
                     break;
+                case UpdateElementTaskAction:
+                    this.UpdateElement();
+                    break;
+                case UpdateAttributeTaskAction:
+                    this.UpdateAttribute();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void UpdateElement()
+        {
+            if (string.IsNullOrEmpty(this.XPath))
+            {
+                this.Log.LogError("XPath is Required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerText: {1}", this.XPath, this.InnerText));
+            if (this.elements != null && this.elements.Count > 0)
+            {
+                foreach (XmlNode element in this.elements)
+                {
+                    element.InnerText = this.InnerText;
+                }
+
+                this.TrySave();
+            }
+        }
+
+        private void UpdateAttribute()
+        {
+            if (string.IsNullOrEmpty(this.XPath))
+            {
+                this.Log.LogError("XPath is Required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.Key))
+            {
+                this.Log.LogError("Key is Required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Attribute: {0} @ {1}. Value: {2}", this.Key, this.XPath, this.Value));
+            if (this.elements != null && this.elements.Count > 0)
+            {
+                foreach (XmlNode element in this.elements)
+                {
+                    XmlAttribute attNode = element.Attributes.GetNamedItem(this.Key) as XmlAttribute;
+                    if (attNode != null)
+                    {
+                        attNode.Value = this.Value;
+                    }
+                }
+
+                this.TrySave();
             }
         }
 
@@ -306,9 +378,8 @@ namespace MSBuild.ExtensionPack.Xml
             if (string.IsNullOrEmpty(this.XPath))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Attribute: {0}", this.Key));
-
-            XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element);
-            if (elementNode == null)
+                XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element);
+                if (elementNode == null)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
                 return;

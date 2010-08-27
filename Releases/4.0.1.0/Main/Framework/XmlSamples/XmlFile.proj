@@ -78,6 +78,8 @@
         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" File="%(XMLConfigElementsToDelete.Identity)" XPath="%(XMLConfigElementsToDelete.XPath)" Condition="'%(XMLConfigElementsToDelete.Identity)'!=''"/>
         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" File="%(XMLConfigElementsToAdd.Identity)" Key="%(XMLConfigElementsToAdd.KeyAttributeName)" Value="%(XMLConfigElementsToAdd.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd.Name)" XPath="%(XMLConfigElementsToAdd.XPath)" Condition="'%(XMLConfigElementsToAdd.Identity)'!=''"/>
         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddAttribute" File="%(XMLConfigAttributesToAdd.Identity)" Key="%(XMLConfigAttributesToAdd.Name)" Value="%(XMLConfigAttributesToAdd.Value)" XPath="%(XMLConfigAttributesToAdd.XPath)" Condition="'%(XMLConfigAttributesToAdd.Identity)'!=''"/>
+        <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateElement" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" InnerText="NewValue"/>
+        <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateAttribute" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" Key="SomeAttribute" Value="NewValue"/>
     </Target>
     <!-- The following illustrates Namespace usage -->
     <ItemGroup>
