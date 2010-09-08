@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType)</para>
+    /// <para><i>AddSecurity</i> (<b>Required: </b> Path, Users <b>Optional: </b>AccessType, Permission)</para>
     /// <para><i>DeleteAll</i> (<b>Required: </b> Path, Match)</para>
     /// <para><i>Get</i> (<b>Required: </b> Path <b>Optional:</b> Match, Recursive)</para>
     /// <para><i>Move</i> (<b>Required: </b> Path, TargetPath)</para>
@@ -155,7 +155,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
-        /// Separate pemissions with a comma.
+        /// A comma-separated list of <a href="http://msdn.microsoft.com/en-us/library/942f991b.aspx">FileSystemRights</a>.
         /// </summary>
         [TaskAction(AddSecurityTaskAction, false)]
         [TaskAction(RemoveSecurityTaskAction, false)]
