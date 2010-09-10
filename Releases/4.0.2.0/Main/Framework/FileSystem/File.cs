@@ -8,6 +8,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
+    using System.Security.AccessControl;
     using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -17,12 +19,14 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttributes</i> (<b>Required: </b>Files)</para>
+    /// <para><i>AddSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
     /// <para><i>GetTempFileName</i> (<b>Output: </b>Path)</para>
     /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
     /// <para><i>Move</i> (<b>Required: </b>Path, TargetPath)</para>
     /// <para><i>RemoveAttributes</i> (<b>Required: </b>Files)</para>
+    /// <para><i>RemoveSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
     /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
@@ -30,69 +34,81 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
-    ///     <ItemGroup>
-    ///         <FilesToParse Include="c:\demo\file.txt"/>
-    ///         <FilesToCount Include="C:\Demo\**\*.cs"/>
-    ///         <AllFilesToCount Include="C:\Demo\**\*"/>
-    ///         <AtFiles Include="c:\demo\file1.txt">
-    ///             <Attributes>ReadOnly;Hidden</Attributes>
-    ///         </AtFiles>
-    ///         <AtFiles2 Include="c:\demo\file1.txt">
-    ///             <Attributes>Normal</Attributes>
-    ///         </AtFiles2>
-    ///         <MyFiles Include="C:\demo\**\*.csproj"/>
-    ///     </ItemGroup>
-    ///     <Target Name="Default">
-    ///         <!-- Get a temp file -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
-    ///             <Output TaskParameter="Path" PropertyName="TempPath"/>
-    ///         </MSBuild.ExtensionPack.FileSystem.File>
-    ///         <Message Text="TempPath: $(TempPath)"/>
-    ///         <!-- Filter a collection of files based on their content -->
-    ///         <Message Text="MyProjects %(MyFiles.Identity)"/>
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
-    ///             <Output TaskParameter="IncludedFiles" ItemName="WebProjects"/>
-    ///             <Output TaskParameter="ExcludedFiles" ItemName="NonWebProjects"/>
-    ///             <Output TaskParameter="IncludedFileCount" PropertyName="WebProjectsCount"/>
-    ///             <Output TaskParameter="ExcludedFileCount" PropertyName="NonWebProjectsCount"/>
-    ///         </MSBuild.ExtensionPack.FileSystem.File>
-    ///         <Message Text="WebProjects: %(WebProjects.Identity)"/>
-    ///         <Message Text="NonWebProjects: %(NonWebProjects.Identity)"/>
-    ///         <Message Text="WebProjectsCount: $(WebProjectsCount)"/>
-    ///         <Message Text="NonWebProjectsCount: $(NonWebProjectsCount)"/>
-    ///         <!-- Get the checksum of a file -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
-    ///             <Output TaskParameter="Checksum" PropertyName="chksm"/>
-    ///         </MSBuild.ExtensionPack.FileSystem.File>
-    ///         <Message Text="$(chksm)"/>
-    ///         <!-- Replace file content using a regular expression -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="iiiii" Files="@(FilesToParse)"/>
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="idi" Path="c:\Demo*"/>
-    ///         <!-- Count the number of lines in a file and exclude comments -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(FilesToCount)" CommentIdentifiers="//">
-    ///             <Output TaskParameter="CodeLinecount" PropertyName="csharplines"/>
-    ///             <Output TaskParameter="IncludedFiles" ItemName="MyIncludedFiles"/>
-    ///             <Output TaskParameter="ExcludedFiles" ItemName="MyExcludedFiles"/>
-    ///         </MSBuild.ExtensionPack.FileSystem.File>
-    ///         <Message Text="C# CodeLinecount: $(csharplines)"/>
-    ///         <Message Text="MyIncludedFiles: %(MyIncludedFiles.Identity)"/>
-    ///         <Message Text="MyExcludedFiles: %(MyExcludedFiles.Identity)"/>
-    ///         <!-- Count all lines in a file -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(AllFilesToCount)">
-    ///             <Output TaskParameter="TotalLinecount" PropertyName="AllLines"/>
-    ///         </MSBuild.ExtensionPack.FileSystem.File>
-    ///         <Message Text="All Files TotalLinecount: $(AllLines)"/>
-    ///         <!-- Set some attributes -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles2)"/>
-    ///         <!-- Move a file -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="c:\demo\file.txt" TargetPath="c:\dddd\d\oo\d\mee.txt"/>
-    ///     </Target>
+    ///   <PropertyGroup>
+    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///   </PropertyGroup>
+    ///   <Import Project="$(TPath)"/>
+    ///   <ItemGroup>
+    ///     <FilesToParse Include="c:\demo\file.txt"/>
+    ///     <FilesToCount Include="C:\Demo\**\*.cs"/>
+    ///     <AllFilesToCount Include="C:\Demo\**\*"/>
+    ///     <AtFiles Include="c:\demo\file1.txt">
+    ///       <Attributes>ReadOnly;Hidden</Attributes>
+    ///     </AtFiles>
+    ///     <AtFiles2 Include="c:\demo\file1.txt">
+    ///       <Attributes>Normal</Attributes>
+    ///     </AtFiles2>
+    ///     <MyFiles Include="C:\demo\**\*.csproj"/>
+    ///     <FilesToSecure Include="C:\demo\file1.txt" />
+    ///     <FilesToSecure Include="C:\demo\file2.txt" />
+    ///     <Users Include="MyUser" />
+    ///     <UsersWithPermissions Include="MyUser">
+    ///       <Permission>Read,Write</Permission>
+    ///     </UsersWithPermissions>
+    ///   </ItemGroup>
+    ///   <Target Name="Default">
+    ///     <!-- adding security -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Path="C:\demo\file3.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
+    ///     <!-- remove security -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Path="C:\demo\file4.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
+    ///     <!-- Get a temp file -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
+    ///       <Output TaskParameter="Path" PropertyName="TempPath"/>
+    ///     </MSBuild.ExtensionPack.FileSystem.File>
+    ///     <Message Text="TempPath: $(TempPath)"/>
+    ///     <!-- Filter a collection of files based on their content -->
+    ///     <Message Text="MyProjects %(MyFiles.Identity)"/>
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
+    ///       <Output TaskParameter="IncludedFiles" ItemName="WebProjects"/>
+    ///       <Output TaskParameter="ExcludedFiles" ItemName="NonWebProjects"/>
+    ///       <Output TaskParameter="IncludedFileCount" PropertyName="WebProjectsCount"/>
+    ///       <Output TaskParameter="ExcludedFileCount" PropertyName="NonWebProjectsCount"/>
+    ///     </MSBuild.ExtensionPack.FileSystem.File>
+    ///     <Message Text="WebProjects: %(WebProjects.Identity)"/>
+    ///     <Message Text="NonWebProjects: %(NonWebProjects.Identity)"/>
+    ///     <Message Text="WebProjectsCount: $(WebProjectsCount)"/>
+    ///     <Message Text="NonWebProjectsCount: $(NonWebProjectsCount)"/>
+    ///     <!-- Get the checksum of a file -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+    ///       <Output TaskParameter="Checksum" PropertyName="chksm"/>
+    ///     </MSBuild.ExtensionPack.FileSystem.File>
+    ///     <Message Text="$(chksm)"/>
+    ///     <!-- Replace file content using a regular expression -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="iiiii" Files="@(FilesToParse)"/>
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="idi" Path="c:\Demo*"/>
+    ///     <!-- Count the number of lines in a file and exclude comments -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(FilesToCount)" CommentIdentifiers="//">
+    ///       <Output TaskParameter="CodeLinecount" PropertyName="csharplines"/>
+    ///       <Output TaskParameter="IncludedFiles" ItemName="MyIncludedFiles"/>
+    ///       <Output TaskParameter="ExcludedFiles" ItemName="MyExcludedFiles"/>
+    ///     </MSBuild.ExtensionPack.FileSystem.File>
+    ///     <Message Text="C# CodeLinecount: $(csharplines)"/>
+    ///     <Message Text="MyIncludedFiles: %(MyIncludedFiles.Identity)"/>
+    ///     <Message Text="MyExcludedFiles: %(MyExcludedFiles.Identity)"/>
+    ///     <!-- Count all lines in a file -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(AllFilesToCount)">
+    ///       <Output TaskParameter="TotalLinecount" PropertyName="AllLines"/>
+    ///     </MSBuild.ExtensionPack.FileSystem.File>
+    ///     <Message Text="All Files TotalLinecount: $(AllLines)"/>
+    ///     <!-- Set some attributes -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles2)"/>
+    ///     <!-- Move a file -->
+    ///     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="c:\demo\file.txt" TargetPath="c:\dddd\d\oo\d\mee.txt"/>
+    ///   </Target>
     /// </Project>
     /// ]]></code>
     /// </example>
@@ -108,6 +124,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string MoveTaskAction = "Move";
         private const string RemoveAttributesTaskAction = "RemoveAttributes";
         private const string GetTempFileNameTaskAction = "GetTempFileName";
+        private const string AddSecurityTaskAction = "AddSecurity";
+        private const string RemoveSecurityTaskAction = "RemoveSecurity";
 
         private Encoding fileEncoding = Encoding.UTF8;
         private string replacement = string.Empty;
@@ -115,6 +133,26 @@ namespace MSBuild.ExtensionPack.FileSystem
         private string[] commentIdentifiers;
         private List<ITaskItem> excludedFiles;
         private List<ITaskItem> includedFiles;
+        private AccessControlType accessType;
+
+        /// <summary>
+        /// Set the AccessType. Can be Allow or Deny. Default is Allow.
+        /// </summary>
+        [TaskAction(AddSecurityTaskAction, false)]
+        [TaskAction(RemoveSecurityTaskAction, false)]
+        public string AccessType
+        {
+            get { return this.accessType.ToString(); }
+            set { this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value); }
+        }
+
+        /// <summary>
+        /// A comma-separated list of <a href="http://msdn.microsoft.com/en-us/library/942f991b.aspx">FileSystemRights</a>.
+        /// </summary>
+        /// <remarks>If Permission is not set, the task will look for Permission meta-data on each user item.</remarks>
+        [TaskAction(AddSecurityTaskAction, false)]
+        [TaskAction(RemoveSecurityTaskAction, false)]
+        public string Permission { get; set; }
 
         [DropdownValue(AddAttributesTaskAction)]
         [DropdownValue(CountLinesTaskAction)]
@@ -130,6 +168,21 @@ namespace MSBuild.ExtensionPack.FileSystem
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
         }
+
+        /// <summary>
+        /// Sets the users collection. Use the Permission metadata tag to specify permissions. Separate pemissions with a comma.
+        /// <remarks>
+        /// The Permission metadata is only used if the Permission property is not set.
+        /// <code lang="xml"><![CDATA[
+        /// <UsersCol Include="AUser">
+        ///     <Permission>Read,etc</Permission>
+        /// </UsersCol>
+        /// ]]></code>
+        /// </remarks>
+        /// </summary>
+        [TaskAction(AddSecurityTaskAction, true)]
+        [TaskAction(RemoveSecurityTaskAction, true)]
+        public ITaskItem[] Users { get; set; }
 
         /// <summary>
         /// Sets the regex pattern.
@@ -182,6 +235,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(RemoveAttributesTaskAction, true)]
         [TaskAction(ReplaceTaskAction, false)]
         [TaskAction(FilterByContentTaskAction, true)]
+        [TaskAction(AddSecurityTaskAction, true)]
+        [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
@@ -327,6 +382,10 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case MoveTaskAction:
                     this.Move();
                     break;
+                case AddSecurityTaskAction:
+                case RemoveSecurityTaskAction:
+                    this.SetSecurity();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
@@ -372,6 +431,59 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             return flags;
+        }
+
+        private void SetSecurity()
+        {
+            var files = (this.Path == null) ? this.Files : new[] { this.Path };
+
+            if (files == null || files.Length == 0)
+            {
+                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "Please supply a value for either the Path or Files property."));
+                return;
+            }
+
+            if (this.Users == null || this.Users.Length == 0)
+            {
+                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "Please supply a value for the Users property."));
+                return;
+            }
+
+            foreach (ITaskItem fileTaskItem in files)
+            {
+                var fileInfo = new FileInfo(fileTaskItem.GetMetadata("FullPath"));
+                FileSecurity currentSecurity = fileInfo.GetAccessControl();
+
+                foreach (ITaskItem user in this.Users)
+                {
+                    string userName = user.ItemSpec;
+
+                    string[] permissions = string.IsNullOrEmpty(this.Permission) ? user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : this.Permission.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    FileSystemRights userRights = permissions.Aggregate(new FileSystemRights(), (current, s) => current | (FileSystemRights)Enum.Parse(typeof(FileSystemRights), s));
+
+                    var accessRule = new FileSystemAccessRule(userName, userRights, InheritanceFlags.None, PropagationFlags.None, this.accessType);
+                    if (this.TaskAction == AddSecurityTaskAction)
+                    {
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding security for user: {0} on {1}", userName, fileInfo.FullName));
+                        currentSecurity.AddAccessRule(accessRule);
+                    }
+                    else
+                    {
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing security for user: {0} on {1}", userName, fileInfo.FullName));
+                        if (permissions.Length == 0)
+                        {
+                            currentSecurity.RemoveAccessRuleAll(accessRule);
+                        }
+                        else
+                        {
+                            currentSecurity.RemoveAccessRule(accessRule);
+                        }
+                    }
+                }
+
+                // Set the new access settings.
+                fileInfo.SetAccessControl(currentSecurity);
+            }
         }
 
         private void FilterByContent()

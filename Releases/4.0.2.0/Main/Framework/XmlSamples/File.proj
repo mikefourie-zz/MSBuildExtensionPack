@@ -15,8 +15,20 @@
             <Attributes>Normal</Attributes>
         </AtFiles2>
         <MyFiles Include="C:\demo\**\*.csproj"/>
+    <FilesToSecure Include="C:\demo\file1.txt" />
+    <FilesToSecure Include="C:\demo\file2.txt" />
+    <Users Include="MyUser" />
+    <UsersWithPermissions Include="MyUser">
+      <Permission>Read,Write</Permission>
+    </UsersWithPermissions>
     </ItemGroup>
     <Target Name="Default">
+    <!-- adding security -->
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Path="C:\demo\file3.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
+    <!-- remove security -->
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Path="C:\demo\file4.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
         <!-- Get a temp file -->
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
             <Output TaskParameter="Path" PropertyName="TempPath"/>

@@ -957,3 +957,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XPath", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#UpdateElement()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "InnerText", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#UpdateElement()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XPath", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#UpdateAttribute()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XPath", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#ReadElement()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XPath", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#ReadAttribute()")]
