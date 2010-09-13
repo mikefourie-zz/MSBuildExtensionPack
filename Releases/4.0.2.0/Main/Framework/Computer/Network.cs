@@ -13,6 +13,7 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>GetDnsHostName</i> (<b>Required: HostName</b> <b>Output:</b> DnsHostName)</para>
     /// <para><i>GetInternalIP</i> (<b>Output:</b> Ip)</para>
     /// <para><i>GetRemoteIP</i> (<b>Required: </b>HostName <b>Output:</b> Ip)</para>
     /// <para><i>Ping</i> (<b>Required: </b> HostName <b>Optional: </b>Timeout, PingCount <b>Output:</b> Exists)</para>
@@ -21,34 +22,40 @@ namespace MSBuild.ExtensionPack.Computer
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
-    ///     <Target Name="Default">
-    ///         <!-- Get the Machine IP Addresses -->
-    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="GetInternalIP">
-    ///             <Output TaskParameter="IP" ItemName="TheIP"/>
-    ///         </MSBuild.ExtensionPack.Computer.Network>
-    ///         <Message Text="The IP: %(TheIP.Identity)"/>
-    ///         <!-- Get Remote IP Addresses -->
-    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="GetRemoteIP" HostName="www.freetodev.com">
-    ///             <Output TaskParameter="IP" ItemName="TheRemoteIP"/>
-    ///         </MSBuild.ExtensionPack.Computer.Network>
-    ///         <Message Text="The Remote IP: %(TheRemoteIP.Identity)"/>
-    ///         <!-- Ping a host -->
-    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="Ping" HostName="www.cnn.com">
-    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///         </MSBuild.ExtensionPack.Computer.Network>
-    ///         <Message Text="Exists: $(DoesExist)"/>
-    ///     </Target>
+    ///   <PropertyGroup>
+    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///   </PropertyGroup>
+    ///   <Import Project="$(TPath)"/>
+    ///   <Target Name="Default">
+    ///     <!-- Get the Machine IP Addresses -->
+    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="GetInternalIP">
+    ///       <Output TaskParameter="IP" ItemName="TheIP"/>
+    ///     </MSBuild.ExtensionPack.Computer.Network>
+    ///     <Message Text="The IP: %(TheIP.Identity)"/>
+    ///     <!-- Get Remote IP Addresses -->
+    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="GetRemoteIP" HostName="www.freetodev.com">
+    ///       <Output TaskParameter="IP" ItemName="TheRemoteIP"/>
+    ///     </MSBuild.ExtensionPack.Computer.Network>
+    ///     <Message Text="The Remote IP: %(TheRemoteIP.Identity)"/>
+    ///     <!-- Ping a host -->
+    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="Ping" HostName="www.freetodev.com">
+    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///     </MSBuild.ExtensionPack.Computer.Network>
+    ///     <Message Text="Exists: $(DoesExist)"/>
+    ///     <!-- Gets the fully-qualified domain name for a hostname. -->
+    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="GetDnsHostName" HostName="192.168.0.15">
+    ///       <Output TaskParameter="DnsHostName" PropertyName="HostEntryName" />
+    ///     </MSBuild.ExtensionPack.Computer.Network>
+    ///     <Message Text="Host Entry name: $(HostEntryName)" />
+    ///   </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
     [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/2719abfe-553d-226c-d75f-2964c24f1965.htm")]    
     public class Network : BaseTask
     {
+        private const string GetDnsHostNameTaskAction = "GetDnsHostName";
         private const string GetInternalIPTaskAction = "GetInternalIP";
         private const string GetRemoteIPTaskAction = "GetRemoteIP";
         private const string PingTaskAction = "Ping";
@@ -66,8 +73,9 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Sets the HostName / IP
+        /// Sets the HostName / IP address
         /// </summary>
+        [TaskAction(GetDnsHostNameTaskAction, true)]
         [TaskAction(PingTaskAction, true)]
         public string HostName { get; set; }
 
@@ -105,6 +113,12 @@ namespace MSBuild.ExtensionPack.Computer
         public ITaskItem[] IP { get; set; }
 
         /// <summary>
+        /// Gets the DnsHostName
+        /// </summary>
+        [Output]
+        public string DnsHostName { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -125,16 +139,31 @@ namespace MSBuild.ExtensionPack.Computer
                 case GetRemoteIPTaskAction:
                     this.GetRemoteIP();
                     break;
+                case GetDnsHostNameTaskAction:
+                    this.GetDnsHostName();
+                    break;
                 default:
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
 
+        private void GetDnsHostName()
+        {
+            if (String.IsNullOrEmpty(this.HostName))
+            {
+                Log.LogError("HostName is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting host entry name for: {0}", this.HostName));
+            var hostEntry = Dns.GetHostEntry(this.HostName);
+            this.DnsHostName = hostEntry.HostName;
+        }
+
         private void GetRemoteIP()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Get Remote IP for: {0}", this.HostName));
-
             IPAddress[] addresslist = Dns.GetHostAddresses(this.HostName);
             this.IP = new ITaskItem[addresslist.Length];
             for (int i = 0; i < addresslist.Length; i++)
