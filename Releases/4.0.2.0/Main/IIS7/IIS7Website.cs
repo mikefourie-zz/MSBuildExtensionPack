@@ -139,7 +139,7 @@ namespace MSBuild.ExtensionPack.Web
         public string Name { get; set; }
 
         /// <summary>
-        /// ITaskItem of Applications. Use AppPool and PhysicalPath metadata to specify applicable values
+        /// ITaskItem of Applications. Use AppPool, PhysicalPath and EnabledProtocols metadata to specify applicable values
         /// </summary>
         [TaskAction(AddApplicationTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
@@ -354,6 +354,12 @@ namespace MSBuild.ExtensionPack.Web
                     }
 
                     this.website.Applications[app.ItemSpec].ApplicationPoolName = app.GetMetadata("AppPool");
+                }
+
+                // Set EnabledProtocols if given
+                if (!string.IsNullOrEmpty(app.GetMetadata("EnabledProtocols")))
+                {
+                    this.website.Applications[app.ItemSpec].EnabledProtocols = app.GetMetadata("EnabledProtocols");
                 }
             }
         }
