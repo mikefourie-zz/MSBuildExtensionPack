@@ -287,8 +287,8 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
     /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Stop</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
+    /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RetryAttempts)</para>
+    /// <para><i>Stop</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RetryAttempts)</para>
     /// <para><i>Uninstall</i> (<b>Required: </b> ServicePath <b>Optional: </b>MachineName, RemoteUser, RemoteUserPassword)</para>
     /// <para><i>UpdateIdentity</i> (<b>Required: </b> ServiceName, User, Password <b>Optional: </b>MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -372,6 +372,7 @@ namespace MSBuild.ExtensionPack.Computer
         private const string UpdateIdentityTaskAction = "UpdateIdentity";
 
         private const bool RemoteExecutionAvailable = true;
+        private int retryAttempts = 60;
 
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(DisableTaskAction)]
@@ -386,6 +387,17 @@ namespace MSBuild.ExtensionPack.Computer
         {
             get { return base.TaskAction; }
             set { base.TaskAction = value; }
+        }
+
+        /// <summary>
+        /// Sets the number of times to attempt Starting / Stopping a service. Default is 60.
+        /// </summary>
+        [TaskAction(StartTaskAction, false)]
+        [TaskAction(StopTaskAction, false)]
+        public int RetryAttempts
+        {
+            get { return this.retryAttempts; }
+            set { this.retryAttempts = value; }
         }
 
         [TaskAction(CheckExistsTaskAction, true)]
@@ -663,7 +675,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
 
             int i = 1;
-            while (i <= 60)
+            while (i <= this.RetryAttempts)
             {         
                 ServiceState state = this.GetServiceState();
                 switch (state)
@@ -687,7 +699,7 @@ namespace MSBuild.ExtensionPack.Computer
                         return;
                 }
 
-                if (i == 60)
+                if (i == this.RetryAttempts)
                 {
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not start: {0}", this.ServiceDisplayName));
                     return;
@@ -726,7 +738,7 @@ namespace MSBuild.ExtensionPack.Computer
             try
             {
                 int i = 1;
-                while (i <= 60)
+                while (i <= this.RetryAttempts)
                 {
                     ServiceState state = this.GetServiceState();
                     switch (state)
@@ -754,7 +766,7 @@ namespace MSBuild.ExtensionPack.Computer
                             return true;
                     }
 
-                    if (i == 60)
+                    if (i == this.RetryAttempts)
                     {
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not stop: {0} on '{1}'", this.ServiceDisplayName, this.MachineName));
                         return false;
