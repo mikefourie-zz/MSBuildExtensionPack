@@ -11,8 +11,8 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Get</i> (<b>Required: </b> Variable  <b>Output: </b> Value)</para>
-    /// <para><i>Set</i> (<b>Required: </b> Variable, Value)</para>
+    /// <para><i>Get</i> (<b>Required: </b> Variable <b>Optional: </b>Target <b>Output: </b> Value)</para>
+    /// <para><i>Set</i> (<b>Required: </b> Variable, Value <b>Optional: </b>Target)</para>
     /// <para><b>Remote Execution Support:</b> For Get TaskAction only</para>
     /// </summary>
     /// <example>
@@ -88,6 +88,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Machine, Process or User. Defaults to Process
         /// </summary>
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(SetTaskAction, false)]
         public string Target
         {
             get
@@ -169,7 +171,7 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 else
                 {
-                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The Environemnt Variable was not found: {0}", this.Variable));
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The Environment Variable was not found: {0}", this.Variable));
                 }
             }
             else
