@@ -199,6 +199,7 @@
     <Compile Include="FileSystem\RoboCopy.cs" />
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
+    <Compile Include="Framework\AsyncExec.cs" />
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
@@ -361,6 +362,9 @@
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
+    <None Include="XmlSamples\AsyncExec.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\NUnit.proj" />
     <None Include="XmlSamples\SqlCmd.proj" />
     <None Include="XmlSamples\Xml.proj" />
@@ -453,6 +457,9 @@
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />
+    <Content Include="XmlSamples\01.txt" />
+    <Content Include="XmlSamples\02.txt" />
+    <Content Include="XmlSamples\03.txt" />
     <Content Include="XmlSamples\MotorData\Cars\Dodge.txt" />
     <Content Include="XmlSamples\MotorData\Cars\lexus.txt" />
     <Content Include="XmlSamples\MotorData\rootfile1.txt" />

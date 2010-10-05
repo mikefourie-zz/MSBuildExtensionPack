@@ -202,6 +202,7 @@
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="FileSystem\RoboCopy.cs" />
+    <Compile Include="Framework\AsyncExec.cs" />
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
@@ -365,6 +366,7 @@
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\AsyncExec.proj" />
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
