@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.Multimedia
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/d5ecc508-4437-dc9d-569d-2eb066a29c81.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/d5ecc508-4437-dc9d-569d-2eb066a29c81.htm")]
     public class Sound : BaseTask
     {
         private const string PlayTaskAction = "Play";

@@ -55,7 +55,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
     public class FindUnder : BaseTask
     {
         private const string FindFilesTaskAction = "FindFiles";

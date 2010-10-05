@@ -48,7 +48,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/e38221c2-c686-2a47-489c-ea2ef10d915b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/e38221c2-c686-2a47-489c-ea2ef10d915b.htm")]
     public class Ftp : BaseTask
     {
         private const string UploadFilesTaskAction = "UploadFiles";

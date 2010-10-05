@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/68cdc023-8926-4ac9-9e7c-0297592fec29.htm")]
     public class AsyncExec : Task
     {
         /// <summary>

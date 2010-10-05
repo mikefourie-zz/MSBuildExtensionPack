@@ -39,7 +39,7 @@ namespace MSBuild.ExtensionPack.UI
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/e7981fca-ab45-8126-d9e8-e905a1176cb2.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/e7981fca-ab45-8126-d9e8-e905a1176cb2.htm")]
     public class Console : BaseTask
     {
         private const string BeepTaskAction = "Beep";
