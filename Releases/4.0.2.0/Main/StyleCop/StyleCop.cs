@@ -263,12 +263,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
             }
 
             ITaskItem item = new TaskItem(file);
-            item.SetMetadata("CheckId", e.Violation.Rule.CheckId);
-            item.SetMetadata("RuleDescription", e.Violation.Rule.Description);
-            item.SetMetadata("RuleName", e.Violation.Rule.Name);
-            item.SetMetadata("RuleGroup", e.Violation.Rule.RuleGroup);
+            item.SetMetadata("CheckId", e.Violation.Rule.CheckId ?? string.Empty);
+            item.SetMetadata("RuleDescription", e.Violation.Rule.Description ?? string.Empty);
+            item.SetMetadata("RuleName", e.Violation.Rule.Name ?? string.Empty);
+            item.SetMetadata("RuleGroup", e.Violation.Rule.RuleGroup ?? string.Empty);
             item.SetMetadata("LineNumber", e.LineNumber.ToString(CultureInfo.CurrentCulture));
-            item.SetMetadata("Message", e.Message);
+            item.SetMetadata("Message", e.Message ?? string.Empty);
             this.failedFiles.Add(item);
         }
     }
