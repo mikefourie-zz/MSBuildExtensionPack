@@ -6,5 +6,6 @@
   <Import Project="$(TPath)"/>
   <Target Name="Default">
     <MSBuild.ExtensionPack.Framework.AsyncExec Command="iisreset.exe"/>
+    <MSBuild.ExtensionPack.Framework.AsyncExec Command="copy &quot;d:\a\*&quot; &quot;d:\b\&quot; /Y"/>
   </Target>
 </Project>
