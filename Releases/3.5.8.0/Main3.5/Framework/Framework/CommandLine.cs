@@ -10,7 +10,6 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
@@ -168,12 +167,6 @@ namespace MSBuild.ExtensionPack.Framework
         public bool IgnoreStandardErrorWarningFormat { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to provide verbose output.
-        /// </summary>
-        /// <remarks>No Exec Equivalent</remarks>
-        public bool Verbose { get; set; }
-
-        /// <summary>
         /// Gets or sets the success exit code for the command. Default is zero (0).
         /// </summary>
         /// <remarks>No Exec Equivalent</remarks>
@@ -220,20 +213,6 @@ namespace MSBuild.ExtensionPack.Framework
         public string StdOutEncoding { get; set; }
 
         /// <summary>
-        /// Gets or sets the amount of time, in milliseconds, after which the task executable is terminated.
-        /// The default value is zero (0), indicating that there is no time out period.
-        /// </summary>
-        /// <remarks>Exec Equivalent: Timeout (default value is Int.MaxValue).</remarks>
-        public int Timeout { get; set; }
-
-        /// <summary>
-        /// Gets or sets the location from where the task will load the underlying executable file (cmd.exe).
-        /// The Execute task does not use this property and is available here for task signature compatibility only.
-        /// </summary>
-        /// <remarks>Exec Equivalent: ToolPath</remarks>
-        public string ToolPath { get; set; }
-
-        /// <summary>
         /// Gets or sets the directory in which the command will run.
         /// </summary>
         /// <remarks>Exec Equivalent: WorkingDirectory</remarks>
@@ -274,7 +253,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             foreach (string expression in this.WarningExpressionList)
             {
-                this.Comment("Warning RegEx: {0}", expression);
+                this.Log.LogMessage("Warning RegEx: {0}", expression);
             }
 
             // Assemble error regular expression list
@@ -291,7 +270,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             foreach (string expression in this.ErrorExpressionList)
             {
-                this.Comment("Error RegEx: {0}", expression);
+                this.Log.LogMessage("Error RegEx: {0}", expression);
             }
 
             // Assemble command list
@@ -300,12 +279,12 @@ namespace MSBuild.ExtensionPack.Framework
             foreach (string command in tokens.Select(token => token.Trim()).Where(command => !string.IsNullOrEmpty(command)))
             {
                 commands.Add(command);
-                this.Comment("Command: {0}", command);
+                this.Log.LogMessage("Command: {0}", command);
             }
 
             if (commands.Count == 0)
             {
-                this.Comment("Fatal input error: no command(s) specified");
+                this.Log.LogMessage("Fatal input error: no command(s) specified");
                 this.ExitCode = 1;
                 return false;
             }
@@ -313,47 +292,27 @@ namespace MSBuild.ExtensionPack.Framework
             // Execute commands and collect input
             foreach (string command in commands)
             {
-                this.Comment("Execute: {0}", command);
+                this.Log.LogMessage("Execute: {0}", command);
                 var startInfo = this.GetCommandLine(command, this.WorkingDirectory, this.StdErrEncoding, this.StdOutEncoding);
                 using (Process process = Process.Start(startInfo))
                 {
-                    using (new Timer(TimeOutAction, process, this.Timeout, System.Threading.Timeout.Infinite))
+                    this.Log.LogMessage("Collect Standard Output Stream");
+                    while (!process.StandardOutput.EndOfStream || !process.HasExited)
                     {
-                        this.Comment("Collect Standard Output Stream");
-                        while (process != null && (!process.StandardOutput.EndOfStream || !process.HasExited))
-                        {
-                            this.CollectOutputLine(process.StandardOutput.ReadLine());
-                        }
-
-                        this.Comment("Collect Standard Error Stream");
-                        while (process != null && !process.StandardError.EndOfStream)
-                        {
-                            this.CollectOutputLine(process.StandardError.ReadLine());
-                        }
-
-                        if (process != null)
-                        {
-                            this.ExitCode = process.ExitCode;
-                        }
+                        this.CollectOutputLine(process.StandardOutput.ReadLine());
                     }
+
+                    this.Log.LogMessage("Collect Standard Error Stream");
+                    while (!process.StandardError.EndOfStream)
+                    {
+                        this.CollectOutputLine(process.StandardError.ReadLine());
+                    }
+
+                    this.ExitCode = process.ExitCode;
                 }
             }
 
-            return (this.IgnoreExitCode || this.ExitCode == this.SuccessExitCode) && this.PerformMatching(this.CollectedOutput);
-        }
-
-        /// <summary>
-        /// Callback method passed to timer.  It's called when Timeout is due.
-        /// It will terminated the task
-        /// </summary>
-        /// <param name="state">Process object</param>
-        private static void TimeOutAction(object state)
-        {
-            Process process = (Process)state;
-            if (process.Id >= 0)
-            {
-                process.Kill();
-            }
+            return this.PerformMatching(this.CollectedOutput) && (this.IgnoreExitCode || this.ExitCode == this.SuccessExitCode);
         }
 
         /// <summary>
@@ -384,10 +343,10 @@ namespace MSBuild.ExtensionPack.Framework
                 {
                     process.StandardErrorEncoding = Encoding.GetEncoding(standardErrorEncoding);
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException ex)
                 {
-                    this.Comment("Non-fatal exception caught: invalid encoding specified for standard error stream: {0}", standardErrorEncoding);
-                    this.Log.LogWarningFromException(e);
+                    this.Log.LogMessage("Non-fatal exception caught: invalid encoding specified for standard error stream: {0}", standardErrorEncoding);
+                    this.Log.LogWarningFromException(ex);
                 }
             }
 
@@ -397,10 +356,10 @@ namespace MSBuild.ExtensionPack.Framework
                 {
                     process.StandardOutputEncoding = Encoding.GetEncoding(standardOutputEncoding);
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException ex)
                 {
-                    this.Comment("Non-fatal exception caught: invalid encoding specified for standard output stream: {0}", standardOutputEncoding);
-                    this.Log.LogWarningFromException(e);
+                    this.Log.LogMessage("Non-fatal exception caught: invalid encoding specified for standard output stream: {0}", standardOutputEncoding);
+                    this.Log.LogWarningFromException(ex);
                 }
             }
 
@@ -533,18 +492,8 @@ namespace MSBuild.ExtensionPack.Framework
             if (!string.IsNullOrEmpty(text))
             {
                 this.CollectedOutput += Environment.NewLine + text;
-                this.Comment(text);
+                this.Log.LogMessage(text);
             }
-        }
-
-        /// <summary>
-        /// Logs a comment line.
-        /// </summary>
-        /// <param name="message">message to log</param>
-        /// <param name="tokens">tokens to format in to the message</param>
-        private void Comment(string message, params string[] tokens)
-        {
-            this.Log.LogMessage(this.Verbose ? MessageImportance.High : MessageImportance.Normal, message, tokens);
         }
     }
 }
