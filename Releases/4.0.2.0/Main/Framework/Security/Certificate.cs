@@ -174,7 +174,7 @@ namespace MSBuild.ExtensionPack.Security
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b>FileName <b>Optional: </b>MachineStore, CertPassword, Exportable, StoreName  <b>Output: </b>Thumbprint, SubjectDName)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Thumbprint or SubjectDName <b> Optional:</b> MachineStore, StoreName <b>Output:</b> CertInfo)</para>
-    /// <para><i>Remove</i> (<b>Required: </b>Thumbprint <b>Optional: </b>MachineStore, StoreName)</para>
+    /// <para><i>Remove</i> (<b>Required: </b>Thumbprint or SubjectDName <b>Optional: </b>MachineStore, StoreName)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
