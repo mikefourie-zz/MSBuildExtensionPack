@@ -206,6 +206,7 @@
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
       <SubType>Code</SubType>

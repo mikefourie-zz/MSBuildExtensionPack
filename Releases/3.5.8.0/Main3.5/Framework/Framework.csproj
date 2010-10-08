@@ -203,6 +203,7 @@
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
       <SubType>Code</SubType>
@@ -375,7 +376,9 @@
     <None Include="XmlSamples\Share.proj" />
     <None Include="XmlSamples\Dialog.proj" />
     <None Include="XmlSamples\VB6.proj" />
-    <None Include="XmlSamples\Certificate.proj" />
+    <None Include="XmlSamples\Certificate.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\FxCop.proj" />
     <None Include="XmlSamples\Gac.proj" />
     <None Include="XmlSamples\Signing.proj" />
