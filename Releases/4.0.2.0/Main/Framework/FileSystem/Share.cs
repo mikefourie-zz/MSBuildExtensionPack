@@ -306,7 +306,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outputParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
                 if (returnCode != ReturnCode.Success)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to delete the share. ReturnCode: {0}.", returnCode));
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to set the share permissions. ReturnCode: {0}.", returnCode));
                     return;
                 }
             }
