@@ -8,7 +8,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using Microsoft.Build.Utilities;
 
     /// <summary>
-    /// This task wraps RoboCopy
+    /// This task wraps RoboCopy. Successful non-zero exit codes from Robocopy are set to zero to not break MSBuild. Use the ReturnCode property to access the exit code from Robocopy
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -19,8 +19,18 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
-    ///         <MSBuild.ExtensionPack.FileSystem.RoboCopy Source="C:\b" Destination="C:\bbzz" Files="*.*" Options="/MIR"/>
-    ///         <MSBuild.ExtensionPack.FileSystem.RoboCopy Source="C:\a" Destination="C:\abzz" Files="*.txt" Options="/e"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.RoboCopy Source="C:\b" Destination="C:\bbzz" Files="*.*" Options="/MIR">
+    ///             <Output TaskParameter="ExitCode" PropertyName="Exit" />
+    ///             <Output TaskParameter="ReturnCode" PropertyName="Return" />
+    ///         </MSBuild.ExtensionPack.FileSystem.RoboCopy>
+    ///         <Message Text="ExitCode = $(Exit)"/>
+    ///         <Message Text="ReturnCode = $(Return)"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.RoboCopy Source="C:\a" Destination="C:\abzz" Files="*.txt" Options="/e">
+    ///             <Output TaskParameter="ExitCode" PropertyName="Exit" />
+    ///             <Output TaskParameter="ReturnCode" PropertyName="Return" />
+    ///         </MSBuild.ExtensionPack.FileSystem.RoboCopy>
+    ///         <Message Text="ExitCode = $(Exit)"/>
+    ///         <Message Text="ReturnCode = $(Return)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -45,6 +55,12 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         [Required]
         public ITaskItem[] Files { get; set; }
+
+        /// <summary>
+        /// Gets the Return Code from RoboCopy
+        /// </summary>
+        [Output]
+        public int ReturnCode { get; set; }
 
         /// <summary>
         /// Type 'robocopy.exe /?' at the command prompt for all available options
@@ -79,6 +95,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+            this.ReturnCode = retVal;
             switch (retVal)
             {
                 case 0:
