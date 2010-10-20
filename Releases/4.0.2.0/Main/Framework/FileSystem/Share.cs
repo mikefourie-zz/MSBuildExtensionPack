@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
 
@@ -16,7 +17,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>CheckExists</i> (<b>Required: </b> ShareName <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> ShareName, SharePath <b>Optional: </b>Description, MaximumAllowed, CreateSharePath, AllowUsers, DenyUsers)</para>
     /// <para><i>Delete</i> (<b>Required: </b> ShareName)</para>
-    /// <para><i>SetPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers)</para>
+    /// <para><i>ModifyPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers).</para>
+    /// <para><i>SetPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers). SetPermissions will reset all existing permissions.</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -51,10 +53,12 @@ namespace MSBuild.ExtensionPack.FileSystem
     [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
+        private const string ModifyPermissionsTaskAction = "ModifyPermissions";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string DeleteTaskAction = "Delete";
         private const string CreateTaskAction = "Create";
         private const string SetPermissionsTaskAction = "SetPermissions";
+        private int newPermissionCount;
 
         #region enums
         private enum ReturnCode : uint
@@ -201,6 +205,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case SetPermissionsTaskAction:
                     this.SetPermissions();
                     break;
+                case ModifyPermissionsTaskAction:
+                    this.ModifyPermissions();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
@@ -293,7 +300,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch
                 {
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
                     return;
                 }
 
@@ -311,7 +318,60 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
             }
         }
-        
+
+        private void ModifyPermissions()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Modify permissions on share: {0} on: {1}", this.ShareName, this.MachineName));
+            this.GetManagementScope(@"\root\cimv2");
+            ManagementObject shareObject = null;
+            ObjectQuery query = new ObjectQuery("Select * from Win32_LogicalShareSecuritySetting where Name = '" + this.ShareName + "'");
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
+            {
+                ManagementObjectCollection moc = searcher.Get();
+                if (moc.Count > 0)
+                {
+                    shareObject = moc.Cast<ManagementObject>().FirstOrDefault();
+                }
+                else
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                    return;
+                }
+            }
+
+            ManagementBaseObject securityDescriptorObject = shareObject.InvokeMethod("GetSecurityDescriptor", null, null);
+            if (securityDescriptorObject == null)
+            {
+                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Error extracting security descriptor from: {0}.", this.ShareName));
+                return;
+            }
+
+            ManagementBaseObject[] newaccessControlList = this.BuildAccessControlList();
+            ManagementBaseObject securityDescriptor = securityDescriptorObject.Properties["Descriptor"].Value as ManagementBaseObject;
+            int existingAcessControlEntriesCount = 0;
+            ManagementBaseObject[] accessControlList = securityDescriptor.Properties["DACL"].Value as ManagementBaseObject[];
+
+            if (accessControlList == null)
+            {
+                accessControlList = new ManagementBaseObject[this.newPermissionCount];
+            }
+            else
+            {
+                existingAcessControlEntriesCount = accessControlList.Length;
+                Array.Resize(ref accessControlList, accessControlList.Length + this.newPermissionCount);
+            }
+
+            for (int i = 0; i < newaccessControlList.Length; i++)
+            {
+                accessControlList[existingAcessControlEntriesCount + i] = newaccessControlList[i];
+            }
+
+            securityDescriptor.Properties["DACL"].Value = accessControlList;
+            ManagementBaseObject parameterForSetSecurityDescriptor = shareObject.GetMethodParameters("SetSecurityDescriptor");
+            parameterForSetSecurityDescriptor["Descriptor"] = securityDescriptor;
+            shareObject.InvokeMethod("SetSecurityDescriptor", parameterForSetSecurityDescriptor, null);
+        }
+
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating share: {0} on: {1}", this.ShareName, this.MachineName));
@@ -430,6 +490,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
             }
 
+            this.newPermissionCount = acl.Count;
             return acl.ToArray();
         }
 
