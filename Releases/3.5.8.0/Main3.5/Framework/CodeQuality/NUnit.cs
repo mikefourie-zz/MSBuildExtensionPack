@@ -274,16 +274,9 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
         {
-            int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
-            this.Log.LogMessage(MessageImportance.High, "Dir" + this.GetWorkingDirectory());
+            this.Failures = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             this.ProcessXmlResultsFile();
-            if (retVal > 0)
-            {
-                this.Failures = retVal;
-                retVal = 0;
-            }
-
-            return retVal;
+            return this.Failures;
         }
 
         /// <summary>
