@@ -406,7 +406,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 if (this.SetAssemblyFileVersion)
                 {
-                    if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase))
+                    if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase) && newFile.IndexOf("AssemblyFileVersion", StringComparison.OrdinalIgnoreCase) < 0)
                     {
                         switch (file.GetMetadata("Extension"))
                         {
@@ -424,7 +424,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 {
                     string originalFile = newFile;
                     newFile = this.regexAssemblyVersion.Replace(newFile, @"AssemblyVersion(""" + this.AssemblyVersion + @""")");
-                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase))
+                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase) && newFile.IndexOf("AssemblyVersion", StringComparison.OrdinalIgnoreCase) < 0)
                     {
                         switch (file.GetMetadata("Extension"))
                         {
