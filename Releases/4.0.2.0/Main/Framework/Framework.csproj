@@ -118,6 +118,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -204,6 +205,7 @@
     <Compile Include="FileSystem\RoboCopy.cs" />
     <Compile Include="Framework\AsyncExec.cs" />
     <Compile Include="Framework\CommandLine.cs" />
+    <Compile Include="Framework\ConfigManager.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Security\CertificateNativeMethods.cs" />
@@ -368,6 +370,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\AsyncExec.proj" />
+    <None Include="XmlSamples\ConfigManager.proj" />
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />

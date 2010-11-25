@@ -74,9 +74,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
@@ -85,6 +88,7 @@
     <Compile Include="..\MockBuildEngine.cs">
       <Link>MockBuildEngine.cs</Link>
     </Compile>
+    <Compile Include="ConfigMangerTests.cs" />
     <Compile Include="FileTest.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
     <Compile Include="SqlScriptLoaderTests.cs" />
