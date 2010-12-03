@@ -461,7 +461,7 @@ namespace MSBuild.ExtensionPack.Web
             if (!string.IsNullOrEmpty(this.ManagedRuntimeVersion))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedRuntimeVersion to: {0}", this.ManagedRuntimeVersion));
-                this.pool.ManagedRuntimeVersion = this.ManagedRuntimeVersion;
+                this.pool.ManagedRuntimeVersion = this.ManagedRuntimeVersion.ToUpperInvariant() == "NO MANAGED CODE" ? string.Empty : this.ManagedRuntimeVersion;
             }
 
             if (this.QueueLength > 0)
