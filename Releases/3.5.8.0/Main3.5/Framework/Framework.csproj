@@ -205,6 +205,7 @@
     <Compile Include="Framework\ConfigManager.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="Framework\ILMerge.cs" />
     <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
@@ -369,6 +370,7 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\ILMerge.proj" />
     <None Include="XmlSamples\NUnit.proj" />
     <None Include="XmlSamples\SqlCmd.proj" />
     <None Include="XmlSamples\Xml.proj" />
