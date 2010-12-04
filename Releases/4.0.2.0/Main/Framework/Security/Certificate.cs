@@ -6,8 +6,12 @@ namespace MSBuild.ExtensionPack.Security
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Security.AccessControl;
+    using System.Security.Cryptography;
     using System.Security.Cryptography.X509Certificates;
+    using System.Security.Principal;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using MSBuild.ExtensionPack.Security.Extended;
@@ -173,8 +177,11 @@ namespace MSBuild.ExtensionPack.Security
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b>FileName <b>Optional: </b>MachineStore, CertPassword, Exportable, StoreName  <b>Output: </b>Thumbprint, SubjectDName)</para>
+    /// <para><i>GetBase64EncodedCertificate</i> (<b>Required:  Thumbprint or SubjectDName</b> <b> Optional:</b> MachineStore, <b>Output:</b> Base64EncodedCertificate)</para>
+    /// <para><i>GetExpiryDate</i> (<b>Required: </b>  Thumbprint or SubjectDName<b> Optional: MachineStore, </b> <b>Output:</b> CertificateExpiryDate)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Thumbprint or SubjectDName <b> Optional:</b> MachineStore, StoreName <b>Output:</b> CertInfo)</para>
     /// <para><i>Remove</i> (<b>Required: </b>Thumbprint or SubjectDName <b>Optional: </b>MachineStore, StoreName)</para>
+    /// <para><i>SetUserRights</i> (<b>Required: </b> AccountName, Thumbprint or SubjectDName<b> Optional:</b> MachineStore, <b>Output:</b> )</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -223,10 +230,20 @@ namespace MSBuild.ExtensionPack.Security
     {
         private const string AddTaskAction = "Add";
         private const string RemoveTaskAction = "Remove";
+        private const string SetUserRightsTaskAction = "SetUserRights";
+        private const string GetExpiryDateTaskAction = "GetExpiryDate";
+        private const string GetBase64EncodedCertificateTaskAction = "GetBase64EncodedCertificate";        
         private const string GetInfoTaskAction = "GetInfo";
+        private const string AccessRightsRead = "Read";
+        private const string AccessRightsReadAndExecute = "ReadAndExecute";
+        private const string AccessRightsWrite = "Write";
+        private const string AccessRightsFullControl = "FullControl";
         private string storeName = "MY";
 
         [DropdownValue(AddTaskAction)]
+        [DropdownValue(GetExpiryDateTaskAction)]
+        [DropdownValue(GetBase64EncodedCertificateTaskAction)]
+        [DropdownValue(SetUserRightsTaskAction)]
         [DropdownValue(RemoveTaskAction)]
         [DropdownValue(GetInfoTaskAction)]
         public override string TaskAction
@@ -239,6 +256,9 @@ namespace MSBuild.ExtensionPack.Security
         /// Sets a value indicating whether to use the MachineStore. Default is false
         /// </summary>
         [TaskAction(AddTaskAction, false)]
+        [TaskAction(GetExpiryDateTaskAction, false)]
+        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
+        [TaskAction(SetUserRightsTaskAction, false)]
         [TaskAction(RemoveTaskAction, false)]
         [TaskAction(GetInfoTaskAction, false)]
         public bool MachineStore { get; set; }
@@ -263,13 +283,55 @@ namespace MSBuild.ExtensionPack.Security
         public string SubjectDName { get; set; }
 
         /// <summary>
+        /// Gets or sets the Base 64 Encoded string of the certificate
+        /// </summary>
+        [Output]
+        [TaskAction(GetBase64EncodedCertificateTaskAction, true)]
+        public string Base64EncodedCertificate { get; set; }
+
+        /// <summary>
         /// Gets the thumbprint. Used to uniquely identify certificate in further tasks
+        /// The thumprint  can be used in place of distinguished name to identify a certificate
         /// </summary>
         [Output]
         [TaskAction(AddTaskAction, false)]
+        [TaskAction(GetExpiryDateTaskAction, false)]
+        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
+        [TaskAction(SetUserRightsTaskAction, false)]
         [TaskAction(RemoveTaskAction, true)]
         [TaskAction(GetInfoTaskAction, false)]
         public string Thumbprint { get; set; }
+
+        /// <summary>
+        /// Gets the Distinguished Name for the certificate used to to uniquely identify certificate in further tasks.
+        /// The distinguished name can be used in place of thumbprint to identify a certificate
+        /// </summary>
+        [Output]
+        [TaskAction(AddTaskAction, false)]
+        [TaskAction(GetExpiryDateTaskAction, false)]
+        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
+        [TaskAction(SetUserRightsTaskAction, false)]
+        [TaskAction(RemoveTaskAction, false)]
+        public string DistinguishedName { get; set; }
+
+        /// <summary>
+        /// Gets the Certificate Exprity Date.
+        /// </summary>
+        [Output]
+        [TaskAction(GetExpiryDateTaskAction, true)]                
+        public string CertificateExpiryDate { get; set; }
+
+        /// <summary>
+        /// The name of user or group that needs to be given rights on the given certificate
+        /// </summary>
+        [TaskAction(SetUserRightsTaskAction, true)]
+        public string AccountName { get; set; }
+
+        /// <summary>
+        /// The access rights that need to be given.
+        /// </summary>    
+        [TaskAction(SetUserRightsTaskAction, true)]
+        public string AccessRights { get; set; }
 
         /// <summary>
         /// Sets the name of the store. Defaults to MY
@@ -284,6 +346,9 @@ namespace MSBuild.ExtensionPack.Security
         /// TrustedPublisher:     The store for directly trusted publishers<br />
         /// </summary>
         [TaskAction(AddTaskAction, false)]
+        [TaskAction(GetExpiryDateTaskAction, false)]
+        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
+        [TaskAction(SetUserRightsTaskAction, false)]
         [TaskAction(RemoveTaskAction, false)]
         [TaskAction(GetInfoTaskAction, false)]
         public string StoreName
@@ -324,6 +389,15 @@ namespace MSBuild.ExtensionPack.Security
                 case RemoveTaskAction:
                     this.Remove();
                     break;
+                case SetUserRightsTaskAction:
+                    this.SetUserAccessRights();
+                    break;
+                case GetExpiryDateTaskAction:
+                    this.GetCertificateExpiryDate();
+                    break;
+                case GetBase64EncodedCertificateTaskAction:
+                    this.GetCertificateAsBase64String();
+                    break;
                 case GetInfoTaskAction:
                     this.GetInfo();
                     break;
@@ -331,6 +405,64 @@ namespace MSBuild.ExtensionPack.Security
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+       /// <summary>
+        /// Extracts a certificate from the certificate Distinguished Name
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name of the certificate</param>
+        /// <param name="certificateStore">The certificate store to look for certificate for.</param>        
+        /// <returns>Returns the X509 certificate with the given DName</returns>
+        private static X509Certificate2 GetCertificateFromDistinguishedName(string distinguishedName, X509Store certificateStore)
+        {
+           // Iterate through each certificate trying to find the first unexpired certificate
+           return certificateStore.Certificates.Cast<X509Certificate2>().FirstOrDefault(certificate => string.Compare(certificate.Subject, distinguishedName, StringComparison.CurrentCultureIgnoreCase) == 0);
+        }
+
+        /// <summary>
+        /// Extracts a certificate from the certificate Thumbprint Name
+        /// </summary>
+        /// <param name="thumbprint">The thumbprint of the certificate to look for</param>
+        /// <param name="certificateStore">The certificate store to look for certificate for.</param>        
+        /// <returns>Returns the X509 certificate with the given DName</returns>
+        private static X509Certificate2 GetCertificateFromThumbprint(string thumbprint, X509Store certificateStore)
+        {
+            // Iterate through each certificate trying to find the first unexpired certificate
+            return certificateStore.Certificates.Cast<X509Certificate2>().FirstOrDefault(certificate => certificate.Thumbprint == thumbprint);
+        }
+
+        /// <summary>
+        /// The method search for the given Key Name in the Application Data folders and return the folder location 
+        /// where the key file resides
+        /// </summary>
+        /// <param name="keyFileName">The name of the key file whose file location needs to be found</param>
+        /// <returns>Returns the location of the given key file name</returns>
+        private static string FindKeyLocation(string keyFileName)
+        {
+            // First search for the key in the Common (All User) Application Data directory
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            string rsaFolder = appDataFolder + @"\Microsoft\Crypto\RSA\MachineKeys";
+            if (Directory.GetFiles(rsaFolder, keyFileName).Length > 0)
+            {
+                return rsaFolder;
+            }
+
+            // If not found, search the key in the currently signed in user's Application Data directory
+            appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            rsaFolder = appDataFolder + @"\Microsoft\Crypto\RSA\";
+            string[] directoryList = Directory.GetDirectories(rsaFolder);
+            if (directoryList.Length > 0)
+            {
+                foreach (string directoryName in directoryList)
+                {
+                    if (Directory.GetFiles(directoryName, keyFileName).Length != 0)
+                    {
+                        return directoryName;
+                    }
+                }
+            }
+
+            return string.Empty;
         }
 
         private static string GetKeyFileName(X509Certificate cert)
@@ -379,12 +511,7 @@ namespace MSBuild.ExtensionPack.Security
                 }
             }
 
-            if (keyFileName == null)
-            {
-                return String.Empty;
-            }
-
-            return keyFileName;
+            return keyFileName ?? String.Empty;
         }
 
         private void GetInfo()
@@ -429,28 +556,31 @@ namespace MSBuild.ExtensionPack.Security
                 cert = matches[0];
             }
 
-            this.CertInfo = new TaskItem("CertInfo");
-            this.CertInfo.SetMetadata("SubjectName", cert.SubjectName.Name);
-            this.CertInfo.SetMetadata("SubjectNameOidValue", cert.SubjectName.Oid.Value ?? string.Empty);
-            this.CertInfo.SetMetadata("SerialNumber", cert.SerialNumber);
-            this.CertInfo.SetMetadata("Archived", cert.Archived.ToString());
-            this.CertInfo.SetMetadata("NotBefore", cert.NotBefore.ToString());
-            this.CertInfo.SetMetadata("FriendlyName", cert.FriendlyName);
-            this.CertInfo.SetMetadata("HasPrivateKey", cert.HasPrivateKey.ToString());
-            this.CertInfo.SetMetadata("Thumbprint", cert.Thumbprint);
-            this.CertInfo.SetMetadata("Version", cert.Version.ToString());
-            this.CertInfo.SetMetadata("SignatureAlgorithm", cert.SignatureAlgorithm.FriendlyName);
-            this.CertInfo.SetMetadata("IssuerName", cert.IssuerName.Name);
-            this.CertInfo.SetMetadata("NotAfter", cert.NotAfter.ToString());
-
-            var privateKeyFileName = GetKeyFileName(cert);
-            if (!String.IsNullOrEmpty(privateKeyFileName))
+            if (cert != null)
             {
-                // Adapted from the FindPrivateKey application.  See http://msdn.microsoft.com/en-us/library/aa717039(v=VS.90).aspx.
-                var keyFileDirectory = this.GetKeyFileDirectory(privateKeyFileName);
-                if (!String.IsNullOrEmpty(privateKeyFileName) && !String.IsNullOrEmpty(keyFileDirectory))
+                this.CertInfo = new TaskItem("CertInfo");
+                this.CertInfo.SetMetadata("SubjectName", cert.SubjectName.Name);
+                this.CertInfo.SetMetadata("SubjectNameOidValue", cert.SubjectName.Oid.Value ?? string.Empty);
+                this.CertInfo.SetMetadata("SerialNumber", cert.SerialNumber ?? string.Empty);
+                this.CertInfo.SetMetadata("Archived", cert.Archived.ToString());
+                this.CertInfo.SetMetadata("NotBefore", cert.NotBefore.ToString());
+                this.CertInfo.SetMetadata("FriendlyName", cert.FriendlyName);
+                this.CertInfo.SetMetadata("HasPrivateKey", cert.HasPrivateKey.ToString());
+                this.CertInfo.SetMetadata("Thumbprint", cert.Thumbprint ?? string.Empty);
+                this.CertInfo.SetMetadata("Version", cert.Version.ToString());
+                this.CertInfo.SetMetadata("SignatureAlgorithm", cert.SignatureAlgorithm.FriendlyName);
+                this.CertInfo.SetMetadata("IssuerName", cert.IssuerName.Name);
+                this.CertInfo.SetMetadata("NotAfter", cert.NotAfter.ToString());
+
+                var privateKeyFileName = GetKeyFileName(cert);
+                if (!String.IsNullOrEmpty(privateKeyFileName))
                 {
-                    this.CertInfo.SetMetadata("PrivateKeyFileName", Path.Combine(keyFileDirectory, privateKeyFileName));
+                    // Adapted from the FindPrivateKey application.  See http://msdn.microsoft.com/en-us/library/aa717039(v=VS.90).aspx.
+                    var keyFileDirectory = this.GetKeyFileDirectory(privateKeyFileName);
+                    if (!String.IsNullOrEmpty(privateKeyFileName) && !String.IsNullOrEmpty(keyFileDirectory))
+                    {
+                        this.CertInfo.SetMetadata("PrivateKeyFileName", Path.Combine(keyFileDirectory, privateKeyFileName));
+                    }
                 }
             }
 
@@ -462,7 +592,7 @@ namespace MSBuild.ExtensionPack.Security
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
             X509Store store = new X509Store(this.StoreName, locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
-            X509Certificate2 cert = null;
+            X509Certificate2 cert;
             if (!string.IsNullOrEmpty(this.Thumbprint))
             {
                 var matches = store.Certificates.Find(X509FindType.FindByThumbprint, this.Thumbprint, false);
@@ -579,6 +709,145 @@ namespace MSBuild.ExtensionPack.Security
 
             this.Log.LogError("Unable to locate private key file directory");
             return String.Empty;
+        }
+
+        /// <summary>
+        /// Retrieves the Expiry Date of the Certificate
+        /// </summary>
+        private void GetCertificateExpiryDate()
+        {
+            StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
+            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Certificate2 certificate = null;
+
+            try
+            {
+                store.Open(OpenFlags.ReadOnly);
+                if (string.IsNullOrEmpty(this.Thumbprint) == false)
+                {
+                    certificate = GetCertificateFromThumbprint(this.Thumbprint, store);
+                }
+                else if (string.IsNullOrEmpty(this.DistinguishedName) == false)
+                {
+                    certificate = GetCertificateFromDistinguishedName(this.DistinguishedName, store);
+                }
+
+                if (certificate == null)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Error fetching expiry date. Could not find the certificate in the certificate store"));
+                }
+                else
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Returning Expiry Date of Certificate: {0}", certificate.Thumbprint));
+                    this.CertificateExpiryDate = certificate.NotAfter.ToString("s", CultureInfo.CurrentCulture);
+                }
+            }
+            finally
+            {
+                store.Close();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the Expiry Date of the Certificate
+        /// </summary>
+        private void GetCertificateAsBase64String()
+        {
+            StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
+            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Certificate2 certificate = null;
+
+            try
+            {
+                store.Open(OpenFlags.ReadOnly);
+                if (string.IsNullOrEmpty(this.Thumbprint) == false)
+                {
+                    certificate = GetCertificateFromThumbprint(this.Thumbprint, store);
+                }
+                else if (string.IsNullOrEmpty(this.DistinguishedName) == false)
+                {
+                    certificate = GetCertificateFromDistinguishedName(this.DistinguishedName, store);
+                }
+
+                if (certificate == null)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Error fetching base 64 encoded certificate string. Could not find the certificate in the certificate store"));
+                }
+                else
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Returning Expiry Date of Certificate: {0}", certificate.Thumbprint));
+                    this.Base64EncodedCertificate = Convert.ToBase64String(certificate.RawData);
+                }
+            }
+            finally
+            {
+                store.Close();
+            }
+        }
+
+        /// <summary>
+        /// Set the given user access rights on the given certificate to the given user
+        /// </summary>        
+        private void SetUserAccessRights()
+        {
+            StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
+            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Certificate2 certificate = null;
+
+            try
+            {
+                store.Open(OpenFlags.ReadOnly);
+                if (string.IsNullOrEmpty(this.Thumbprint) == false)
+                {
+                    certificate = GetCertificateFromThumbprint(this.Thumbprint, store);
+                }
+                else if (string.IsNullOrEmpty(this.DistinguishedName) == false)
+                {
+                    certificate = GetCertificateFromDistinguishedName(this.DistinguishedName, store);
+                }
+
+                if (certificate == null)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Error in setting user rights on certificate. Could not find the certificate in the certificate store"));
+                }
+                else
+                {
+                    RSACryptoServiceProvider rsa = certificate.PrivateKey as RSACryptoServiceProvider;
+                    FileSystemRights fileSystemAccessRights = FileSystemRights.ReadAndExecute;
+                    if (rsa != null)
+                    {
+                        switch (this.AccessRights)
+                        {
+                            case AccessRightsRead:
+                                fileSystemAccessRights = FileSystemRights.Read;
+                                break;
+
+                            case AccessRightsReadAndExecute:
+                                fileSystemAccessRights = FileSystemRights.ReadAndExecute;
+                                break;
+
+                            case AccessRightsWrite:
+                                fileSystemAccessRights = FileSystemRights.Write;
+                                break;
+
+                            case AccessRightsFullControl:
+                                fileSystemAccessRights = FileSystemRights.FullControl;
+                                break;
+                        }
+
+                        string keyfilepath = FindKeyLocation(rsa.CspKeyContainerInfo.UniqueKeyContainerName);
+                        FileInfo file = new FileInfo(keyfilepath + "\\" + rsa.CspKeyContainerInfo.UniqueKeyContainerName);
+                        FileSecurity fs = file.GetAccessControl();
+                        NTAccount account = new NTAccount(this.AccountName);
+                        fs.AddAccessRule(new FileSystemAccessRule(account, fileSystemAccessRights, AccessControlType.Allow));
+                        file.SetAccessControl(fs);
+                    }
+                }
+            }
+            finally
+            {
+                store.Close();
+            }
         }
     }
 }
