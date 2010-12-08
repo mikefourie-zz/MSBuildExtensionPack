@@ -157,7 +157,6 @@ namespace MSBuild.ExtensionPack.Framework
             get { return this.Config.ConnectionStrings.ConnectionStrings; }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ConfigurationFile")]
         protected override void InternalExecute()
         {
             switch (this.configurationFileType)
