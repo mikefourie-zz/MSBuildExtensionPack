@@ -25,52 +25,61 @@ namespace MSBuild.ExtensionPack.Framework
     /// <summary>
     /// Task used to work with the .NET framework web.config and machine config files
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>ProtectConfigSection</i> (<b>Required: </b> Section <b>Optional: </b>Site, Path, ConfigurationFileType, ProtectionProvider, SaveMode)</para>
     /// <para><i>RemoveAppSetting</i> (<b>Required: </b> SettingName <b>Optional: </b>Site, Path, ConfigurationFileType, SaveMode)</para>
     /// <para><i>RemoveConnectionString</i> (<b>Required: </b> SettingName <b>Optional: </b>Site, Path, ConfigurationFileType, SaveMode)</para>
     /// <para><i>SetAppSetting</i> (<b>Required: </b> SettingName <b>Optional: </b>Site, Path, SettingValue, ConfigurationFileType, SaveMode)</para>
     /// <para><i>SetConnectionString</i> (<b>Required: </b> SettingName <b>Optional: </b>Site, Path, SettingValue, ConfigurationFileType, SaveMode)</para>
+    /// <para><i>UnprotectConfigSection</i> (<b>Required: </b> Section <b>Optional: </b>Site, Path, ConfigurationFileType, SaveMode)</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///   <PropertyGroup>
-    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///   </PropertyGroup>
-    ///   <Import Project="$(TPath)"/>
-    ///   <Target Name="Default">
-    ///     <ItemGroup>
-    ///       <MachineConfigSettings Include="settingName" >
-    ///         <Value>settingValue</Value>
-    ///       </MachineConfigSettings>
-    ///     </ItemGroup>
-    ///     <!-- Update machine.config app settings -->
-    ///     <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="SetAppSetting" SettingName="%(MachineConfigSettings.Identity)" SettingValue="%(Value)" SaveMode="Full"/>
-    ///     <ItemGroup>
-    ///       <ConnectionStrings Include="myAppDB">
-    ///         <Value>Server=MyServer;</Value>
-    ///       </ConnectionStrings>
-    ///     </ItemGroup>
-    ///     <!-- Update a website's connection strings -->
-    ///     <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="SetConnectionString" SettingName="%(ConnectionStrings.Identity)" SettingValue="%(Value)" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
-    ///     <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveConnectionString" SettingName="%(ConnectionStrings.Identity)" ConfigurationFileType="WebConfig"  Site="NewSite" Path="/" />
-    ///     <!--- Remove a setting from a website -->
-    ///     <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveAppSetting" SettingName="removeMe" ConfigurationFileType="WebConfig"  Site="NewSite" Path="/" />
-    ///     <!-- Remove connection string 'obsoleteConnection' from machine.config file -->
-    ///     <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveConnectionString" SettingName="obsoleteConnection" />
-    ///   </Target>
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <ItemGroup>
+    ///             <MachineConfigSettings Include="settingName" >
+    ///                 <Value>settingValue</Value>
+    ///             </MachineConfigSettings>
+    ///         </ItemGroup>
+    ///         <!-- Update machine.config app settings -->
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="SetAppSetting" SettingName="%(MachineConfigSettings.Identity)" SettingValue="%(Value)" SaveMode="Full"/>
+    ///         <ItemGroup>
+    ///             <ConnectionStrings Include="myAppDB">
+    ///                 <Value>Server=MyServer;</Value>
+    ///             </ConnectionStrings>
+    ///         </ItemGroup>
+    ///         <!-- Update a website's connection strings -->
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="SetConnectionString" SettingName="%(ConnectionStrings.Identity)" SettingValue="%(Value)" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
+    ///         <!-- Encrypt a website's connection strings -->
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="ProtectConfigSection" Section="connectionStrings"  ProtectionProvider="DataProtectionConfigurationProvider" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
+    ///         <!-- Un-encrypt a website's connection strings -->
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="UnprotectConfigSection" Section="connectionStrings" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveConnectionString" SettingName="%(ConnectionStrings.Identity)" ConfigurationFileType="WebConfig"  Site="NewSite" Path="/" />
+    ///         <!--- Remove a setting from a website -->
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveAppSetting" SettingName="removeMe" ConfigurationFileType="WebConfig"  Site="NewSite" Path="/" />
+    ///         <!-- Remove connection string 'obsoleteConnection' from machine.config file -->
+    ///         <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveConnectionString" SettingName="obsoleteConnection" />
+    ///     </Target>
     /// </Project>
     /// ]]></code>
     /// </example>
     [HelpUrl("")]
     public sealed class ConfigManager : BaseTask
     {
-        internal const string RemoveAppSettingTaskAction = "RemoveAppSetting";
-        internal const string RemoveConnectionStringTaskAction = "RemoveConnectionString";
-        internal const string SetAppSettingTaskAction = "SetAppSetting";
-        internal const string SetConnectionStringTaskAction = "SetConnectionString";
+        private const string RemoveAppSettingTaskAction = "RemoveAppSetting";
+        private const string RemoveConnectionStringTaskAction = "RemoveConnectionString";
+        private const string SetAppSettingTaskAction = "SetAppSetting";
+        private const string SetConnectionStringTaskAction = "SetConnectionString";
+        private const string ProtectConfigSectionAction = "ProtectConfigSection";
+        private const string UnprotectConfigSectionAction = "UnprotectConfigSection";
         private DotNetConfigurationFile configurationFileType = DotNetConfigurationFile.MachineConfig;
         private ConfigurationSaveMode saveMode = ConfigurationSaveMode.Minimal;
+        private string protectionProvider = "RSAProtectedConfigurationProvider";
         
         /// <summary>
         /// Which .NET framework configuration file to update. Supports WebConfig and MachineConfig. Default is MachineConfig
@@ -124,8 +133,24 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(SetConnectionStringTaskAction, false)]
         [TaskAction(RemoveAppSettingTaskAction, false)]
         [TaskAction(RemoveConnectionStringTaskAction, false)]
-        [Required]
         public string SettingName { get; set; }
+
+        /// <summary>
+        /// The config section to protect or unprotect
+        /// </summary>
+        [TaskAction(ProtectConfigSectionAction, true)]
+        [TaskAction(UnprotectConfigSectionAction, true)]
+        public string Section { get; set; }
+
+        /// <summary>
+        /// The encryption provider. Supports RSAProtectedConfigurationProvider and DataProtectionConfigurationProvider. Default is RSAProtectedConfigurationProvider
+        /// </summary>
+        [TaskAction(ProtectConfigSectionAction, true)]
+        public string ProtectionProvider
+        {
+            get { return this.protectionProvider; }
+            set { this.protectionProvider = value; }
+        }
 
         /// <summary>
         /// The setting's value.
@@ -185,6 +210,18 @@ namespace MSBuild.ExtensionPack.Framework
                     break;
                 case SetConnectionStringTaskAction:
                     this.SetConnectionString();
+                    break;
+                case ProtectConfigSectionAction:
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Protecting section '{0}' in {1}.", this.Section, this.Config.FilePath));
+                    ConfigurationSection cs = this.Config.Sections[this.Section];
+                    cs.SectionInformation.ProtectSection(this.ProtectionProvider);
+                    this.Save();
+                    break;
+                case UnprotectConfigSectionAction:
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Unprotecting section '{0}' in {1}.", this.Section, this.Config.FilePath));
+                    ConfigurationSection cs2 = this.Config.Sections[this.Section];
+                    cs2.SectionInformation.UnprotectSection();
+                    this.Save();
                     break;
                 default:
                     this.Log.LogError("Invalid task action: {0}.", this.TaskAction);
