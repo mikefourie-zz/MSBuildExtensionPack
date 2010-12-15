@@ -1,0 +1,40 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Confirm a Password -->
+        <MSBuild.ExtensionPack.UI.Dialog TaskAction="Confirm" Title="Confirmation Required" Button2Text="Cancel" Text="Enter Password" ConfirmText="Confirm Password" MaskText="true">
+            <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+            <Output TaskParameter="UserText" PropertyName="Typed"/>
+        </MSBuild.ExtensionPack.UI.Dialog>
+        <Message Text="User Clicked: $(Clicked)"/>
+        <Message Text="User Typed: $(Typed)"/>
+        <!-- A simple message -->
+        <MSBuild.ExtensionPack.UI.Dialog TaskAction="Show" Text="Hello MSBuild">
+            <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+        </MSBuild.ExtensionPack.UI.Dialog>
+        <Message Text="User Clicked: $(Clicked)"/>
+        <!-- A longer message with a few more attributes set -->
+        <MSBuild.ExtensionPack.UI.Dialog TaskAction="Show" Title="A Longer Message" MessageBold="True" Button2Text="Cancel" MessageColour="Green" Height="300" Width="600" Text="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cras vitae velit. Pellentesque malesuada diam eget sem. Praesent vestibulum. Donec egestas, quam at viverra volutpat, eros nulla gravida nisi, sed bibendum metus mauris ut diam. Aliquam interdum lacus nec quam. Etiam porta, elit sed pretium vestibulum, nisi dui condimentum enim, ut rhoncus ipsum leo nec est. Nullam congue velit id ligula. Sed imperdiet bibendum pede. In hac habitasse platea dictumst. Praesent eleifend, elit quis convallis aliquam, mi arcu feugiat sem, at blandit mauris nisi eget mauris.">
+            <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+        </MSBuild.ExtensionPack.UI.Dialog>
+        <Message Text="User Clicked: $(Clicked)"/>
+        <!-- A simple prompt for input -->
+        <MSBuild.ExtensionPack.UI.Dialog TaskAction="Prompt" Title="Information Required" Button2Text="Cancel" Text="Please enter your Name below">
+            <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+            <Output TaskParameter="UserText" PropertyName="Typed"/>
+        </MSBuild.ExtensionPack.UI.Dialog>
+        <Message Text="User Clicked: $(Clicked)"/>
+        <Message Text="User Typed: $(Typed)"/>
+        <!-- A prompt for password input -->
+        <MSBuild.ExtensionPack.UI.Dialog TaskAction="Prompt" Title="Sensitive Information Required" Button2Text="Cancel" Text="Please enter your Password below" MessageColour="Red" MaskText="true">
+            <Output TaskParameter="ButtonClickedText" PropertyName="Clicked"/>
+            <Output TaskParameter="UserText" PropertyName="Typed"/>
+        </MSBuild.ExtensionPack.UI.Dialog>
+        <Message Text="User Clicked: $(Clicked)"/>
+        <Message Text="User Typed: $(Typed)"/>
+    </Target >
+</Project>

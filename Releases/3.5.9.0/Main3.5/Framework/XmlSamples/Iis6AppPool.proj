@@ -1,0 +1,20 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Delete an AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis6AppPool TaskAction="Delete" Name="AnAppPool"/>
+        <!-- Create an AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis6AppPool TaskAction="Create" Name="AnAppPool" Properties="AppPoolAutoStart=TRUE;PeriodicRestartTime=0;PeriodicRestartRequests=0;PeriodicRestartMemory=0;PeriodicRestartPrivateMemory=0;PeriodicRestartSchedule=04:00;IdleTimeout=0;AppPoolQueueLength=2000;CPULimit=0;CPUResetInterval=5;CPUAction=0;MaxProcesses=1;PingingEnabled=TRUE;PingInterval=60;PingResponseTime=90;RapidFailProtection=FALSE;RapidFailProtectionMaxCrashes=5;RapidFailProtectionInterval=5;StartupTimeLimit=60;ShutdownTimeLimit=60;AppPoolIdentityType=3;"/>
+        <!-- Modify an AppPool -->
+        <MSBuild.ExtensionPack.Web.Iis6AppPool TaskAction="Modify" Name="AnAppPool" Properties="AppPoolAutoStart=TRUE;PeriodicRestartTime=0;PeriodicRestartRequests=0;PeriodicRestartMemory=0;PeriodicRestartPrivateMemory=0;PeriodicRestartSchedule=04:00;IdleTimeout=0;AppPoolQueueLength=1952;CPULimit=0;CPUResetInterval=5;CPUAction=0;MaxProcesses=6;PingingEnabled=TRUE;PingInterval=60;PingResponseTime=90;RapidFailProtection=FALSE;RapidFailProtectionMaxCrashes=5;RapidFailProtectionInterval=5;StartupTimeLimit=60;ShutdownTimeLimit=60;AppPoolIdentityType=3;"/>
+        <!-- Check whether an AppPool exists -->
+        <MSBuild.ExtensionPack.Web.Iis6AppPool TaskAction="CheckExists" Name="AnAppPool">
+            <Output PropertyName="DoesExist" TaskParameter="Exists"/>
+        </MSBuild.ExtensionPack.Web.Iis6AppPool>
+        <Message Text="AnAppPool exists: $(DoesExist)"/>
+    </Target>
+</Project>

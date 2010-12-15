@@ -1,0 +1,22 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Add a binding -->
+        <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Add" Name="NewSite" BindingInformation="123.123.11.33:234:www.freet2odev.com" BindingProtocol="http"/>
+        <!-- Check whether a binding exists-->
+        <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="CheckExists" Name="NewSite" BindingInformation="123.123.11.33:234:www.freet2odev.com" BindingProtocol="http">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Web.Iis7Binding>
+        <Message Text="Exists: $(DoesExist)"/>
+        <!-- Add another binding -->
+        <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Add" Name="NewSite" BindingInformation="123.123.33.33:455:www.freet2odev.com" BindingProtocol="http"/>
+        <!-- Modify the binding -->
+        <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Modify" Name="NewSite" PreviousBindingProtocol="http" PreviousBindingInformation="123.123.11.33:234:www.freet2odev.com" BindingInformation="5.5.55.5:111:www.newmod.com" BindingProtocol="http"/>
+        <!-- Remove the binding -->
+        <MSBuild.ExtensionPack.Web.Iis7Binding TaskAction="Remove" Name="NewSite" BindingInformation="123.123.33.33:455:www.freet2odev.com" BindingProtocol="http"/>
+    </Target>
+</Project>
