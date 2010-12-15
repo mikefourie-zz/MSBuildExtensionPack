@@ -7,12 +7,14 @@ namespace MSBuild.ExtensionPack.Web
     using System.DirectoryServices;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Runtime.InteropServices;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>CheckExists</i> (<b>Required: </b> Website <b>Optional:</b> Name</para>
     /// <para><i>Create</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent, RequireApplication, DirectoryType, AppPool, Properties)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Website <b>Optional:</b> Name, Parent</para>
     /// <para><b>Remote Execution Support:</b> Yes. Please note that the machine you execute from must have IIS installed.</para>
@@ -28,6 +30,10 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Target Name="Default">
     ///         <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
     ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
+    ///         <!-- Check if a virtual directory exists-->
+    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="CheckExists" Website="awebsite" Name="AVDir" >
+    ///            <Output TaskParameter="Exists" PropertyName="CheckExists" />
+    ///         </MSBuild.ExtensionPack.Web.Iis6VirtualDirectory>
     ///         <!-- Create another IIsWebVirtualDir -->
     ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
     ///         <!-- Delete the IIsWebVirtualDir-->
@@ -36,12 +42,13 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/d479e68b-a15a-4f52-fca5-49937669a9f6.htm")]
     public class Iis6VirtualDirectory : BaseTask, IDisposable
     {
+        private const string CheckExistsTaskAction = "CheckExists";
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
-        
+
         private DirectoryEntry websiteEntry;
         private string properties;
         private string directoryType = "IIsWebVirtualDir";
@@ -50,6 +57,14 @@ namespace MSBuild.ExtensionPack.Web
         private string name = "ROOT";
         private string parent = "/ROOT";
 
+        /// <summary>
+        /// Gets whether the Virtual Directory exists
+        /// </summary>
+        [TaskAction(CheckExistsTaskAction, false)]
+        [Output]
+        public bool Exists { get; set; }
+
+        [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(CreateTaskAction)]
         [DropdownValue(DeleteTaskAction)]
         public override string TaskAction
@@ -112,6 +127,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the name of the Virtual Directory. Defaults to 'ROOT'
         /// </summary>
+        [TaskAction(CheckExistsTaskAction, false)]
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         public string Name
@@ -124,6 +140,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the Website to add the Virtual Directory to.
         /// </summary>
         [Required]
+        [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
         public string Website { get; set; }
@@ -156,6 +173,9 @@ namespace MSBuild.ExtensionPack.Web
         {
             switch (this.TaskAction)
             {
+                case CheckExistsTaskAction:
+                    this.CheckExists();
+                    break;
                 case CreateTaskAction:
                     this.Create();
                     break;
@@ -301,6 +321,29 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
+        private void CheckExists()
+        {
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Checking if Virtual Directory: {0} exists under {1}", this.Name, this.Website));
+
+            // Locate the website.
+            this.websiteEntry = this.LoadWebsite(this.Website);
+            if (this.websiteEntry == null)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Website));
+                return;
+            }
+
+            if (this.Name != "ROOT")
+            {
+                string parentPath = string.Format(CultureInfo.InvariantCulture, "{0}{1}", this.websiteEntry.Path, this.Parent);
+                this.websiteEntry = new DirectoryEntry(parentPath);
+                if (this.websiteEntry.Children.Cast<DirectoryEntry>().Any(vd => vd.Name == this.Name))
+                {
+                    this.Exists = true;
+                }
+            }
+        }
+
         private void Delete()
         {
             this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Deleting Virtual Directory: {0} under {1}", this.Name, this.Website));
@@ -309,17 +352,14 @@ namespace MSBuild.ExtensionPack.Web
             this.websiteEntry = this.LoadWebsite(this.Website);
             if (this.websiteEntry == null)
             {
-                throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Website));
+                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Website));
+                return;
             }
 
             if (this.Name != "ROOT")
             {
                 string parentPath = string.Format(CultureInfo.InvariantCulture, "{0}{1}", this.websiteEntry.Path, this.Parent);
                 this.websiteEntry = new DirectoryEntry(parentPath);
-                if (this.websiteEntry == null)
-                {
-                    throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Virtual Directory not found: {0} under {1}", this.Name, this.Website));
-                }
             }
 
             this.websiteEntry.Invoke("Delete", new[] { "IIsWebVirtualDir", this.Name });
@@ -337,7 +377,8 @@ namespace MSBuild.ExtensionPack.Web
                 this.websiteEntry = this.LoadWebsite(this.Website);
                 if (this.websiteEntry == null)
                 {
-                    throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Website));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Website));
+                    return;
                 }
 
                 if (this.Name == "ROOT")
@@ -408,7 +449,8 @@ namespace MSBuild.ExtensionPack.Web
                     {
                         if (!DirectoryEntry.Exists(this.AppPoolsPath + @"/" + this.AppPool))
                         {
-                            throw new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "AppPool not found: {0}", this.AppPool));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "AppPool not found: {0}", this.AppPool));
+                            return;
                         }
 
                         vdirEntry.Invoke("AppCreate3", 1, this.AppPool, false);

@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
     public class TeamBuild : BaseTask
     {
         private const string GetLatestTaskAction = "GetLatest";
@@ -309,22 +309,22 @@ namespace MSBuild.ExtensionPack.Tfs
                 this.buildDetails = results.Builds[0];
                 ITaskItem ibuildDef = new TaskItem(this.BuildDefinitionName);
                 ibuildDef.SetMetadata("BuildAgentDirectory", this.buildDetails.BuildAgent.BuildDirectory ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentBuildServerVersion", this.buildDetails.BuildAgent.BuildServer.BuildServerVersion.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentBuildServerVersion", this.buildDetails.BuildAgent.BuildServer.BuildServerVersion.ToString());
                 ibuildDef.SetMetadata("BuildAgentDescription", this.buildDetails.BuildAgent.Description ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentFullPath", this.buildDetails.BuildAgent.FullPath ?? string.Empty);
                 ibuildDef.SetMetadata("BuildAgentMachineName", this.buildDetails.BuildAgent.MachineName ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentMaxProcesses", this.buildDetails.BuildAgent.MaxProcesses.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentMaxProcesses", this.buildDetails.BuildAgent.MaxProcesses.ToString(CultureInfo.CurrentCulture));
                 ibuildDef.SetMetadata("BuildAgentName", this.buildDetails.BuildAgent.Name ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentPort", this.buildDetails.BuildAgent.Port.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
-                ibuildDef.SetMetadata("BuildAgentUri", this.buildDetails.BuildAgentUri.ToString() ?? string.Empty);
-                ibuildDef.SetMetadata("BuildDefinitionUri", this.buildDetails.BuildDefinitionUri.ToString() ?? string.Empty);
-                ibuildDef.SetMetadata("BuildFinished", this.buildDetails.BuildFinished.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("BuildAgentPort", this.buildDetails.BuildAgent.Port.ToString(CultureInfo.CurrentCulture));
+                ibuildDef.SetMetadata("BuildAgentUri", this.buildDetails.BuildAgentUri.ToString());
+                ibuildDef.SetMetadata("BuildDefinitionUri", this.buildDetails.BuildDefinitionUri.ToString());
+                ibuildDef.SetMetadata("BuildFinished", this.buildDetails.BuildFinished.ToString());
                 ibuildDef.SetMetadata("BuildNumber", this.buildDetails.BuildNumber ?? string.Empty);
-                ibuildDef.SetMetadata("BuildUri", this.buildDetails.Uri.ToString() ?? string.Empty);
-                ibuildDef.SetMetadata("CompilationStatus", this.buildDetails.CompilationStatus.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("BuildUri", this.buildDetails.Uri.ToString());
+                ibuildDef.SetMetadata("CompilationStatus", this.buildDetails.CompilationStatus.ToString());
                 ibuildDef.SetMetadata("CompilationSuccess", this.buildDetails.CompilationStatus == BuildPhaseStatus.Succeeded ? "true" : "false");
                 ibuildDef.SetMetadata("ConfigurationFolderPath", this.buildDetails.ConfigurationFolderPath ?? string.Empty);
-                ibuildDef.SetMetadata("ConfigurationFolderUri", this.buildDetails.ConfigurationFolderUri.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("ConfigurationFolderUri", this.buildDetails.ConfigurationFolderUri != null ? this.buildDetails.ConfigurationFolderUri.ToString() : string.Empty);
                 ibuildDef.SetMetadata("DropLocation", this.buildDetails.DropLocation ?? string.Empty);
                 ibuildDef.SetMetadata("FinishTime", this.buildDetails.FinishTime.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("KeepForever", this.buildDetails.KeepForever.ToString() ?? string.Empty);

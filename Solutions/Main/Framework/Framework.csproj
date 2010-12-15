@@ -118,6 +118,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -180,6 +181,7 @@
     <Compile Include="..\Common\StringExtension.cs">
       <Link>StringExtension.cs</Link>
     </Compile>
+    <Compile Include="CodeQuality\NUnit.cs" />
     <Compile Include="Communication\Ftp.cs" />
     <Compile Include="Communication\FTP\Extensions.cs" />
     <Compile Include="Communication\FTP\FtpConnection.cs" />
@@ -201,9 +203,13 @@
     <Compile Include="FileSystem\FileVersion.cs" />
     <Compile Include="FileSystem\FindUnder.cs" />
     <Compile Include="FileSystem\RoboCopy.cs" />
+    <Compile Include="Framework\AsyncExec.cs" />
     <Compile Include="Framework\CommandLine.cs" />
+    <Compile Include="Framework\ConfigManager.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
+    <Compile Include="Framework\ILMerge.cs" />
+    <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
       <SubType>Code</SubType>
@@ -364,6 +370,8 @@
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\AsyncExec.proj" />
+    <None Include="XmlSamples\ConfigManager.proj" />
     <None Include="XmlSamples\Console.proj" />
     <None Include="XmlSamples\Cab.proj" />
     <None Include="XmlSamples\Assembly.proj" />
@@ -371,6 +379,8 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\ILMerge.proj" />
+    <None Include="XmlSamples\NUnit.proj" />
     <None Include="XmlSamples\DNZip.proj" />
     <None Include="XmlSamples\Ftp.proj" />
     <None Include="XmlSamples\FxCop.FxCop" />

@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/591882fc-0534-dc0b-fe48-c2e7ec8608e0.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/591882fc-0534-dc0b-fe48-c2e7ec8608e0.htm")]
     public class TfsVersion : BaseTask
     {
         private const string GetVersionTaskAction = "GetVersion";
@@ -406,7 +406,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                 if (this.SetAssemblyFileVersion)
                 {
-                    if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase))
+                    if (this.ForceSetVersion && newFile.Equals(entireFile, StringComparison.OrdinalIgnoreCase) && newFile.IndexOf("AssemblyFileVersion", StringComparison.OrdinalIgnoreCase) < 0)
                     {
                         switch (file.GetMetadata("Extension"))
                         {
@@ -424,7 +424,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 {
                     string originalFile = newFile;
                     newFile = this.regexAssemblyVersion.Replace(newFile, @"AssemblyVersion(""" + this.AssemblyVersion + @""")");
-                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase))
+                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase) && newFile.IndexOf("AssemblyVersion", StringComparison.OrdinalIgnoreCase) < 0)
                     {
                         switch (file.GetMetadata("Extension"))
                         {

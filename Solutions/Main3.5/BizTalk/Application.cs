@@ -3,7 +3,9 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.BizTalk
 {
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.BizTalk.ApplicationDeployment;
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
@@ -18,6 +20,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
+    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, Database, IncludeGlobalPartyBinding)</para>
     /// <para><i>Get</i> (<b>Optional: </b>MachineName, Database)</para>
     /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>StartAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
@@ -59,6 +62,8 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
     ///         <!-- Remove a Reference -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
+    ///         <!-- Export and Application to an MSI -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="An Application" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
     ///         <!-- Check if the Applications in the Apps collection exist -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
     ///         <!-- Execute a StartAll on the Apps Application collection -->
@@ -73,7 +78,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";
@@ -81,6 +86,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
         private const string DisableAllReceiveLocationsTaskAction = "DisableAllReceiveLocations";
+        private const string ExportToMsiTaskAction = "ExportToMsi";
         private const string EnableAllReceiveLocationsTaskAction = "EnableAllReceiveLocations";
         private const string GetTaskAction = "Get";
         private const string RemoveReferenceTaskAction = "RemoveReference";
@@ -241,6 +247,16 @@ namespace MSBuild.ExtensionPack.BizTalk
         public bool Force { get; set; }
 
         /// <summary>
+        /// Set the path to export the Application MSI to. The directory path must exist and have appropriate permissions to write to.
+        /// </summary>
+        public ITaskItem MsiPath { get; set; }
+
+        /// <summary>
+        /// Set to true to export the global party information. Default is false.
+        /// </summary>
+        public bool IncludeGlobalPartyBinding { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -251,39 +267,40 @@ namespace MSBuild.ExtensionPack.BizTalk
                 this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database);
                 switch (this.TaskAction)
                 {
-                    case "Create":
+                    case CreateTaskAction:
                         this.Create();
                         break;
-                    case "Get":
+                    case GetTaskAction:
                         this.GetApplications();
                         break;
-                    case "CheckExists":
+                    case CheckExistsTaskAction:
                         this.CheckApplicationExists();
                         break;
-                    case "StartAll":
-                    case "EnableAllReceiveLocations":
-                    case "StartAllOrchestrations":
-                    case "StartAllSendPortGroups":
-                    case "StartAllSendPorts":
-                    case "StartReferencedApplications":
+                    case StartAllTaskAction:
+                    case EnableAllReceiveLocationsTaskAction:
+                    case StartAllOrchestrationsTaskAction:
+                    case StartAllSendPortGroupsTaskAction:
+                    case StartAllSendPortsTaskAction:
+                    case StartReferencedApplicationsTaskAction:
                         this.StartApplication();
                         break;
-                    case "StopAll":
-                    case "DisableAllReceiveLocations":
-                    case "UndeployAllPolicies":
-                    case "UnenlistAllOrchestrations":
-                    case "UnenlistAllSendPortGroups":
-                    case "UnenlistAllSendPorts":
-                    case "StopReferencedApplications":
+                    case StopAllTaskAction:
+                    case DisableAllReceiveLocationsTaskAction:
+                    case UndeployAllPoliciesTaskAction:
+                    case UnenlistAllOrchestrationsTaskAction:
+                    case UnenlistAllSendPortGroupsTaskAction:
+                    case UnenlistAllSendPortsTaskAction:
+                    case StopReferencedApplicationsTaskAction:
                         this.StopApplication();
                         break;
-                    case "Delete":
+                    case DeleteTaskAction:
                         this.Delete();
                         break;
-                    case "RemoveReference":
-                        this.ConfigureReference();
+                    case ExportToMsiTaskAction:
+                        this.ExportToMsi();
                         break;
-                    case "AddReference":
+                    case RemoveReferenceTaskAction:
+                    case AddReferenceTaskAction:
                         this.ConfigureReference();
                         break;
                     default:
@@ -315,11 +332,11 @@ namespace MSBuild.ExtensionPack.BizTalk
                 {
                     switch (this.TaskAction)
                     {
-                        case "RemoveReference":
+                        case RemoveReferenceTaskAction:
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Referenced Application: {0} from: {1}", item.ItemSpec, this.Application));
                             this.app.RemoveReference(refApp);
                             break;
-                        case "AddReference":
+                        case AddReferenceTaskAction:
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Referenced Application: {0} from: {1}", item.ItemSpec, this.Application));
                             this.app.AddReference(refApp);
                             break;
@@ -345,6 +362,53 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application exists: {0}", this.Application));
             this.Exists = this.CheckExists(this.Application);
+        }
+
+        private void ExportToMsi()
+        {
+            if (string.IsNullOrEmpty(this.Application))
+            {
+                this.Log.LogError("Application is required");
+                return;
+            }
+
+            if (this.MsiPath == null)
+            {
+                this.Log.LogError("Destination is required");
+                return;
+            }
+
+            if (!this.CheckExists(this.Application))
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application does not exist: {0}", this.Application));
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Exporting Application {0} to {1}", this.Application, this.MsiPath));
+            using (Group group = new Group())
+            {
+                group.DBName = this.Database;
+                group.DBServer = this.MachineName;
+
+                Microsoft.BizTalk.ApplicationDeployment.ApplicationCollection apps = group.Applications;
+                apps.UiLevel = 2;
+
+                Microsoft.BizTalk.ApplicationDeployment.Application appl = apps[this.Application];
+                List<Resource> exportedResources = new List<Resource>();
+
+                foreach (Resource resource in appl.ResourceCollection.Cast<Resource>().Where(resource => !resource.Properties.ContainsKey("IsSystem") || !((bool)resource.Properties["IsSystem"])))
+                {
+                    if (this.IncludeGlobalPartyBinding && resource.Luid.Equals("Application/" + this.Application, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        resource.Properties["IncludeGlobalPartyBinding"] = this.IncludeGlobalPartyBinding;
+                    }
+
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Exporting Resource {0}", resource.Luid));
+                    exportedResources.Add(resource);
+                }
+
+                appl.Export(this.MsiPath.ItemSpec, exportedResources);
+             }
         }
 
         private void Create()
@@ -440,25 +504,25 @@ namespace MSBuild.ExtensionPack.BizTalk
                     OM.ApplicationStopOption option = OM.ApplicationStopOption.StopAll;
                     switch (this.TaskAction)
                     {
-                        case "StopAll":
+                        case StopAllTaskAction:
                             option = OM.ApplicationStopOption.StopAll;
                             break;
-                        case "DisableAllReceiveLocations":
+                        case DisableAllReceiveLocationsTaskAction:
                             option = OM.ApplicationStopOption.DisableAllReceiveLocations;
                             break;
-                        case "UndeployAllPolicies":
+                        case UndeployAllPoliciesTaskAction:
                             option = OM.ApplicationStopOption.UndeployAllPolicies;
                             break;
-                        case "UnenlistAllOrchestrations":
+                        case UnenlistAllOrchestrationsTaskAction:
                             option = OM.ApplicationStopOption.UnenlistAllOrchestrations;
                             break;
-                        case "UnenlistAllSendPortGroups":
+                        case UnenlistAllSendPortGroupsTaskAction:
                             option = OM.ApplicationStopOption.UnenlistAllSendPortGroups;
                             break;
-                        case "UnenlistAllSendPorts":
+                        case UnenlistAllSendPortsTaskAction:
                             option = OM.ApplicationStopOption.UnenlistAllSendPorts;
                             break;
-                        case "StopReferencedApplications":
+                        case StopReferencedApplicationsTaskAction:
                             option = OM.ApplicationStopOption.StopReferencedApplications;
                             break;
                     }
@@ -490,22 +554,22 @@ namespace MSBuild.ExtensionPack.BizTalk
                 {
                     switch (this.TaskAction)
                     {
-                        case "StartAll":
+                        case StartAllTaskAction:
                             this.app.Start(OM.ApplicationStartOption.StartAll);
                             break;
-                        case "EnableAllReceiveLocations":
+                        case EnableAllReceiveLocationsTaskAction:
                             this.app.Start(OM.ApplicationStartOption.EnableAllReceiveLocations);
                             break;
-                        case "StartAllOrchestrations":
+                        case StartAllOrchestrationsTaskAction:
                             this.app.Start(OM.ApplicationStartOption.StartAllOrchestrations);
                             break;
-                        case "StartAllSendPortGroups":
+                        case StartAllSendPortGroupsTaskAction:
                             this.app.Start(OM.ApplicationStartOption.StartAllSendPortGroups);
                             break;
-                        case "StartAllSendPorts":
+                        case StartAllSendPortsTaskAction:
                             this.app.Start(OM.ApplicationStartOption.StartAllSendPorts);
                             break;
-                        case "StartReferencedApplications":
+                        case StartReferencedApplicationsTaskAction:
                             this.app.Start(OM.ApplicationStartOption.StartReferencedApplications);
                             break;
                     }

@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
     public class Iis7AppPool : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -461,7 +461,7 @@ namespace MSBuild.ExtensionPack.Web
             if (!string.IsNullOrEmpty(this.ManagedRuntimeVersion))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedRuntimeVersion to: {0}", this.ManagedRuntimeVersion));
-                this.pool.ManagedRuntimeVersion = this.ManagedRuntimeVersion;
+                this.pool.ManagedRuntimeVersion = this.ManagedRuntimeVersion.ToUpperInvariant() == "NO MANAGED CODE" ? string.Empty : this.ManagedRuntimeVersion;
             }
 
             if (this.QueueLength > 0)

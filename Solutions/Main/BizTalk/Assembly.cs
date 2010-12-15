@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, DeploymentPath, Database, Gac, Force)</para>
+    /// <para><i>Add</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, DeploymentPath, Database, Gac, Force, GacOnAddResource, GacOnMSIFileImport, GacOnMSIFileInstall) </para>
     /// <para><i>Remove</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, Database <b>Output: </b>Exists)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -46,7 +46,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
     public class BizTalkAssembly : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -56,6 +56,31 @@ namespace MSBuild.ExtensionPack.BizTalk
         private string database = "BizTalkMgmtDb";
         private List<BizTalkResource> resources = new List<BizTalkResource>();
         private bool gac = true;
+        private bool gacOnAddResource = true;
+        private bool gacOnMsiFileImport = true;
+
+        /// <summary>
+        /// Sets whether to GAC the assembly on file install. Default is false
+        /// </summary>
+        public bool GacOnMsiFileInstall { get; set; }
+
+        /// <summary>
+        /// Sets whether to GAC the assembly on file import. Default is true
+        /// </summary>
+        public bool GacOnMsiFileImport
+        {
+            get { return this.gacOnMsiFileImport; }
+            set { this.gacOnMsiFileImport = value; }
+        }
+
+        /// <summary>
+        /// Sets whether to GAC the assembly on add resource. Default is true
+        /// </summary>
+        public bool GacOnAddResource
+        {
+            get { return this.gacOnAddResource; }
+            set { this.gacOnAddResource = value; }
+        }
 
         /// <summary>
         /// Sets the TaskAction.
@@ -132,7 +157,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Set to true to gac the biztalk assemblies. Default is true
+        /// Set to true to gac the biztalk assemblies. Default is true. Note that if you set GacOnMSIFileInstall to true, the assembly will also be added to the gac.
         /// </summary>
         [TaskAction(AddTaskAction, false)]
         public bool Gac
@@ -182,18 +207,18 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
         }
 
-        private static Dictionary<string, object> GetResourceProperties(string assemblyPath)
+        private Dictionary<string, object> GetResourceProperties(string assemblyPath)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
             // gac on deploying,  set to false as we handle this ourselves (Microsoft.BizTalk.ApplicationDeployment does not support remote gac)
-            properties.Add("Gacutil", false);
+            properties.Add("Gacutil", this.GacOnMsiFileInstall);
 
             // gac on msi install 
-            properties.Add("UpdateGac", true);
+            properties.Add("UpdateGac", this.GacOnAddResource);
 
             // gac on msi import 
-            properties.Add("UpdateGacOnImport", true);
+            properties.Add("UpdateGacOnImport", this.GacOnMsiFileImport);
 
             // source location of assembly
             properties.Add("SourceLocation", Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileName(assemblyPath)));
@@ -208,7 +233,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             return new BizTalkResource
             {
                 FullName = assembly.FullName,
-                Properties = GetResourceProperties(assemblyPath),
+                Properties = this.GetResourceProperties(assemblyPath),
                 Dependencies = assembly.GetReferencedAssemblies().Select(a => a.FullName).ToList(),
                 Order = order,
                 SourcePath = assemblyPath,

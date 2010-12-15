@@ -72,7 +72,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
     public class DNZip : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -93,7 +93,7 @@ namespace MSBuild.ExtensionPack.Compression
         }
 
         /// <summary>
-        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName. Only Applies to CompressFiles
+        /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem RemoveRoot { get; set; }
@@ -208,7 +208,18 @@ namespace MSBuild.ExtensionPack.Compression
                         zip.Password = this.Password;
                     }
 
-                    zip.UpdateDirectory(this.CompressPath.ItemSpec);
+                    if (this.RemoveRoot != null)
+                    {
+                        DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
+                        string location = d.FullName.Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
+                        zip.AddDirectory(this.CompressPath.ItemSpec, location);
+                    }
+                    else
+                    {
+                        DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
+                        zip.UpdateDirectory(this.CompressPath.ItemSpec, d.Name);
+                    }
+
                     zip.Save();
                 }
             }
@@ -258,7 +269,18 @@ namespace MSBuild.ExtensionPack.Compression
                         zip.Password = this.Password;
                     }
 
-                    zip.AddDirectory(this.CompressPath.ItemSpec);
+                    if (this.RemoveRoot != null)
+                    {
+                        DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
+                        string location = d.FullName.Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
+                        zip.AddDirectory(this.CompressPath.ItemSpec, location);
+                    }
+                    else
+                    {
+                        DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
+                        zip.AddDirectory(this.CompressPath.ItemSpec, d.Name);
+                    }
+
                     zip.Save(this.ZipFileName.ItemSpec);
                 }
             }

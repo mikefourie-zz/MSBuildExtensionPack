@@ -54,7 +54,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/e2afb52c-e056-ed76-7503-c57fc3125f66.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/e2afb52c-e056-ed76-7503-c57fc3125f66.htm")]
     public class StyleCop : BaseTask
     {
         private const string ScanTaskAction = "Scan";
@@ -263,12 +263,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
             }
 
             ITaskItem item = new TaskItem(file);
-            item.SetMetadata("CheckId", e.Violation.Rule.CheckId);
-            item.SetMetadata("RuleDescription", e.Violation.Rule.Description);
-            item.SetMetadata("RuleName", e.Violation.Rule.Name);
-            item.SetMetadata("RuleGroup", e.Violation.Rule.RuleGroup);
+            item.SetMetadata("CheckId", e.Violation.Rule.CheckId ?? string.Empty);
+            item.SetMetadata("RuleDescription", e.Violation.Rule.Description ?? string.Empty);
+            item.SetMetadata("RuleName", e.Violation.Rule.Name ?? string.Empty);
+            item.SetMetadata("RuleGroup", e.Violation.Rule.RuleGroup ?? string.Empty);
             item.SetMetadata("LineNumber", e.LineNumber.ToString(CultureInfo.CurrentCulture));
-            item.SetMetadata("Message", e.Message);
+            item.SetMetadata("Message", e.Message ?? string.Empty);
             this.failedFiles.Add(item);
         }
     }

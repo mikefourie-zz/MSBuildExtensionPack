@@ -14,6 +14,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         private char currentChar;
         private char nextChar;
         private bool inComment;
+        private int commentDepth;
 
         public SqlScriptLoader(StreamReader reader)
         {
@@ -28,6 +29,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
 
         public string ReadToEnd()
         {
+            this.commentDepth = 0;
             if (this.reader.EndOfStream)
             {
                 return this.contents.ToString();
@@ -40,25 +42,30 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
                     break;
                 }
 
-                if (this.inComment)
+                if (this.inComment && this.currentChar == '*' && this.Peek() && this.nextChar == '/')
                 {
-                    if (this.currentChar == '*' && this.Peek() && this.nextChar == '/')
+                    this.commentDepth--;
+                    this.Read();
+
+                    if (this.commentDepth == 0)
                     {
                         this.inComment = false;
-                        this.Read();
+                        continue;
                     }
-
-                    continue;
                 }
 
                 if (this.currentChar == '/' && this.Peek() && this.nextChar == '*')
                 {
                     this.inComment = true;
+                    this.commentDepth++;
                     this.Read();
                     continue;
                 }
 
-                this.contents.Append(this.currentChar);
+                if (!this.inComment)
+                {
+                    this.contents.Append(this.currentChar);
+                }
             }
 
             return this.contents.ToString();

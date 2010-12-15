@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Web
 {
+    using System;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -83,7 +84,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
@@ -139,7 +140,7 @@ namespace MSBuild.ExtensionPack.Web
         public string Name { get; set; }
 
         /// <summary>
-        /// ITaskItem of Applications. Use AppPool and PhysicalPath metadata to specify applicable values
+        /// ITaskItem of Applications. Use AppPool, PhysicalPath and EnabledProtocols metadata to specify applicable values
         /// </summary>
         [TaskAction(AddApplicationTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
@@ -280,7 +281,7 @@ namespace MSBuild.ExtensionPack.Web
                 foreach (ITaskItem virDir in this.VirtualDirectories)
                 {
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether VirtualDirectory: {0} exists on: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
-                    if (this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path == virDir.ItemSpec))
+                    if (this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path.Equals(virDir.ItemSpec.ToUpperInvariant(), StringComparison.CurrentCultureIgnoreCase)))
                     {
                         this.Exists = true;
                         return;
@@ -299,7 +300,7 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.VirtualDirectories != null)
             {
-                foreach (ITaskItem virDir in this.VirtualDirectories.Where(virDir => this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path == virDir.ItemSpec)))
+                foreach (ITaskItem virDir in this.VirtualDirectories.Where(virDir => this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path.Equals(virDir.ItemSpec, StringComparison.CurrentCultureIgnoreCase))))
                 {
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing VirtualDirectory: {0} from: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                     this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Remove(this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories[virDir.ItemSpec]);
@@ -355,6 +356,12 @@ namespace MSBuild.ExtensionPack.Web
 
                     this.website.Applications[app.ItemSpec].ApplicationPoolName = app.GetMetadata("AppPool");
                 }
+
+                // Set EnabledProtocols if given
+                if (!string.IsNullOrEmpty(app.GetMetadata("EnabledProtocols")))
+                {
+                    this.website.Applications[app.ItemSpec].EnabledProtocols = app.GetMetadata("EnabledProtocols");
+                }
             }
         }
 
@@ -368,7 +375,7 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.VirtualDirectories != null)
             {
-                this.ProcessVirtualDirectories(); 
+                this.ProcessVirtualDirectories();
                 this.iisServerManager.CommitChanges();
             }
         }
@@ -444,7 +451,7 @@ namespace MSBuild.ExtensionPack.Web
 
             if (!string.IsNullOrEmpty(this.EnabledProtocols))
             {
-               this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
+                this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
             }
 
             this.iisServerManager.CommitChanges();
@@ -523,7 +530,7 @@ namespace MSBuild.ExtensionPack.Web
             this.SiteInfo = isite;
             this.SiteId = this.website.Id;
         }
-    
+
         private bool SiteExists()
         {
             this.website = this.iisServerManager.Sites[this.Name];

@@ -15,8 +15,30 @@
             <Attributes>Normal</Attributes>
         </AtFiles2>
         <MyFiles Include="C:\demo\**\*.csproj"/>
+        <FilesToSecure Include="C:\demo\file1.txt" />
+        <FilesToSecure Include="C:\demo\file2.txt" />
+        <Users Include="MyUser" />
+        <UsersWithPermissions Include="MyUser">
+            <Permission>Read,Write</Permission>
+        </UsersWithPermissions>
+        <FilesToWriteTo Include="C:\a\hosts"/>
+        <LinesToRemove Include="192\.156\.236\.25 www\.myurl\.com"/>
+        <LinesToRemove Include="192\.156\.234\.25 www\.myurl\.com"/>
+        <LinesToRemove Include="192\.156\.23sss4\.25 www\.myurl\.com"/>
+        <Lines Include="192.156.236.25 www.myurl.com"/>
+        <Lines Include="192.156.234.25 www.myurl.com"/>
     </ItemGroup>
     <Target Name="Default">
+        <!-- Write lines to a file. Lines only added if file does not contain them -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="WriteLines" Files="@(FilesToWriteTo)" Lines="@(Lines)"/>
+        <!-- Remove lines from a file based on regular expressions -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveLines" Files="@(FilesToWriteTo)" Lines="@(LinesToRemove)"/>
+        <!-- adding security -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Path="C:\demo\file3.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
+        <!-- remove security -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Path="C:\demo\file4.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
         <!-- Get a temp file -->
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
             <Output TaskParameter="Path" PropertyName="TempPath"/>

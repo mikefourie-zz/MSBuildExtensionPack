@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
 
@@ -16,7 +17,8 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>CheckExists</i> (<b>Required: </b> ShareName <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> ShareName, SharePath <b>Optional: </b>Description, MaximumAllowed, CreateSharePath, AllowUsers, DenyUsers)</para>
     /// <para><i>Delete</i> (<b>Required: </b> ShareName)</para>
-    /// <para><i>SetPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers)</para>
+    /// <para><i>ModifyPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers).</para>
+    /// <para><i>SetPermissions</i> (<b>Required: </b> ShareName <b>Optional: </b>AllowUsers, DenyUsers). SetPermissions will reset all existing permissions.</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -48,13 +50,15 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
+        private const string ModifyPermissionsTaskAction = "ModifyPermissions";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string DeleteTaskAction = "Delete";
         private const string CreateTaskAction = "Create";
         private const string SetPermissionsTaskAction = "SetPermissions";
+        private int newPermissionCount;
 
         #region enums
         private enum ReturnCode : uint
@@ -201,6 +205,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case SetPermissionsTaskAction:
                     this.SetPermissions();
                     break;
+                case ModifyPermissionsTaskAction:
+                    this.ModifyPermissions();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
@@ -286,7 +293,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
             catch
             {
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
                 return;
             }
 
@@ -299,9 +306,62 @@ namespace MSBuild.ExtensionPack.FileSystem
             ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outputParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
             if (returnCode != ReturnCode.Success)
             {
-                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to delete the share. ReturnCode: {0}.", returnCode));
+                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to set the share permissions. ReturnCode: {0}.", returnCode));
                 return;
             }
+        }
+
+        private void ModifyPermissions()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Modify permissions on share: {0} on: {1}", this.ShareName, this.MachineName));
+            this.GetManagementScope(@"\root\cimv2");
+            ManagementObject shareObject = null;
+            ObjectQuery query = new ObjectQuery("Select * from Win32_LogicalShareSecuritySetting where Name = '" + this.ShareName + "'");
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
+            {
+                ManagementObjectCollection moc = searcher.Get();
+                if (moc.Count > 0)
+                {
+                    shareObject = moc.Cast<ManagementObject>().FirstOrDefault();
+                }
+                else
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Did not find share: {0} on: {1}", this.ShareName, this.MachineName));
+                    return;
+                }
+            }
+
+            ManagementBaseObject securityDescriptorObject = shareObject.InvokeMethod("GetSecurityDescriptor", null, null);
+            if (securityDescriptorObject == null)
+            {
+                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Error extracting security descriptor from: {0}.", this.ShareName));
+                return;
+            }
+
+            ManagementBaseObject[] newaccessControlList = this.BuildAccessControlList();
+            ManagementBaseObject securityDescriptor = securityDescriptorObject.Properties["Descriptor"].Value as ManagementBaseObject;
+            int existingAcessControlEntriesCount = 0;
+            ManagementBaseObject[] accessControlList = securityDescriptor.Properties["DACL"].Value as ManagementBaseObject[];
+
+            if (accessControlList == null)
+            {
+                accessControlList = new ManagementBaseObject[this.newPermissionCount];
+            }
+            else
+            {
+                existingAcessControlEntriesCount = accessControlList.Length;
+                Array.Resize(ref accessControlList, accessControlList.Length + this.newPermissionCount);
+            }
+
+            for (int i = 0; i < newaccessControlList.Length; i++)
+            {
+                accessControlList[existingAcessControlEntriesCount + i] = newaccessControlList[i];
+            }
+
+            securityDescriptor.Properties["DACL"].Value = accessControlList;
+            ManagementBaseObject parameterForSetSecurityDescriptor = shareObject.GetMethodParameters("SetSecurityDescriptor");
+            parameterForSetSecurityDescriptor["Descriptor"] = securityDescriptor;
+            shareObject.InvokeMethod("SetSecurityDescriptor", parameterForSetSecurityDescriptor, null);
         }
 
         private void Create()
@@ -324,7 +384,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath path = new ManagementPath("Win32_Share");
             ManagementClass managementClass = new ManagementClass(this.Scope, path, null);
-            
+
             // Set the input parameters
             ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");
             inParams["Description"] = this.Description;
@@ -417,6 +477,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
             }
 
+            this.newPermissionCount = acl.Count;
             return acl.ToArray();
         }
 
@@ -489,7 +550,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 {
                     // readonly permission
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Read permission for: {0}", user.ItemSpec));
-                    ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;  
+                    ace.Properties["AccessMask"].Value = 0x1U | 0x2U | 0x4U | 0x8U | 0x10U | 0x20U | 0x40U | 0x80U | 0x100U | 0x20000U | 0x40000U | 0x80000U | 0x100000U;
                 }
 
                 if (permissions.IndexOf("Change", StringComparison.OrdinalIgnoreCase) >= 0)

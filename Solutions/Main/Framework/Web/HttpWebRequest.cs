@@ -8,12 +8,14 @@ namespace MSBuild.ExtensionPack.Web
     using System.IO;
     using System.Net;
     using System.Net.Security;
+    using System.Text;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
-    
+    using Thread = System.Threading.Thread;
+
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout, SkipSslCertificateValidation <b>Output:</b> Response, Status)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout, SkipSslCertificateValidation, Retries, RetryInterval <b>Output:</b> Response, Status)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -41,7 +43,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.1.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
@@ -81,6 +83,18 @@ namespace MSBuild.ExtensionPack.Web
         public ITaskItem Response { get; set; }
 
         /// <summary>
+        /// The number of times the request should be retried before failing.
+        /// </summary>
+        [TaskAction(GetResponseTaskAction, false)]
+        public int Retries { get; set; }
+
+        /// <summary>
+        /// The number of milliseconds between retry attempts.  Default is 0.
+        /// </summary>
+        [TaskAction(GetResponseTaskAction, false)]
+        public int RetryInterval { get; set; }
+
+        /// <summary>
         /// Contains the StatusDescription for successful requests. Contains the Status when encountering a WebException.
         /// </summary>
         [Output]
@@ -102,16 +116,35 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
+        private System.Net.HttpWebRequest CreateRequest()
+        {
+            var request = WebRequest.Create(new Uri(this.Url)) as System.Net.HttpWebRequest;
+            if (request == null)
+            {
+                return request;
+            }
+
+            request.Timeout = this.Timeout;
+            if (this.SkipSslCertificateValidation)
+            {
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((sender, certificate, chain, sslPolicyErrors) => true);
+            }
+
+            return request;
+        }
+
         private void GetResponse()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Executing HttpRequest against: {0}", this.Url));
-            System.Net.HttpWebRequest request = WebRequest.Create(new Uri(this.Url)) as System.Net.HttpWebRequest;
-            if (request != null)
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing HttpRequest against: {0}", this.Url));
+            var tries = 0;
+            while (tries <= this.Retries)
             {
-                request.Timeout = this.Timeout;
-                if (this.SkipSslCertificateValidation)
+                tries++;
+                var request = this.CreateRequest();
+                if (request == null)
                 {
-                    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((sender, certificate, chain, sslPolicyErrors) => true);
+                    this.Log.LogError("Failed to create request against: {0}.", this.Url);
+                    return;
                 }
 
                 try
@@ -129,17 +162,37 @@ namespace MSBuild.ExtensionPack.Web
                         this.Response.SetMetadata("ProtocolVersion", response.ProtocolVersion.ToString());
                         this.Response.SetMetadata("ResponseUri", response.ResponseUri.ToString());
                         this.Response.SetMetadata("Server", response.Server);
+                        return;
                     }
                 }
                 catch (WebException ex)
                 {
-                    this.Log.LogError("{0}. Status: {1}", ex.Message, ex.Status);
-                    this.Status = ex.Status.ToString();
+                    var failureMessage = String.Format(CultureInfo.CurrentCulture, "{0}. Status: {1}", ex.Message, ex.Status);
+                    var responseBody = new StringBuilder();
                     if (ex.Response != null)
                     {
-                        using (StreamReader responseReader = new StreamReader(ex.Response.GetResponseStream()))
+                        using (var responseReader = new StreamReader(ex.Response.GetResponseStream()))
                         {
-                            this.Log.LogError(responseReader.ReadToEnd());
+                            responseBody.Append(responseReader.ReadToEnd());
+                        }
+                    }
+
+                    if (tries < this.Retries)
+                    {
+                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "{0}.  Attempt {1} of {2}.  Waiting {3} milliseconds before trying again.", failureMessage, tries, this.Retries, this.RetryInterval));
+                        if (responseBody.Length > 0)
+                        {
+                            this.LogTaskMessage(responseBody.ToString());
+                        }
+
+                        Thread.Sleep(this.RetryInterval);
+                    }
+                    else
+                    {
+                        this.Log.LogError(failureMessage);
+                        if (responseBody.Length > 0)
+                        {
+                            this.Log.LogError(responseBody.ToString());
                         }
                     }
                 }

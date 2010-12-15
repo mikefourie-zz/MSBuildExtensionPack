@@ -150,7 +150,7 @@ namespace MSBuild.ExtensionPack.Computer
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
     ///         <!-- Check a Group Exists -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" Group="NewGroup1">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
     ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
     ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
@@ -184,7 +184,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.7.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
     public class ActiveDirectory : BaseTask
     {
         private const string AddUserTaskAction = "AddUser";
@@ -408,7 +408,7 @@ namespace MSBuild.ExtensionPack.Computer
                         this.DeleteUserFromGroup();
                         break;
                     case CheckUserExistsTaskAction:
-                        this.CheckExists("User");
+                        this.CheckExists("User", this.User[0].ItemSpec);
                         break;
                     case CheckUserPasswordTaskAction:
                         this.CheckUserPassword();
@@ -417,7 +417,7 @@ namespace MSBuild.ExtensionPack.Computer
                         this.GetUserPassword();
                         break;
                     case CheckGroupExistsTaskAction:
-                        this.CheckExists("group");
+                        this.CheckExists("group", this.Group[0].ItemSpec);
                         break;
                     case GrantPrivilegeTaskAction:
                         this.GrantUserPrivilege();
@@ -598,11 +598,11 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
-        private void CheckExists(string type)
+        private void CheckExists(string type, string name)
         {
             try
             {
-                using (DirectoryEntry entity = this.activeDirEntry.Children.Find(this.User[0].ItemSpec, type))
+                using (DirectoryEntry entity = this.activeDirEntry.Children.Find(name, type))
                 {
                     this.Exists = true;
                 }

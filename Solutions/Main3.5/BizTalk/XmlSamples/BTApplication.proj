@@ -22,6 +22,8 @@
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
         <!-- Remove a Reference -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
+        <!-- Export and Application to an MSI -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="An Application" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
         <!-- Check if the Applications in the Apps collection exist -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
         <!-- Execute a StartAll on the Apps Application collection -->
