@@ -1,0 +1,32 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <PropertyGroup>
+        <ftpHost>localhost</ftpHost>        
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <!-- Specify FilesToUpload -->
+            <FilesToUpload Include="C:\demo.txt" />
+            <FilesToUpload Include="C:\demo2.txt" />            
+        </ItemGroup>        
+        <MSBuild.ExtensionPack.Communication.Ftp TaskAction="UploadFiles" Host="$(ftpHost)" FileNames="@(FilesToUpload)"/>
+
+        <ItemGroup>
+            <!-- Specify the files to Download-->
+            <FilesToDownload Include="demo2.txt" />
+            <FilesToDownload Include="demo.txt" />
+        </ItemGroup>
+        <MSBuild.ExtensionPack.Communication.Ftp TaskAction="DownloadFiles" Host="$(ftpHost)" FileNames="@(FilesToDownload)" WorkingDirectory="C:\FtpWorkingFolder"/>
+
+        <MSBuild.ExtensionPack.Communication.Ftp TaskAction="CreateDirectory" Host="$(ftpHost)" RemoteDirectoryName="NewFolder1"/>
+        <MSBuild.ExtensionPack.Communication.Ftp TaskAction="CreateDirectory" Host="$(ftpHost)" RemoteDirectoryName="NewFolder2"/>
+
+        <MSBuild.ExtensionPack.Communication.Ftp TaskAction="DeleteDirectory" Host="$(ftpHost)" RemoteDirectoryName="NewFolder1"/>
+        <MSBuild.ExtensionPack.Communication.Ftp TaskAction="DeleteFiles" Host="$(ftpHost)" FileNames="@(FilesToDownload)" />
+    </Target>
+</Project>
+
