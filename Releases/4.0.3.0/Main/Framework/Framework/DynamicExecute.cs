@@ -526,7 +526,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an optional parameter for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// <para>The name of a reference is taken from the metadata "Name", if it exists; otherwise, it is the item's identity.</para>
         /// <para>To reference assemblies in the GAC, a strong name must be used, e.g., "System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".</para>
-        /// <para>The default references are System (System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), System.Core (System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), Microsoft.Build.Framework (Microsoft.Build.Framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a), and Microsoft.Build.Utilities.v3.5 (Microsoft.Build.Utilities.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a).</para>
+        /// <para>The default references are System (System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), System.Core (System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), Microsoft.Build.Framework (Microsoft.Build.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a), and Microsoft.Build.Utilities.v4.0 (Microsoft.Build.Utilities.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a).</para>
         /// </remarks>
         /// <seealso cref="NoDefaultReferences"/>
         [TaskAction(DefineTaskAction, false)]
@@ -1276,10 +1276,10 @@ namespace MSBuild.ExtensionPack.Framework
             CompilerParameters parameters = new CompilerParameters { GenerateInMemory = true };
             if (!this.NoDefaultReferences)
             {
-                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").Location);
-                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").Location);
-                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("Microsoft.Build.Framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a").Location);
-                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("Microsoft.Build.Utilities.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a").Location);
+                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").Location);
+                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").Location);
+                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("Microsoft.Build.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a").Location);
+                parameters.ReferencedAssemblies.Add(System.Reflection.Assembly.Load("Microsoft.Build.Utilities.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a").Location);
             }
 
             if (this.References != null)
