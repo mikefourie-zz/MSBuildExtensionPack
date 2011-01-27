@@ -12,14 +12,14 @@ namespace MSBuild.ExtensionPack.Xml
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText, InsertBeforeXPath / InsertAfterXPath)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText, InnerXml, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>ReadAttribute</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElementText</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElementXml</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Key, Element or XPath <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><i>RemoveElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><i>UpdateAttribute</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces, Key, Value, RetryCount)</para>
-    /// <para><i>UpdateElement</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces, InnerText, RetryCount)</para>
+    /// <para><i>UpdateElement</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces, InnerText, InnerXml, RetryCount)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -161,7 +161,7 @@ namespace MSBuild.ExtensionPack.Xml
         }
 
         /// <summary>
-        /// Sets the element. For AddElement, if the element exists, it's InnerText will be updated
+        /// Sets the element. For AddElement, if the element exists, it's InnerText / InnerXml will be updated
         /// </summary>
         [TaskAction(AddAttributeTaskAction, true)]
         [TaskAction(AddElementTaskAction, true)]
@@ -172,9 +172,16 @@ namespace MSBuild.ExtensionPack.Xml
         /// <summary>
         /// Sets the InnerText.
         /// </summary>
-        [TaskAction(AddElementTaskAction, true)]
+        [TaskAction(AddElementTaskAction, false)]
         [TaskAction(UpdateElementTaskAction, false)]
         public string InnerText { get; set; }
+
+        /// <summary>
+        /// Sets the InnerXml.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(UpdateElementTaskAction, false)]
+        public string InnerXml { get; set; }
         
         /// <summary>
         /// Sets the parent element.
@@ -278,7 +285,6 @@ namespace MSBuild.ExtensionPack.Xml
             }
 
             this.xmlFileDoc = new XmlDocument();
-
             try
             {
                 this.xmlFileDoc.Load(this.File.ItemSpec);
@@ -390,12 +396,28 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerText: {1}", this.XPath, this.InnerText));
+            if (string.IsNullOrEmpty(this.InnerXml))
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerText: {1}", this.XPath, this.InnerText));
+                if (this.elements != null && this.elements.Count > 0)
+                {
+                    foreach (XmlNode element in this.elements)
+                    {
+                        element.InnerText = this.InnerText;
+                    }
+
+                    this.TrySave();
+                }
+
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerXml: {1}", this.XPath, this.InnerXml));
             if (this.elements != null && this.elements.Count > 0)
             {
                 foreach (XmlNode element in this.elements)
                 {
-                    element.InnerText = this.InnerText;
+                    element.InnerXml = this.InnerXml;
                 }
 
                 this.TrySave();
@@ -557,6 +579,10 @@ namespace MSBuild.ExtensionPack.Xml
                     {
                         newNode.InnerText = this.InnerText;    
                     }
+                    else if (!string.IsNullOrEmpty(this.InnerXml))
+                    {
+                        newNode.InnerXml = this.InnerXml;
+                    }
 
                     if (!string.IsNullOrEmpty(this.Key))
                     {
@@ -587,8 +613,13 @@ namespace MSBuild.ExtensionPack.Xml
                     if (!string.IsNullOrEmpty(this.InnerText))
                     {
                         newNode.InnerText = this.InnerText;
-                        this.TrySave();
                     }
+                    else if (!string.IsNullOrEmpty(this.InnerXml))
+                    {
+                        newNode.InnerXml = this.InnerXml;
+                    }
+
+                    this.TrySave();
                 }
             }
             else
@@ -602,6 +633,10 @@ namespace MSBuild.ExtensionPack.Xml
                         if (!string.IsNullOrEmpty(this.InnerText))
                         {
                             newNode.InnerText = this.InnerText;
+                        }
+                        else if (!string.IsNullOrEmpty(this.InnerXml))
+                        {
+                            newNode.InnerXml = this.InnerXml;
                         }
 
                         if (!string.IsNullOrEmpty(this.Key))
