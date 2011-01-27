@@ -216,8 +216,7 @@ namespace MSBuild.ExtensionPack.Compression
                     }
                     else
                     {
-                        DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
-                        zip.UpdateDirectory(this.CompressPath.ItemSpec, d.Name);
+                        zip.UpdateDirectory(this.CompressPath.ItemSpec);
                     }
 
                     zip.Save();
