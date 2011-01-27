@@ -14,19 +14,19 @@ namespace MSBuild.ExtensionPack.Sql2005
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling)</para>
-    /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
-    /// <para><i>DeleteBackupHistory</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
-    /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
-    /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling)</para>
-    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath, PrimaryDataFileName, SecondaryDataFileName, SecondaryDataFilePath)</para>
-    /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling)</para>
-    /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
-    /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling)</para>
-    /// <para><i>VerifyBackup</i> (<b>Required: </b>DataFilePath <b>Optional: </b>NoPooling)</para>
+    /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling, StatementTimeout)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout <b>Output:</b> Exists)</para>
+    /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName, StatementTimeout)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>DeleteBackupHistory</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath, PrimaryDataFileName, SecondaryDataFileName, SecondaryDataFilePath, StatementTimeout)</para>
+    /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>VerifyBackup</i> (<b>Required: </b>DataFilePath <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -119,6 +119,7 @@ namespace MSBuild.ExtensionPack.Sql2005
         private RestoreActionType restoreAction = RestoreActionType.Database;
         private int notificationInterval = 10;
         private string fileGroupName = "PRIMARY";
+        private int statementTimeout = -1;
 
         /// <summary>
         /// Sets the TaskAction.
@@ -296,6 +297,35 @@ namespace MSBuild.ExtensionPack.Sql2005
         public ITaskItem OutputFilePath { get; set; }
 
         /// <summary>
+        /// Sets the number of seconds before an operation times out. The default is not to specify this property on the connection.
+        /// </summary>
+        [TaskAction(BackupTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(DeleteBackupHistoryTaskAction, false)]
+        [TaskAction(GetConnectionCountTaskAction, false)]
+        [TaskAction(GetInfoTaskAction, false)]
+        [TaskAction(RenameTaskAction, false)]
+        [TaskAction(RestoreTaskAction, false)]
+        [TaskAction(ScriptTaskAction, false)]
+        [TaskAction(SetOfflineTaskAction, false)]
+        [TaskAction(SetOnlineTaskAction, false)]
+        [TaskAction(VerifyBackupTaskAction, false)]
+        public int StatementTimeout
+        {
+            get
+            {
+                return this.statementTimeout;
+            }
+
+            set 
+            {
+                this.statementTimeout = value;
+            }
+        }
+
+        /// <summary>
         /// Gets whether the database exists
         /// </summary>
         [Output]
@@ -326,6 +356,11 @@ namespace MSBuild.ExtensionPack.Sql2005
             }
 
             ServerConnection con = new ServerConnection { LoginSecure = this.trustedConnection, ServerInstance = this.MachineName, NonPooledConnection = this.NoPooling };
+            if (this.statementTimeout >= 0)
+            {
+                con.StatementTimeout = this.statementTimeout;
+            }
+
             if (!string.IsNullOrEmpty(this.UserName))
             {
                 con.Login = this.UserName;
