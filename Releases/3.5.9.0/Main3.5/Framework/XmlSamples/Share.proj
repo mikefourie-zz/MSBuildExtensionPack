@@ -21,5 +21,7 @@
         <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" AllowUsers="@(Allow)" CreateSharePath="true" SharePath="C:\fff1" ShareName="MSBEPS1" Description="A Description of MSBEPS1"/>
         <!-- Create a share. Defaults to full permission for Everyone. -->
         <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" SharePath="C:\fffd" ShareName="MSBEPS2" Description="A Description of MSBEPS2"/>
+        <!-- Create a share on a remote server -->
+        <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" AllowUsers="@(Allow)" CreateSharePath="true" MachineName="MyFileShareServer" ShareName="Temp" SharePath="D:\Temp" Description="Folder for shared files used." />
     </Target>
 </Project>
