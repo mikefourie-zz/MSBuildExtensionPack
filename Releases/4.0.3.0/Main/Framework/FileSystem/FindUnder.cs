@@ -213,7 +213,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             select f).ToArray();
             }
 
-            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedAfterDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
                 tempdirs = (from f in subDirs
                             where f.LastWriteTime < this.ModifiedBeforeDate
@@ -250,7 +250,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                          select f).ToArray();
             }
 
-            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedBeforeDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
+            if (this.ModifiedBeforeDate != Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture) && this.ModifiedAfterDate == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
                 files = (from f in tempfiles
                          where f.LastWriteTime < this.ModifiedBeforeDate
