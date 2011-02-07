@@ -13,7 +13,6 @@
             </NewApps>
             <Reference Include="Another Application"/>
         </ItemGroup>
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="MyApplication" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
         <!-- Get a list of BizTalk Applications -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Get">
             <Output TaskParameter="Applications" ItemName="ApplicationList"/>
@@ -37,5 +36,9 @@
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Create" Applications="@(NewApps)" Force="true"/>
         <!-- Delete the Applications in the NewApps collection-->
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Delete" Applications="@(NewApps)"/>
+        <!-- Imports the specified bindings file into a BizTalk application -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
+        <!-- Exports a BizTalk application bindings to the specified file -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
     </Target>
 </Project>

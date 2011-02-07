@@ -5,9 +5,13 @@ namespace MSBuild.ExtensionPack.BizTalk
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using Microsoft.BizTalk.ApplicationDeployment;
+    using Microsoft.BizTalk.Deployment;
+    using Microsoft.BizTalk.Deployment.Binding;
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -21,7 +25,9 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
+    /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, Database)</para>
     /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, Database, IncludeGlobalPartyBinding)</para>
+    /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, Database)</para>
     /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, Database, Application, Overwrite)</para>
     /// <para><i>Get</i> (<b>Optional: </b>MachineName, Database)</para>
     /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
@@ -78,6 +84,10 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Create" Applications="@(NewApps)" Force="true"/>
     ///         <!-- Delete the Applications in the NewApps collection-->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Delete" Applications="@(NewApps)"/>
+    ///         <!-- Imports the specified bindings file into a BizTalk application -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
+    ///         <!-- Exports a BizTalk application bindings to the specified file -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -106,6 +116,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string UnenlistAllOrchestrationsTaskAction = "UnenlistAllOrchestrations";
         private const string UnenlistAllSendPortGroupsTaskAction = "UnenlistAllSendPortGroups";
         private const string UnenlistAllSendPortsTaskAction = "UnenlistAllSendPorts";
+        private const string ImportBindingsTaskAction = "ImportBindings";
+        private const string ExportBindingsTaskAction = "ExportBindings";
         private string database = "BizTalkMgmtDb";
         private BtsCatalogExplorer explorer;
         private OM.Application app;
@@ -132,6 +144,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [DropdownValue(UnenlistAllOrchestrationsTaskAction)]
         [DropdownValue(UnenlistAllSendPortGroupsTaskAction)]
         [DropdownValue(UnenlistAllSendPortsTaskAction)]
+        [DropdownValue(ImportFromMsiTaskAction)]
+        [DropdownValue(ExportToMsiTaskAction)]
+        [DropdownValue(ImportBindingsTaskAction)]
+        [DropdownValue(ExportBindingsTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -160,6 +176,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortsTaskAction, false)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, false)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
         public override string MachineName
         {
             get { return base.MachineName; }
@@ -200,6 +220,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(AddReferenceTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(RemoveReferenceTaskAction, true)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, true)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
         public string Application { get; set; }
 
         /// <summary>
@@ -234,6 +258,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortsTaskAction, false)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, false)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -254,6 +282,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set the path to export the Application MSI to. The directory path must exist and have appropriate permissions to write to.
         /// </summary>
+        [TaskAction(ImportFromMsiTaskAction, true)]
+        [TaskAction(ExportToMsiTaskAction, true)]
         public ITaskItem MsiPath { get; set; }
 
         /// <summary>
@@ -264,12 +294,21 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Update existing resources. If not specified and resource exists, import will fail. Default is false.
         /// </summary>
+        [TaskAction(ImportFromMsiTaskAction, false)]
         public bool Overwrite { get; set; }
 
         /// <summary>
         /// The environment to deploy.
         /// </summary>
+        [TaskAction(ImportFromMsiTaskAction, false)]
         public string Environment { get; set; }
+
+        /// <summary>
+        /// The Binding File to Import / Export
+        /// </summary>
+        [TaskAction(ImportBindingsTaskAction, true)]
+        [TaskAction(ExportBindingsTaskAction, true)]
+        public ITaskItem BindingFile { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -321,9 +360,108 @@ namespace MSBuild.ExtensionPack.BizTalk
                     case AddReferenceTaskAction:
                         this.ConfigureReference();
                         break;
+                    case ImportBindingsTaskAction:
+                        this.ImportBindings();
+                        break;
+                    case ExportBindingsTaskAction:
+                        this.ExportBindings();
+                        break;
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
+                }
+            }
+        }
+
+        private void ImportBindings()
+        {
+            // not supported, only import bindings at application level
+            // -GroupLevel        Optional. If specified, ports in the binding file are imported into their associated applications. If not specified, all ports are imported
+            // into the specified application or default application if an application name is not specified.
+            if (this.BindingFile == null)
+            {
+                // -Source            Required. The path and file name of the XML binding file to read.
+                this.Log.LogError("BindingFile is required");
+                return;
+            }
+
+            if (!File.Exists(this.BindingFile.ItemSpec))
+            {
+                // -Source            Required. The path and file name of the XML binding file to read.
+                this.Log.LogError("File {0} not found", this.BindingFile.ItemSpec);
+                return;
+            }
+
+            if (String.IsNullOrEmpty(this.Application))
+            {
+                // -ApplicationName   Optional. The name of the BizTalk application.
+                this.Application = this.explorer.DefaultApplication.Name;
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Using default application {0}", this.Application));
+            }
+
+            using (DeployerComponent dc = new DeployerComponent())
+            {
+                string resultMessage = String.Empty;
+
+                switch (dc.ImportBindingWithValidation(this.explorer.ConnectionString, this.BindingFile.ItemSpec, this.Application, false, ref resultMessage))
+                {
+                    case ImportBindingError.Succeeded:
+                        // resultMessage is unchanged (String.Empty), use custom message
+                        this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Imported {0} into application {1}", this.BindingFile.ItemSpec, this.Application));
+                        break;
+                    case ImportBindingError.SucceededWithWarning:
+                        // log message returned by ImportBindingWithValidation()
+                        this.Log.LogWarning(resultMessage);
+                        break;
+                    case ImportBindingError.Failed:
+                        // this is only returned if the app is not found, which will never happen since we use the default app
+                        // if there are any problems with ImportBindingWithValidation, an error will be logged anyway
+                        this.Log.LogError(resultMessage);
+                        break;
+                }
+            }
+        }
+
+        private void ExportBindings()
+        {
+            // not supported, only export bindings at application level
+            //  -GroupLevel        Optional. If specified, all bindings in the current group are exported.
+            //  -GlobalParties     Optional. If specified, the global party information for the group is exported.
+            //  -AssemblyName      Optional. The full name of the BizTalk assembly.
+            if (this.BindingFile == null)
+            {
+                // -Destination       Required. Path and file name of the XML binding file to write.
+                this.Log.LogError("BindingFile is required");
+                return;
+            }
+
+            // use default app if no app name is provided
+            if (String.IsNullOrEmpty(this.Application))
+            {
+                // -ApplicationName   Optional. The name of the BizTalk application.
+                this.Application = this.explorer.DefaultApplication.Name;
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Using default application {0}", this.Application));
+            }
+
+            // create dir if it doesn't exist
+            string dir = Path.GetDirectoryName(Path.GetFullPath(this.BindingFile.ItemSpec));
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Created directory {0}", dir));
+            }
+
+            using (SqlConnection sqlConnection = new SqlConnection(this.explorer.ConnectionString))
+            {
+                using (BindingInfo info = new BindingInfo())
+                {
+                    BindingParameters bindingParameters = new BindingParameters(new Version(info.Version)) { BindingItems = BindingParameters.BindingItemTypes.All, BindingScope = BindingParameters.BindingScopeType.Application };
+                    info.AddApplicationRef(sqlConnection, this.Application);
+                    info.Select(sqlConnection, bindingParameters);
+                    info.SaveXml(this.BindingFile.ItemSpec);
+
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Exported {0} bindings to {1}", this.Application, this.BindingFile.ItemSpec));
                 }
             }
         }
