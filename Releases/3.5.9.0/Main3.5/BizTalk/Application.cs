@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.BizTalk
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -21,6 +22,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, Database, IncludeGlobalPartyBinding)</para>
+    /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, Database, Application, Overwrite)</para>
     /// <para><i>Get</i> (<b>Optional: </b>MachineName, Database)</para>
     /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
     /// <para><i>StartAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
@@ -62,8 +64,10 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
     ///         <!-- Remove a Reference -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
-    ///         <!-- Export and Application to an MSI -->
+    ///         <!-- Export an Application to an MSI -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="An Application" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
+    ///         <!-- Import an Application from an MSI -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportFromMsi" Application="An Application" MsiPath="C:\AnApplication.msi" Overwrite="true" Environment="DEV" />
     ///         <!-- Check if the Applications in the Apps collection exist -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
     ///         <!-- Execute a StartAll on the Apps Application collection -->
@@ -87,6 +91,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string DeleteTaskAction = "Delete";
         private const string DisableAllReceiveLocationsTaskAction = "DisableAllReceiveLocations";
         private const string ExportToMsiTaskAction = "ExportToMsi";
+        private const string ImportFromMsiTaskAction = "ImportFromMsi";
         private const string EnableAllReceiveLocationsTaskAction = "EnableAllReceiveLocations";
         private const string GetTaskAction = "Get";
         private const string RemoveReferenceTaskAction = "RemoveReference";
@@ -168,7 +173,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, true)]
-        [TaskAction(EnableAllReceiveLocationsTaskAction, true)] 
+        [TaskAction(EnableAllReceiveLocationsTaskAction, true)]
         [TaskAction(StartAllTaskAction, true)]
         [TaskAction(StartAllOrchestrationsTaskAction, true)]
         [TaskAction(StartAllSendPortGroupsTaskAction, true)]
@@ -257,6 +262,16 @@ namespace MSBuild.ExtensionPack.BizTalk
         public bool IncludeGlobalPartyBinding { get; set; }
 
         /// <summary>
+        /// Update existing resources. If not specified and resource exists, import will fail. Default is false.
+        /// </summary>
+        public bool Overwrite { get; set; }
+
+        /// <summary>
+        /// The environment to deploy.
+        /// </summary>
+        public string Environment { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -298,6 +313,9 @@ namespace MSBuild.ExtensionPack.BizTalk
                         break;
                     case ExportToMsiTaskAction:
                         this.ExportToMsi();
+                        break;
+                    case ImportFromMsiTaskAction:
+                        this.ImportFromMsi();
                         break;
                     case RemoveReferenceTaskAction:
                     case AddReferenceTaskAction:
@@ -398,7 +416,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
                 foreach (Resource resource in appl.ResourceCollection.Cast<Resource>().Where(resource => !resource.Properties.ContainsKey("IsSystem") || !((bool)resource.Properties["IsSystem"])))
                 {
-                    if (this.IncludeGlobalPartyBinding && resource.Luid.Equals("Application/" + this.Application, System.StringComparison.OrdinalIgnoreCase))
+                    if (this.IncludeGlobalPartyBinding && resource.Luid.Equals("Application/" + this.Application, StringComparison.OrdinalIgnoreCase))
                     {
                         resource.Properties["IncludeGlobalPartyBinding"] = this.IncludeGlobalPartyBinding;
                     }
@@ -409,6 +427,59 @@ namespace MSBuild.ExtensionPack.BizTalk
 
                 appl.Export(this.MsiPath.ItemSpec, exportedResources);
              }
+        }
+
+        private void ImportFromMsi()
+        {
+            if (this.MsiPath == null)
+            {
+                // -Package           Required. The path and file name of the Windows Installer package.
+                this.Log.LogError("MSI source is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Importing from {0}", this.MsiPath.ItemSpec));
+
+            if (String.IsNullOrEmpty(this.Application))
+            {
+                // -ApplicationName   Optional. The name of the BizTalk application.
+                this.Application = this.explorer.DefaultApplication.Name;
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Using default application {0}", this.Application));
+            }
+
+            // create application if it doesn't exist
+            if (!this.CheckExists(this.Application))
+            {
+                OM.Application newapp = this.explorer.AddNewApplication();
+                newapp.Name = this.Application;
+                this.explorer.SaveChanges();
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating new application {0}", this.Application));
+            }
+
+            using (Group group = new Group())
+            {
+                group.DBName = this.Database;
+                group.DBServer = this.MachineName;
+
+                Microsoft.BizTalk.ApplicationDeployment.Application appl = group.Applications[this.Application];
+
+                // used to specify custom properties for import, i.e. TargetEnvironment
+                IDictionary<string, object> requestProperties = null;
+                if (!String.IsNullOrEmpty(this.Environment))
+                {
+                    // -Environment       Optional. The environment to deploy.
+                    requestProperties = new Dictionary<string, object> { { "TargetEnvironment", this.Environment } };
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Target environment {0} specified", this.Environment));
+                }
+
+                // the overload that takes request properties also requires this
+                IInstallPackage package = DeploymentUnit.ScanPackage(this.MsiPath.ItemSpec);
+                ICollection<string> applicationReferences = package.References;
+
+                // -Overwrite         Optional. Update existing resources. If not specified and resource exists, import will fail.
+                appl.Import(this.MsiPath.ItemSpec, requestProperties, applicationReferences, this.Overwrite);
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Successfully imported {0} into application {1}", this.MsiPath.ItemSpec, this.Application));
+            }
         }
 
         private void Create()
@@ -444,7 +515,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     this.explorer.DefaultApplication = newapp;
                 }
             }
-            
+
             this.explorer.SaveChanges();
         }
 
