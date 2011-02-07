@@ -11,10 +11,10 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CheckExists</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, Database <b>Output: </b>Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Update</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, DatabaseServer, Database <b>Output: </b>Exists)</para>
+    /// <para><i>Create</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, DatabaseServer, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>Update</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, DatabaseServer, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>

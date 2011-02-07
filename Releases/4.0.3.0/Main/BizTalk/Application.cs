@@ -19,29 +19,29 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>CheckExists</i> (<b>Required: </b>Application <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Create</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, Database)</para>
-    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, Database, IncludeGlobalPartyBinding)</para>
-    /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, Database)</para>
-    /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, Database, Application, Overwrite)</para>
-    /// <para><i>Get</i> (<b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StopAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StopReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UndeployAllPolicies</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UnenlistAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UnenlistAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UnenlistAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
+    /// <para><i>AddReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>Application <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>Create</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
+    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding)</para>
+    /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
+    /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, Application, Overwrite)</para>
+    /// <para><i>Get</i> (<b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StopAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StopReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UndeployAllPolicies</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UnenlistAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UnenlistAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UnenlistAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -187,6 +187,34 @@ namespace MSBuild.ExtensionPack.BizTalk
         }
 
         /// <summary>
+        /// Sets the DatabaseServer to connect to. Default is MachineName
+        /// </summary>
+        [TaskAction(AddReferenceTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(RemoveReferenceTaskAction, false)]
+        [TaskAction(StartAllTaskAction, false)]
+        [TaskAction(StartAllOrchestrationsTaskAction, false)]
+        [TaskAction(StartAllSendPortGroupsTaskAction, false)]
+        [TaskAction(StartAllSendPortsTaskAction, false)]
+        [TaskAction(StartReferencedApplicationsTaskAction, false)]
+        [TaskAction(StopAllTaskAction, false)]
+        [TaskAction(StopReferencedApplicationsTaskAction, false)]
+        [TaskAction(UndeployAllPoliciesTaskAction, false)]
+        [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
+        [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
+        [TaskAction(UnenlistAllSendPortsTaskAction, false)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, false)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
+        public string DatabaseServer { get; set; }
+
+        /// <summary>
         /// Get or sets the Application Item Collection
         /// </summary>
         [Output]
@@ -315,10 +343,15 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// </summary>
         protected override void InternalExecute()
         {
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
+            if (string.IsNullOrEmpty(this.DatabaseServer))
+            {
+                this.DatabaseServer = this.MachineName;
+            }
+
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.DatabaseServer, this.Database));
             using (this.explorer = new BtsCatalogExplorer())
             {
-                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database);
+                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.DatabaseServer, this.Database);
                 switch (this.TaskAction)
                 {
                     case CreateTaskAction:
@@ -544,7 +577,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             using (Group group = new Group())
             {
                 group.DBName = this.Database;
-                group.DBServer = this.MachineName;
+                group.DBServer = this.DatabaseServer;
 
                 Microsoft.BizTalk.ApplicationDeployment.ApplicationCollection apps = group.Applications;
                 apps.UiLevel = 2;
@@ -597,7 +630,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             using (Group group = new Group())
             {
                 group.DBName = this.Database;
-                group.DBServer = this.MachineName;
+                group.DBServer = this.DatabaseServer;
 
                 Microsoft.BizTalk.ApplicationDeployment.Application appl = group.Applications[this.Application];
 
@@ -681,7 +714,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             using (Group group = new Group())
             {
                 group.DBName = this.Database;
-                group.DBServer = this.MachineName;
+                group.DBServer = this.DatabaseServer;
 
                 Microsoft.BizTalk.ApplicationDeployment.ApplicationCollection apps = group.Applications;
                 apps.UiLevel = 2;
