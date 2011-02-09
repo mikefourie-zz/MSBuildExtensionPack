@@ -29,7 +29,7 @@
         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt"/>
         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt"/>
         <!-- Check a Group Exists -->
-        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" Group="NewGroup1">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
         <Message Text="NewGroup1 Exists: $(DoesExist)"/>

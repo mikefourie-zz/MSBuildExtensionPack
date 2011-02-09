@@ -986,3 +986,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "TaskAction", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.VC6.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "MSDEV", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.VC6.#MSDEVPath")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "MSDEVPath", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.VC6.#InternalExecute()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.ActiveDirectory.#AddUserToGroup()")]

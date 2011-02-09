@@ -22,12 +22,12 @@ namespace MSBuild.ExtensionPack.Computer
         /// Global
         /// </summary>
         Global = 0x00000002,
-        
+
         /// <summary>
         /// Local
         /// </summary>
         Local = 0x00000004,
-        
+
         /// <summary>
         /// Universal
         /// </summary>
@@ -142,7 +142,7 @@ namespace MSBuild.ExtensionPack.Computer
     ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
     ///         <Message Text="JudgeJS1 Exists: $(DoesExist)"/>
     ///         <!-- Check a Group Exists -->
-    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" User="NewGroup1">
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="CheckGroupExists" Group="NewGroup1">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
     ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
     ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
@@ -156,6 +156,8 @@ namespace MSBuild.ExtensionPack.Computer
     ///         <Message Text="NewGroup1 Exists: $(DoesExist)"/>
     ///         <!-- Add the users to the Groups -->
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="JudgeJS1;JudgeJS2" Group="NewGroup1;NewGroup2"/>
+    ///         <!-- To add domain user(s) to a group, prefix name with the user's domain -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddUserToGroup" User="ADOMAIN\JudgeJS1" Group="Group1"/>
     ///         <!-- Delete Users from Groups -->
     ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="DeleteUserFromGroup" User="JudgeJS1" Group="NewGroup1;NewGroup2"/>
     ///         <!-- Delete local Users -->
@@ -207,7 +209,7 @@ namespace MSBuild.ExtensionPack.Computer
         private ContextOptions bindingContextOptions = ContextOptions.Negotiate;
         private ContextType contextType = ContextType.Domain;
         private PrivilegeType privilege;
-        
+
         [DropdownValue(AddUserTaskAction)]
         [DropdownValue(AddGroupTaskAction)]
         [DropdownValue(AddUserToGroupTaskAction)]
@@ -356,6 +358,11 @@ namespace MSBuild.ExtensionPack.Computer
         public bool Exists { get; set; }
 
         /// <summary>
+        /// The domain the user is in.  If not set, defaults to Domain.
+        /// </summary>
+        public string UserDomain { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -363,7 +370,7 @@ namespace MSBuild.ExtensionPack.Computer
             string path;
             if (string.Compare(this.Domain, this.MachineName, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                this.Domain = string.Empty;    
+                this.Domain = string.Empty;
             }
 
             if (string.IsNullOrEmpty(this.Domain))
@@ -582,7 +589,7 @@ namespace MSBuild.ExtensionPack.Computer
                 Log.LogError("Password is required");
                 return;
             }
-            
+
             try
             {
                 PrincipalContext pcontext = new PrincipalContext(this.contextType, this.Domain);
@@ -678,17 +685,39 @@ namespace MSBuild.ExtensionPack.Computer
 
             foreach (ITaskItem u in this.User)
             {
+                DirectoryEntry user;
+                var username = u.ItemSpec;
+                var userAdEntry = this.activeDirEntry;
+
+                if (username.Contains(@"\"))
+                {
+                    var userDomain = username.Substring(0, username.IndexOf(@"\", StringComparison.OrdinalIgnoreCase));
+                    username = username.Substring(username.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) + 1);
+                    userAdEntry = new DirectoryEntry("WinNT://" + userDomain + ",domain");
+                }
+
                 foreach (ITaskItem g in this.Group)
                 {
-                    DirectoryEntry user;
                     try
                     {
-                        user = this.activeDirEntry.Children.Find(u.ItemSpec, "User");
+                        user = userAdEntry.Children.Find(username, "User");
                     }
                     catch
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "User not found: {0}", u.ItemSpec));
-                        return;
+                        user = null;
+                    }
+
+                    if (user == null)
+                    {
+                        try
+                        {
+                            user = userAdEntry.Children.Find(username, "Group");
+                        }
+                        catch (Exception)
+                        {
+                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "User not found: {0} in: {1}", u.ItemSpec, userAdEntry.Path));
+                            return;
+                        }
                     }
 
                     DirectoryEntry groupDir;
@@ -764,13 +793,13 @@ namespace MSBuild.ExtensionPack.Computer
             DirectoryEntry group;
             try
             {
-                group = this.activeDirEntry.Children.Find(this.Group[0].ItemSpec, "group");
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating Group: {0} on {1}", this.Group[0].ItemSpec, this.target));
+                group = this.activeDirEntry.Children.Find(this.Group[0].ItemSpec, "group");
             }
             catch
             {
-                group = this.activeDirEntry.Children.Add(this.Group[0].ItemSpec, "group");
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Group: {0} on {1}", this.Group[0].ItemSpec, this.target));
+                group = this.activeDirEntry.Children.Add(this.Group[0].ItemSpec, "group");
             }
 
             InvokeObj(group, "FullName", this.FullName);
@@ -791,13 +820,13 @@ namespace MSBuild.ExtensionPack.Computer
             DirectoryEntry user;
             try
             {
-                user = this.activeDirEntry.Children.Find(this.User[0].ItemSpec, "User");
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating User: {0} on {1}", this.User[0].ItemSpec, this.MachineName));
+                user = this.activeDirEntry.Children.Find(this.User[0].ItemSpec, "User");
             }
             catch
             {
-                user = this.activeDirEntry.Children.Add(this.User[0].ItemSpec, "User");
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding User: {0} on {1}", this.User[0].ItemSpec, this.MachineName));
+                user = this.activeDirEntry.Children.Add(this.User[0].ItemSpec, "User");
             }
 
             if (!string.IsNullOrEmpty(this.Password))
