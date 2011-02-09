@@ -134,7 +134,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         public string AdditionalHostSettings { get; set; }
 
         /// <summary>
-        /// Gets whether the Application exists
+        /// Gets whether the Host exists
         /// </summary>
         [TaskAction(CheckExistsTaskAction, false)]
         [TaskAction(CreateTaskAction, false)]

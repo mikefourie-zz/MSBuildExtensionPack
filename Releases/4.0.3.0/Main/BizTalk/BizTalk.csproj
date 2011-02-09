@@ -101,6 +101,7 @@
     <Compile Include="..\Framework\Framework\GacNativeMethods.cs">
       <Link>GacNativeMethods.cs</Link>
     </Compile>
+    <Compile Include="Adaptor.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Assembly.cs">
       <SubType>Code</SubType>
@@ -114,6 +115,7 @@
     <Compile Include="SendHandler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="XmlSamples\BTAdaptor.proj" />
     <None Include="XmlSamples\BTApplication.proj" />
     <None Include="XmlSamples\BTAssembly.proj" />
     <None Include="XmlSamples\BTHost.proj" />
