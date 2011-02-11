@@ -14,6 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional:</b> Properties)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output: </b>Exists)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
+    /// <para><i>GetMetabasePropertyValue</i> (<b>Required: </b> Name, MetabasePropertyName<b>Output: </b>MetabasePropertyValue)</para>
     /// <para><i>Modify</i> (<b>Required: </b> Name, Properties)</para>
     /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
@@ -40,6 +41,11 @@ namespace MSBuild.ExtensionPack.Web
     ///             <Output PropertyName="DoesExist" TaskParameter="Exists"/>
     ///         </MSBuild.ExtensionPack.Web.Iis6AppPool>
     ///         <Message Text="AnAppPool exists: $(DoesExist)"/>
+    ///         <!-- GetMetabasePropertyValue -->
+    ///         <MSBuild.ExtensionPack.Web.Iis6AppPool TaskAction="GetMetabasePropertyValue" Name="DefaultAppPool" MetabasePropertyName="AppPoolState">
+    ///             <Output PropertyName="AppPoolState" TaskParameter="MetabasePropertyValue"/>
+    ///         </MSBuild.ExtensionPack.Web.Iis6AppPool>
+    ///         <Message Text="AppPoolState: $(AppPoolState)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -50,6 +56,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string CreateTaskAction = "Create";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string DeleteTaskAction = "Delete";
+        private const string GetMetabasePropertyValueTaskAction = "GetMetabasePropertyValue";
         private const string ModifyTaskAction = "Modify";
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
@@ -95,6 +102,19 @@ namespace MSBuild.ExtensionPack.Web
         public string Name { get; set; }
 
         /// <summary>
+        /// Sets the Metabase Property Name to retrieve. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
+        /// </summary>
+        [TaskAction(GetMetabasePropertyValueTaskAction, true)]
+        public string MetabasePropertyName { get; set; }
+
+        /// <summary>
+        /// Gets the string value of the requested MetabasePropertyName
+        /// </summary>
+        [Output]
+        [TaskAction(GetMetabasePropertyValueTaskAction, false)]
+        public string MetabasePropertyValue { get; set; }
+
+        /// <summary>
         /// Gets whether the app pool exists. Output
         /// </summary>
         [Output]
@@ -133,12 +153,39 @@ namespace MSBuild.ExtensionPack.Web
                 case "CheckExists":
                     this.Exists = this.CheckExists();
                     break;
+                case GetMetabasePropertyValueTaskAction:
+                    this.GetMetabasePropertyValue();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
+        
+        private void GetMetabasePropertyValue()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Getting Metabase Property Value for: {0} from: {1}", this.MetabasePropertyName, this.Name));
 
+            // First locate the app pool.
+            using (DirectoryEntry appPoolEntry = this.LoadAppPool(this.Name))
+            {
+                if (appPoolEntry == null)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "The AppPool does not exist: {0}", this.Name));
+                    return;
+                }
+
+                if (appPoolEntry.Properties[this.MetabasePropertyName] != null && appPoolEntry.Properties[this.MetabasePropertyName].Value != null)
+                {
+                    this.MetabasePropertyValue = appPoolEntry.Properties[this.MetabasePropertyName].Value.ToString();
+                }
+                else
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "MetabasePropertyName not found: {0}", this.MetabasePropertyName));
+                }
+            }
+        }
+        
         [SecurityCritical]
         private void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
