@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
-    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Key, Value, Namespaces, RetryCount, InnerText, InnerXml, InsertBeforeXPath / InsertAfterXPath)</para>
+    /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Prefix, Key, Value, Namespaces, RetryCount, InnerText, InnerXml, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>ReadAttribute</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElementText</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElementXml</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
@@ -182,7 +182,13 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(AddElementTaskAction, false)]
         [TaskAction(UpdateElementTaskAction, false)]
         public string InnerXml { get; set; }
-        
+
+        /// <summary>
+        /// Sets the Prefix used for an added element, prefix must exists in Namespaces.
+        /// </summary>
+        [TaskAction(AddElementTaskAction, false)]
+        public string Prefix { get; set; }
+
         /// <summary>
         /// Sets the parent element.
         /// </summary>
@@ -574,15 +580,7 @@ namespace MSBuild.ExtensionPack.Xml
                 XmlNode newNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement + "/" + this.Element);
                 if (newNode == null)
                 {
-                    newNode = this.xmlFileDoc.CreateElement(this.Element);
-                    if (!string.IsNullOrEmpty(this.InnerText))
-                    {
-                        newNode.InnerText = this.InnerText;    
-                    }
-                    else if (!string.IsNullOrEmpty(this.InnerXml))
-                    {
-                        newNode.InnerXml = this.InnerXml;
-                    }
+                    newNode = this.CreateElement();
 
                     if (!string.IsNullOrEmpty(this.Key))
                     {
@@ -629,15 +627,7 @@ namespace MSBuild.ExtensionPack.Xml
                 {
                     foreach (XmlNode element in this.elements)
                     {
-                        XmlNode newNode = this.xmlFileDoc.CreateElement(this.Element);
-                        if (!string.IsNullOrEmpty(this.InnerText))
-                        {
-                            newNode.InnerText = this.InnerText;
-                        }
-                        else if (!string.IsNullOrEmpty(this.InnerXml))
-                        {
-                            newNode.InnerXml = this.InnerXml;
-                        }
+                        XmlNode newNode = this.CreateElement();
 
                         if (!string.IsNullOrEmpty(this.Key))
                         {
@@ -654,6 +644,37 @@ namespace MSBuild.ExtensionPack.Xml
                     this.TrySave();
                 }
             }
+        }
+
+        private XmlNode CreateElement()
+        {
+            XmlNode newNode;
+            if (string.IsNullOrEmpty(this.Prefix))
+            {
+                newNode = this.xmlFileDoc.CreateElement(this.Element);
+            }
+            else
+            {
+                string prefixNamespace = this.namespaceManager.LookupNamespace(this.Prefix);
+                if (string.IsNullOrEmpty(prefixNamespace))
+                {
+                    Log.LogError("Prefix not defined in Namespaces in parameters: " + this.Prefix);
+                    return null;
+                }
+
+                newNode = this.xmlFileDoc.CreateElement(this.Prefix, this.Element, prefixNamespace);
+            }
+
+            if (!string.IsNullOrEmpty(this.InnerText))
+            {
+                newNode.InnerText = this.InnerText;    
+            }
+            else if (!string.IsNullOrEmpty(this.InnerXml))
+            {
+                newNode.InnerXml = this.InnerXml;
+            }
+
+            return newNode;
         }
 
         private void RemoveElement()
