@@ -37,7 +37,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/469bf63a-ec25-9248-f956-7bf87e364cbd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/469bf63a-ec25-9248-f956-7bf87e364cbd.htm")]
     public class Metadata : BaseTask
     {
         private const string AddTaskAction = "Add";

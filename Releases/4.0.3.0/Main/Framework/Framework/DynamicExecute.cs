@@ -455,7 +455,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/2e32aa32-13c7-6374-e53e-241ff534fe1c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/2e32aa32-13c7-6374-e53e-241ff534fe1c.htm")]
     public sealed class DynamicExecute : BaseTask
     {
         private const string DefineTaskAction = "Define";

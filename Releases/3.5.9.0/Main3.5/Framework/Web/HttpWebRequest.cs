@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";

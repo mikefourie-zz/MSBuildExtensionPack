@@ -92,7 +92,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";

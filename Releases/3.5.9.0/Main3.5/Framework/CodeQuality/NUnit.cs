@@ -70,7 +70,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/9af9f708-425c-dc43-e44c-0d1d113e5d62.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/9af9f708-425c-dc43-e44c-0d1d113e5d62.htm")]
     public class NUnit : ToolTask
     {
         private string version = "2.5.7";
