@@ -173,7 +173,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <para/>
         /// <code lang="xml"><![CDATA[
         /// <Allow Include="AUser">
-        ///     <Permission>Read or Change etc</Permission>
+        ///     <Permission>Full, Read or Change etc</Permission>
         /// </Allow>
         /// ]]></code>    
         /// </summary>
@@ -540,7 +540,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             string permissions = user.GetMetadata("Permission");
 
-            if (string.IsNullOrEmpty(permissions))
+            if (string.IsNullOrEmpty(permissions) | permissions.IndexOf("Full", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 // apply all permissions
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Full permission for: {0}", user.ItemSpec));
