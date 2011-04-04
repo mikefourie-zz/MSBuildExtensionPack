@@ -67,6 +67,11 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         public string Options { get; set; }
 
+        /// <summary>
+        /// Set to true to log output to the console. Default is false
+        /// </summary>
+        public bool LogToConsole { get; set; }
+
         protected override string ToolName
         {
             get { return "RoboCopy.exe"; }
@@ -161,6 +166,14 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             return retVal;
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            if (this.LogToConsole)
+            {
+                this.Log.LogMessage(MessageImportance.Normal, singleLine);
+            }
         }
     }
 }
