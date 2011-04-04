@@ -278,6 +278,21 @@ namespace MSBuild.ExtensionPack.CodeQuality
             this.ProcessXmlResultsFile();
             return this.Failures;
         }
+        
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            this.Log.LogMessage(MessageImportance.Normal, singleLine);
+        }
+
+        private static int GetAttributeInt32Value(string name, XmlNode node)
+        {
+            if (node.Attributes[name] != null)
+            {
+                return Convert.ToInt32(node.Attributes[name].Value, CultureInfo.InvariantCulture);
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Processes the nunit results
@@ -318,16 +333,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 this.Skipped = GetAttributeInt32Value("skipped", root);
                 this.Invalid = GetAttributeInt32Value("invalid", root);
             }
-        }
-
-        private static int GetAttributeInt32Value(string name, XmlNode node)
-        {
-            if (node.Attributes[name] != null)
-            {
-                return Convert.ToInt32(node.Attributes[name].Value, CultureInfo.InvariantCulture);
-            }
-
-            return 0;
         }
     }
 }
