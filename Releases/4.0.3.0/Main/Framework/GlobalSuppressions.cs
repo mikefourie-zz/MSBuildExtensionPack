@@ -996,3 +996,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Metabase", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis6AppPool.#GetMetabasePropertyValueTaskAction")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "HttpRequest", Scope = "member", Target = "MSBuild.ExtensionPack.Web.HttpWebRequest.#GetResponse(System.Func`1<System.Net.HttpWebRequest>)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.ActiveDirectory.#GetGroupMembers()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Login", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.TfsSource.#Login")]
