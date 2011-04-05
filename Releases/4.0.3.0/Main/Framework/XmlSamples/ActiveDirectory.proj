@@ -59,5 +59,15 @@
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
         <Message Text="User Exists: $(DoesExist)"/>
+        <!-- Get Group Members -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="GetGroupMembers" Group="Performance Monitor Users;Users">
+            <Output TaskParameter="Members" ItemName="Groups"/>
+        </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+        <Message Text="%(Groups.Identity)"/>
+        <!-- Get Group Members including Parent -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="GetGroupMembers" GetFullMemberName="true" Group="Performance Monitor Users;Users">
+            <Output TaskParameter="Members" ItemName="FullGroups"/>
+        </MSBuild.ExtensionPack.Computer.ActiveDirectory>
+        <Message Text="FULL %(FullGroups.Identity)"/>
     </Target>
 </Project>
