@@ -190,6 +190,10 @@
     <Compile Include="Compression\DNZip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
+    <Compile Include="Computer\HostsFile\HostsFile.cs" />
+    <Compile Include="Computer\HostsFile\HostsFileEntries.cs" />
+    <Compile Include="Computer\HostsFile\HostsFileReader.cs" />
+    <Compile Include="Computer\HostsFile\HostsFileWriter.cs" />
     <Compile Include="Computer\WshShell.cs" />
     <Compile Include="Computer\GetPasswordForm.cs">
       <SubType>Form</SubType>
@@ -372,6 +376,7 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\HostsFile.proj" />
     <None Include="XmlSamples\ILMerge.proj" />
     <None Include="XmlSamples\NUnit.proj" />
     <None Include="XmlSamples\SqlCmd.proj" />

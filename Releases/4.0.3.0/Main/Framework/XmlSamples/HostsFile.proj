@@ -1,0 +1,32 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>    
+    <ItemGroup>
+        <HostEntries Include="MyWebService">
+            <IPAddress>10.0.0.1</IPAddress>
+            <Comment>The IP address for MyWebService</Comment>
+        </HostEntries>
+        <HostEntries Include="MyWebSite">
+            <IPAddress>10.0.0.2</IPAddress>
+        </HostEntries>
+    </ItemGroup>
+    <Target Name="Default">
+        <!-- Update the current machine's hosts file.  With Truncate=True, any hosts entries not in @(HostEntries) will
+       be deleted (except for the default localhost/127.0.0.1 entry). -->
+        <MSBuild.ExtensionPack.Computer.HostsFile TaskAction="Update"
+                                                  HostEntries="@(HostEntries)"
+                                                  Truncate="True" />
+        <!-- Update a hosts file in a custom location.  -->
+        <MSBuild.ExtensionPack.Computer.HostsFile TaskAction="Update"
+                                                  HostEntries="@(HostEntries)"
+                                                  PathToHostsFile="\\SDG-WKS1348\a\hosts" />
+        <!-- Update a single host entry.  If the entry doesn't exist, it will be created. -->
+        <MSBuild.ExtensionPack.Computer.HostsFile TaskAction="SetHostEntry"
+                                                  HostName="MyInternalHost"
+                                                  IPAddress="10.0.0.3"
+                                                  Comment="This points to the MyInternalHost server." />
+    </Target>
+</Project>
