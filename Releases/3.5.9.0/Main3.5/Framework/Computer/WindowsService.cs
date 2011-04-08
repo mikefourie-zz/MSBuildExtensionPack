@@ -881,9 +881,9 @@ namespace MSBuild.ExtensionPack.Computer
                 wmi.InvokeMethod("InterrogateService", null);
                 return true;
             }
-            catch (Exception ex)
+            catch (ManagementException ex)
             {
-                if (string.Compare(ex.Message.Trim(), "not found", StringComparison.OrdinalIgnoreCase) == 0 || ex.GetHashCode() == 41149443)
+                if (ex.ErrorCode == ManagementStatus.NotFound)
                 {
                     return false;
                 }
