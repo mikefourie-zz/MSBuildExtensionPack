@@ -366,5 +366,10 @@ namespace MSBuild.ExtensionPack.Framework
             int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             return retVal;
         }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            this.Log.LogMessage(MessageImportance.Normal, singleLine);
+        }
     }
 }

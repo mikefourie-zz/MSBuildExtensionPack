@@ -74,6 +74,11 @@ namespace MSBuild.ExtensionPack.Framework
         public int RealExitCode { get; set; }
 
         /// <summary>
+        /// Set to true to log output to the console. Default is false
+        /// </summary>
+        public bool LogToConsole { get; set; }
+
+        /// <summary>
         /// The Executable to call
         /// </summary>
         [Required]
@@ -134,6 +139,14 @@ namespace MSBuild.ExtensionPack.Framework
 
             this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Unhandled Return Code: {0}. Returning -1.", this.RealExitCode));         
             return -1;
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            if (this.LogToConsole)
+            {
+                this.Log.LogMessage(MessageImportance.Normal, singleLine);
+            }
         }
     }
 }

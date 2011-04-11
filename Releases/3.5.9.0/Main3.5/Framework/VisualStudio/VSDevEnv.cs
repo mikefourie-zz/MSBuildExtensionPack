@@ -128,6 +128,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             return base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
-        }       
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            this.Log.LogMessage(MessageImportance.Normal, singleLine);
+        }
     }
 }
