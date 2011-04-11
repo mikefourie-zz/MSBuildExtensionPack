@@ -11,6 +11,11 @@
         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Pause" Name="awebsite" />
         <!-- Stop a website -->
         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Stop" Name="awebsite" />
+        <!-- GetMetabasePropertyValue -->
+        <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="GetMetabasePropertyValue" Name="awebsite" MetabasePropertyName="ServerState">
+            <Output PropertyName="WebsiteState" TaskParameter="MetabasePropertyValue"/>
+        </MSBuild.ExtensionPack.Web.Iis6Website>
+        <Message Text="WebsiteState: $(ServerState)"/>
         <!-- Start a website -->
         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Start" Name="awebsite" />
         <!-- Check whether a website exists -->
