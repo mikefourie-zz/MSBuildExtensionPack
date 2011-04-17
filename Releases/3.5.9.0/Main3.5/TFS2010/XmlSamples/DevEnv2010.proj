@@ -8,7 +8,7 @@
     <Target Name="AfterCompileSolution">
         
         <!-- Use the DevEnv task to build our setup project. -->
-        <MSBuild.ExtensionPack.Tfs.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build"/>
+        <MSBuild.ExtensionPack.Tfs2010.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build"/>
         <!-- Copy all compilation outputs for the solution AND the setup project to the Team Build out dir so that they are copied to the drop location, can be found by unit tests, etc. -->
         <ItemGroup>
             <SolutionOutputs Condition=" '%(CompilationOutputs.Solution)' == '$(Solution)' " Include="%(RootDir)%(Directory)**\*.*" />

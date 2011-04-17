@@ -32,7 +32,7 @@ namespace MSBuild.ExtensionPack.Tfs2010
     ///     </PropertyGroup>
     ///     <Target Name="AfterCompileSolution">
     ///         <!-- Use the DevEnv task to build our setup project. -->
-    ///         <MSBuild.ExtensionPack.Tfs.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build" Version="9" />
+    ///         <MSBuild.ExtensionPack.Tfs2010.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build"/>
     ///         <!-- Copy all compilation outputs for the solution AND the setup project to the Team Build out dir so that they are copied to the drop location, can be found by unit tests, etc. -->
     ///         <ItemGroup>
     ///             <SolutionOutputs Condition=" '%(CompilationOutputs.Solution)' == '$(Solution)' " Include="%(RootDir)%(Directory)**\*.*" />
@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Tfs2010
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/87a51246-5d06-72b5-191f-9f6976177ea6.htm")]
     public class DevEnv : ToolTask
     {
         private IBuildDetail build;
