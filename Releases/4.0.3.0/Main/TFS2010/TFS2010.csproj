@@ -65,7 +65,7 @@
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="XmlSamples\DevEnv.proj" />
+    <None Include="XmlSamples\DevEnv2010.proj" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
