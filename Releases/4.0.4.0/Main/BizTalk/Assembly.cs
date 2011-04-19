@@ -290,7 +290,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                         Deployment.Application btsApplication = btsGroup.Applications[this.Application];
                         btsApplication.Log += this.DeploymentLog;
                         btsApplication.UILevel = 2;
-                        btsApplication.RemoveResource(String.Empty, r.FullName);
+                        btsApplication.RemoveResource(string.Empty, r.FullName);
                     }
                     catch
                     {

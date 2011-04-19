@@ -543,16 +543,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string comment = string.Empty;
             if (!string.IsNullOrEmpty(this.Comments))
             {
-                comment = String.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\"", this.Comments);
+                comment = string.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\"", this.Comments);
             }
 
             string note = string.Empty;
             if (!string.IsNullOrEmpty(this.Notes))
             {
-                note = String.Format(CultureInfo.CurrentCulture, "/notes:\"{0}\"", this.Notes);
+                note = string.Format(CultureInfo.CurrentCulture, "/notes:\"{0}\"", this.Notes);
             }
 
-            this.ExecuteCommand("checkin", String.Format(CultureInfo.CurrentCulture, "{0} {1}", comment, note), "/noprompt /recursive");
+            this.ExecuteCommand("checkin", string.Format(CultureInfo.CurrentCulture, "{0} {1}", comment, note), "/noprompt /recursive");
         }
 
         private void Delete()
@@ -579,7 +579,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemSpec, options);
+            string arguments = string.Format(CultureInfo.CurrentCulture, "{0} {1} {2}", action, this.itemSpec, options);
             if (string.IsNullOrEmpty(this.OverrideText) == false)
             {
                 arguments += " /override:\"" + this.OverrideText + "\"";

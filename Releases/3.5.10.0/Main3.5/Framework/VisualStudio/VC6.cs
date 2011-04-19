@@ -157,7 +157,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private bool BuildProject(ITaskItem project)
         {
             string projectNames = project.GetMetadata(ProjectsMetadataName);
-            if (String.IsNullOrEmpty(projectNames))
+            if (string.IsNullOrEmpty(projectNames))
             {
                 Log.LogMessage(MessageImportance.Low, "No project names specified. Using 'ALL'.");
                 projectNames = "ALL";
@@ -168,7 +168,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             string platformName = project.GetMetadata(PlatformMetadataName);
-            if (String.IsNullOrEmpty(platformName))
+            if (string.IsNullOrEmpty(platformName))
             {
                 Log.LogMessage(MessageImportance.Low, "No platform name specified. Using 'Win32'.");
                 platformName = "Win32";
@@ -179,7 +179,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             string configurationName = project.GetMetadata(ConfigurationMetadataName);
-            if (String.IsNullOrEmpty(configurationName))
+            if (string.IsNullOrEmpty(configurationName))
             {
                 Log.LogMessage(MessageImportance.Low, "No configuration name specified. Using 'Debug'.");
                 configurationName = "Debug";

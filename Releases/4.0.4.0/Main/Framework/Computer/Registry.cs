@@ -298,7 +298,7 @@ namespace MSBuild.ExtensionPack.Computer
                                 byte[] val = new byte[parts.Length];
                                 for (int i = 0; i < parts.Length; i++)
                                 {
-                                    val[i] = Byte.Parse(parts[i], CultureInfo.CurrentCulture);
+                                    val[i] = byte.Parse(parts[i], CultureInfo.CurrentCulture);
                                 }
 
                                 registryValue = val;

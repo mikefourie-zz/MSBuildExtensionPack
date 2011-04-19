@@ -150,7 +150,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void GetDnsHostName()
         {
-            if (String.IsNullOrEmpty(this.HostName))
+            if (string.IsNullOrEmpty(this.HostName))
             {
                 Log.LogError("HostName is required");
                 return;

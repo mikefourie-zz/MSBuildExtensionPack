@@ -1273,7 +1273,7 @@ namespace MSBuild.ExtensionPack.Framework
         // returns false.
         private bool ParseIncrementProperties()
         {
-            string enumNames = String.Join(", ", Enum.GetNames(typeof(IncrementMethod)));
+            string enumNames = string.Join(", ", Enum.GetNames(typeof(IncrementMethod)));
 
             // Handle AssemblyBuildNumberType
             if (this.AssemblyBuildNumberType == null)

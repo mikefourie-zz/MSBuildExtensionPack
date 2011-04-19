@@ -100,7 +100,7 @@ namespace MSBuild.ExtensionPack
                 proc.BeginErrorReadLine();
 
                 // wait for exit after reading the streams to avoid deadlock
-                proc.WaitForExit(Int32.MaxValue);
+                proc.WaitForExit(int.MaxValue);
 
                 // get the exit code and release the process handle
                 if (!proc.HasExited)
@@ -122,7 +122,7 @@ namespace MSBuild.ExtensionPack
         private void StandardErrorHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
         {
             // Collect the error output.
-            if (!String.IsNullOrEmpty(lineReceived.Data))
+            if (!string.IsNullOrEmpty(lineReceived.Data))
             {
                 // Add the text to the collected errors.
                 this.stdError.AppendLine(lineReceived.Data);
@@ -132,7 +132,7 @@ namespace MSBuild.ExtensionPack
         private void StandardOutHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
         {
             // Collect the command output.
-            if (!String.IsNullOrEmpty(lineReceived.Data))
+            if (!string.IsNullOrEmpty(lineReceived.Data))
             {
                 // Add the text to the collected output.
                 this.stdOut.AppendLine(lineReceived.Data);

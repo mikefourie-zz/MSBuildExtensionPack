@@ -74,7 +74,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 if (!File.Exists(file.ItemSpec))
                 {
-                    this.Log.LogError(String.Format(CultureInfo.InvariantCulture, "File not found: {0}", file.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "File not found: {0}", file.ItemSpec));
                     return false;
                 }
 

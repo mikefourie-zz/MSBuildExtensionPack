@@ -178,7 +178,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 using (System.Diagnostics.EventLog log = new System.Diagnostics.EventLog("Application", this.MachineName, this.Source))
                 {
-                    log.WriteEntry(this.Description, this.logType, Int32.Parse(this.EventId, CultureInfo.CurrentCulture));
+                    log.WriteEntry(this.Description, this.logType, int.Parse(this.EventId, CultureInfo.CurrentCulture));
                 }
             }
         }

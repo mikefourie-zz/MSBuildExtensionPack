@@ -143,7 +143,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <param name="options">The options.</param>
         private void ExecuteCommand(string action, string options)
         {
-            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
+            string arguments = string.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
 
             this.shellWrapper = new ShellWrapper(this.teamFoundationExe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)

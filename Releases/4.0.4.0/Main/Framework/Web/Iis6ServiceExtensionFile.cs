@@ -150,7 +150,7 @@ namespace MSBuild.ExtensionPack.Web
                     }
                     catch (COMException ex)
                     {
-                        throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to delete web service extension of '{0}'", this.Path), ex);
+                        throw new ApplicationException(string.Format(CultureInfo.InvariantCulture, "Unable to delete web service extension of '{0}'", this.Path), ex);
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Web
                 }
                 catch (Exception ex)
                 {
-                    throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to create the extension: {0}", this.Path), ex);
+                    throw new ApplicationException(string.Format(CultureInfo.InvariantCulture, "Unable to create the extension: {0}", this.Path), ex);
                 }
             }
         }

@@ -425,7 +425,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 return;
             }
 
-            if (String.IsNullOrEmpty(this.Application))
+            if (string.IsNullOrEmpty(this.Application))
             {
                 // -ApplicationName   Optional. The name of the BizTalk application.
                 this.Application = this.explorer.DefaultApplication.Name;
@@ -434,12 +434,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             using (DeployerComponent dc = new DeployerComponent())
             {
-                string resultMessage = String.Empty;
+                string resultMessage = string.Empty;
 
                 switch (dc.ImportBindingWithValidation(this.explorer.ConnectionString, this.BindingFile.ItemSpec, this.Application, false, ref resultMessage))
                 {
                     case ImportBindingError.Succeeded:
-                        // resultMessage is unchanged (String.Empty), use custom message
+                        // resultMessage is unchanged (string.Empty), use custom message
                         this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Imported {0} into application {1}", this.BindingFile.ItemSpec, this.Application));
                         break;
                     case ImportBindingError.SucceededWithWarning:
@@ -469,7 +469,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
 
             // use default app if no app name is provided
-            if (String.IsNullOrEmpty(this.Application))
+            if (string.IsNullOrEmpty(this.Application))
             {
                 // -ApplicationName   Optional. The name of the BizTalk application.
                 this.Application = this.explorer.DefaultApplication.Name;
@@ -611,7 +611,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Importing from {0}", this.MsiPath.ItemSpec));
 
-            if (String.IsNullOrEmpty(this.Application))
+            if (string.IsNullOrEmpty(this.Application))
             {
                 // -ApplicationName   Optional. The name of the BizTalk application.
                 this.Application = this.explorer.DefaultApplication.Name;
@@ -636,7 +636,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
                 // used to specify custom properties for import, i.e. TargetEnvironment
                 IDictionary<string, object> requestProperties = null;
-                if (!String.IsNullOrEmpty(this.Environment))
+                if (!string.IsNullOrEmpty(this.Environment))
                 {
                     // -Environment       Optional. The environment to deploy.
                     requestProperties = new Dictionary<string, object> { { "TargetEnvironment", this.Environment } };

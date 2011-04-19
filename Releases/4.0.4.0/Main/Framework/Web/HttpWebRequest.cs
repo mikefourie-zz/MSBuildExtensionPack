@@ -235,7 +235,7 @@ namespace MSBuild.ExtensionPack.Web
                 }
                 catch (WebException ex)
                 {
-                    var failureMessage = String.Format(CultureInfo.CurrentCulture, "{0}. Status: {1}", ex.Message, ex.Status);
+                    var failureMessage = string.Format(CultureInfo.CurrentCulture, "{0}. Status: {1}", ex.Message, ex.Status);
                     var responseBody = new StringBuilder();
                     if (ex.Response != null)
                     {

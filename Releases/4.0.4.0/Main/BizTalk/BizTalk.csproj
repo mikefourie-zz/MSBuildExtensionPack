@@ -109,7 +109,7 @@
     <Compile Include="BizTalkHelper.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Host.cs" />
-    <Compile Include="HostInstance.cs" />
+    <Compile Include="BizTalkHostInstance.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
     <Compile Include="ReceiveHandler.cs" />
     <Compile Include="SendHandler.cs" />

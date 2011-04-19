@@ -656,7 +656,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception ex)
             {
-                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "An error occurred in GetServiceStartMode of {0} on '{1}'.  Message: {2}", this.ServiceDisplayName, this.MachineName, ex.Message));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An error occurred in GetServiceStartMode of {0} on '{1}'.  Message: {2}", this.ServiceDisplayName, this.MachineName, ex.Message));
                 throw;
             }
 
@@ -815,7 +815,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             string path = targetLocal ? "\\root\\CIMV2" : string.Format(CultureInfo.InvariantCulture, "\\\\{0}\\root\\CIMV2", this.MachineName);
 
-            string servicePath = String.Format(CultureInfo.InvariantCulture, "Win32_Service.Name='{0}'", this.ServiceName);
+            string servicePath = string.Format(CultureInfo.InvariantCulture, "Win32_Service.Name='{0}'", this.ServiceName);
             ManagementObject wmiReturnObject;
             using (ManagementObject wmi = new ManagementObject(path, servicePath, null))
             {
@@ -867,7 +867,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception ex)
             {
-                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "An error occurred in GetState of {0} on '{1}'.  Message: {2}", this.ServiceDisplayName, this.MachineName, ex.Message));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An error occurred in GetState of {0} on '{1}'.  Message: {2}", this.ServiceDisplayName, this.MachineName, ex.Message));
                 throw;
             }
 

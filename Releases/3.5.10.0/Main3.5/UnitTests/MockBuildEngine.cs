@@ -27,7 +27,7 @@ namespace MSBuild.ExtensionPack.FrameworkTests
 
         public string ProjectFileOfTaskNode
         {
-            get { return String.Empty; }
+            get { return string.Empty; }
         }
         
         public bool BuildProjectFile(string projectFileName, string[] targetNames, System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs)

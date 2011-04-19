@@ -11,12 +11,12 @@ namespace MSBuild.ExtensionPack
     {
         public static string AppendFormat(this string originalValue, IFormatProvider provider, string format, params object[] args)
         {
-            if (String.IsNullOrEmpty(format) || args == null)
+            if (string.IsNullOrEmpty(format) || args == null)
             {
-                return originalValue ?? String.Empty;
+                return originalValue ?? string.Empty;
             }
 
-            StringBuilder builder = new StringBuilder(originalValue ?? String.Empty);
+            StringBuilder builder = new StringBuilder(originalValue ?? string.Empty);
             builder.AppendFormat(provider, format, args);
             return builder.ToString();
         }

@@ -109,7 +109,7 @@ namespace MSBuild.ExtensionPack.Computer
         protected override void InternalExecute()
         {
             var pathToHostsFile = this.PathToHostsFile;
-            if (String.IsNullOrEmpty(pathToHostsFile))
+            if (string.IsNullOrEmpty(pathToHostsFile))
             {
                 pathToHostsFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.InvariantCulture, "Path to hosts file is empty; defaulting to {0}.", pathToHostsFile));
@@ -140,7 +140,7 @@ namespace MSBuild.ExtensionPack.Computer
                     truncate = false;
                     var hostEntry = new TaskItem(this.HostName);
                     hostEntry.SetMetadata("IPAddress", this.IPAddress);
-                    if (!String.IsNullOrEmpty(this.Comment))
+                    if (!string.IsNullOrEmpty(this.Comment))
                     {
                         hostEntry.SetMetadata("Comment", this.Comment);
                     }
@@ -199,13 +199,13 @@ namespace MSBuild.ExtensionPack.Computer
             var hostName = hostEntry.ItemSpec;
             var comment = hostEntry.GetMetadata("Comment");
 
-            if (String.IsNullOrEmpty(hostName))
+            if (string.IsNullOrEmpty(hostName))
             {
                 this.Log.LogError("HostName is null or empty.");
                 return false;
             }
 
-            if (String.IsNullOrEmpty(ipAddress))
+            if (string.IsNullOrEmpty(ipAddress))
             {
                 this.Log.LogError("IPAddress is null or empty for hostname '{0}.", hostName);
                 return false;

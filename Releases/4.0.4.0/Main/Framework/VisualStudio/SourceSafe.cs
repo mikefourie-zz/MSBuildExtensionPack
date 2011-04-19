@@ -173,7 +173,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 }
             }
 
-            string args = String.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
+            string args = string.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Executing: {0} {1}", this.fileName, args));
             this.ExecuteVisualSourceSafe(args);
         }

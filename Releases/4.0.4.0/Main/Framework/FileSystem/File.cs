@@ -215,7 +215,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public string RegexPattern { get; set; }
 
         /// <summary>
-        /// The replacement text to use. Default is String.Empty
+        /// The replacement text to use. Default is string.Empty
         /// </summary>
         [TaskAction(ReplaceTaskAction, false)]
         public string Replacement
@@ -655,13 +655,13 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (files == null || files.Length == 0)
             {
-                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "Please supply a value for either the Path or Files property."));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Please supply a value for either the Path or Files property."));
                 return;
             }
 
             if (this.Users == null || this.Users.Length == 0)
             {
-                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "Please supply a value for the Users property."));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Please supply a value for the Users property."));
                 return;
             }
 

@@ -203,24 +203,24 @@ namespace MSBuild.ExtensionPack.Loggers
         private void BuildFinished(object sender, BuildFinishedEventArgs e)
         {
             this.WriteLine(e.Message);
-            this.WriteLine(String.Format(CultureInfo.InvariantCulture, "{0} Warning(s) ", this.warnings));
-            this.WriteLine(String.Format(CultureInfo.InvariantCulture, "{0} Error(s) ", this.errors) + Environment.NewLine + Environment.NewLine);
+            this.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0} Warning(s) ", this.warnings));
+            this.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0} Error(s) ", this.errors) + Environment.NewLine + Environment.NewLine);
 
             TimeSpan s = DateTime.UtcNow - this.startTime;
-            this.WriteLine(String.Format(CultureInfo.InvariantCulture, "Time Elapsed {0}", s));
+            this.WriteLine(string.Format(CultureInfo.InvariantCulture, "Time Elapsed {0}", s));
         }
 
         private void BuildStarted(object sender, BuildStartedEventArgs e)
         {
             this.startTime = DateTime.UtcNow;
-            string line = String.Format(CultureInfo.InvariantCulture, "{0} {1}", e.Message, e.Timestamp);
+            string line = string.Format(CultureInfo.InvariantCulture, "{0} {1}", e.Message, e.Timestamp);
             this.WriteLine(line);
             this.WriteLine("__________________________________________________");
         }
 
         private void ErrorRaised(object sender, BuildErrorEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "ERROR {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
+            string line = string.Format(CultureInfo.InvariantCulture, "ERROR {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
             this.WriteLine(this.ProcessLine(line));
             this.errors++;
         }
@@ -242,7 +242,7 @@ namespace MSBuild.ExtensionPack.Loggers
         private void ProjectStarted(object sender, ProjectStartedEventArgs e)
         {
             string targets = string.IsNullOrEmpty(e.TargetNames) ? "default" : e.TargetNames;
-            string line = String.Format(CultureInfo.InvariantCulture, "Project \"{0}\" ({1} target(s)):", e.ProjectFile, targets);
+            string line = string.Format(CultureInfo.InvariantCulture, "Project \"{0}\" ({1} target(s)):", e.ProjectFile, targets);
             this.WriteLine(line + Environment.NewLine);
 
             if (IsVerbosityAtLeast(LoggerVerbosity.Diagnostic))
@@ -273,33 +273,33 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void TargetFinished(object sender, TargetFinishedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "Done building target \"{0}\" in project \"{1}\"", e.TargetName, e.ProjectFile);
+            string line = string.Format(CultureInfo.InvariantCulture, "Done building target \"{0}\" in project \"{1}\"", e.TargetName, e.ProjectFile);
             this.indent--;
             this.WriteLine(line);
         }
 
         private void TargetStarted(object sender, TargetStartedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "Target {0}:", e.TargetName);
+            string line = string.Format(CultureInfo.InvariantCulture, "Target {0}:", e.TargetName);
             this.WriteLine(line);
             this.indent++;
         }
 
         private void TaskFinished(object sender, TaskFinishedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "{0}", e.Message);
+            string line = string.Format(CultureInfo.InvariantCulture, "{0}", e.Message);
             this.WriteLine(line);
         }
 
         private void TaskStarted(object sender, TaskStartedEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "{0}", e.Message);
+            string line = string.Format(CultureInfo.InvariantCulture, "{0}", e.Message);
             this.WriteLine(line);
         }
 
         private void WarningRaised(object sender, BuildWarningEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "Warning {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
+            string line = string.Format(CultureInfo.InvariantCulture, "Warning {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
             this.WriteLine(this.ProcessLine(line));
             this.warnings++;
         }

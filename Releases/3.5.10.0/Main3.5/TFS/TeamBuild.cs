@@ -235,12 +235,12 @@ namespace MSBuild.ExtensionPack.Tfs
 
         private void RelatedChangesets()
         {
-            if (String.IsNullOrEmpty(this.BuildUri))
+            if (string.IsNullOrEmpty(this.BuildUri))
             {
                 this.GetLatestInfo();
             }
 
-            this.LogTaskMessage(String.Format(CultureInfo.CurrentCulture, "Retrieving changesets related to Build {0}", this.BuildUri));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Retrieving changesets related to Build {0}", this.BuildUri));
             var build = this.buildServer.GetAllBuildDetails(new Uri(this.BuildUri));
             var changesets = InformationNodeConverters.GetAssociatedChangesets(build);
             var taskItems = new List<ITaskItem>();
@@ -249,9 +249,9 @@ namespace MSBuild.ExtensionPack.Tfs
                 x =>
                     {
                         ITaskItem item = new TaskItem(x.ChangesetId.ToString(CultureInfo.CurrentCulture));
-                        item.SetMetadata("CheckedInBy", x.CheckedInBy ?? String.Empty);
-                        item.SetMetadata("ChangesetUri", x.ChangesetUri != null ? x.ChangesetUri.ToString() : String.Empty);
-                        item.SetMetadata("Comment", x.Comment ?? String.Empty);
+                        item.SetMetadata("CheckedInBy", x.CheckedInBy ?? string.Empty);
+                        item.SetMetadata("ChangesetUri", x.ChangesetUri != null ? x.ChangesetUri.ToString() : string.Empty);
+                        item.SetMetadata("Comment", x.Comment ?? string.Empty);
                         taskItems.Add(item);
                     });
 
@@ -260,12 +260,12 @@ namespace MSBuild.ExtensionPack.Tfs
 
         private void RelatedWorkItems()
         {
-            if (String.IsNullOrEmpty(this.BuildUri))
+            if (string.IsNullOrEmpty(this.BuildUri))
             {
                 this.GetLatestInfo();
             }
 
-            this.LogTaskMessage(String.Format(
+            this.LogTaskMessage(string.Format(
                                     CultureInfo.CurrentCulture,
                                     "Retrieving Work Items related to Build {0}",
                                     this.BuildUri));
@@ -279,10 +279,10 @@ namespace MSBuild.ExtensionPack.Tfs
                     {
                         ITaskItem item = new TaskItem(x.WorkItemId.ToString(CultureInfo.CurrentCulture));
                         item.SetMetadata("Status", x.Status);
-                        item.SetMetadata("Title", x.Title ?? String.Empty);
-                        item.SetMetadata("Type", x.Type ?? String.Empty);
-                        item.SetMetadata("WorkItemUri", x.WorkItemUri != null ? x.WorkItemUri.ToString() : String.Empty);
-                        item.SetMetadata("AssignedTo", x.AssignedTo ?? String.Empty);
+                        item.SetMetadata("Title", x.Title ?? string.Empty);
+                        item.SetMetadata("Type", x.Type ?? string.Empty);
+                        item.SetMetadata("WorkItemUri", x.WorkItemUri != null ? x.WorkItemUri.ToString() : string.Empty);
+                        item.SetMetadata("AssignedTo", x.AssignedTo ?? string.Empty);
 
                         taskItems.Add(item);
                     });

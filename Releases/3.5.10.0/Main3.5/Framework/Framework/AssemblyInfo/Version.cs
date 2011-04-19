@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", this.MajorVersion, this.MinorVersion, this.BuildNumber, this.Revision);
+            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", this.MajorVersion, this.MinorVersion, this.BuildNumber, this.Revision);
         }
 
         private void ParseVersion(string version)
