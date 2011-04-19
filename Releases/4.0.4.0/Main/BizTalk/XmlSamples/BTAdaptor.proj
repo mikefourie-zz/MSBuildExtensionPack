@@ -1,0 +1,30 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Check an Adaptor Exists -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="CheckExists" AdaptorName="WCF-SQL">
+            <Output TaskParameter="Exists" PropertyName="AdaptorExists" />
+        </MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor>
+        <Message Text="WCF-SQL Exists: $(AdaptorExists)"/>
+        <!-- Delete an Adaptor -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="Delete" AdaptorName="WCF-SQL"/>
+        <!-- Check an Adaptor Exists -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="CheckExists" AdaptorName="WCF-SQL">
+            <Output TaskParameter="Exists" PropertyName="AdaptorExists" />
+        </MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor>
+        <Message Text="WCF-SQL Exists: $(AdaptorExists)"/>
+        <!-- Create an Adaptor -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="Create" AdaptorName="WCF-SQL" MgmtCLSID="{59b35d03-6a06-4734-a249-ef561254ecf7}" Comment="WCF-SQL adapter"/>
+        <!-- Check an Adaptor Exists -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="CheckExists" AdaptorName="WCF-SQL">
+            <Output TaskParameter="Exists" PropertyName="AdaptorExists" />
+            <Output TaskParameter="Comment" PropertyName="AdaptorComment" />
+        </MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor>
+        <Message Text="WCF-SQL Exists: $(AdaptorExists)"/>
+        <Message Text="WCF-SQL Comment: $(AdaptorComment)"/>
+    </Target>
+</Project>

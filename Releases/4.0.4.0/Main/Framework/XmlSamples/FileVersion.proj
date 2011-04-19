@@ -1,0 +1,24 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Perform a default increment of 1 -->
+        <MSBuild.ExtensionPack.FileSystem.FileVersion TaskAction="Increment" File="C:\a\MyVersionfile.txt">
+            <Output TaskParameter="Value" PropertyName="NewValue"/>
+        </MSBuild.ExtensionPack.FileSystem.FileVersion>
+        <Message Text="$(NewValue)"/>
+        <!-- Perform an increment of 5 -->
+        <MSBuild.ExtensionPack.FileSystem.FileVersion TaskAction="Increment" File="C:\a\MyVersionfile2.txt" Increment="5">
+            <Output TaskParameter="Value" PropertyName="NewValue"/>
+        </MSBuild.ExtensionPack.FileSystem.FileVersion>
+        <Message Text="$(NewValue)"/>
+        <!-- Reset a file value -->
+        <MSBuild.ExtensionPack.FileSystem.FileVersion TaskAction="Reset" File="C:\a\MyVersionfile3.txt" Value="10">
+            <Output TaskParameter="Value" PropertyName="NewValue"/>
+        </MSBuild.ExtensionPack.FileSystem.FileVersion>
+        <Message Text="$(NewValue)"/>
+    </Target>
+</Project>
