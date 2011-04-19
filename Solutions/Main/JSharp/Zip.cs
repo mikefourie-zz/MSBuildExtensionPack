@@ -10,6 +10,7 @@ namespace MSBuild.ExtensionPack.Compression
     using Microsoft.Build.Framework;
 
     /// <summary>
+    /// <para>PLEASE NOTE: You should use the DNZip task rather which has no requirement for JSharp </para>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>RemoveRoot)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath)</para>
@@ -17,7 +18,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// <para><b>This task requires:</b></para>
     ///     <para>Microsoft Visual J# 2.0 Redistributable Package – Second Edition (x86) or (x64)</para>
     ///     <para/>
-    ///     <para>Please note that file attributes are not maintained when using these tasks.</para>
+    ///     <para>Please note that file attributes are not maintained when using this task</para>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -69,7 +70,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
     public class Zip : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -169,7 +170,8 @@ namespace MSBuild.ExtensionPack.Compression
                         string zipentry;
                         if (this.RemoveRoot != null)
                         {
-                            zipentry = Path.Combine(Path.GetDirectoryName(filePath).Substring(Path.GetFullPath(this.RemoveRoot.GetMetadata("FullPath")).Length - 1), Path.GetFileName(filePath));
+                            int rootLength = this.RemoveRoot.GetMetadata("FullPath").EndsWith("\\") ? this.RemoveRoot.GetMetadata("FullPath").Length - 1 : this.RemoveRoot.GetMetadata("FullPath").Length;
+                            zipentry = Path.Combine(Path.GetDirectoryName(filePath).Substring(rootLength), Path.GetFileName(filePath));
                             if (zipentry[0] == Path.DirectorySeparatorChar)
                             {
                                 zipentry = zipentry.Substring(1);
@@ -233,7 +235,8 @@ namespace MSBuild.ExtensionPack.Compression
                     string zipentry;
                     if (this.RemoveRoot != null)
                     {
-                        zipentry = Path.Combine(Path.GetDirectoryName(filePath).Substring(this.RemoveRoot.GetMetadata("FullPath").Length - 1), Path.GetFileName(filePath));
+                        int rootLength = this.RemoveRoot.GetMetadata("FullPath").EndsWith("\\") ? this.RemoveRoot.GetMetadata("FullPath").Length - 1 : this.RemoveRoot.GetMetadata("FullPath").Length;
+                        zipentry = Path.Combine(Path.GetDirectoryName(filePath).Substring(rootLength), Path.GetFileName(filePath));
                         if (zipentry[0] == Path.DirectorySeparatorChar)
                         {
                             zipentry = zipentry.Substring(1);
@@ -263,7 +266,8 @@ namespace MSBuild.ExtensionPack.Compression
                     string zipentry;
                     if (this.RemoveRoot != null)
                     {
-                        zipentry = Path.Combine(Path.GetDirectoryName(filePath).Substring(this.RemoveRoot.GetMetadata("FullPath").Length - 1), Path.GetFileName(filePath));
+                        int rootLength = this.RemoveRoot.GetMetadata("FullPath").EndsWith("\\") ? this.RemoveRoot.GetMetadata("FullPath").Length - 1 : this.RemoveRoot.GetMetadata("FullPath").Length;
+                        zipentry = Path.Combine(Path.GetDirectoryName(filePath).Substring(rootLength), Path.GetFileName(filePath));
                         if (zipentry[0] == Path.DirectorySeparatorChar)
                         {
                             zipentry = zipentry.Substring(1);

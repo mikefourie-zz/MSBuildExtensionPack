@@ -3,10 +3,15 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.BizTalk
 {
+    using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using Microsoft.BizTalk.ApplicationDeployment;
+    using Microsoft.BizTalk.Deployment;
+    using Microsoft.BizTalk.Deployment.Binding;
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -14,26 +19,29 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>CheckExists</i> (<b>Required: </b>Application <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Create</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, Database, IncludeGlobalPartyBinding)</para>
-    /// <para><i>Get</i> (<b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StartReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StopAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>StopReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UndeployAllPolicies</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UnenlistAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UnenlistAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>UnenlistAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, Database)</para>
+    /// <para><i>AddReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>Application <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>Create</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
+    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding)</para>
+    /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
+    /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, Application, Overwrite)</para>
+    /// <para><i>Get</i> (<b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>RemoveReference</i> (<b>Required: </b>Application, References <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StartReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StopAll</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>StopReferencedApplications</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UndeployAllPolicies</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UnenlistAllOrchestrations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UnenlistAllSendPortGroups</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>UnenlistAllSendPorts</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -62,8 +70,10 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
     ///         <!-- Remove a Reference -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
-    ///         <!-- Export and Application to an MSI -->
+    ///         <!-- Export an Application to an MSI -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="An Application" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
+    ///         <!-- Import an Application from an MSI -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportFromMsi" Application="An Application" MsiPath="C:\AnApplication.msi" Overwrite="true" Environment="DEV" />
     ///         <!-- Check if the Applications in the Apps collection exist -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
     ///         <!-- Execute a StartAll on the Apps Application collection -->
@@ -74,11 +84,15 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Create" Applications="@(NewApps)" Force="true"/>
     ///         <!-- Delete the Applications in the NewApps collection-->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Delete" Applications="@(NewApps)"/>
+    ///         <!-- Imports the specified bindings file into a BizTalk application -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
+    ///         <!-- Exports a BizTalk application bindings to the specified file -->
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";
@@ -87,6 +101,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string DeleteTaskAction = "Delete";
         private const string DisableAllReceiveLocationsTaskAction = "DisableAllReceiveLocations";
         private const string ExportToMsiTaskAction = "ExportToMsi";
+        private const string ImportFromMsiTaskAction = "ImportFromMsi";
         private const string EnableAllReceiveLocationsTaskAction = "EnableAllReceiveLocations";
         private const string GetTaskAction = "Get";
         private const string RemoveReferenceTaskAction = "RemoveReference";
@@ -101,6 +116,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string UnenlistAllOrchestrationsTaskAction = "UnenlistAllOrchestrations";
         private const string UnenlistAllSendPortGroupsTaskAction = "UnenlistAllSendPortGroups";
         private const string UnenlistAllSendPortsTaskAction = "UnenlistAllSendPorts";
+        private const string ImportBindingsTaskAction = "ImportBindings";
+        private const string ExportBindingsTaskAction = "ExportBindings";
         private string database = "BizTalkMgmtDb";
         private BtsCatalogExplorer explorer;
         private OM.Application app;
@@ -127,6 +144,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [DropdownValue(UnenlistAllOrchestrationsTaskAction)]
         [DropdownValue(UnenlistAllSendPortGroupsTaskAction)]
         [DropdownValue(UnenlistAllSendPortsTaskAction)]
+        [DropdownValue(ImportFromMsiTaskAction)]
+        [DropdownValue(ExportToMsiTaskAction)]
+        [DropdownValue(ImportBindingsTaskAction)]
+        [DropdownValue(ExportBindingsTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -155,11 +176,43 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortsTaskAction, false)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, false)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
         public override string MachineName
         {
             get { return base.MachineName; }
             set { base.MachineName = value; }
         }
+
+        /// <summary>
+        /// Sets the DatabaseServer to connect to. Default is MachineName
+        /// </summary>
+        [TaskAction(AddReferenceTaskAction, false)]
+        [TaskAction(CheckExistsTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(DeleteTaskAction, false)]
+        [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
+        [TaskAction(RemoveReferenceTaskAction, false)]
+        [TaskAction(StartAllTaskAction, false)]
+        [TaskAction(StartAllOrchestrationsTaskAction, false)]
+        [TaskAction(StartAllSendPortGroupsTaskAction, false)]
+        [TaskAction(StartAllSendPortsTaskAction, false)]
+        [TaskAction(StartReferencedApplicationsTaskAction, false)]
+        [TaskAction(StopAllTaskAction, false)]
+        [TaskAction(StopReferencedApplicationsTaskAction, false)]
+        [TaskAction(UndeployAllPoliciesTaskAction, false)]
+        [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
+        [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
+        [TaskAction(UnenlistAllSendPortsTaskAction, false)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, false)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
+        public string DatabaseServer { get; set; }
 
         /// <summary>
         /// Get or sets the Application Item Collection
@@ -168,7 +221,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, true)]
-        [TaskAction(EnableAllReceiveLocationsTaskAction, true)] 
+        [TaskAction(EnableAllReceiveLocationsTaskAction, true)]
         [TaskAction(StartAllTaskAction, true)]
         [TaskAction(StartAllOrchestrationsTaskAction, true)]
         [TaskAction(StartAllSendPortGroupsTaskAction, true)]
@@ -195,6 +248,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(AddReferenceTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(RemoveReferenceTaskAction, true)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, true)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
         public string Application { get; set; }
 
         /// <summary>
@@ -229,6 +286,10 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
         [TaskAction(UnenlistAllSendPortsTaskAction, false)]
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        [TaskAction(ExportToMsiTaskAction, false)]
+        [TaskAction(ImportBindingsTaskAction, false)]
+        [TaskAction(ExportBindingsTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -249,6 +310,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set the path to export the Application MSI to. The directory path must exist and have appropriate permissions to write to.
         /// </summary>
+        [TaskAction(ImportFromMsiTaskAction, true)]
+        [TaskAction(ExportToMsiTaskAction, true)]
         public ITaskItem MsiPath { get; set; }
 
         /// <summary>
@@ -257,14 +320,38 @@ namespace MSBuild.ExtensionPack.BizTalk
         public bool IncludeGlobalPartyBinding { get; set; }
 
         /// <summary>
+        /// Update existing resources. If not specified and resource exists, import will fail. Default is false.
+        /// </summary>
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        public bool Overwrite { get; set; }
+
+        /// <summary>
+        /// The environment to deploy.
+        /// </summary>
+        [TaskAction(ImportFromMsiTaskAction, false)]
+        public string Environment { get; set; }
+
+        /// <summary>
+        /// The Binding File to Import / Export
+        /// </summary>
+        [TaskAction(ImportBindingsTaskAction, true)]
+        [TaskAction(ExportBindingsTaskAction, true)]
+        public ITaskItem BindingFile { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
         {
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.MachineName, this.Database));
+            if (string.IsNullOrEmpty(this.DatabaseServer))
+            {
+                this.DatabaseServer = this.MachineName;
+            }
+
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Connecting to BtsCatalogExplorer: Server: {0}. Database: {1}", this.DatabaseServer, this.Database));
             using (this.explorer = new BtsCatalogExplorer())
             {
-                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.MachineName, this.Database);
+                this.explorer.ConnectionString = string.Format(CultureInfo.CurrentCulture, "Server={0};Database={1};Integrated Security=SSPI;", this.DatabaseServer, this.Database);
                 switch (this.TaskAction)
                 {
                     case CreateTaskAction:
@@ -299,13 +386,115 @@ namespace MSBuild.ExtensionPack.BizTalk
                     case ExportToMsiTaskAction:
                         this.ExportToMsi();
                         break;
+                    case ImportFromMsiTaskAction:
+                        this.ImportFromMsi();
+                        break;
                     case RemoveReferenceTaskAction:
                     case AddReferenceTaskAction:
                         this.ConfigureReference();
                         break;
+                    case ImportBindingsTaskAction:
+                        this.ImportBindings();
+                        break;
+                    case ExportBindingsTaskAction:
+                        this.ExportBindings();
+                        break;
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
+                }
+            }
+        }
+
+        private void ImportBindings()
+        {
+            // not supported, only import bindings at application level
+            // -GroupLevel        Optional. If specified, ports in the binding file are imported into their associated applications. If not specified, all ports are imported
+            // into the specified application or default application if an application name is not specified.
+            if (this.BindingFile == null)
+            {
+                // -Source            Required. The path and file name of the XML binding file to read.
+                this.Log.LogError("BindingFile is required");
+                return;
+            }
+
+            if (!File.Exists(this.BindingFile.ItemSpec))
+            {
+                // -Source            Required. The path and file name of the XML binding file to read.
+                this.Log.LogError("File {0} not found", this.BindingFile.ItemSpec);
+                return;
+            }
+
+            if (String.IsNullOrEmpty(this.Application))
+            {
+                // -ApplicationName   Optional. The name of the BizTalk application.
+                this.Application = this.explorer.DefaultApplication.Name;
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Using default application {0}", this.Application));
+            }
+
+            using (DeployerComponent dc = new DeployerComponent())
+            {
+                string resultMessage = String.Empty;
+
+                switch (dc.ImportBindingWithValidation(this.explorer.ConnectionString, this.BindingFile.ItemSpec, this.Application, false, ref resultMessage))
+                {
+                    case ImportBindingError.Succeeded:
+                        // resultMessage is unchanged (String.Empty), use custom message
+                        this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Imported {0} into application {1}", this.BindingFile.ItemSpec, this.Application));
+                        break;
+                    case ImportBindingError.SucceededWithWarning:
+                        // log message returned by ImportBindingWithValidation()
+                        this.Log.LogWarning(resultMessage);
+                        break;
+                    case ImportBindingError.Failed:
+                        // this is only returned if the app is not found, which will never happen since we use the default app
+                        // if there are any problems with ImportBindingWithValidation, an error will be logged anyway
+                        this.Log.LogError(resultMessage);
+                        break;
+                }
+            }
+        }
+
+        private void ExportBindings()
+        {
+            // not supported, only export bindings at application level
+            //  -GroupLevel        Optional. If specified, all bindings in the current group are exported.
+            //  -GlobalParties     Optional. If specified, the global party information for the group is exported.
+            //  -AssemblyName      Optional. The full name of the BizTalk assembly.
+            if (this.BindingFile == null)
+            {
+                // -Destination       Required. Path and file name of the XML binding file to write.
+                this.Log.LogError("BindingFile is required");
+                return;
+            }
+
+            // use default app if no app name is provided
+            if (String.IsNullOrEmpty(this.Application))
+            {
+                // -ApplicationName   Optional. The name of the BizTalk application.
+                this.Application = this.explorer.DefaultApplication.Name;
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Using default application {0}", this.Application));
+            }
+
+            // create dir if it doesn't exist
+            string dir = Path.GetDirectoryName(Path.GetFullPath(this.BindingFile.ItemSpec));
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Created directory {0}", dir));
+            }
+
+            using (SqlConnection sqlConnection = new SqlConnection(this.explorer.ConnectionString))
+            {
+                using (BindingInfo info = new BindingInfo())
+                {
+                    BindingParameters bindingParameters = new BindingParameters(new Version(info.Version)) { BindingItems = BindingParameters.BindingItemTypes.All, BindingScope = BindingParameters.BindingScopeType.Application };
+                    info.AddApplicationRef(sqlConnection, this.Application);
+                    info.Select(sqlConnection, bindingParameters);
+                    info.SaveXml(this.BindingFile.ItemSpec);
+
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Exported {0} bindings to {1}", this.Application, this.BindingFile.ItemSpec));
                 }
             }
         }
@@ -388,7 +577,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             using (Group group = new Group())
             {
                 group.DBName = this.Database;
-                group.DBServer = this.MachineName;
+                group.DBServer = this.DatabaseServer;
 
                 Microsoft.BizTalk.ApplicationDeployment.ApplicationCollection apps = group.Applications;
                 apps.UiLevel = 2;
@@ -398,7 +587,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
                 foreach (Resource resource in appl.ResourceCollection.Cast<Resource>().Where(resource => !resource.Properties.ContainsKey("IsSystem") || !((bool)resource.Properties["IsSystem"])))
                 {
-                    if (this.IncludeGlobalPartyBinding && resource.Luid.Equals("Application/" + this.Application, System.StringComparison.OrdinalIgnoreCase))
+                    if (this.IncludeGlobalPartyBinding && resource.Luid.Equals("Application/" + this.Application, StringComparison.OrdinalIgnoreCase))
                     {
                         resource.Properties["IncludeGlobalPartyBinding"] = this.IncludeGlobalPartyBinding;
                     }
@@ -409,6 +598,59 @@ namespace MSBuild.ExtensionPack.BizTalk
 
                 appl.Export(this.MsiPath.ItemSpec, exportedResources);
              }
+        }
+
+        private void ImportFromMsi()
+        {
+            if (this.MsiPath == null)
+            {
+                // -Package           Required. The path and file name of the Windows Installer package.
+                this.Log.LogError("MSI source is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Importing from {0}", this.MsiPath.ItemSpec));
+
+            if (String.IsNullOrEmpty(this.Application))
+            {
+                // -ApplicationName   Optional. The name of the BizTalk application.
+                this.Application = this.explorer.DefaultApplication.Name;
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Using default application {0}", this.Application));
+            }
+
+            // create application if it doesn't exist
+            if (!this.CheckExists(this.Application))
+            {
+                OM.Application newapp = this.explorer.AddNewApplication();
+                newapp.Name = this.Application;
+                this.explorer.SaveChanges();
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating new application {0}", this.Application));
+            }
+
+            using (Group group = new Group())
+            {
+                group.DBName = this.Database;
+                group.DBServer = this.DatabaseServer;
+
+                Microsoft.BizTalk.ApplicationDeployment.Application appl = group.Applications[this.Application];
+
+                // used to specify custom properties for import, i.e. TargetEnvironment
+                IDictionary<string, object> requestProperties = null;
+                if (!String.IsNullOrEmpty(this.Environment))
+                {
+                    // -Environment       Optional. The environment to deploy.
+                    requestProperties = new Dictionary<string, object> { { "TargetEnvironment", this.Environment } };
+                    this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Target environment {0} specified", this.Environment));
+                }
+
+                // the overload that takes request properties also requires this
+                IInstallPackage package = DeploymentUnit.ScanPackage(this.MsiPath.ItemSpec);
+                ICollection<string> applicationReferences = package.References;
+
+                // -Overwrite         Optional. Update existing resources. If not specified and resource exists, import will fail.
+                appl.Import(this.MsiPath.ItemSpec, requestProperties, applicationReferences, this.Overwrite);
+                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Successfully imported {0} into application {1}", this.MsiPath.ItemSpec, this.Application));
+            }
         }
 
         private void Create()
@@ -444,7 +686,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     this.explorer.DefaultApplication = newapp;
                 }
             }
-            
+
             this.explorer.SaveChanges();
         }
 
@@ -472,7 +714,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             using (Group group = new Group())
             {
                 group.DBName = this.Database;
-                group.DBServer = this.MachineName;
+                group.DBServer = this.DatabaseServer;
 
                 Microsoft.BizTalk.ApplicationDeployment.ApplicationCollection apps = group.Applications;
                 apps.UiLevel = 2;

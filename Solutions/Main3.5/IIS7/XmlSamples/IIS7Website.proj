@@ -16,6 +16,9 @@
             <ApplicationPath>/photos2</ApplicationPath>
             <PhysicalPath>C:\photos2</PhysicalPath>
         </VirtualDirectory>
+        <HttpResponseHeaders Include="DemoHeader">
+            <Value>DemoHeaderValue</Value>
+        </HttpResponseHeaders>
     </ItemGroup>
     <Target Name="Default">
         <!-- Create a site with a virtual directory -->
@@ -23,6 +26,8 @@
             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
         </MSBuild.ExtensionPack.Web.Iis7Website>
         <Message Text="NewSite SiteId: $(NewSiteId)"/>
+        <!-- Add HTTP Response Headers -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddResponseHeaders" Name="NewSite" HttpResponseHeaders="@(HttpResponseHeaders)"/>
         <!-- Check whether the virtual directory exists -->
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
             <Output TaskParameter="Exists" PropertyName="VDirExists"/>

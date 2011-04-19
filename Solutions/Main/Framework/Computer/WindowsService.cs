@@ -358,7 +358,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
     public class WindowsService : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -885,9 +885,9 @@ namespace MSBuild.ExtensionPack.Computer
                 wmi.InvokeMethod("InterrogateService", null);
                 return true;
             }
-            catch (Exception ex)
+            catch (ManagementException ex)
             {
-                if (string.Compare(ex.Message.Trim(), "not found", StringComparison.OrdinalIgnoreCase) == 0 || ex.GetHashCode() == 41149443)
+                if (ex.ErrorCode == ManagementStatus.NotFound)
                 {
                     return false;
                 }

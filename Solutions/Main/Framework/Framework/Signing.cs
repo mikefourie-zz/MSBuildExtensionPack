@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
     public class Signing : BaseTask
     {
         private const string CAddSkipVerificationTaskAction = "AddSkipVerification";

@@ -84,7 +84,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
     public class VirtualPc : BaseTask
     {
         private const string AddHardDiskConnectionTaskAction = "AddHardDiskConnection";

@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/c5420cf1-0107-8a74-1621-99fc367d9351.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/c5420cf1-0107-8a74-1621-99fc367d9351.htm")]
     public class ILMerge : ToolTask
     {
         private int fileAlignment = 512;
@@ -365,6 +365,11 @@ namespace MSBuild.ExtensionPack.Framework
             Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             return retVal;
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            this.Log.LogMessage(MessageImportance.Normal, singleLine);
         }
     }
 }

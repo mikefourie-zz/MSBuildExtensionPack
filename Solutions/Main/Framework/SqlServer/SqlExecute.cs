@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Globalization;
     using System.IO;
@@ -16,10 +17,10 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: </b> ConnectionString, Sql or Files <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction)</para>
-    /// <para><i>ExecuteRawReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction <b>Output: </b> RawReaderResult)</para>
-    /// <para><i>ExecuteReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction <b>Output: </b> ReaderResult)</para>
-    /// <para><i>ExecuteScalar</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction <b>Output: </b> ScalarResult)</para>
+    /// <para><i>Execute</i> (<b>Required: </b> ConnectionString, Sql or Files <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> FailedScripts)</para>
+    /// <para><i>ExecuteRawReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> RawReaderResult, FailedScripts)</para>
+    /// <para><i>ExecuteReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ReaderResult, FailedScripts)</para>
+    /// <para><i>ExecuteScalar</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ScalarResult, FailedScripts)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -59,7 +60,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
         private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -120,6 +121,13 @@ namespace MSBuild.ExtensionPack.SqlServer
         public bool UseTransaction { get; set; }
 
         /// <summary>
+        /// Ignore any script errors, i.e. continue executing any remaining scripts when an error is encountered.  Failed
+        /// scripts will be returned in the FailedScripts output item.
+        /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
+        public bool IgnoreScriptErrors { get; set; }
+
+        /// <summary>
         /// Gets the scalar result
         /// </summary>
         [Output]
@@ -136,6 +144,12 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         [Output]
         public ITaskItem[] ReaderResult { get; set; }
+
+        /// <summary>
+        /// A list of failed scripts.  Each will have metadata item ErrorMessage set to the error encountered.
+        /// </summary>
+        [Output]
+        public ITaskItem[] FailedScripts { get; set; }
 
         protected override void InternalExecute()
         {
@@ -208,6 +222,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 {
                     int errorNo = 0;
                     ITaskItem[] failures = new ITaskItem[this.Files.Length];
+                    var failedScripts = new List<ITaskItem>();
                     foreach (ITaskItem fileInfo in this.Files)
                     {
                         this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Execute: {0}", fileInfo.ItemSpec));
@@ -262,8 +277,10 @@ namespace MSBuild.ExtensionPack.SqlServer
                         }
                         catch (SqlException ex)
                         {
+                            fileInfo.SetMetadata("ErrorMessage", ex.Message);
+                            failedScripts.Add(fileInfo);
                             lastException = new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "{0}. {1}", fileInfo.ItemSpec, ex.Message), ex);
-                            if (!this.Retry)
+                            if (!this.Retry && !this.IgnoreScriptErrors)
                             {
                                 throw lastException;
                             }
@@ -288,7 +305,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                                 this.Files[i] = failures[i];
                             }
 
-                            if (this.Files.Length >= previousFailures)
+                            if (this.Files.Length >= previousFailures && !this.IgnoreScriptErrors)
                             {
                                 throw lastException;
                             }
@@ -300,6 +317,8 @@ namespace MSBuild.ExtensionPack.SqlServer
                             retry = false;
                         }
                     }
+
+                    this.FailedScripts = failedScripts.ToArray();
                 }
             }
         }

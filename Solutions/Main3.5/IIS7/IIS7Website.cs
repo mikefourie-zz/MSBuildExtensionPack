@@ -14,6 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
+    /// <para><i>AddResponseHeaders</i> (<b>Required: </b> Name, HttpResponseHeaders)</para>
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
@@ -46,6 +47,9 @@ namespace MSBuild.ExtensionPack.Web
     ///             <ApplicationPath>/photos2</ApplicationPath>
     ///             <PhysicalPath>C:\photos2</PhysicalPath>
     ///         </VirtualDirectory>
+    ///         <HttpResponseHeaders Include="DemoHeader">
+    ///             <Value>DemoHeaderValue</Value>
+    ///         </HttpResponseHeaders>
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Create a site with a virtual directory -->
@@ -53,6 +57,8 @@ namespace MSBuild.ExtensionPack.Web
     ///             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
     ///         </MSBuild.ExtensionPack.Web.Iis7Website>
     ///         <Message Text="NewSite SiteId: $(NewSiteId)"/>
+    ///         <!-- Add HTTP Response Headers -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddResponseHeaders" Name="NewSite" HttpResponseHeaders="@(HttpResponseHeaders)"/>
     ///         <!-- Check whether the virtual directory exists -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
     ///             <Output TaskParameter="Exists" PropertyName="VDirExists"/>
@@ -84,11 +90,12 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
         private const string AddVirtualDirectoryTaskAction = "AddVirtualDirectory";
+        private const string AddResponseHeadersTaskAction = "AddResponseHeaders";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
@@ -154,6 +161,11 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
         [TaskAction(DeleteVirtualDirectoryTaskAction, true)]
         public ITaskItem[] VirtualDirectories { get; set; }
+
+        /// <summary>
+        /// A collection of headers to add. Specify Identity as name and add Value metadata
+        /// </summary>
+        public ITaskItem[] HttpResponseHeaders { get; set; }
 
         /// <summary>
         /// Sets the path.
@@ -223,6 +235,9 @@ namespace MSBuild.ExtensionPack.Web
 
                 switch (this.TaskAction)
                 {
+                    case AddResponseHeadersTaskAction:
+                        this.AddResponseHeaders();
+                        break;
                     case AddApplicationTaskAction:
                         this.AddApplication();
                         break;
@@ -264,6 +279,37 @@ namespace MSBuild.ExtensionPack.Web
                 if (this.iisServerManager != null)
                 {
                     this.iisServerManager.Dispose();
+                }
+            }
+        }
+
+        private void AddResponseHeaders()
+        {
+            if (!this.SiteExists())
+            {
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            Configuration config = this.iisServerManager.GetWebConfiguration(this.Name);
+            ConfigurationSection httpProtocolSection = config.GetSection("system.webServer/httpProtocol");
+            ConfigurationElementCollection customHeadersCollection = httpProtocolSection.GetCollection("customHeaders");
+            
+            foreach (ITaskItem header in this.HttpResponseHeaders)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding HttpResponseHeader: {0} to: {1} on: {2}", header.ItemSpec, this.Name, this.MachineName));
+                ConfigurationElement addElement = customHeadersCollection.CreateElement("add");
+                addElement["name"] = header.ItemSpec;
+                addElement["value"] = header.GetMetadata("Value");
+                try
+                {
+                    customHeadersCollection.Add(addElement);
+                    this.iisServerManager.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    // do nothing
+                    this.LogTaskWarning(ex.ToString());
                 }
             }
         }

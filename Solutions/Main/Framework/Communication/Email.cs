@@ -9,7 +9,7 @@ namespace MSBuild.ExtensionPack.Communication
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Send</i> (<b>Required: </b> SmtpServer, MailFrom, MailTo, Subject  <b>Optional: </b> Priority, Body, Format, Attachments, UseDefaultCredentials, UserName, UserPassword)</para>
+    /// <para><i>Send</i> (<b>Required: </b> SmtpServer, MailFrom, MailTo, Subject  <b>Optional: </b> Priority, Body, Format, Attachments, UseDefaultCredentials, UserName, UserPassword, Port, EnableSsl)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
     public class Email : BaseTask
     {
         private const string SendTaskAction = "Send";
@@ -55,6 +55,18 @@ namespace MSBuild.ExtensionPack.Communication
         [Required]
         [TaskAction(SendTaskAction, true)]
         public string SmtpServer { get; set; }
+
+        /// <summary>
+        /// Sets the port to use. Ignored if not specified.
+        /// </summary>
+        [TaskAction(SendTaskAction, true)]
+        public int Port { get; set; }
+
+        /// <summary>
+        /// Sets whether to EnableSsl
+        /// </summary>
+        [TaskAction(SendTaskAction, true)]
+        public bool EnableSsl { get; set; }
 
         /// <summary>
         /// The email address to send the email from.
@@ -168,14 +180,16 @@ namespace MSBuild.ExtensionPack.Communication
 
                 using (SmtpClient client = new SmtpClient(this.SmtpServer))
                 {
+                    if (this.Port > 0)
+                    {
+                        client.Port = this.Port;
+                    }
+
+                    client.EnableSsl = this.EnableSsl;
+                    client.UseDefaultCredentials = this.UseDefaultCredentials;
                     if (!string.IsNullOrEmpty(this.UserName))
                     {
                         client.Credentials = new System.Net.NetworkCredential(this.UserName, this.UserPassword);
-                        client.UseDefaultCredentials = false;
-                    }
-                    else
-                    {
-                        client.UseDefaultCredentials = this.UseDefaultCredentials;
                     }
 
                     client.Send(msg);

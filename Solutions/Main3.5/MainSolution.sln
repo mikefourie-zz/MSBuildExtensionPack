@@ -16,21 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Common\StringExtension.cs = Common\StringExtension.cs
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentationSchema", "DocumentationSchema", "{27FF4005-D504-48A9-A0C0-40C32F21F324}"
-	ProjectSection(SolutionItems) = preProject
-		DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd = DocumentationSchema\MSBuild.ExtensionPack.BizTalk.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd = DocumentationSchema\MSBuild.ExtensionPack.Framework.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd = DocumentationSchema\MSBuild.ExtensionPack.Iis7.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd = DocumentationSchema\MSBuild.ExtensionPack.JSharp.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.MSTFSBuild2008.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Sql2005.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sql2005.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Sql2008.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sql2008.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd = DocumentationSchema\MSBuild.ExtensionPack.StyleCop.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd = DocumentationSchema\MSBuild.ExtensionPack.Sync.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd = DocumentationSchema\MSBuild.ExtensionPack.Tfs.xsd
-		DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd = DocumentationSchema\MSBuild.ExtensionPack.Virtualisation.VirtualPc.xsd
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{5909040A-8319-49A2-858B-BD3A1A9EE7B0}"
 	ProjectSection(SolutionItems) = preProject
 		UnitTests\MockBuildEngine.cs = UnitTests\MockBuildEngine.cs
@@ -58,9 +43,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkTests", "UnitTests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsVirtualPc", "WindowsVirtualPC\WindowsVirtualPc.csproj", "{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS2010", "TFS2010\TFS2010.csproj", "{2761548E-5ACA-4842-8E04-DACB6643FF2E}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 12
+		SccNumberOfProjects = 13
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -98,6 +85,9 @@ Global
 		SccProjectUniqueName11 = WindowsVirtualPC\\WindowsVirtualPc.csproj
 		SccProjectName11 = WindowsVirtualPC
 		SccLocalPath11 = WindowsVirtualPC
+		SccProjectUniqueName12 = TFS2010\\TFS2010.csproj
+		SccProjectName12 = TFS2010
+		SccLocalPath12 = TFS2010
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
@@ -149,6 +139,10 @@ Global
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

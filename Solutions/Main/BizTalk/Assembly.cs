@@ -10,6 +10,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
+    using Microsoft.XLANGs.BaseTypes;
     using MSBuild.ExtensionPack.Framework;
     using Deployment = Microsoft.BizTalk.ApplicationDeployment;
     using Reflection = System.Reflection;
@@ -46,13 +47,12 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
     public class BizTalkAssembly : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
         private const string AddTaskAction = "Add";
         private const string RemoveTaskAction = "Remove";
-        private const string BizTalkAssemblyResourceType = "System.BizTalk:BizTalkAssembly";
         private string database = "BizTalkMgmtDb";
         private List<BizTalkResource> resources = new List<BizTalkResource>();
         private bool gac = true;
@@ -230,6 +230,9 @@ namespace MSBuild.ExtensionPack.BizTalk
         {
             Reflection.Assembly assembly = Reflection.Assembly.LoadFile(assemblyPath);
 
+            // if the assembly has this attribute, then it's a BizTalk assembly - otherwise it's a standard .NET assembly
+            object[] bizTalkAssemblyAttribute = assembly.GetCustomAttributes(typeof(BizTalkAssemblyAttribute), false);
+
             return new BizTalkResource
             {
                 FullName = assembly.FullName,
@@ -237,7 +240,8 @@ namespace MSBuild.ExtensionPack.BizTalk
                 Dependencies = assembly.GetReferencedAssemblies().Select(a => a.FullName).ToList(),
                 Order = order,
                 SourcePath = assemblyPath,
-                DeploymentPath = Path.Combine(Path.GetDirectoryName(this.DeploymentPath) ?? string.Empty, Path.GetFileName(assemblyPath))
+                DeploymentPath = Path.Combine(Path.GetDirectoryName(this.DeploymentPath) ?? string.Empty, Path.GetFileName(assemblyPath)),
+                ResourceType = bizTalkAssemblyAttribute.Length == 0 ? "System.BizTalk:Assembly" : "System.BizTalk:BizTalkAssembly"
             };
         }
 
@@ -260,7 +264,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                         this.Resources.ForEach(r => this.AddAssembly(r));
                     }
 
-                    this.Resources.ForEach(r => btsApplication.AddResource(BizTalkAssemblyResourceType, r.FullName, r.Properties, this.Force));
+                    this.Resources.ForEach(r => btsApplication.AddResource(r.ResourceType, r.FullName, r.Properties, this.Force));
                 }
                 catch
                 {
@@ -433,6 +437,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         private int SortResourcesExecute(BizTalkResource root, int order)
         {
             order = root.Dependencies.Select(name => this.Resources.Find(r => r.FullName == name)).Where(dependency => dependency != null).Where(dependency => !dependency.IsProcessed).Aggregate(order, (current, dependency) => this.SortResourcesExecute(dependency, current));
+
             root.IsProcessed = true;
             root.Order = order;
             return ++order;
@@ -469,6 +474,8 @@ namespace MSBuild.ExtensionPack.BizTalk
             public string DeploymentPath { get; set; }
 
             public bool IsProcessed { get; set; }
+
+            public string ResourceType { get; set; }
         }
     }
 }

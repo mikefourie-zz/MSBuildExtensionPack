@@ -16,5 +16,10 @@
             <Output PropertyName="DoesExist" TaskParameter="Exists"/>
         </MSBuild.ExtensionPack.Web.Iis6AppPool>
         <Message Text="AnAppPool exists: $(DoesExist)"/>
+        <!-- GetMetabasePropertyValue -->
+        <MSBuild.ExtensionPack.Web.Iis6AppPool TaskAction="GetMetabasePropertyValue" Name="DefaultAppPool" MetabasePropertyName="AppPoolState">
+            <Output PropertyName="AppPoolState" TaskParameter="MetabasePropertyValue"/>
+        </MSBuild.ExtensionPack.Web.Iis6AppPool>
+        <Message Text="AppPoolState: $(AppPoolState)"/>
     </Target>
 </Project>

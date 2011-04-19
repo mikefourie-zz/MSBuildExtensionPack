@@ -70,7 +70,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/9af9f708-425c-dc43-e44c-0d1d113e5d62.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/9af9f708-425c-dc43-e44c-0d1d113e5d62.htm")]
     public class NUnit : ToolTask
     {
         private string version = "2.5.7";
@@ -279,6 +279,21 @@ namespace MSBuild.ExtensionPack.CodeQuality
             return this.Failures;
         }
 
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            this.Log.LogMessage(MessageImportance.Normal, singleLine);
+        }
+
+        private static int GetAttributeInt32Value(string name, XmlNode node)
+        {
+            if (node.Attributes[name] != null)
+            {
+                return Convert.ToInt32(node.Attributes[name].Value, CultureInfo.InvariantCulture);
+            }
+
+            return 0;
+        }
+
         /// <summary>
         /// Processes the nunit results
         /// </summary>
@@ -310,13 +325,13 @@ namespace MSBuild.ExtensionPack.CodeQuality
                     return;
                 }
 
-                this.Total = Convert.ToInt32(root.Attributes["total"].Value, CultureInfo.InvariantCulture);
-                this.NotRun = Convert.ToInt32(root.Attributes["not-run"].Value, CultureInfo.InvariantCulture);
-                this.Errors = Convert.ToInt32(root.Attributes["errors"].Value, CultureInfo.InvariantCulture);
-                this.Inconclusive = Convert.ToInt32(root.Attributes["inconclusive"].Value, CultureInfo.InvariantCulture);
-                this.Ignored = Convert.ToInt32(root.Attributes["ignored"].Value, CultureInfo.InvariantCulture);
-                this.Skipped = Convert.ToInt32(root.Attributes["skipped"].Value, CultureInfo.InvariantCulture);
-                this.Invalid = Convert.ToInt32(root.Attributes["invalid"].Value, CultureInfo.InvariantCulture);
+                this.Total = GetAttributeInt32Value("total", root);
+                this.NotRun = GetAttributeInt32Value("not-run", root);
+                this.Errors = GetAttributeInt32Value("errors", root);
+                this.Inconclusive = GetAttributeInt32Value("inconclusive", root);
+                this.Ignored = GetAttributeInt32Value("ignored", root);
+                this.Skipped = GetAttributeInt32Value("skipped", root);
+                this.Invalid = GetAttributeInt32Value("invalid", root);
             }
         }
     }

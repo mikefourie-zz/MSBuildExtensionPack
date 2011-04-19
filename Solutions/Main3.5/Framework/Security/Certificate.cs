@@ -225,20 +225,20 @@ namespace MSBuild.ExtensionPack.Security
     /// </Project>
     /// ]]></code>    
     /// </example>    
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
     public class Certificate : BaseTask
     {
         private const string AddTaskAction = "Add";
         private const string RemoveTaskAction = "Remove";
         private const string SetUserRightsTaskAction = "SetUserRights";
         private const string GetExpiryDateTaskAction = "GetExpiryDate";
-        private const string GetBase64EncodedCertificateTaskAction = "GetBase64EncodedCertificate";        
+        private const string GetBase64EncodedCertificateTaskAction = "GetBase64EncodedCertificate";
         private const string GetInfoTaskAction = "GetInfo";
         private const string AccessRightsRead = "Read";
         private const string AccessRightsReadAndExecute = "ReadAndExecute";
         private const string AccessRightsWrite = "Write";
         private const string AccessRightsFullControl = "FullControl";
-        private string storeName = "MY";
+        private StoreName storeName = System.Security.Cryptography.X509Certificates.StoreName.My;
 
         [DropdownValue(AddTaskAction)]
         [DropdownValue(GetExpiryDateTaskAction)]
@@ -318,7 +318,7 @@ namespace MSBuild.ExtensionPack.Security
         /// Gets the Certificate Exprity Date.
         /// </summary>
         [Output]
-        [TaskAction(GetExpiryDateTaskAction, true)]                
+        [TaskAction(GetExpiryDateTaskAction, true)]
         public string CertificateExpiryDate { get; set; }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace MSBuild.ExtensionPack.Security
         public string AccessRights { get; set; }
 
         /// <summary>
-        /// Sets the name of the store. Defaults to MY
+        /// Sets the name of the store. Defaults to My
         /// <para/>
         /// AddressBook:          The store for other users<br />
         /// AuthRoot:             The store for third-party certificate authorities<br />
@@ -353,8 +353,8 @@ namespace MSBuild.ExtensionPack.Security
         [TaskAction(GetInfoTaskAction, false)]
         public string StoreName
         {
-            get { return this.storeName; }
-            set { this.storeName = value; }
+            get { return this.storeName.ToString(); }
+            set { this.storeName = (StoreName)Enum.Parse(typeof(StoreName), value); }
         }
 
         /// <summary>
@@ -407,7 +407,7 @@ namespace MSBuild.ExtensionPack.Security
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// Extracts a certificate from the certificate Distinguished Name
         /// </summary>
         /// <param name="distinguishedName">The distinguished name of the certificate</param>
@@ -415,8 +415,8 @@ namespace MSBuild.ExtensionPack.Security
         /// <returns>Returns the X509 certificate with the given DName</returns>
         private static X509Certificate2 GetCertificateFromDistinguishedName(string distinguishedName, X509Store certificateStore)
         {
-           // Iterate through each certificate trying to find the first unexpired certificate
-           return certificateStore.Certificates.Cast<X509Certificate2>().FirstOrDefault(certificate => string.Compare(certificate.Subject, distinguishedName, StringComparison.CurrentCultureIgnoreCase) == 0);
+            // Iterate through each certificate trying to find the first unexpired certificate
+            return certificateStore.Certificates.Cast<X509Certificate2>().FirstOrDefault(certificate => string.Compare(certificate.Subject, distinguishedName, StringComparison.CurrentCultureIgnoreCase) == 0);
         }
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace MSBuild.ExtensionPack.Security
         private void GetInfo()
         {
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Store store = this.GetStore(locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
             X509Certificate2 cert = null;
 
@@ -590,7 +590,7 @@ namespace MSBuild.ExtensionPack.Security
         private void Remove()
         {
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Store store = this.GetStore(locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
             X509Certificate2 cert;
             if (!string.IsNullOrEmpty(this.Thumbprint))
@@ -660,7 +660,7 @@ namespace MSBuild.ExtensionPack.Security
             cert.Import(this.FileName.GetMetadata("FullPath"), this.CertPassword, keyflags);
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Certificate: {0} to Store: {1}", this.FileName.GetMetadata("FullPath"), this.StoreName));
-            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Store store = this.GetStore(locationFlag);
             store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadWrite);
             store.Add(cert);
             store.Close();
@@ -717,7 +717,7 @@ namespace MSBuild.ExtensionPack.Security
         private void GetCertificateExpiryDate()
         {
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Store store = this.GetStore(locationFlag);
             X509Certificate2 certificate = null;
 
             try
@@ -754,7 +754,7 @@ namespace MSBuild.ExtensionPack.Security
         private void GetCertificateAsBase64String()
         {
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Store store = this.GetStore(locationFlag);
             X509Certificate2 certificate = null;
 
             try
@@ -785,13 +785,20 @@ namespace MSBuild.ExtensionPack.Security
             }
         }
 
+        private X509Store GetStore(StoreLocation locationFlag)
+        {
+            X509Store store = new X509Store(this.storeName, locationFlag);
+            this.Log.LogMessage(MessageImportance.Low, "Opening store {0} at location {1}.", this.StoreName, locationFlag);
+            return store;
+        }
+
         /// <summary>
         /// Set the given user access rights on the given certificate to the given user
         /// </summary>        
         private void SetUserAccessRights()
         {
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
-            X509Store store = new X509Store(this.StoreName, locationFlag);
+            X509Store store = this.GetStore(locationFlag);
             X509Certificate2 certificate = null;
 
             try

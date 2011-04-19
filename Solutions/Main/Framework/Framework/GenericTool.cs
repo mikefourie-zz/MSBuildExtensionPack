@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
     public class GenericTool : ToolTask
     {
         /// <summary>
@@ -72,6 +72,11 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [Output]
         public int RealExitCode { get; set; }
+
+        /// <summary>
+        /// Set to true to log output to the console. Default is false
+        /// </summary>
+        public bool LogToConsole { get; set; }
 
         /// <summary>
         /// The Executable to call
@@ -134,6 +139,14 @@ namespace MSBuild.ExtensionPack.Framework
 
             this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Unhandled Return Code: {0}. Returning -1.", this.RealExitCode));         
             return -1;
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            if (this.LogToConsole)
+            {
+                this.Log.LogMessage(MessageImportance.Normal, singleLine);
+            }
         }
     }
 }

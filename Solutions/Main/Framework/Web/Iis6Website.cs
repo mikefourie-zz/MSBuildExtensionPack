@@ -15,6 +15,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output: </b>Exists)</para>
     /// <para><i>Continue</i> (<b>Required: </b> Name)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
+    /// <para><i>GetMetabasePropertyValue</i> (<b>Required: </b> Name, MetabasePropertyName<b>Output: </b>MetabasePropertyValue)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><i>Pause</i> (<b>Required: </b> Name)</para>
@@ -35,6 +36,11 @@ namespace MSBuild.ExtensionPack.Web
     ///         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Pause" Name="awebsite" />
     ///         <!-- Stop a website -->
     ///         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Stop" Name="awebsite" />
+    ///         <!-- GetMetabasePropertyValue -->
+    ///         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="GetMetabasePropertyValue" Name="awebsite" MetabasePropertyName="ServerState">
+    ///             <Output PropertyName="WebsiteState" TaskParameter="MetabasePropertyValue"/>
+    ///         </MSBuild.ExtensionPack.Web.Iis6Website>
+    ///         <Message Text="WebsiteState: $(ServerState)"/>
     ///         <!-- Start a website -->
     ///         <MSBuild.ExtensionPack.Web.Iis6Website TaskAction="Start" Name="awebsite" />
     ///         <!-- Check whether a website exists -->
@@ -51,13 +57,14 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
         private const string CreateTaskAction = "Create";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string ContinueTaskAction = "Continue";
         private const string DeleteTaskAction = "Delete";
+        private const string GetMetabasePropertyValueTaskAction = "GetMetabasePropertyValue";
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
         private const string PauseTaskAction = "Pause";
@@ -89,6 +96,19 @@ namespace MSBuild.ExtensionPack.Web
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
             set { this.properties = value; }
         }
+
+        /// <summary>
+        /// Sets the Metabase Property Name to retrieve. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
+        /// </summary>
+        [TaskAction(GetMetabasePropertyValueTaskAction, true)]
+        public string MetabasePropertyName { get; set; }
+
+        /// <summary>
+        /// Gets the string value of the requested MetabasePropertyName
+        /// </summary>
+        [Output]
+        [TaskAction(GetMetabasePropertyValueTaskAction, false)]
+        public string MetabasePropertyValue { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -163,6 +183,9 @@ namespace MSBuild.ExtensionPack.Web
                 case "CheckExists":
                     this.CheckWebsiteExists();
                     break;
+                case GetMetabasePropertyValueTaskAction:
+                    this.GetMetabasePropertyValue();
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
@@ -218,6 +241,26 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
+        private void GetMetabasePropertyValue()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Getting Metabase Property Value for: {0} from: {1}", this.MetabasePropertyName, this.Name));
+            if (this.CheckWebsiteExists())
+            {
+                if (this.websiteEntry.Properties[this.MetabasePropertyName] != null && this.websiteEntry.Properties[this.MetabasePropertyName].Value != null)
+                {
+                    this.MetabasePropertyValue = this.websiteEntry.Properties[this.MetabasePropertyName].Value.ToString();
+                }
+                else
+                {
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "MetabasePropertyName not found: {0}", this.MetabasePropertyName));
+                }
+            }
+            else
+            {
+                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Name));
+            }
+        }
+        
         private bool CheckWebsiteExists()
         {
             this.LoadWebsite();

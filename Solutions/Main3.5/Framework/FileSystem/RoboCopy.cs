@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
     public class RoboCopy : ToolTask
     {
         /// <summary>
@@ -66,6 +66,11 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Type 'robocopy.exe /?' at the command prompt for all available options
         /// </summary>
         public string Options { get; set; }
+
+        /// <summary>
+        /// Set to true to log output to the console. Default is false
+        /// </summary>
+        public bool LogToConsole { get; set; }
 
         protected override string ToolName
         {
@@ -161,6 +166,14 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             return retVal;
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            if (this.LogToConsole)
+            {
+                this.Log.LogMessage(MessageImportance.Normal, singleLine);
+            }
         }
     }
 }

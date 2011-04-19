@@ -48,17 +48,17 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
-    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Comments, Notes, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
-    /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
-    /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
-    /// <para><i>GetChangeset</i> (<b>Required: </b>VersionSpec <b>Optional: </b>Server, WorkingDirectory <b>Output:</b> ExitCode, Changeset)</para>
-    /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
-    /// <para><i>Resolve</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Recursive, Version, Auto, NewName)</para>
-    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode, PendingChangesExistItem)</para>
-    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
-    /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Comments, Notes, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
+    /// <para><i>GetChangeset</i> (<b>Required: </b>VersionSpec <b>Optional: </b>Login, Server, WorkingDirectory <b>Output:</b> ExitCode, Changeset)</para>
+    /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Login, Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
+    /// <para><i>Resolve</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Recursive, Version, Auto, NewName)</para>
+    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode, PendingChangesExistItem)</para>
+    /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -103,7 +103,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
     public class TfsSource : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -278,6 +278,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         [TaskAction(CheckinTaskAction, false)]
         public string Notes { get; set; }
+
+        /// <summary>
+        /// Sets the Login. TFS2010 and greater only.
+        /// </summary>
+        [TaskAction(CheckinTaskAction, false)]
+        public string Login { get; set; }
 
         /// <summary>
         /// Sets whether the Tfs operation should be recursive. Default is true.
@@ -582,6 +588,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (string.IsNullOrEmpty(this.Server) == false)
             {
                 arguments += " /s:" + this.Server;
+            }
+
+            if (string.IsNullOrEmpty(this.Login) == false)
+            {
+                arguments += " /login:" + this.Login;
             }
 
             if (!this.Recursive)

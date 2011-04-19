@@ -46,11 +46,13 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" AllowUsers="@(Allow)" CreateSharePath="true" SharePath="C:\fff1" ShareName="MSBEPS1" Description="A Description of MSBEPS1"/>
     ///         <!-- Create a share. Defaults to full permission for Everyone. -->
     ///         <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" SharePath="C:\fffd" ShareName="MSBEPS2" Description="A Description of MSBEPS2"/>
+    ///         <!-- Create a share on a remote server -->
+    ///         <MSBuild.ExtensionPack.FileSystem.Share TaskAction="Create" AllowUsers="@(Allow)" CreateSharePath="true" MachineName="MyFileShareServer" ShareName="Temp" SharePath="D:\Temp" Description="Folder for shared files used." />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
         private const string ModifyPermissionsTaskAction = "ModifyPermissions";
@@ -171,7 +173,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <para/>
         /// <code lang="xml"><![CDATA[
         /// <Allow Include="AUser">
-        ///     <Permission>Read or Change etc</Permission>
+        ///     <Permission>Full, Read or Change etc</Permission>
         /// </Allow>
         /// ]]></code>    
         /// </summary>
@@ -538,7 +540,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             string permissions = user.GetMetadata("Permission");
 
-            if (string.IsNullOrEmpty(permissions))
+            if (string.IsNullOrEmpty(permissions) | permissions.IndexOf("Full", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 // apply all permissions
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Full permission for: {0}", user.ItemSpec));

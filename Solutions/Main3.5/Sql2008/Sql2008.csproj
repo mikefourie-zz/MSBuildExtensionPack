@@ -65,6 +65,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AnalysisServices, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v3.5">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -97,16 +98,19 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AnalysisServices.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="XmlSamples\AnalysisServices2008.proj" />
     <None Include="XmlSamples\Database2008.proj" />
     <None Include="XmlSamples\Server2008.proj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AssemblyReferences\Microsoft.AnalysisServices.DLL" />
     <Content Include="AssemblyReferences\Microsoft.SqlServer.ConnectionInfo.dll" />
     <Content Include="AssemblyReferences\Microsoft.SqlServer.Management.Sdk.Sfc.dll" />
     <Content Include="AssemblyReferences\Microsoft.SqlServer.Smo.dll" />

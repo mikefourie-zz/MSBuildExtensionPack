@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetLatest</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildDefinitionName, Status <b>Output: </b>Info)</para>
-    /// <para><i>Queue</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildDefinitionName)</para>
+    /// <para><i>Queue</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject, BuildDefinitionName <b>Optional: </b>DropLocation, CommandLineArguments)</para>
     /// <para><i>RelatedChangesets</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildUri, BuildDefinitionName <b>Output: </b>Info, RelatedItems)</para>
     /// <para><i>RelatedWorkItems</i> (<b>Required: </b>TeamFoundationServerUrl, TeamProject <b>Optional: </b>BuildUri, BuildDefinitionName <b>Output: </b>Info, RelatedItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -71,7 +71,7 @@ namespace MSBuild.ExtensionPack.Tfs
     ///         <Message Text="TestStatus: %(BuildInfo.TestStatus)"/>
     ///         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
     ///         <!-- Queue a new build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="Queue" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild"/>
+    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="Queue" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="SpeedCMMI" BuildDefinitionName="DemoBuild" DropLocation= "\\Server\Share" CommandLineArguments="/P:argument"/>
     ///         <!-- Retrieve Changesets associated with a given build -->
     ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
     public class TeamBuild : BaseTask
     {
         private const string GetLatestTaskAction = "GetLatest";
@@ -100,7 +100,9 @@ namespace MSBuild.ExtensionPack.Tfs
         private string buildDefinition;
         private string buildStatus;
         private string teamProject;
-
+        private string dropLocation;
+        private string commandLineArguments;
+        
         /// <summary>
         /// Sets the TaskAction.
         /// </summary>
@@ -147,6 +149,26 @@ namespace MSBuild.ExtensionPack.Tfs
         {
             get { return this.buildDetails != null ? this.buildDetails.BuildDefinition.Name : this.buildDefinition; }
             set { this.buildDefinition = value; }
+        }
+
+        /// <summary>
+        /// The name of the Drop folder
+        /// </summary>
+        [TaskAction(QueueTaskAction, false)]
+        public string DropLocation
+        {
+            get { return this.buildDetails != null ? this.buildDetails.DropLocation : this.dropLocation; }
+            set { this.dropLocation = value; }
+        }
+
+        /// <summary>
+        /// The Command line arguments for the build
+        /// </summary>
+        [TaskAction(QueueTaskAction, false)]
+        public string CommandLineArguments
+        {
+            get { return this.buildDetails != null ? this.buildDetails.CommandLineArguments : this.commandLineArguments; }
+            set { this.commandLineArguments = value; }
         }
 
         /// <summary>
@@ -279,8 +301,27 @@ namespace MSBuild.ExtensionPack.Tfs
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Queueing Build: {0}", this.BuildDefinitionName));
             IBuildDefinition definition = this.buildServer.GetBuildDefinition(this.TeamProject, this.BuildDefinitionName);
             IBuildRequest request = definition.CreateBuildRequest();
+
+            // Add in the optional params to the request
+            if (this.CommandLineArguments != null)
+            {
+                request.CommandLineArguments = this.CommandLineArguments;
+            }
+
+            if (this.DropLocation != null)
+            {
+                request.DropLocation = this.DropLocation;
+            }
+            
+            // queue the build
             var queuedBuild = this.buildServer.QueueBuild(request, QueueOptions.None);
-            this.BuildUri = queuedBuild.Build.Uri.ToString();
+            
+            // After adding the new prams, the Uri started throwing Null exceptions.
+            // Added check to handle it
+            if (queuedBuild.Build.Uri != null)
+            {
+                this.BuildUri = queuedBuild.Build.Uri.ToString();
+            }
         }
 
         private void GetLatestInfo()

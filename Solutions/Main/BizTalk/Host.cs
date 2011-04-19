@@ -12,10 +12,10 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>CheckExists</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, Database <b>Output: </b>Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, Database)</para>
-    /// <para><i>Update</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
+    /// <para><i>CheckExists</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, DatabaseServer, Database <b>Output: </b>Exists)</para>
+    /// <para><i>Create</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, DatabaseServer, Database, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>Update</i> (<b>Required: </b>HostName, WindowsGroup <b>Optional: </b>MachineName, Database, DatabaseServer, HostType, Use32BitHostOnly, Trusted, Tracking, Default, AdditionalHostSettings)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -37,7 +37,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
     public class BizTalkHost : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -134,7 +134,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         public string AdditionalHostSettings { get; set; }
 
         /// <summary>
-        /// Gets whether the Application exists
+        /// Gets whether the Host exists
         /// </summary>
         [TaskAction(CheckExistsTaskAction, false)]
         [TaskAction(CreateTaskAction, false)]

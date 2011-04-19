@@ -31,7 +31,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/c73b9da3-3269-a0b1-2f17-b51c2db37293.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/c73b9da3-3269-a0b1-2f17-b51c2db37293.htm")]
     public class Thread : BaseTask
     {
         private const string AbortTaskAction = "Abort";

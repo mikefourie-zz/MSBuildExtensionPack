@@ -628,7 +628,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
                 throw new FtpException(code, errorText);
             }
 
-            throw new Win32Exception(code);
+            throw new Win32Exception(code, "Error code: " + code + ". Please see: http://support.microsoft.com/kb/193625");
         }
 
         /// <summary>

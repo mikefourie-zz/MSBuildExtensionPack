@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.2.0/html/b66e00d5-adec-2163-3878-e5812f7f53a5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/b66e00d5-adec-2163-3878-e5812f7f53a5.htm")]
     public class VSDevEnv : ToolTask
     {
         private string version = "9.0";
@@ -128,6 +128,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             return base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+        }
+
+        protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+        {
+            this.Log.LogMessage(MessageImportance.Normal, singleLine);
         }
     }
 }

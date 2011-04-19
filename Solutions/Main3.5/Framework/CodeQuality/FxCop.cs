@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac <b>Output: </b>AnalysisFailed, OutputText)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
     public class FxCop : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
@@ -172,6 +172,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
         [Output]
         [TaskAction(AnalyseTaskAction, false)]
         public bool AnalysisFailed { get; set; }
+
+        /// <summary>
+        /// The exit code returned from FxCop
+        /// </summary>
+        [Output]
+        public int ExitCode { get; set; }
 
         /// <summary>
         /// Gets the OutputText emitted during analysis
@@ -340,6 +346,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 proc.WaitForExit();
                 if (proc.ExitCode != 0)
                 {
+                    this.ExitCode = proc.ExitCode;
                     Log.LogError(proc.ExitCode.ToString(CultureInfo.CurrentCulture));
                     this.AnalysisFailed = true;
                     return;

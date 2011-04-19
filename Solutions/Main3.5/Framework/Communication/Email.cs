@@ -9,7 +9,7 @@ namespace MSBuild.ExtensionPack.Communication
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Send</i> (<b>Required: </b> SmtpServer, MailFrom, MailTo, Subject  <b>Optional: </b> Priority, Body, Format, Attachments, UseDefaultCredentials, UserName, UserPassword)</para>
+    /// <para><i>Send</i> (<b>Required: </b> SmtpServer, MailFrom, MailTo, Subject  <b>Optional: </b> Priority, Body, Format, Attachments, UseDefaultCredentials, UserName, UserPassword, Port, EnableSsl)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
     public class Email : BaseTask
     {
         private const string SendTaskAction = "Send";
@@ -55,6 +55,18 @@ namespace MSBuild.ExtensionPack.Communication
         [Required]
         [TaskAction(SendTaskAction, true)]
         public string SmtpServer { get; set; }
+
+        /// <summary>
+        /// Sets the port to use. Ignored if not specified.
+        /// </summary>
+        [TaskAction(SendTaskAction, true)]
+        public int Port { get; set; }
+
+        /// <summary>
+        /// Sets whether to EnableSsl
+        /// </summary>
+        [TaskAction(SendTaskAction, true)]
+        public bool EnableSsl { get; set; }
 
         /// <summary>
         /// The email address to send the email from.
@@ -140,44 +152,47 @@ namespace MSBuild.ExtensionPack.Communication
         private void Send()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Sending email: {0}", this.Subject));
-            MailMessage msg = new MailMessage { From = new MailAddress(this.MailFrom) };
-
-            foreach (ITaskItem recipient in this.MailTo)
+            using (MailMessage msg = new MailMessage())
             {
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding recipient: {0}", recipient.ItemSpec));
-                msg.To.Add(new MailAddress(recipient.ItemSpec));
-            }
-
-            if (this.Attachments != null)
-            {
-                foreach (ITaskItem file in this.Attachments)
+                msg.From = new MailAddress(this.MailFrom);
+                foreach (ITaskItem recipient in this.MailTo)
                 {
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
-                    Attachment attachment = new Attachment(file.ItemSpec);
-                    msg.Attachments.Add(attachment);
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding recipient: {0}", recipient.ItemSpec));
+                    msg.To.Add(new MailAddress(recipient.ItemSpec));
                 }
-            }
 
-            msg.Subject = this.Subject ?? string.Empty;
-            msg.Body = this.Body ?? string.Empty;
-            if (this.format.ToUpperInvariant() == "HTML")
-            {
-                msg.IsBodyHtml = true;
-            }
+                if (this.Attachments != null)
+                {
+                    foreach (ITaskItem file in this.Attachments)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding attachment: {0}", file.ItemSpec));
+                        Attachment attachment = new Attachment(file.ItemSpec);
+                        msg.Attachments.Add(attachment);
+                    }
+                }
 
-            SmtpClient client = new SmtpClient(this.SmtpServer);
+                msg.Subject = this.Subject ?? string.Empty;
+                msg.Body = this.Body ?? string.Empty;
+                if (this.format.ToUpperInvariant() == "HTML")
+                {
+                    msg.IsBodyHtml = true;
+                }
 
-            if (!string.IsNullOrEmpty(this.UserName))
-            {
-                client.Credentials = new System.Net.NetworkCredential(this.UserName, this.UserPassword);
-                client.UseDefaultCredentials = false;
-            }
-            else
-            {
+                SmtpClient client = new SmtpClient(this.SmtpServer);
+                if (this.Port > 0)
+                {
+                    client.Port = this.Port;
+                }
+
+                client.EnableSsl = this.EnableSsl;
                 client.UseDefaultCredentials = this.UseDefaultCredentials;
-            }
+                if (!string.IsNullOrEmpty(this.UserName))
+                {
+                    client.Credentials = new System.Net.NetworkCredential(this.UserName, this.UserPassword);
+                }
 
-            client.Send(msg);
+                client.Send(msg);
+            }
         }
     }
 }

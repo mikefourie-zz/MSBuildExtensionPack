@@ -76,7 +76,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.8.0/html/dab48c6f-9775-22d4-988b-81eba0e3a3a6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/dab48c6f-9775-22d4-988b-81eba0e3a3a6.htm")]
     public class ComponentServices : BaseTask
     {
         private const string AddComponentTaskAction = "AddComponent";
