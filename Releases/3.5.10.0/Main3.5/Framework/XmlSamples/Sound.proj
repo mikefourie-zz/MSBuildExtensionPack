@@ -1,0 +1,21 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Play a bunch of sounds with various tones, repeats and durations-->
+        <MSBuild.ExtensionPack.Multimedia.Sound TaskAction="Play" SoundFile="C:\Windows\Media\notify.wav" Repeat="10"/>
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="500"/>
+        <MSBuild.ExtensionPack.Multimedia.Sound TaskAction="Play" SystemSound="Asterisk"/>
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="500"/>
+        <MSBuild.ExtensionPack.Multimedia.Sound TaskAction="Play" SystemSound="Beep"/>
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="500"/>
+        <MSBuild.ExtensionPack.Multimedia.Sound TaskAction="Play" SystemSound="Exclamation"/>
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="500"/>
+        <MSBuild.ExtensionPack.Multimedia.Sound TaskAction="Play" SystemSound="Hand"/>
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="500"/>
+        <MSBuild.ExtensionPack.Multimedia.Sound TaskAction="Play" SystemSound="Question"/>
+    </Target>
+</Project>

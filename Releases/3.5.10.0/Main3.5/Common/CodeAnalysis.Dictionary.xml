@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>Changesets</Word>
+    </Recognized>
+    <!--<Compound>
+      <Term CompoundAlternate="...">...</Term>
+    </Compound>-->
+    <!--<DiscreteExceptions>
+      <Term>...</Term>
+    </DiscreteExceptions>-->
+  </Words>
+  <!--<Acronyms>
+    <CasingExceptions>
+      <Acronym>...</Acronym>
+    </CasingExceptions>
+  </Acronyms>-->
+</Dictionary>

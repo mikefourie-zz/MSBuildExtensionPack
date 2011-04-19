@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="DeployFiles" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- Please be aware that the rest of the build file is ommited for brevity -->
+    <PropertyGroup>
+        <!-- Tell Team Build not to override $(OutDir), so that we can build once from MSBuild and not rebuild when DevEnv.com is executed. -->
+        <CustomizableOutDir>true</CustomizableOutDir>
+    </PropertyGroup>
+    <Target Name="AfterCompileSolution">
+        
+        <!-- Use the DevEnv task to build our setup project. -->
+        <MSBuild.ExtensionPack.Tfs.DevEnv TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Solution="$(Solution)" SolutionConfiguration="$(Configuration)" SolutionPlatform="$(Platform)" Target="Build" Version="9" />
+        <!-- Copy all compilation outputs for the solution AND the setup project to the Team Build out dir so that they are copied to the drop location, can be found by unit tests, etc. -->
+        <ItemGroup>
+            <SolutionOutputs Condition=" '%(CompilationOutputs.Solution)' == '$(Solution)' " Include="%(RootDir)%(Directory)**\*.*" />
+            <SolutionOutputs Include="$(SolutionRoot)\Setup1\$(Configuration)\**\*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(SolutionOutputs)" DestinationFolder="$(TeamBuildOutDir)" />
+        
+    </Target>
+</Project>

@@ -1,0 +1,39 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="BuildNumberOverrideTarget" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="BuildNumberOverrideTarget">
+        <PropertyGroup>
+            <FieldToIncrement Condition=" '$(IncrementalBuild)'=='true' ">4</FieldToIncrement>
+            <FieldToIncrement Condition=" '$(IncrementalBuild)'!='true' ">3</FieldToIncrement>
+        </PropertyGroup>
+        <!-- Get the latest build number without incrementing it -->
+        <MSBuild.ExtensionPack.SqlServer.SqlVersion Taskaction="GetVersion" BuildName="V9 Production Build" DatabaseName="Mike">
+            <Output TaskParameter="Version" PropertyName="LatestVersion" />
+        </MSBuild.ExtensionPack.SqlServer.SqlVersion>
+        <Message Text="LatestVersion is: $(LatestVersion)"/>
+        <!-- Get the latest build number and increment as necessary -->
+        <MSBuild.ExtensionPack.SqlServer.SqlVersion Taskaction="GetVersion" BuildName="V9 Production Build" FieldToIncrement="$(FieldToIncrement)" DatabaseName="Mike">
+            <Output TaskParameter="Major" PropertyName="BuildMajor" />
+            <Output TaskParameter="Minor" PropertyName="BuildMinor" />
+            <Output TaskParameter="Build" PropertyName="BuildBuild" />
+            <Output TaskParameter="Revision" PropertyName="BuildRevision" />
+        </MSBuild.ExtensionPack.SqlServer.SqlVersion>
+        <!-- Override Team Build BuildNumber property -->
+        <PropertyGroup>
+            <BuildNumber>$(BuildMajor).$(BuildMinor).$(BuildBuild).$(BuildRevision)</BuildNumber>
+        </PropertyGroup>
+        <Message Text="BuildNumber is: $(BuildNumber)"/>
+        <!-- Export values so they can be seen by targets inside CoreCompile -->
+        <PropertyGroup>
+            <CustomPropertiesForBuild>$(CustomPropertiesForBuild);BuildMajor=$(BuildMajor);BuildMinor=$(BuildMinor);BuildBuild=$(BuildBuild);BuildRevision=$(BuildRevision)</CustomPropertiesForBuild>
+        </PropertyGroup>
+        <!-- Get the latest build number without incrementing it -->
+        <MSBuild.ExtensionPack.SqlServer.SqlVersion Taskaction="GetVersion" BuildName="V9 Production Build" DatabaseName="Mike" PaddingCount="4" PaddingDigit="0">
+            <Output TaskParameter="Version" PropertyName="LatestVersion" />
+        </MSBuild.ExtensionPack.SqlServer.SqlVersion>
+        <Message Text="LatestVersion is: $(LatestVersion)"/>
+    </Target>
+</Project>
