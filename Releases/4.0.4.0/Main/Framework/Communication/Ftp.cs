@@ -6,8 +6,8 @@ namespace MSBuild.ExtensionPack.Communication
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using Extended;
     using Microsoft.Build.Framework;
-    using MSBuild.ExtensionPack.Communication.Extended;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -135,23 +135,18 @@ namespace MSBuild.ExtensionPack.Communication
                 case CreateDirectoryTaskAction:
                     this.CreateDirectory();
                     break;
-
                 case DeleteDirectoryTaskAction:
                     this.DeleteDirectory();
                     break;
-
                 case DeleteFilesTaskAction:
                     this.DeleteFiles();
                     break;
-
                 case DownloadFilesTaskAction:
                     this.DownloadFiles();
                     break;
-
                 case UploadFilesTaskAction:
                     this.UploadFiles();
-                    break;                
-                
+                    break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid Task Action passed: {0}", this.TaskAction));
                     return;
@@ -163,36 +158,29 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         private void CreateDirectory()
         {
-            FtpConnection ftpConnection = this.CreateFtpConnection();            
-            try
-            {   
-                ftpConnection.LogOn();
-                if (string.IsNullOrEmpty(this.RemoteDirectoryName))
-                {
-                    this.Log.LogError("The required Remote Directory Name attribute has not been set for FTP.");                 
-                }
-                else
-                {
-                    try
-                    {
-                        if (ftpConnection.DirectoryExists(this.RemoteDirectoryName))
-                        {
-                            this.Log.LogError("The FTP Directory already exists on the ftp server.");
-                        }
-                        else
-                        {
-                            ftpConnection.CreateDirectory(this.RemoteDirectoryName);
-                        }
-                    }
-                    catch (FtpException ex)
-                    {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error creating ftp directory: {0}. The Error Details are \"{1}\" and error code is {2} ", this.RemoteDirectoryName, ex.Message, ex.ErrorCode));
-                    }                
-                }
-            }
-            finally
+            if (string.IsNullOrEmpty(this.RemoteDirectoryName))
             {
-                ftpConnection.Close();
+                this.Log.LogError("The required RemoteDirectoryName attribute has not been set for FTP.");
+                return;
+            }
+
+            using (FtpConnection ftpConnection = this.CreateFtpConnection())
+            {
+                ftpConnection.LogOn();
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Directory: {0}", this.RemoteDirectoryName));
+                try
+                {
+                    ftpConnection.CreateDirectory(this.RemoteDirectoryName);
+                }
+                catch (FtpException ex)
+                {
+                    if (ex.Message.Contains("550"))
+                    {
+                        return;
+                    }
+
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error creating ftp directory: {0}. The Error Details are \"{1}\" and error code is {2} ", this.RemoteDirectoryName, ex.Message, ex.ErrorCode));
+                }
             }
         }
 
@@ -201,36 +189,29 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         private void DeleteDirectory()
         {
-            FtpConnection ftpConnection = this.CreateFtpConnection();
-            try
+            if (string.IsNullOrEmpty(this.RemoteDirectoryName))
+            {
+                this.Log.LogError("The required RemoteDirectoryName attribute has not been set for FTP.");
+                return;
+            }
+
+            using (FtpConnection ftpConnection = this.CreateFtpConnection())
             {
                 ftpConnection.LogOn();
-                if (string.IsNullOrEmpty(this.RemoteDirectoryName))
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Directory: {0}", this.RemoteDirectoryName));
+                try
                 {
-                    this.Log.LogError("The required Remote Directory Name attribute has not been set for FTP.");
+                    ftpConnection.DeleteDirectory(this.RemoteDirectoryName);
                 }
-                else
+                catch (FtpException ex)
                 {
-                    try
+                    if (ex.Message.Contains("550"))
                     {
-                        if (!ftpConnection.DirectoryExists(this.RemoteDirectoryName))
-                        {                            
-                            this.Log.LogError("The FTP Directory does not exist.");
-                        }
-                        else
-                        {
-                            ftpConnection.DeleteDirectory(this.RemoteDirectoryName);                         
-                        }
+                        return;
                     }
-                    catch (FtpException ex)
-                    {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error creating ftp directory: {0}. The Error Details are \"{1}\" and error code is {2} ", this.RemoteDirectoryName, ex.Message, ex.ErrorCode));
-                    }
+
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error deleting ftp directory: {0}. The Error Details are \"{1}\" and error code is {2} ", this.RemoteDirectoryName, ex.Message, ex.ErrorCode));
                 }
-            }
-            finally
-            {
-                ftpConnection.Close();
             }
         }
 
@@ -239,47 +220,39 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         private void DeleteFiles()
         {
-            FtpConnection ftpConnection = this.CreateFtpConnection();
-            try
+            if (this.FileNames == null)
+            {
+                this.Log.LogError("The required FileNames attribute has not been set for FTP.");
+                return;
+            }
+
+            using (FtpConnection ftpConnection = this.CreateFtpConnection())
             {
                 ftpConnection.LogOn();
-                if (this.FileNames == null)
+                this.LogTaskMessage("Deleting Files");
+                if (!string.IsNullOrEmpty(this.RemoteDirectoryName))
                 {
-                    this.Log.LogError("The required Files Names attribute has not been set for FTP.");
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Current Directory: {0}", this.RemoteDirectoryName));
+                    ftpConnection.SetCurrentDirectory(this.RemoteDirectoryName);
                 }
-                else
+
+                foreach (string fileName in this.FileNames.Select(item => item.ItemSpec))
                 {
                     try
                     {
-                        if (!string.IsNullOrEmpty(this.RemoteDirectoryName))
-                        {
-                            ftpConnection.SetCurrentDirectory(this.RemoteDirectoryName);
-                        }
-
-                        foreach (string fileName in this.FileNames.Select(item => item.ItemSpec))
-                        {
-                            try
-                            {
-                                if (ftpConnection.FileExists(fileName))
-                                {
-                                    ftpConnection.DeleteFile(fileName);                                    
-                                }
-                            }
-                            catch (FtpException ex)
-                            {   
-                                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error in deleting file: {0}. The Error Details are \"{1}\" and error code is {2} ", fileName, ex.Message, ex.ErrorCode));
-                            }
-                        }
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting: {0}", fileName));
+                        ftpConnection.DeleteFile(fileName);
                     }
                     catch (FtpException ex)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error creating ftp directory: {0}. The Error Details are \"{1}\" and error code is {2} ", this.RemoteDirectoryName, ex.Message, ex.ErrorCode));
+                        if (ex.Message.Contains("550"))
+                        {
+                            continue;
+                        }
+
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "There was an error in deleting file: {0}. The Error Details are \"{1}\" and error code is {2} ", fileName, ex.Message, ex.ErrorCode));
                     }
                 }
-            }
-            finally
-            {
-                ftpConnection.Close();
             }
         }
 
@@ -292,20 +265,22 @@ namespace MSBuild.ExtensionPack.Communication
             {
                 this.Log.LogError("The required fileNames attribute has not been set for FTP.");
                 return;
-            }                       
+            }
 
-            FtpConnection ftpConnection = this.CreateFtpConnection();            
-            try
-            {   
+            using (FtpConnection ftpConnection = this.CreateFtpConnection())
+            {
+                this.LogTaskMessage("Uploading Files");
                 if (!string.IsNullOrEmpty(this.WorkingDirectory))
                 {
-                    FtpConnection.SetLocalDirectory(this.WorkingDirectory);        
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Local Directory: {0}", this.WorkingDirectory));
+                    FtpConnection.SetLocalDirectory(this.WorkingDirectory);
                 }
 
                 ftpConnection.LogOn();
 
                 if (!string.IsNullOrEmpty(this.RemoteDirectoryName))
                 {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Current Directory: {0}", this.RemoteDirectoryName));
                     ftpConnection.SetCurrentDirectory(this.RemoteDirectoryName);
                 }
 
@@ -315,6 +290,7 @@ namespace MSBuild.ExtensionPack.Communication
                     {
                         if (File.Exists(fileName))
                         {
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Uploading: {0}", fileName));
                             ftpConnection.PutFile(fileName);
                         }
                     }
@@ -324,10 +300,6 @@ namespace MSBuild.ExtensionPack.Communication
                     }
                 }
             }
-            finally
-            {   
-                ftpConnection.Close();
-            }
         }
 
         /// <summary>
@@ -335,11 +307,17 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         private void DownloadFiles()
         {
-            FtpConnection ftpConnection = this.CreateFtpConnection();
-            try
+            using (FtpConnection ftpConnection = this.CreateFtpConnection())
             {
                 if (!string.IsNullOrEmpty(this.WorkingDirectory))
                 {
+                    if (!Directory.Exists(this.WorkingDirectory))
+                    {
+                        Directory.CreateDirectory(this.WorkingDirectory);
+                    }
+
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Local Directory: {0}", this.WorkingDirectory));
+
                     FtpConnection.SetLocalDirectory(this.WorkingDirectory);
                 }
 
@@ -350,11 +328,13 @@ namespace MSBuild.ExtensionPack.Communication
                     ftpConnection.SetCurrentDirectory(this.RemoteDirectoryName);
                 }
 
+                this.LogTaskMessage("Downloading Files");
                 if (this.FileNames == null)
                 {
                     FtpFileInfo[] filesToDownload = ftpConnection.GetFiles();
                     foreach (FtpFileInfo fileToDownload in filesToDownload)
                     {
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Downloading: {0}", fileToDownload));
                         ftpConnection.GetFile(fileToDownload.Name, false);
                     }
                 }
@@ -364,7 +344,8 @@ namespace MSBuild.ExtensionPack.Communication
                     {
                         try
                         {
-                            ftpConnection.GetFile(fileName, false);                            
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Downloading: {0}", fileName));
+                            ftpConnection.GetFile(fileName, false);
                         }
                         catch (FtpException ex)
                         {
@@ -372,10 +353,6 @@ namespace MSBuild.ExtensionPack.Communication
                         }
                     }
                 }
-            }
-            finally
-            {
-                ftpConnection.Close();
             }
         }
 
@@ -385,6 +362,8 @@ namespace MSBuild.ExtensionPack.Communication
         /// <returns>An initialised FTP Connection</returns>
         private FtpConnection CreateFtpConnection()
         {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Connecting to FTP Host: {0}", this.Host));
+
             if (!string.IsNullOrEmpty(this.UserName))
             {
                 return this.Port != 0 ? new FtpConnection(this.Host, this.Port, this.UserName, this.UserPassword) : new FtpConnection(this.Host, this.UserName, this.UserPassword);                
