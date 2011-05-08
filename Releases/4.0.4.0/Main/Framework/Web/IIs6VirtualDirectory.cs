@@ -297,13 +297,7 @@ namespace MSBuild.ExtensionPack.Web
                         {
                             int websiteIdentifier = int.Parse(webEntry.Name, CultureInfo.InvariantCulture);
                             string rootVdirPath = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/ROOT", this.IisPath, websiteIdentifier);
-                            DirectoryEntry returnedvdirEntry;
-                            using (DirectoryEntry vdirEntry = new DirectoryEntry(rootVdirPath))
-                            {
-                                returnedvdirEntry = vdirEntry;
-                            }
-
-                            return returnedvdirEntry;
+                            return new DirectoryEntry(rootVdirPath);
                         }
                     }
 
