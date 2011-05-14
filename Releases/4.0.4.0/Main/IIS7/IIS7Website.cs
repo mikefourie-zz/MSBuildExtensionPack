@@ -14,6 +14,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
+    /// <para><i>AddMimeType</i> (<b>Required: </b> Name, MimeTypes)</para>
     /// <para><i>AddResponseHeaders</i> (<b>Required: </b> Name, HttpResponseHeaders)</para>
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
@@ -50,6 +51,9 @@ namespace MSBuild.ExtensionPack.Web
     ///         <HttpResponseHeaders Include="DemoHeader">
     ///             <Value>DemoHeaderValue</Value>
     ///         </HttpResponseHeaders>
+    ///         <MimeTypes Include=".test">
+    ///             <Value>test/test1</Value>
+    ///         </MimeTypes>
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Create a site with a virtual directory -->
@@ -59,6 +63,8 @@ namespace MSBuild.ExtensionPack.Web
     ///         <Message Text="NewSite SiteId: $(NewSiteId)"/>
     ///         <!-- Add HTTP Response Headers -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddResponseHeaders" Name="NewSite" HttpResponseHeaders="@(HttpResponseHeaders)"/>
+    ///         <!-- Add Mime Types -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddMimeType" Name="NewSite" MimeTypes="@(MimeTypes)"/>
     ///         <!-- Check whether the virtual directory exists -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
     ///             <Output TaskParameter="Exists" PropertyName="VDirExists"/>
@@ -94,6 +100,7 @@ namespace MSBuild.ExtensionPack.Web
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
+        private const string AddMimeTypeTaskAction = "AddMimeType";
         private const string AddVirtualDirectoryTaskAction = "AddVirtualDirectory";
         private const string AddResponseHeadersTaskAction = "AddResponseHeaders";
         private const string CheckExistsTaskAction = "CheckExists";
@@ -113,6 +120,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the TaskAction.
         /// </summary>
         [DropdownValue(AddApplicationTaskAction)]
+        [DropdownValue(AddMimeTypeTaskAction)]
         [DropdownValue(AddVirtualDirectoryTaskAction)]
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(CreateTaskAction)]
@@ -165,7 +173,14 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// A collection of headers to add. Specify Identity as name and add Value metadata
         /// </summary>
+        [TaskAction(AddResponseHeadersTaskAction, true)]
         public ITaskItem[] HttpResponseHeaders { get; set; }
+
+        /// <summary>
+        /// A collection of MimeTypes. Specify Identity as name and add Value metadata
+        /// </summary>
+        [TaskAction(AddMimeTypeTaskAction, true)]
+        public ITaskItem[] MimeTypes { get; set; }
 
         /// <summary>
         /// Sets the path.
@@ -241,6 +256,9 @@ namespace MSBuild.ExtensionPack.Web
                     case AddApplicationTaskAction:
                         this.AddApplication();
                         break;
+                    case AddMimeTypeTaskAction:
+                        this.AddMimeType();
+                        break;
                     case AddVirtualDirectoryTaskAction:
                         this.AddVirtualDirectory();
                         break;
@@ -283,6 +301,32 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
+        private void AddMimeType()
+        {
+            if (!this.SiteExists())
+            {
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            Configuration config = this.iisServerManager.GetWebConfiguration(this.Name);
+            foreach (ITaskItem mimetype in this.MimeTypes)
+            {
+                ConfigurationSection staticContentSection = config.GetSection("system.webServer/staticContent");
+                ConfigurationElementCollection staticContentCollection = staticContentSection.GetCollection();
+                ConfigurationElement mimeMapElement = staticContentCollection.CreateElement("mimeMap");
+                mimeMapElement["fileExtension"] = mimetype.ItemSpec;
+                mimeMapElement["mimeType"] = mimetype.GetMetadata("Value");
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding MimeType: {0} to: {1} on: {2}", mimetype.ItemSpec, this.Name, this.MachineName));
+                bool typeExists = staticContentCollection.Any(obj => obj.Attributes["fileExtension"].Value.ToString() == mimetype.ItemSpec);
+                if (!typeExists)
+                {
+                    staticContentCollection.Add(mimeMapElement);
+                    this.iisServerManager.CommitChanges();
+                }
+            }
+        }
+
         private void AddResponseHeaders()
         {
             if (!this.SiteExists())
@@ -294,22 +338,17 @@ namespace MSBuild.ExtensionPack.Web
             Configuration config = this.iisServerManager.GetWebConfiguration(this.Name);
             ConfigurationSection httpProtocolSection = config.GetSection("system.webServer/httpProtocol");
             ConfigurationElementCollection customHeadersCollection = httpProtocolSection.GetCollection("customHeaders");
-            
             foreach (ITaskItem header in this.HttpResponseHeaders)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding HttpResponseHeader: {0} to: {1} on: {2}", header.ItemSpec, this.Name, this.MachineName));
                 ConfigurationElement addElement = customHeadersCollection.CreateElement("add");
                 addElement["name"] = header.ItemSpec;
                 addElement["value"] = header.GetMetadata("Value");
-                try
+                bool headerExists = customHeadersCollection.Any(obj => obj.Attributes["name"].Value.ToString() == header.ItemSpec);
+                if (!headerExists)
                 {
                     customHeadersCollection.Add(addElement);
                     this.iisServerManager.CommitChanges();
-                }
-                catch (Exception ex)
-                {
-                    // do nothing
-                    this.LogTaskWarning(ex.ToString());
                 }
             }
         }
