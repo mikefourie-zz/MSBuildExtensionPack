@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Sql2008
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling, StatementTimeout)</para>
+    /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling, StatementTimeout, CopyOnly)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName, StatementTimeout)</para>
     /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
@@ -217,6 +217,12 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// </summary>
         [TaskAction(RestoreTaskAction, false)]
         public string SecondaryDataFileName { get; set; }
+
+        /// <summary>
+        /// Sets whether the backup is a copy-only backup. Default is false.
+        /// </summary>
+        [TaskAction(RestoreTaskAction, false)]
+        public bool CopyOnly { get; set; }
 
         /// <summary>
         /// Sets the collation of the database.
@@ -743,6 +749,7 @@ namespace MSBuild.ExtensionPack.Sql2008
             sqlBackup.Devices.AddDevice(this.DataFilePath.GetMetadata("FullPath"), DeviceType.File);
             sqlBackup.Database = this.DatabaseItem.ItemSpec;
             sqlBackup.Incremental = this.Incremental;
+            sqlBackup.CopyOnly = this.CopyOnly;
             sqlBackup.Action = this.backupAction;
             sqlBackup.Initialize = true;
             sqlBackup.PercentCompleteNotification = this.NotificationInterval;
