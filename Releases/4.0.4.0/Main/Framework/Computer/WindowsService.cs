@@ -284,7 +284,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RemoteUser, RemoteUserPassword <b>Output: </b>Exists)</para>
     /// <para><i>Disable</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
+    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>ServiceDependencies, ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
     /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RetryAttempts)</para>
