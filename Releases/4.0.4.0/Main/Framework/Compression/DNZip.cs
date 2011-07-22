@@ -236,6 +236,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -262,6 +263,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
