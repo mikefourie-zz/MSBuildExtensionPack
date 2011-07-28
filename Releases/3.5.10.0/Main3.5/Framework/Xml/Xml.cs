@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Conformance, Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
-    /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Output: </b>IsValid, Output)</para>
+    /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Optional: </b> TargetNamespace <b>Output: </b>IsValid, Output)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -100,6 +100,7 @@ namespace MSBuild.ExtensionPack.Xml
         private const string TransformTaskAction = "Transform";
         private const string ValidateTaskAction = "Validate";
 
+        private string targetNamespace = string.Empty;
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
         private ConformanceLevel conformanceLevel;
@@ -143,6 +144,16 @@ namespace MSBuild.ExtensionPack.Xml
         /// </summary>
         [TaskAction(TransformTaskAction, false)]
         public string OutputFile { get; set; }
+
+        /// <summary>
+        /// Sets the TargetNamespace for Validate. Default is ""
+        /// </summary>
+        [TaskAction(ValidateTaskAction, false)]
+        public string TargetNamespace
+        {
+            get { return this.targetNamespace; }
+            set { this.targetNamespace = value; }
+        }
 
         /// <summary>
         /// Sets the Schema Files collection
@@ -355,7 +366,7 @@ namespace MSBuild.ExtensionPack.Xml
             foreach (ITaskItem i in this.SchemaFiles)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading SchemaFile: {0}", i.ItemSpec));
-                schemas.Add(string.Empty, i.ItemSpec);
+                schemas.Add(this.TargetNamespace, i.ItemSpec);
             }
 
             bool errorEncountered = false;
