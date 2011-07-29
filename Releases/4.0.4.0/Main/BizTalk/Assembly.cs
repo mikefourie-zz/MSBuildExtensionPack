@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -229,9 +230,17 @@ namespace MSBuild.ExtensionPack.BizTalk
         private BizTalkResource CreateBizTalkResource(string assemblyPath, int order)
         {
             Reflection.Assembly assembly = Reflection.Assembly.LoadFile(assemblyPath);
-
-            // if the assembly has this attribute, then it's a BizTalk assembly - otherwise it's a standard .NET assembly
-            object[] bizTalkAssemblyAttribute = assembly.GetCustomAttributes(typeof(BizTalkAssemblyAttribute), false);
+            object[] bizTalkAssemblyAttribute = null;
+            try
+            {
+                // if the assembly has this attribute, then it's a BizTalk assembly - otherwise it's a standard .NET assembly
+                // if an exception is thrown, we assume it is a standard .NET assembly - see http://msbuildextensionpack.codeplex.com/workitem/9177
+                bizTalkAssemblyAttribute = assembly.GetCustomAttributes(typeof(BizTalkAssemblyAttribute), false);
+            }
+            catch
+            {
+                // do nothing
+            }
 
             return new BizTalkResource
             {
@@ -241,7 +250,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 Order = order,
                 SourcePath = assemblyPath,
                 DeploymentPath = Path.Combine(Path.GetDirectoryName(this.DeploymentPath) ?? string.Empty, Path.GetFileName(assemblyPath)),
-                ResourceType = bizTalkAssemblyAttribute.Length == 0 ? "System.BizTalk:Assembly" : "System.BizTalk:BizTalkAssembly"
+                ResourceType = (bizTalkAssemblyAttribute == null || bizTalkAssemblyAttribute.Length == 0) ? "System.BizTalk:Assembly" : "System.BizTalk:BizTalkAssembly"
             };
         }
 
