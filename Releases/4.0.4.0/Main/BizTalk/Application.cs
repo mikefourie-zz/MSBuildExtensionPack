@@ -25,6 +25,8 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>DisableReceiveLocations</i> (<b>Required: </b>Applications, ReceiveLocations <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>EnableReceiveLocations</i> (<b>Required: </b>Applications, ReceiveLocations <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
     /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding)</para>
     /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
@@ -100,9 +102,11 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
         private const string DisableAllReceiveLocationsTaskAction = "DisableAllReceiveLocations";
+        private const string DisableReceiveLocationsTaskAction = "DisableReceiveLocations";
         private const string ExportToMsiTaskAction = "ExportToMsi";
         private const string ImportFromMsiTaskAction = "ImportFromMsi";
         private const string EnableAllReceiveLocationsTaskAction = "EnableAllReceiveLocations";
+        private const string EnableReceiveLocationsTaskAction = "EnableReceiveLocations";
         private const string GetTaskAction = "Get";
         private const string RemoveReferenceTaskAction = "RemoveReference";
         private const string StartAllTaskAction = "StartAll";
@@ -130,6 +134,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [DropdownValue(CreateTaskAction)]
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(DisableAllReceiveLocationsTaskAction)]
+        [DropdownValue(DisableReceiveLocationsTaskAction)]
+        [DropdownValue(EnableReceiveLocationsTaskAction)]
         [DropdownValue(EnableAllReceiveLocationsTaskAction)]
         [DropdownValue(GetTaskAction)]
         [DropdownValue(RemoveReferenceTaskAction)]
@@ -162,6 +168,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(DisableReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableReceiveLocationsTaskAction, false)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(RemoveReferenceTaskAction, false)]
@@ -194,6 +202,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(DisableReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableReceiveLocationsTaskAction, false)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(RemoveReferenceTaskAction, false)]
@@ -221,6 +231,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, true)]
+        [TaskAction(DisableReceiveLocationsTaskAction, true)]
+        [TaskAction(EnableReceiveLocationsTaskAction, true)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, true)]
         [TaskAction(StartAllTaskAction, true)]
         [TaskAction(StartAllOrchestrationsTaskAction, true)]
@@ -241,6 +253,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(AddReferenceTaskAction, true)]
         [TaskAction(RemoveReferenceTaskAction, true)]
         public ITaskItem[] References { get; set; }
+
+        /// <summary>
+        /// sets the ReceiveLocations to operate on.
+        /// </summary>
+        [TaskAction(DisableReceiveLocationsTaskAction, true)]
+        [TaskAction(EnableReceiveLocationsTaskAction, true)]
+        public ITaskItem[] ReceiveLocations { get; set; }
 
         /// <summary>
         /// Sets the Application Name
@@ -272,7 +291,9 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(DisableReceiveLocationsTaskAction, false)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableReceiveLocationsTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(RemoveReferenceTaskAction, false)]
         [TaskAction(StartAllTaskAction, false)]
@@ -380,6 +401,10 @@ namespace MSBuild.ExtensionPack.BizTalk
                     case StopReferencedApplicationsTaskAction:
                         this.StopApplication();
                         break;
+                    case EnableReceiveLocationsTaskAction:
+                    case DisableReceiveLocationsTaskAction:
+                        this.ControlReceiveLocations();
+                        break;
                     case DeleteTaskAction:
                         this.Delete();
                         break;
@@ -404,6 +429,38 @@ namespace MSBuild.ExtensionPack.BizTalk
                         return;
                 }
             }
+        }
+
+        private void ControlReceiveLocations()
+        {
+            if (this.ReceiveLocations == null)
+            {
+                Log.LogError("ReceiveLocations is required");
+                return;
+            }
+
+            foreach (ITaskItem item in this.ReceiveLocations)
+            {
+                foreach (Microsoft.BizTalk.ExplorerOM.ReceivePort rport in this.explorer.ReceivePorts)
+                {
+                    foreach (Microsoft.BizTalk.ExplorerOM.ReceiveLocation rl in rport.ReceiveLocations.Cast<Microsoft.BizTalk.ExplorerOM.ReceiveLocation>().Where(rl => string.Compare(rl.Name, item.ItemSpec, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        switch (this.TaskAction)
+                        {
+                            case EnableReceiveLocationsTaskAction:
+                                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Enabling {1} for {0}", rport.Name, rl.Name));
+                                rl.Enable = true;
+                                break;
+                            case DisableReceiveLocationsTaskAction:
+                                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Disabling {1} for {0}", rport.Name, rl.Name));
+                                rl.Enable = false;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            this.explorer.SaveChanges();
         }
 
         private void ImportBindings()
@@ -597,7 +654,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 }
 
                 appl.Export(this.MsiPath.ItemSpec, exportedResources);
-             }
+            }
         }
 
         private void ImportFromMsi()

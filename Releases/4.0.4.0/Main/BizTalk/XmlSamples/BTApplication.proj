@@ -6,39 +6,16 @@
     <Import Project="$(TPath)"/>
     <Target Name="Default">
         <ItemGroup>
-            <Apps Include="An Application"/>
+            <Apps Include="BizTalk Application 1"/>
             <NewApps Include="NewExtensionPackApp">
                 <!--<Default>true</Default>-->
                 <Description>New ExtensionPack App</Description>
             </NewApps>
             <Reference Include="Another Application"/>
+            <ReceiveLocations Include="rl1"/>
         </ItemGroup>
-        <!-- Get a list of BizTalk Applications -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Get">
-            <Output TaskParameter="Applications" ItemName="ApplicationList"/>
-        </MSBuild.ExtensionPack.BizTalk.BizTalkApplication>
-        <Message Text="%(ApplicationList.Identity)"/>
+
         <!-- Add a Reference -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
-        <!-- Remove a Reference -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
-        <!-- Export an Application to an MSI -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="An Application" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
-        <!-- Import an Application from an MSI -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportFromMsi" Application="An Application" MsiPath="C:\AnApplication.msi" Overwrite="true" Environment="DEV" />
-        <!-- Check if the Applications in the Apps collection exist -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
-        <!-- Execute a StartAll on the Apps Application collection -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="StartAll" Applications="@(Apps)"/>
-        <!-- Execute a StopAll on the Apps Application collection -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="StopAll" Applications="@(Apps)"/>
-        <!-- Force the creation of the Applications in the NewApps collection -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Create" Applications="@(NewApps)" Force="true"/>
-        <!-- Delete the Applications in the NewApps collection-->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Delete" Applications="@(NewApps)"/>
-        <!-- Imports the specified bindings file into a BizTalk application -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
-        <!-- Exports a BizTalk application bindings to the specified file -->
-        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="EnableReceiveLocations" Application="@(Apps)" ReceiveLocations="@(ReceiveLocations)"/>
     </Target>
 </Project>
