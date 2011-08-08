@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -190,6 +190,20 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public string Types { get; set; }
 
         /// <summary>
+        /// Specifies the directory to search for rule set files that are specified by the Ruleset switch or are included by one of the specified rule sets.
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public string RulesetDirectory { get; set; }
+
+        /// <summary>
+        /// Specifies the Rule set to be used for the analysis. It can be a file path to the rule set file or the file name of 
+        /// a built-in rule set. '+' enables all rules in the rule set; '-' disables all rules in the rule set; '=' sets rules 
+        /// to match the rule set and disables all rules that are not enabled in the rule set
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public string Ruleset { get; set; }
+
+        /// <summary>
         /// Sets the path to FxCopCmd.exe. Default is [Program Files]\Microsoft FxCop 1.36\FxCopCmd.exe
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
@@ -307,6 +321,16 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 }
             }
 
+            if (!string.IsNullOrEmpty(this.Ruleset))
+            {
+                arguments += " /ruleset:\"" + this.Ruleset + "\"";
+            }
+
+            if (!string.IsNullOrEmpty(this.RulesetDirectory))
+            {
+                arguments += " /rulesetdirectory:\"" + this.RulesetDirectory + "\""; 
+            }
+            
             if (this.UpdateProject)
             {
                 arguments += " /update";
