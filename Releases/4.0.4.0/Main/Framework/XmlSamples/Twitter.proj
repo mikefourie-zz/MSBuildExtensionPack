@@ -6,6 +6,11 @@
     <Import Project="$(TPath)"/>
     <Target Name="Default">
         <!-- Send a Twitter message-->
-        <MSBuild.ExtensionPack.Communication.Twitter TaskAction="Tweet" Message="Hello Sir, this is your build server letting you know that all is ok." UserName="yourtwitterusername" UserPassword="yourtwitterpassword"/>
+        <MSBuild.ExtensionPack.Communication.Twitter TaskAction="Tweet"
+                                                     Message="yourMessage"
+                                                     ConsumerKey="yourConsumerKey"
+                                                     AccessToken="yourAccessToken"
+                                                     ConsumerSecret="yourConsumerSecret"
+                                                     AccessTokenSecret="yourAccessTokenSecret"/>
     </Target>
 </Project>

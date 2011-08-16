@@ -1018,3 +1018,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis6VirtualDirectory.#LoadVirtualRoot(System.String)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Ruleset", Scope = "member", Target = "MSBuild.ExtensionPack.CodeQuality.FxCop.#RulesetDirectory")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Ruleset", Scope = "member", Target = "MSBuild.ExtensionPack.CodeQuality.FxCop.#Ruleset")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int64.ToString", Scope = "member", Target = "MSBuild.ExtensionPack.Communication.Twitter.#Tweet()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Communication.Twitter.#Tweet()")]
