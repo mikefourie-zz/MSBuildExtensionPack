@@ -10,7 +10,7 @@
       <Output TaskParameter="Include" ItemName="StyleCopFiles"/>
     </CreateItem>
     <!-- Run the StyleCop MSBuild task -->
-    <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="C:\StyleCopLog.txt" SettingsFile="$(MSBuildExtensionsPath)\Microsoft\StyleCop\v4.4\Settings.StyleCop">
+    <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="C:\StyleCopLog.txt" SettingsFile="C:\Program Files (x86)\StyleCop 4.5\Settings.StyleCop">
       <Output TaskParameter="Succeeded" PropertyName="AllPassed"/>
       <Output TaskParameter="ViolationCount" PropertyName="Violations"/>
       <Output TaskParameter="FailedFiles" ItemName="Failures"/>
