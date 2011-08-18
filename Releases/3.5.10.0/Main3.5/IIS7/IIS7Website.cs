@@ -19,7 +19,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
@@ -112,6 +112,8 @@ namespace MSBuild.ExtensionPack.Web
         private const string StopTaskAction = "Stop";
         private const string CheckVirtualDirectoryExistsTaskAction = "CheckVirtualDirectoryExists";
         private const string DeleteVirtualDirectoryTaskAction = "DeleteVirtualDirectory";
+        private bool anonymousAuthentication = true;
+        private bool serverAutoStart = true;
 
         private ServerManager iisServerManager;
         private Site website;
@@ -160,7 +162,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(AddApplicationTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Applications { get; set; }
-
+        
         /// <summary>
         /// ITaskItem of VirtualDirectories. Use PhysicalPath metadata to specify applicable values
         /// </summary>
@@ -199,12 +201,62 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string EnabledProtocols { get; set; }
+        
+        /// <summary>
+        /// Sets AnonymousAuthentication for the website. Default is true
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool AnonymousAuthentication
+        {
+            get { return this.anonymousAuthentication; }
+            set { this.anonymousAuthentication = value; }
+        }
+         
+        /// <summary>
+        /// Sets DigestAuthentication for the website. Default is false;
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool DigestAuthentication { get; set; }
+
+        /// <summary>
+        /// Sets BasicAuthentication for the website. Default is false;
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool BasicAuthentication { get; set; }
+
+        /// <summary>
+        /// Sets ServerAutoStart for the website. Default is true.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool ServerAutoStart
+        {
+            get { return this.serverAutoStart; }
+            set { this.serverAutoStart = value; }
+        }
+
+        /// <summary>
+        /// Sets WindowsAuthentication for the website. Default is false;
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool WindowsAuthentication { get; set; }
 
         /// <summary>
         /// Sets the port.
         /// </summary>
         [TaskAction(CreateTaskAction, true)]
         public int Port { get; set; }
+
+        /// <summary>
+        /// Sets the LogExtFileFlags. Default is 1414 (logextfiletime | logextfileclientip |logextfilemethod | logextfileuristem | logextfilehttpstatus)
+        /// </summary>
+        [TaskAction(CreateTaskAction, true)]
+        public string LogExtFileFlags { get; set; }
+
+        /// <summary>
+        /// Sets the LogExtFileFlags. Default is W3c.
+        /// </summary>
+        [TaskAction(CreateTaskAction, true)]
+        public string LogFormat { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
@@ -460,7 +512,7 @@ namespace MSBuild.ExtensionPack.Web
 
             if (this.VirtualDirectories != null)
             {
-                this.ProcessVirtualDirectories();
+                this.ProcessVirtualDirectories(); 
                 this.iisServerManager.CommitChanges();
             }
         }
@@ -499,6 +551,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Create()
         {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
             if (this.SiteExists())
             {
                 if (!this.Force)
@@ -507,12 +560,11 @@ namespace MSBuild.ExtensionPack.Web
                     return;
                 }
 
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Website exists. Deleting website: {0} on: {1}", this.Name, this.MachineName));
                 this.iisServerManager.Sites.Remove(this.website);
                 this.iisServerManager.CommitChanges();
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
             if (!Directory.Exists(this.Path))
             {
                 Directory.CreateDirectory(this.Path);
@@ -536,9 +588,30 @@ namespace MSBuild.ExtensionPack.Web
 
             if (!string.IsNullOrEmpty(this.EnabledProtocols))
             {
-                this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
+               this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
             }
 
+            if (!string.IsNullOrEmpty(this.LogExtFileFlags))
+            {
+                this.website.LogFile.LogExtFileFlags = (LogExtFileFlags)Enum.Parse(typeof(LogExtFileFlags), this.LogExtFileFlags);
+            }
+
+            if (!string.IsNullOrEmpty(this.LogFormat))
+            {
+                this.website.LogFile.LogFormat = (LogFormat)Enum.Parse(typeof(LogFormat), this.LogFormat);
+            }
+
+            this.website.ServerAutoStart = this.serverAutoStart;
+      
+            Configuration config = this.iisServerManager.GetApplicationHostConfiguration();
+            ConfigurationSection windowsAuthenticationSection = config.GetSection("system.webServer/security/authentication/windowsAuthentication", this.Name);
+            windowsAuthenticationSection["enabled"] = this.WindowsAuthentication;
+            ConfigurationSection anonyAuthentication = config.GetSection("system.webServer/security/authentication/anonymousAuthentication", this.Name);
+            anonyAuthentication["enabled"] = this.AnonymousAuthentication;
+            ConfigurationSection digestAuthentication = config.GetSection("system.webServer/security/authentication/digestAuthentication", this.Name);
+            digestAuthentication["enabled"] = this.DigestAuthentication;
+            ConfigurationSection basicAuthentication = config.GetSection("system.webServer/security/authentication/basicAuthentication", this.Name);
+            basicAuthentication["enabled"] = this.WindowsAuthentication;
             this.iisServerManager.CommitChanges();
             this.SiteId = this.website.Id;
         }
@@ -615,7 +688,7 @@ namespace MSBuild.ExtensionPack.Web
             this.SiteInfo = isite;
             this.SiteId = this.website.Id;
         }
-
+    
         private bool SiteExists()
         {
             this.website = this.iisServerManager.Sites[this.Name];
