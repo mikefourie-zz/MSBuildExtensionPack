@@ -301,7 +301,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Create()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Creating Website: {0}", this.Name));
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Creating Website: {0}", this.Name));
             using (DirectoryEntry webserviceEntry = this.LoadWebService())
             {
                 // We'll try and find the website first.
@@ -394,6 +394,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (this.CheckWebsiteExists())
             {
+                this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Deleting Website: {0}", this.Name));
                 using (DirectoryEntry webService = this.LoadWebService())
                 {
                     object[] args = { "IIsWebServer", Convert.ToInt32(this.websiteEntry.Name, CultureInfo.InvariantCulture) };
