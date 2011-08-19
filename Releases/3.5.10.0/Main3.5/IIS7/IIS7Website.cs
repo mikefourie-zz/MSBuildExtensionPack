@@ -551,7 +551,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Create()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
             if (this.SiteExists())
             {
                 if (!this.Force)
@@ -611,7 +611,7 @@ namespace MSBuild.ExtensionPack.Web
             ConfigurationSection digestAuthentication = config.GetSection("system.webServer/security/authentication/digestAuthentication", this.Name);
             digestAuthentication["enabled"] = this.DigestAuthentication;
             ConfigurationSection basicAuthentication = config.GetSection("system.webServer/security/authentication/basicAuthentication", this.Name);
-            basicAuthentication["enabled"] = this.WindowsAuthentication;
+            basicAuthentication["enabled"] = this.BasicAuthentication;
             this.iisServerManager.CommitChanges();
             this.SiteId = this.website.Id;
         }
