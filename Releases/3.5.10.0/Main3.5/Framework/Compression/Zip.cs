@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="DNZip.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Zip.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Compression
 {
@@ -10,7 +10,6 @@ namespace MSBuild.ExtensionPack.Compression
     using Microsoft.Build.Framework;
 
     /// <summary>
-    /// <para>NOTE: This task is for backwards compatibility only. You should use the Zip task rather</para>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot) Existing files will be updated</para>
     /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot)</para>
@@ -35,14 +34,14 @@ namespace MSBuild.ExtensionPack.Compression
     ///       <FilesToZip Include="C:\Patches\**\*"/>
     ///     </ItemGroup>
     ///     <!-- Create a zip file based on the FilesToZip collection -->
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFile.zip"/>
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" RemoveRoot="C:\Patches" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFileBestCompression.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFile.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" RemoveRoot="C:\Patches" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFileBestCompression.zip"/>
     ///     <!-- Create a zip file based on a Path -->
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressPath="C:\Patches" ZipFileName="C:\newZipByPath.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressPath="C:\Patches" ZipFileName="C:\newZipByPath.zip"/>
     ///     <!-- Extract a zip file-->
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Extract" ExtractPath="C:\aaa11\1" ZipFileName="C:\newZipByFile.zip"/>
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Extract" ExtractPath="C:\aaa11\2" ZipFileName="C:\newZipByPath.zip"/>
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Extract" Password="apassword"  ExtractPath="C:\aaa11\3" ZipFileName="C:\newZipByFileBestCompression.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Extract" ExtractPath="C:\aaa11\1" ZipFileName="C:\newZipByFile.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Extract" ExtractPath="C:\aaa11\2" ZipFileName="C:\newZipByPath.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Extract" Password="apassword"  ExtractPath="C:\aaa11\3" ZipFileName="C:\newZipByFileBestCompression.zip"/>
     ///   </Target>
     ///   <Target Name="Sample2">
     ///     <PropertyGroup>
@@ -68,13 +67,13 @@ namespace MSBuild.ExtensionPack.Compression
     ///       <WorkingDir>%(OutputDirectory.Fullpath)</WorkingDir>
     ///     </PropertyGroup>
     ///     <!-- Zip files based on the group they belong to -->
-    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(Files)" ZipFileName="$(WorkingDir)%(Files.Group).zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(Files)" ZipFileName="$(WorkingDir)%(Files.Group).zip"/>
     ///   </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
-    public class DNZip : BaseTask
+    [HelpUrl("")]
+    public class Zip : BaseTask
     {
         private const string CreateTaskAction = "Create";
         private const string ExtractTaskAction = "Extract";

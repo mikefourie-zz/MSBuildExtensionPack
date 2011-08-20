@@ -187,6 +187,7 @@
     <Compile Include="Communication\FTP\FtpFileInfo.cs" />
     <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\Twitter.cs" />
+    <Compile Include="Compression\Zip.cs" />
     <Compile Include="Compression\DNZip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
@@ -376,6 +377,7 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\Zip.proj" />
     <None Include="XmlSamples\HostsFile.proj" />
     <None Include="XmlSamples\ILMerge.proj" />
     <None Include="XmlSamples\NUnit.proj" />

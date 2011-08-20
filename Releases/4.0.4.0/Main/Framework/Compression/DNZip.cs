@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="DNZip.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
+#pragma warning disable 618
 namespace MSBuild.ExtensionPack.Compression
 {
     using System;
@@ -10,13 +11,14 @@ namespace MSBuild.ExtensionPack.Compression
     using Microsoft.Build.Framework;
 
     /// <summary>
+    /// <para>NOTE: This task is for backwards compatibility only. You should use the Zip task rather</para>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot) Existing files will be updated</para>
     /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para/>
-    /// This task uses http://dotnetzip.codeplex.com/ v1.9 for compression.
+    /// This task uses http://dotnetzip.codeplex.com v1.9.1.8 for compression.
     /// <para/>
     /// </summary>
     /// <example>

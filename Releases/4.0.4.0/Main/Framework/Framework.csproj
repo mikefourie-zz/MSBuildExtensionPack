@@ -191,6 +191,7 @@
     <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\DNZip.cs" />
+    <Compile Include="Compression\Zip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
     <Compile Include="Computer\HostsFile\HostsFile.cs" />
@@ -385,6 +386,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\Zip.proj" />
     <None Include="XmlSamples\HostsFile.proj" />
     <None Include="XmlSamples\ILMerge.proj" />
     <None Include="XmlSamples\NUnit.proj" />
@@ -405,7 +407,9 @@
     <None Include="XmlSamples\Dialog.proj" />
     <None Include="XmlSamples\VB6.proj" />
     <None Include="XmlSamples\Certificate.proj" />
-    <None Include="XmlSamples\FxCop.proj" />
+    <None Include="XmlSamples\FxCop.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\Gac.proj" />
     <None Include="XmlSamples\Signing.proj" />
     <None Include="XmlSamples\Sound.proj" />
