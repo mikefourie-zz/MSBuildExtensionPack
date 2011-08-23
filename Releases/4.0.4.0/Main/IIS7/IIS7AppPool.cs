@@ -475,7 +475,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.QueueLength = this.iisServerManager.ApplicationPoolDefaults.QueueLength;
             }
 
-            if (this.IdleTimeout > 0)
+            if (this.IdleTimeout >= 0)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting IdleTimeout to: {0} minutes", this.IdleTimeout));
                 this.pool.ProcessModel.IdleTimeout = TimeSpan.FromMinutes(this.IdleTimeout);
@@ -536,7 +536,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.Recycling.PeriodicRestart.Schedule.Clear();
             }
 
-            if (this.RecycleRequests > 0)
+            if (this.RecycleRequests >= 0)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.RecycleRequests to: {0}", this.RecycleRequests));
                 this.pool.Recycling.PeriodicRestart.Requests = this.RecycleRequests;
@@ -547,7 +547,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.Recycling.PeriodicRestart.Requests = this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Requests;
             }
 
-            if (this.RecycleInterval > 0)
+            if (this.RecycleInterval >= 0)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.Time to: {0}", this.RecycleInterval));
                 this.pool.Recycling.PeriodicRestart.Time = TimeSpan.FromMinutes(this.RecycleInterval);
