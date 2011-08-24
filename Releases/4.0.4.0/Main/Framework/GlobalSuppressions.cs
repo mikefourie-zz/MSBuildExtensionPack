@@ -1030,3 +1030,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ZipFile", Scope = "member", Target = "MSBuild.ExtensionPack.Compression.Zip.#Extract()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ZipFileName", Scope = "member", Target = "MSBuild.ExtensionPack.Compression.Zip.#Extract()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ZipFile", Scope = "member", Target = "MSBuild.ExtensionPack.Compression.Zip.#Create()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.Share.#Create()")]
