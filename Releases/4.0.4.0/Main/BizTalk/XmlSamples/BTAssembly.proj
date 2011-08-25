@@ -5,8 +5,8 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
-      <ItemGroup>
-            <BizTalkAssemblies Include="YOURASSEMBLY">
+        <ItemGroup>
+            <BizTalkAssemblies Include="YOURASSEMBLY"/>
         </ItemGroup>
         <!-- Add the Assemblies -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkAssembly TaskAction="Add" Force="true" Gac="true" MachineName="$(COMPUTERNAME)" Application="BizTalk Application 1" Assemblies="@(BizTalkAssemblies)" />
