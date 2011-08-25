@@ -6,7 +6,7 @@
   <Import Project="$(TPath)"/>
   <Target Name="Default">
     <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
-    <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
+    <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.htm,C:\Windows\System32\Inetsrv\Test.dll,5,GET, HEAD, POST"/>
     <!-- Check if a virtual directory exists-->
     <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="CheckExists" Website="awebsite" Name="AVDir" >
       <Output TaskParameter="Exists" PropertyName="CheckExists" />

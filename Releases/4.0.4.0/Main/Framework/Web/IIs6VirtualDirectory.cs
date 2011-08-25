@@ -22,23 +22,23 @@ namespace MSBuild.ExtensionPack.Web
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
-    ///     <Target Name="Default">
-    ///         <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
-    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="Path=AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.aspx"/>
-    ///         <!-- Check if a virtual directory exists-->
-    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="CheckExists" Website="awebsite" Name="AVDir" >
-    ///            <Output TaskParameter="Exists" PropertyName="CheckExists" />
-    ///         </MSBuild.ExtensionPack.Web.Iis6VirtualDirectory>
-    ///         <!-- Create another IIsWebVirtualDir -->
-    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
-    ///         <!-- Delete the IIsWebVirtualDir-->
-    ///         <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
-    ///     </Target>
+    ///   <PropertyGroup>
+    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///   </PropertyGroup>
+    ///   <Import Project="$(TPath)"/>
+    ///   <Target Name="Default">
+    ///     <!-- Create an IIsWebVirtualDir at the ROOT of the website -->
+    ///     <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Properties="AccessRead=True;AccessWrite=False;AccessExecute=False;AccessScript=True;AccessSource=False;AspScriptErrorSentToBrowser=False;AspScriptErrorMessage=An error occurred on the server.;AspEnableApplicationRestart=False;DefaultDoc=SubmissionProtocol.aspx;DontLog=False;EnableDefaultDoc=True;HttpExpires=D, 0;HttpErrors=;Path=c:\Demo1;ScriptMaps=.htm,C:\Windows\System32\Inetsrv\Test.dll,5,GET, HEAD, POST"/>
+    ///     <!-- Check if a virtual directory exists-->
+    ///     <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="CheckExists" Website="awebsite" Name="AVDir" >
+    ///       <Output TaskParameter="Exists" PropertyName="CheckExists" />
+    ///     </MSBuild.ExtensionPack.Web.Iis6VirtualDirectory>
+    ///     <!-- Create another IIsWebVirtualDir -->
+    ///     <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Create" Website="awebsite" Name="AVDir" Properties="Path=c:\Demo2"/>
+    ///     <!-- Delete the IIsWebVirtualDir-->
+    ///     <MSBuild.ExtensionPack.Web.Iis6VirtualDirectory TaskAction="Delete" Website="awebsite" Name="AVDir"/>
+    ///   </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -116,6 +116,7 @@ namespace MSBuild.ExtensionPack.Web
 
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
+        /// If a property contains =, enter #~# as a special sequence which will be replaced with = during processing
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
@@ -426,6 +427,9 @@ namespace MSBuild.ExtensionPack.Web
                         string[] propPair = s.Split(new[] { '=' });
                         string propName = propPair[0];
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
+
+                        // handle the special character sequence to insert '=' if property requires it
+                        propValue = propValue.Replace("#~#", "=");
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
                         UpdateMetaBaseProperty(vdirEntry, propName, propValue);
                     }

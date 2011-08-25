@@ -79,6 +79,7 @@ namespace MSBuild.ExtensionPack.Web
         
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
+        /// If a property contains =, enter #~# as a special sequence which will be replaced with = during processing
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(ModifyTaskAction, false)]
@@ -230,6 +231,9 @@ namespace MSBuild.ExtensionPack.Web
                     {
                         string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
+
+                        // handle the special character sequence to insert '=' if property requires it
+                        propValue = propValue.Replace("#~#", "=");
                         this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
                     }
 
@@ -341,6 +345,9 @@ namespace MSBuild.ExtensionPack.Web
                         {
                             string[] propPair = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                             string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
+
+                            // handle the special character sequence to insert '=' if property requires it
+                            propValue = propValue.Replace("#~#", "=");
                             this.UpdateMetaBaseProperty(appPoolEntry, propPair[0], propValue);
                         }
 
