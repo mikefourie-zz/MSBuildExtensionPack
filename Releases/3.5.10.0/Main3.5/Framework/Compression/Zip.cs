@@ -176,6 +176,8 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
+                    zip.ParallelDeflateThreshold = -1;
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -202,6 +204,8 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
+                    zip.ParallelDeflateThreshold = -1;
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -236,6 +240,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.ParallelDeflateThreshold = -1;
                     zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
@@ -263,6 +268,7 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.ParallelDeflateThreshold = -1;
                     zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
