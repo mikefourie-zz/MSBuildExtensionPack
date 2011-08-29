@@ -195,6 +195,7 @@
     <Compile Include="Computer\HostsFile\IHostsFile.cs" />
     <Compile Include="Computer\HostsFile\IHostsFileReader.cs" />
     <Compile Include="Computer\HostsFile\IHostsFileWriter.cs" />
+    <Compile Include="Computer\Process.cs" />
     <Compile Include="Computer\WshShell.cs" />
     <Compile Include="Computer\GetPasswordForm.cs">
       <SubType>Form</SubType>
@@ -378,6 +379,7 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
     <None Include="XmlSamples\Zip.proj" />
     <None Include="XmlSamples\HostsFile.proj" />

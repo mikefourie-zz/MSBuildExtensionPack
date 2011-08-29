@@ -194,6 +194,7 @@
     <Compile Include="Compression\Zip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
+    <Compile Include="Computer\Process.cs" />
     <Compile Include="Computer\HostsFile\HostsFile.cs" />
     <Compile Include="Computer\HostsFile\IHostsFile.cs" />
     <Compile Include="Computer\HostsFile\IHostsFileReader.cs" />
@@ -387,6 +388,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
     <None Include="XmlSamples\Zip.proj" />
     <None Include="XmlSamples\HostsFile.proj" />

@@ -23,6 +23,7 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.HostsFile"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.Network"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.PerformanceCounters"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.Process"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.Registry"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.SystemDrive"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Computer.WindowsService"/>
