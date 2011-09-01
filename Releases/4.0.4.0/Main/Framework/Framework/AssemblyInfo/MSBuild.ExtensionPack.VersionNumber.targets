@@ -108,7 +108,7 @@
                       AssemblyFileRevisionType="$(AssemblyFileRevisionType)"
                       AssemblyFileRevisionFormat="$(AssemblyFileRevisionFormat)"
                       ComVisible="$(AssemblyComVisible)"
-                      AssemblyGuid="$(AssemblyGuid)"
+                      Guid="$(AssemblyGuid)"
                       AssemblyCompany="$(AssemblyCompany)"
                       AssemblyConfiguration="$(AssemblyConfiguration)"
                       AssemblyCopyright="$(AssemblyCopyright)"
