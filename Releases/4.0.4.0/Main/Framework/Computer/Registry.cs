@@ -60,7 +60,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";

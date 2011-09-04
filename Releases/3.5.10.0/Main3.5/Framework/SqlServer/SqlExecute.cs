@@ -59,7 +59,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
         private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);

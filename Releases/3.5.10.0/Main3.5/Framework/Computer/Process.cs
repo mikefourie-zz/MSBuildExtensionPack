@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/5eddaaa1-5a75-e314-d96e-6e8ecc2b2997.htm")]
     public class Process : BaseTask
     {
         private const string GetTaskAction = "Get";

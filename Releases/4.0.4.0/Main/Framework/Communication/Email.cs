@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
     public class Email : BaseTask
     {
         private const string SendTaskAction = "Send";

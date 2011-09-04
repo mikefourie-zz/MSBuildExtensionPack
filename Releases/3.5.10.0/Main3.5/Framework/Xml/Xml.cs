@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
         private const string TransformTaskAction = "Transform";

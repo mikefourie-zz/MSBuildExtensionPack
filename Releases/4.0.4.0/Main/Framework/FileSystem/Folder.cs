@@ -89,7 +89,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
         private const string AddSecurityTaskAction = "AddSecurity";
