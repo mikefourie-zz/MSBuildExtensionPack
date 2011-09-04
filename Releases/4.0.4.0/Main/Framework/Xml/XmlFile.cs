@@ -651,7 +651,7 @@ namespace MSBuild.ExtensionPack.Xml
             XmlNode newNode;
             if (string.IsNullOrEmpty(this.Prefix))
             {
-                newNode = this.xmlFileDoc.CreateElement(this.Element);
+                newNode = this.xmlFileDoc.CreateElement(this.Element, this.xmlFileDoc.DocumentElement.NamespaceURI);
             }
             else
             {
