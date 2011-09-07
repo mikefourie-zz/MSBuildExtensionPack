@@ -14,9 +14,9 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckRunning</i> (<b>Required: </b>ProcessName <b>Output: </b> IsRunning)</para>
-    /// <para><i>Create</i> (<b>Required: </b>Parameters <b>Output: </b> ReturnValue)</para>
+    /// <para><i>Create</i> (<b>Required: </b>Parameters <b>Output: </b> ReturnValue, ProcessId)</para>
     /// <para><i>Get</i> (<b>Required: </b>ProcessName, Value <b>Optional: </b>User, ProcessName, IncludeUserInfo <b>Output: </b> Processes)</para>
-    /// <para><i>Terminate</i> (<b>Required: </b>ProcessName)</para>
+    /// <para><i>Terminate</i> (<b>Required: </b>ProcessName or ProcessId)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -31,10 +31,12 @@ namespace MSBuild.ExtensionPack.Computer
     ///         <WmiExec3 Include="CommandLine#~#notepad.exe"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
+    ///         <MSBuild.ExtensionPack.Computer.Process TaskAction="Terminate" ProcessId="9564"/>
     ///         <MSBuild.ExtensionPack.Computer.Process TaskAction="Create" Parameters="@(WmiExec3)">
     ///             <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+    ///             <Output TaskParameter="ProcessId" PropertyName="PID"/>
     ///         </MSBuild.ExtensionPack.Computer.Process>
-    ///         <Message Text="ReturnValue: $(Rval2)"/>
+    ///         <Message Text="ReturnValue: $(Rval2). ProcessId: $(PID)"/>
     ///         <MSBuild.ExtensionPack.Computer.Process TaskAction="CheckRunning" ProcessName="notepad.exe">
     ///             <Output PropertyName="Running" TaskParameter="IsRunning"/>
     ///         </MSBuild.ExtensionPack.Computer.Process>
@@ -100,6 +102,14 @@ namespace MSBuild.ExtensionPack.Computer
         [Output]
         [TaskAction(CreateTaskAction, false)]
         public string ReturnValue { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the ProcessId
+        /// </summary>
+        [Output]
+        [TaskAction(TerminateTaskAction, false)]
+        [TaskAction(CreateTaskAction, false)]
+        public int ProcessId { get; set; }
 
         /// <summary>
         /// Sets the Parameters for Create. Use #~# separate name and value.
@@ -180,6 +190,7 @@ namespace MSBuild.ExtensionPack.Computer
                 if (outParams != null)
                 {
                     this.ReturnValue = outParams["ReturnValue"].ToString();
+                    this.ProcessId = Convert.ToInt32(outParams["ProcessId"], CultureInfo.CurrentCulture);
                 }
             }
         }
@@ -207,18 +218,19 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Kill()
         {
-            if (string.IsNullOrEmpty(this.ProcessName))
+            if (this.ProcessName == ".*" && this.ProcessId == 0)
             {
-                this.Log.LogError("ProcessName is required");
+                this.Log.LogError("ProcessName or ProcessId is required");
                 return;
             }
 
-            ObjectQuery query = new ObjectQuery("SELECT * FROM Win32_Process WHERE Name ='" + this.ProcessName + "'");
+            ObjectQuery query = this.ProcessName != ".*" ? new ObjectQuery("SELECT * FROM Win32_Process WHERE Name ='" + this.ProcessName + "'") : new ObjectQuery("SELECT * FROM Win32_Process WHERE Handle ='" + this.ProcessId + "'");
             using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query, null))
             {
                 foreach (ManagementObject returnedProcess in searcher.Get())
                 {
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Terminating: {0}", this.ProcessName));
+                    this.LogTaskMessage(this.ProcessName != ".*" ? string.Format(CultureInfo.CurrentCulture, "Terminating: {0}", this.ProcessName) : string.Format(CultureInfo.CurrentCulture, "Terminating: {0}", this.ProcessId));
+
                     ManagementBaseObject inParams = returnedProcess.GetMethodParameters("Terminate");
                     ManagementBaseObject outParams = returnedProcess.InvokeMethod("Terminate", inParams, null);
                    

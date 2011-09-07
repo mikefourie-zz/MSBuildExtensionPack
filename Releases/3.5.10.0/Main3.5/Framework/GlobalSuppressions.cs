@@ -1184,3 +1184,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ProcessName", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.Process.#Get()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ProcessName", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.Process.#Kill()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "TaskAction", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.Process.#InternalExecute()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ProcessId", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.Process.#Kill()")]

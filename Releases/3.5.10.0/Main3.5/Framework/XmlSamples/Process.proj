@@ -8,10 +8,12 @@
         <WmiExec3 Include="CommandLine#~#notepad.exe"/>
     </ItemGroup>
     <Target Name="Default">
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="Terminate" ProcessId="9564"/>
         <MSBuild.ExtensionPack.Computer.Process TaskAction="Create" Parameters="@(WmiExec3)">
             <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+            <Output TaskParameter="ProcessId" PropertyName="PID"/>
         </MSBuild.ExtensionPack.Computer.Process>
-        <Message Text="ReturnValue: $(Rval2)"/>
+        <Message Text="ReturnValue: $(Rval2). ProcessId: $(PID)"/>
         <MSBuild.ExtensionPack.Computer.Process TaskAction="CheckRunning" ProcessName="notepad.exe">
             <Output PropertyName="Running" TaskParameter="IsRunning"/>
         </MSBuild.ExtensionPack.Computer.Process>
