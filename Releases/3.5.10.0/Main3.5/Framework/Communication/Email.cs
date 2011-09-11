@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Communication
 {
+    using System;
     using System.Globalization;
     using System.Net.Mail;
     using Microsoft.Build.Framework;
@@ -40,7 +41,7 @@ namespace MSBuild.ExtensionPack.Communication
         private const string SendTaskAction = "Send";
         private bool useDefaultCredentials = true;
         private string format = "HTML";
-        private string priority = "Normal";
+        private System.Net.Mail.MailPriority priority = System.Net.Mail.MailPriority.Normal;
 
         [DropdownValue(SendTaskAction)]
         public override string TaskAction
@@ -90,13 +91,13 @@ namespace MSBuild.ExtensionPack.Communication
         public string Subject { get; set; }
 
         /// <summary>
-        /// The priority of the email. Default is Normal
+        /// The priority of the email. Default is Normal (also available High and Low).
         /// </summary>
         [TaskAction(SendTaskAction, false)]
         public string Priority
         {
-            get { return this.priority; }
-            set { this.priority = value; }
+            get { return this.priority.ToString(); }
+            set { this.priority = (System.Net.Mail.MailPriority)Enum.Parse(typeof(System.Net.Mail.MailPriority), value); }
         }
 
         /// <summary>
@@ -172,6 +173,7 @@ namespace MSBuild.ExtensionPack.Communication
                 }
 
                 msg.Subject = this.Subject ?? string.Empty;
+                msg.Priority = this.priority;
                 msg.Body = this.Body ?? string.Empty;
                 if (this.format.ToUpperInvariant() == "HTML")
                 {
