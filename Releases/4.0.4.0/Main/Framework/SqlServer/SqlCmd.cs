@@ -74,6 +74,9 @@ namespace MSBuild.ExtensionPack.SqlServer
         private int queryTimeout;
         private string server = ".";
 
+        /// <summary>
+        /// Initializes a new instance of the SqlCmd class
+        /// </summary>
         public SqlCmd()
         {
             this.DisableVariableSubstitution = false;
@@ -333,6 +336,12 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         protected override void InternalExecute()
         {
+            if (this.InputFiles == null && this.CommandLineQuery == null)
+            {
+                this.Log.LogError("InputFiles or CommandLineQuery is required");
+                return;
+            }
+
             switch (this.TaskAction)
             {
                 case ExecuteTaskAction:
