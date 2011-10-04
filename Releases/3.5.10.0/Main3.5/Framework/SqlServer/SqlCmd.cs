@@ -75,7 +75,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         private string server = ".";
 
         /// <summary>
-        /// SqlCmd
+        /// Initializes a new instance of the SqlCmd class
         /// </summary>
         public SqlCmd()
         {
