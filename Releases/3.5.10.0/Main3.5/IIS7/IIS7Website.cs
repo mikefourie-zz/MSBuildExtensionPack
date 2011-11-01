@@ -441,9 +441,9 @@ namespace MSBuild.ExtensionPack.Web
                 {
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing VirtualDirectory: {0} from: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                     this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Remove(this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories[virDir.ItemSpec]);
-                    this.iisServerManager.CommitChanges();
-                    break;
                 }
+
+                this.iisServerManager.CommitChanges();
             }
         }
 
