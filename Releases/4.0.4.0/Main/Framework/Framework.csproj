@@ -189,6 +189,7 @@
     <Compile Include="Communication\FTP\FtpException.cs" />
     <Compile Include="Communication\FTP\FtpFileInfo.cs" />
     <Compile Include="Communication\FTP\NativeMethods.cs" />
+    <Compile Include="Communication\MSMQ.cs" />
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\DNZip.cs" />
     <Compile Include="Compression\Zip.cs" />
@@ -388,6 +389,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\MSMQ.proj" />
     <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
     <None Include="XmlSamples\Zip.proj" />
