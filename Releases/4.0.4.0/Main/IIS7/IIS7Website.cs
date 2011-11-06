@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.Web
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Management;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.Web.Administration;
@@ -473,10 +474,7 @@ namespace MSBuild.ExtensionPack.Web
             foreach (ITaskItem app in this.Applications)
             {
                 string physicalPath = app.GetMetadata("PhysicalPath");
-                if (!Directory.Exists(physicalPath))
-                {
-                    Directory.CreateDirectory(physicalPath);
-                }
+                this.CreateDirectoryIfNecessary(physicalPath);
 
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
                 this.website.Applications.Add(app.ItemSpec, physicalPath);
@@ -498,6 +496,50 @@ namespace MSBuild.ExtensionPack.Web
                 if (!string.IsNullOrEmpty(app.GetMetadata("EnabledProtocols")))
                 {
                     this.website.Applications[app.ItemSpec].EnabledProtocols = app.GetMetadata("EnabledProtocols");
+                }
+            }
+        }
+
+        private void CreateDirectoryIfNecessary(string directoryPath)
+        {
+            if (!this.TargetingLocalMachine(true))
+            {
+                // we need to operate remotely
+                string fullQuery = @"Select * From Win32_Directory Where Name = '" + directoryPath.Replace("\\", "\\\\") + "'";
+                ObjectQuery query1 = new ObjectQuery(fullQuery);
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query1))
+                {
+                    ManagementObjectCollection queryCollection = searcher.Get();
+                    if (queryCollection.Count == 0)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, "Attempting to create remote folder for share");
+                        ManagementPath path2 = new ManagementPath("Win32_Process");
+                        using (ManagementClass managementClass2 = new ManagementClass(this.Scope, path2, null))
+                        {
+                            ManagementBaseObject inParams1 = managementClass2.GetMethodParameters("Create");
+                            string tex = "cmd.exe /c md \"" + directoryPath + "\"";
+                            inParams1["CommandLine"] = tex;
+
+                            ManagementBaseObject outParams1 = managementClass2.InvokeMethod("Create", inParams1, null);
+                            uint rc = Convert.ToUInt32(outParams1.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                            if (rc != 0)
+                            {
+                                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // we are working locally
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+
+                    // adding a sleep as it may take a while to register.
+                    System.Threading.Thread.Sleep(1000);
                 }
             }
         }
@@ -565,10 +607,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.iisServerManager.CommitChanges();
             }
 
-            if (!Directory.Exists(this.Path))
-            {
-                Directory.CreateDirectory(this.Path);
-            }
+            this.CreateDirectoryIfNecessary(this.Path);
 
             this.website = this.iisServerManager.Sites.Add(this.Name, this.Path, this.Port);
             if (!string.IsNullOrEmpty(this.AppPool))
@@ -621,10 +660,7 @@ namespace MSBuild.ExtensionPack.Web
             foreach (ITaskItem virDir in this.VirtualDirectories)
             {
                 string physicalPath = virDir.GetMetadata("PhysicalPath");
-                if (!Directory.Exists(physicalPath))
-                {
-                    Directory.CreateDirectory(physicalPath);
-                }
+                this.CreateDirectoryIfNecessary(physicalPath);
 
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                 this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
@@ -640,11 +676,8 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying website: {0} on: {1}", this.Name, this.MachineName));
-            if (!Directory.Exists(this.Path))
-            {
-                Directory.CreateDirectory(this.Path);
-            }
-
+            this.CreateDirectoryIfNecessary(this.Path);
+            
             Application app = this.website.Applications["/"];
             if (app != null)
             {
