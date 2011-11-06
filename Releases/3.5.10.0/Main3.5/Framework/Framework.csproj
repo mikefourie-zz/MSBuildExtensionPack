@@ -179,6 +179,7 @@
       <Link>StringExtension.cs</Link>
     </Compile>
     <Compile Include="CodeQuality\NUnit.cs" />
+    <Compile Include="Communication\MSMQ.cs" />
     <Compile Include="Communication\Ftp.cs" />
     <Compile Include="Communication\FTP\Extensions.cs" />
     <Compile Include="Communication\FTP\FtpConnection.cs" />
@@ -379,6 +380,7 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\MSMQ.proj" />
     <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
     <None Include="XmlSamples\Zip.proj" />
