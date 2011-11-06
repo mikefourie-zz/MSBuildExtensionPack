@@ -41,4 +41,18 @@
         <!-- Exports a BizTalk application bindings to the specified file -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
     </Target>
+    <!-- Export an Application to a partial/incremental MSI -->
+    <Target Name="ExportToMsi">
+        <MSBuild Projects="@(Compile)" Targets="Build">
+            <Output TaskParameter="TargetOutputs" ItemName="CompiledAssemblies" />
+        </MSBuild>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="%(CompiledAssemblies.Identity)">
+            <Output TaskParameter="OutputItems" ItemName="NetAssemblies" />
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <ItemGroup>
+            <Resources Include="@(NetAssemblies->'%(FullName)')" />
+            <Resources Include="Application/$(BtsApplicationName)" Condition=" '$(ExportBindings)'=='True' " />
+        </ItemGroup>
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="$(BtsApplicationName)" Resources="@(Resources)" MsiPath="$(TargetMsi)" IncludeGlobalPartyBinding="$(ExportBindings)"/>
+    </Target>
 </Project>

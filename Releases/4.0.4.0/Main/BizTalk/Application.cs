@@ -28,7 +28,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>DisableReceiveLocations</i> (<b>Required: </b>Applications, ReceiveLocations <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>EnableReceiveLocations</i> (<b>Required: </b>Applications, ReceiveLocations <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
-    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding)</para>
+    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding, Resources)</para>
     /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
     /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, Application, Overwrite)</para>
     /// <para><i>Get</i> (<b>Optional: </b>MachineName, DatabaseServer, Database)</para>
@@ -91,6 +91,21 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <!-- Exports a BizTalk application bindings to the specified file -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
     ///     </Target>
+    ///     <!-- Export an Application to a partial/incremental MSI -->
+    ///     <Target Name="ExportToMsi">
+    ///         <MSBuild Projects="@(Compile)" Targets="Build">
+    ///             <Output TaskParameter="TargetOutputs" ItemName="CompiledAssemblies" />
+    ///         </MSBuild>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="%(CompiledAssemblies.Identity)">
+    ///             <Output TaskParameter="OutputItems" ItemName="NetAssemblies" />
+    ///         </MSBuild.ExtensionPack.Framework.Assembly>
+    ///         <ItemGroup>
+    ///             <Resources Include="@(NetAssemblies->'%(FullName)')" />
+    ///             <Resources Include="Application/$(BtsApplicationName)" Condition=" '$(ExportBindings)'=='True' " />
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="$(BtsApplicationName)" Resources="@(Resources)" MsiPath="$(TargetMsi)" IncludeGlobalPartyBinding="$(ExportBindings)"/>
+    ///     </Target>
+    /// </Project>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -272,6 +287,12 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(ImportBindingsTaskAction, false)]
         [TaskAction(ExportBindingsTaskAction, false)]
         public string Application { get; set; }
+
+        /// <summary>
+        /// Sets the Resources to export. If not supplied, all resources are exported.
+        /// </summary>
+        [TaskAction(ExportToMsiTaskAction, false)]
+        public ITaskItem[] Resources { get; set; }
 
         /// <summary>
         /// Sets the Application description
@@ -624,6 +645,11 @@ namespace MSBuild.ExtensionPack.BizTalk
                 return;
             }
 
+            if (this.Resources == null)
+            {
+                this.Resources = new ITaskItem[] { };
+            }
+
             if (!this.CheckExists(this.Application))
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application does not exist: {0}", this.Application));
@@ -647,6 +673,12 @@ namespace MSBuild.ExtensionPack.BizTalk
                     if (this.IncludeGlobalPartyBinding && resource.Luid.Equals("Application/" + this.Application, StringComparison.OrdinalIgnoreCase))
                     {
                         resource.Properties["IncludeGlobalPartyBinding"] = this.IncludeGlobalPartyBinding;
+                    }
+
+                    // only export specified resources
+                    if (this.Resources.Length != 0 && !this.Resources.Any(item => item.ItemSpec == resource.Luid))
+                    {
+                        continue;
                     }
 
                     this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Exporting Resource {0}", resource.Luid));
