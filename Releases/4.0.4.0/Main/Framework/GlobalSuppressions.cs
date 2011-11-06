@@ -1049,3 +1049,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Multi", Scope = "member", Target = "MSBuild.ExtensionPack.SqlServer.SqlExecute.#stripMultiLineComments")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "MSMQ", Scope = "type", Target = "MSBuild.ExtensionPack.Communication.MSMQ")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "TaskAction", Scope = "member", Target = "MSBuild.ExtensionPack.Communication.MSMQ.#InternalExecute()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.ActiveDirectory.#GroupGroup()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ParentGroup", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.ActiveDirectory.#GroupGroup()")]

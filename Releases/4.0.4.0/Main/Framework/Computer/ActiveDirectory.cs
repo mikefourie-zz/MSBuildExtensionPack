@@ -194,6 +194,13 @@ namespace MSBuild.ExtensionPack.Computer
     ///             <Output TaskParameter="Members" ItemName="FullGroups"/>
     ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
     ///         <Message Text="FULL %(FullGroups.Identity)"/>
+    ///         <!-- Group Group Operations -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt" GroupType="Global"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt" GroupType="Global"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="RemoveGroupFromGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -214,6 +221,8 @@ namespace MSBuild.ExtensionPack.Computer
         private const string GetGroupMembersTaskAction = "GetGroupMembers";
         private const string GrantPrivilegeTaskAction = "GrantPrivilege";
         private const string RemovePrivilegeTaskAction = "RemovePrivilege";
+        private const string AddGroupToGroupTaskAction = "AddGroupToGroup";
+        private const string RemoveGroupFromGroupTaskAction = "RemoveGroupFromGroup";
         private string target;
         private string domain;
         private int passwordExpired;
@@ -234,6 +243,8 @@ namespace MSBuild.ExtensionPack.Computer
         [DropdownValue(DeleteGroupTaskAction)]
         [DropdownValue(DeleteUserFromGroupTaskAction)]
         [DropdownValue(GrantPrivilegeTaskAction)]
+        [DropdownValue(AddGroupToGroupTaskAction)]
+        [DropdownValue(RemoveGroupFromGroupTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -272,6 +283,8 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(AddUserToGroupTaskAction, true)]
         [TaskAction(DeleteGroupTaskAction, true)]
         [TaskAction(DeleteUserFromGroupTaskAction, true)]
+        [TaskAction(AddGroupToGroupTaskAction, true)]
+        [TaskAction(RemoveGroupFromGroupTaskAction, true)]
         public ITaskItem[] Group { get; set; }
 
         /// <summary>
@@ -387,6 +400,13 @@ namespace MSBuild.ExtensionPack.Computer
         public string UserDomain { get; set; }
 
         /// <summary>
+        /// Sets the Parent group
+        /// </summary>
+        [TaskAction(AddGroupToGroupTaskAction, true)]
+        [TaskAction(RemoveGroupFromGroupTaskAction, true)]
+        public string ParentGroup { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -420,6 +440,10 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 switch (this.TaskAction)
                 {
+                    case AddGroupToGroupTaskAction:
+                    case RemoveGroupFromGroupTaskAction:
+                        this.GroupGroup();
+                        break;
                     case AddUserTaskAction:
                         this.AddUser();
                         break;
@@ -528,6 +552,55 @@ namespace MSBuild.ExtensionPack.Computer
             catch
             {
                 // ignore exceptions on invoke
+            }
+        }
+
+        private void GroupGroup()
+        {
+            if (this.Group == null)
+            {
+                Log.LogError("Group is required");
+                return;
+            }
+
+            if (this.ParentGroup == null)
+            {
+                Log.LogError("ParentGroup is required");
+                return;
+            }
+
+            this.CheckExists("group", this.ParentGroup);
+            if (!this.Exists)
+            {
+                this.Log.LogError("Parent Group not found");
+                return;
+            }
+
+            this.CheckExists("group", this.Group[0].ItemSpec);
+            if (!this.Exists)
+            {
+                this.Log.LogError("Group not found");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding {0} to {1}", this.Group[0].ItemSpec, this.ParentGroup));
+            DirectoryEntry parent = this.activeDirEntry.Children.Find(this.ParentGroup, "group");
+            DirectoryEntry child = this.activeDirEntry.Children.Find(this.Group[0].ItemSpec, "group");
+            try
+            {
+                switch (this.TaskAction)
+                {
+                    case AddGroupToGroupTaskAction:
+                        parent.Invoke("Add", new object[] { child.Path });
+                        break;
+                    case RemoveGroupFromGroupTaskAction:
+                        parent.Invoke("Remove", new object[] { child.Path });
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                // do nothing
             }
         }
 
