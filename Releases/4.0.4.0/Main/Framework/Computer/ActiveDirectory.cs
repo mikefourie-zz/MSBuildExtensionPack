@@ -266,7 +266,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Sets the User name
+        /// Sets the User name. Supports DirectoryPath metadata for AddUserToGroup. Use this to supply different domain users.
         /// </summary>
         [TaskAction(AddUserTaskAction, true)]
         [TaskAction(AddUserToGroupTaskAction, true)]
@@ -824,8 +824,13 @@ namespace MSBuild.ExtensionPack.Computer
                 DirectoryEntry user;
                 var username = u.ItemSpec;
                 var userAdEntry = this.activeDirEntry;
+                var userDirPath = u.GetMetadata("DirectoryPath");
 
-                if (username.Contains(@"\"))
+                if (!string.IsNullOrEmpty(userDirPath))
+                {
+                    userAdEntry = new DirectoryEntry(userDirPath);
+                }
+                else if (username.Contains(@"\"))
                 {
                     var userDomain = username.Substring(0, username.IndexOf(@"\", StringComparison.OrdinalIgnoreCase));
                     username = username.Substring(username.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) + 1);
