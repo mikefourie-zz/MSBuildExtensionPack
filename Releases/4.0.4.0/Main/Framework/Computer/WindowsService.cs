@@ -4,9 +4,11 @@
 namespace MSBuild.ExtensionPack.Computer
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Management;
+    using System.ServiceProcess;
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -285,6 +287,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>CheckExists</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RemoteUser, RemoteUserPassword <b>Output: </b>Exists)</para>
     /// <para><i>Disable</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>ServiceDependencies, ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
+    /// <para><i>Restart</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName). Any running directly dependent services will be restarted too.</para>
     /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RetryAttempts)</para>
@@ -364,6 +367,7 @@ namespace MSBuild.ExtensionPack.Computer
         private const string CheckExistsTaskAction = "CheckExists";
         private const string DisableTaskAction = "Disable";
         private const string InstallTaskAction = "Install";
+        private const string RestartTaskAction = "Restart";
         private const string SetAutomaticTaskAction = "SetAutomatic";
         private const string SetManualTaskAction = "SetManual";
         private const string StartTaskAction = "Start";
@@ -383,6 +387,7 @@ namespace MSBuild.ExtensionPack.Computer
         [DropdownValue(StopTaskAction)]
         [DropdownValue(UninstallTaskAction)]
         [DropdownValue(UpdateIdentityTaskAction)]
+        [DropdownValue(RestartTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -409,6 +414,7 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(StopTaskAction, true)]
         [TaskAction(UpdateIdentityTaskAction, true)]
         [TaskAction(UninstallTaskAction, true)]
+        [TaskAction(RestartTaskAction, true)]
         public override string MachineName
         {
             get { return base.MachineName; }
@@ -442,6 +448,7 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(StopTaskAction, true)]
         [TaskAction(UpdateIdentityTaskAction, true)]
         [TaskAction(UninstallTaskAction, true)]
+        [TaskAction(RestartTaskAction, true)]
         public string ServiceName { get; set; }
 
         /// <summary>
@@ -526,36 +533,69 @@ namespace MSBuild.ExtensionPack.Computer
 
             switch (this.TaskAction)
             {
-                case "Install":
+                case InstallTaskAction:
                     this.Install();
                     break;
-                case "Uninstall":
+                case UninstallTaskAction:
                     this.Uninstall();
                     break;
-                case "Stop":
+                case StopTaskAction:
                     this.Stop();
                     break;
-                case "Start":
+                case StartTaskAction:
                     this.Start();
                     break;
-                case "Disable":
+                case RestartTaskAction:
+                    this.Restart();
+                    break;
+                case DisableTaskAction:
                     this.SetStartupType("Disabled");
                     break;
-                case "SetManual":
+                case SetManualTaskAction:
                     this.SetStartupType("Manual");
                     break;
-                case "SetAutomatic":
+                case SetAutomaticTaskAction:
                     this.SetStartupType("Automatic");
                     break;
-                case "CheckExists":
+                case CheckExistsTaskAction:
                     this.CheckExists();
                     break;
-                case "UpdateIdentity":
+                case UpdateIdentityTaskAction:
                     this.UpdateIdentity();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void Restart()
+        {
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Restarting: {0} on {1}", this.ServiceName, this.MachineName));
+            using (ServiceController sc = new ServiceController(this.ServiceName, this.MachineName))
+            {
+                List<ServiceController> runningDependencies = sc.DependentServices.Where(s => s.Status == ServiceControllerStatus.Running).ToList();
+
+                if (!sc.Status.Equals(ServiceControllerStatus.Stopped) && !sc.Status.Equals(ServiceControllerStatus.StopPending))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Stopping: {0}", this.ServiceName));
+                    sc.Stop();
+                    sc.WaitForStatus(ServiceControllerStatus.Stopped);
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Starting: {0}", this.ServiceName));
+                    sc.Start();
+                    sc.WaitForStatus(ServiceControllerStatus.Running);
+
+                    foreach (ServiceController s in runningDependencies)
+                    {
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Starting dependent service: {0}", s.ServiceName));
+                        s.Start();
+                        sc.WaitForStatus(ServiceControllerStatus.Running);
+                    }
+                }
+                else
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service is stopped: {0}", this.ServiceName));
+                }
             }
         }
 
