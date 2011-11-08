@@ -147,12 +147,11 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (StreamReader streamReader = new StreamReader(this.versionFile.FullName, this.fileEncoding, true))
             {
+                currentValue = Convert.ToInt32(streamReader.ReadLine(), CultureInfo.InvariantCulture);
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
                 }
-
-                currentValue = Convert.ToInt32(streamReader.ReadLine(), CultureInfo.InvariantCulture);
             }
 
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Read: {0} from: {1}", currentValue, this.versionFile.FullName));

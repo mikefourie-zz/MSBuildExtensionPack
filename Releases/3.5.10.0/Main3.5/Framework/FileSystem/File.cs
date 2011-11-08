@@ -509,6 +509,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Open the file and attempt to read the encoding from the BOM.
             using (StreamReader streamReader = new StreamReader(parseFile, this.fileEncoding, true))
             {
+                streamReader.Read();
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
@@ -608,6 +609,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Open the file and attempt to read the encoding from the BOM.
             using (StreamReader streamReader = new StreamReader(parseFile, this.fileEncoding, true))
             {
+                streamReader.Read();
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
@@ -1054,12 +1056,11 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (StreamReader streamReader = new StreamReader(parseFile, this.fileEncoding, true))
             {
+                entireFile = streamReader.ReadToEnd();
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
                 }
-
-                entireFile = streamReader.ReadToEnd();
             }
 
             // Parse the entire file.
