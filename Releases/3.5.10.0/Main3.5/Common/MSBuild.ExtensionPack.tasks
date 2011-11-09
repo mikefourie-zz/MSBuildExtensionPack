@@ -106,7 +106,7 @@
 
     
     <!-- ============== StyleCop ============== -->
-    <UsingTask AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\StyleCop\v4.4\MSBuild.ExtensionPack.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
+    <UsingTask AssemblyFile="$(ProgramFiles)\StyleCop 4.6\MSBuild.ExtensionPack.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
 
 
     <!-- ============== Sql2005 ============== -->
