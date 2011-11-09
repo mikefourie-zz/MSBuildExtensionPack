@@ -71,9 +71,15 @@
     <Reference Include="Microsoft.Build.Utilities.v3.5">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="StyleCop, Version=4.5.25.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
-    <Reference Include="StyleCop.CSharp, Version=4.5.25.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
-    <Reference Include="StyleCop.CSharp.Rules, Version=4.5.25.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
+    <Reference Include="StyleCop, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
+      <HintPath>..\..\..\4.0.4.0\Main\StyleCop\AssemblyReferences\StyleCop.dll</HintPath>
+    </Reference>
+    <Reference Include="StyleCop.CSharp, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
+      <HintPath>..\..\..\4.0.4.0\Main\StyleCop\AssemblyReferences\StyleCop.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="StyleCop.CSharp.Rules, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
+      <HintPath>..\..\..\4.0.4.0\Main\StyleCop\AssemblyReferences\StyleCop.CSharp.Rules.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
