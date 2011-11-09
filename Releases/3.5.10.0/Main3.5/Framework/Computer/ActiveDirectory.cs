@@ -107,6 +107,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddUser</i> (<b>Required: </b> User <b>Optional: </b>Domain, FullName, Description, Password, PasswordExpired, PasswordNeverExpires)</para>
     /// <para><i>AddGroup</i> (<b>Required: </b> Group <b>Optional: </b>Domain, Description, GroupType)</para>
+    /// <para><i>AddGroupToGroup</i> (<b>Required: </b> Parent, Group). Windows Server 2008 only.</para>
     /// <para><i>AddUserToGroup</i> (<b>Required: </b> User, Group)</para>
     /// <para><i>CheckUserExists</i> (<b>Required: </b> User <b>Output:</b> Exists)</para>
     /// <para><i>CheckUserPassword</i> (<b>Required: </b> User, Password <b>Optional:</b> BindingContextOptions, ContextTypeStore, Domain <b>Output:</b> Exists)</para>
@@ -117,6 +118,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>GetGroupMembers</i> (<b>Required: </b> Group <b>Optional: </b>GetFullMemberName <b>Output:</b> Members)</para>
     /// <para><i>GetUserPassword</i> (<b>Required: </b>User  <b>Optional: </b>BindingContextOptions, ContextTypeStore, Domain <b>Output:</b> Password)</para>
     /// <para><i>GrantPrivilege</i> (<b>Required: </b>User, Privilege  <b>Optional: </b>Domain)</para>
+    /// <para><i>RemoveGroupFromGroup</i> (<b>Required: </b> Parent, Group). Windows Server 2008 only.</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -576,31 +578,38 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            this.CheckExists("group", this.Group[0].ItemSpec);
-            if (!this.Exists)
+            foreach (ITaskItem g in this.Group)
             {
-                this.Log.LogError("Group not found");
-                return;
-            }
-
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding {0} to {1}", this.Group[0].ItemSpec, this.ParentGroup));
-            DirectoryEntry parent = this.activeDirEntry.Children.Find(this.ParentGroup, "group");
-            DirectoryEntry child = this.activeDirEntry.Children.Find(this.Group[0].ItemSpec, "group");
-            try
-            {
-                switch (this.TaskAction)
+                DirectoryEntry child;
+                try
                 {
-                    case AddGroupToGroupTaskAction:
-                        parent.Invoke("Add", new object[] { child.Path });
-                        break;
-                    case RemoveGroupFromGroupTaskAction:
-                        parent.Invoke("Remove", new object[] { child.Path });
-                        break;
+                    child = this.activeDirEntry.Children.Find(g.ItemSpec, "group");
                 }
-            }
-            catch (Exception)
-            {
-                // do nothing
+                catch
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                    return;
+                }
+
+                DirectoryEntry parent = this.activeDirEntry.Children.Find(this.ParentGroup, "group");
+                try
+                {
+                    switch (this.TaskAction)
+                    {
+                        case AddGroupToGroupTaskAction:
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding {0} to {1}", g.ItemSpec, this.ParentGroup));
+                            parent.Invoke("Add", new object[] { child.Path });
+                            break;
+                        case RemoveGroupFromGroupTaskAction:
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing {0} from {1}", g.ItemSpec, this.ParentGroup));
+                            parent.Invoke("Remove", new object[] { child.Path });
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // do nothing
+                }
             }
         }
 
