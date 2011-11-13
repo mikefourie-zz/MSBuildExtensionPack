@@ -275,14 +275,14 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void WarningRaised(object sender, BuildWarningEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "{0}. Line: {1}, Column: {2}", e.Message, e.LineNumber, e.ColumnNumber);
+            string line = string.Format(CultureInfo.InvariantCulture, "{0}. Line: {1}, Column: {2}", e.Message, e.LineNumber, e.ColumnNumber);
             this.WriteToSql("WarningRaised", line);
             this.warnings++;           
         }
 
         private void ErrorRaised(object sender, BuildErrorEventArgs e)
         {
-            string line = String.Format(CultureInfo.InvariantCulture, "{0}. Line: {1}, Column: {2}: ", e.Message, e.LineNumber, e.ColumnNumber);
+            string line = string.Format(CultureInfo.InvariantCulture, "{0}. Line: {1}, Column: {2}: ", e.Message, e.LineNumber, e.ColumnNumber);
             this.WriteToSql("ErrorRaised", line);
             this.errors++;
         }

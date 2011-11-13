@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="DNZip.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
+#pragma warning disable 618
 namespace MSBuild.ExtensionPack.Compression
 {
     using System;
@@ -10,13 +11,14 @@ namespace MSBuild.ExtensionPack.Compression
     using Microsoft.Build.Framework;
 
     /// <summary>
+    /// <para>NOTE: This task is for backwards compatibility only. You should use the Zip task rather</para>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot) Existing files will be updated</para>
-    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot)</para>
+    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving) Existing files will be updated</para>
+    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para/>
-    /// This task uses http://dotnetzip.codeplex.com/ v1.9 for compression.
+    /// This task uses http://dotnetzip.codeplex.com v1.9.1.8 for compression.
     /// <para/>
     /// </summary>
     /// <example>
@@ -38,6 +40,7 @@ namespace MSBuild.ExtensionPack.Compression
     ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" Password="apassword" CompressionLevel="BestCompression" RemoveRoot="C:\Patches" CompressFiles="@(FilesToZip)" ZipFileName="C:\newZipByFileBestCompression.zip"/>
     ///     <!-- Create a zip file based on a Path -->
     ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressPath="C:\Patches" ZipFileName="C:\newZipByPath.zip"/>
+    ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressPath="C:\Patches" ZipFileName="C:\newZipByPath.zip" MaxOutputSegmentSize="734003200" UseZip64WhenSaving="AsNecessary"/>
     ///     <!-- Extract a zip file-->
     ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Extract" ExtractPath="C:\aaa11\1" ZipFileName="C:\newZipByFile.zip"/>
     ///     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Extract" ExtractPath="C:\aaa11\2" ZipFileName="C:\newZipByPath.zip"/>
@@ -72,13 +75,14 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
     public class DNZip : BaseTask
     {
         private const string CreateTaskAction = "Create";
         private const string ExtractTaskAction = "Extract";
         private const string AddFilesTaskAction = "AddFiles";
         private Ionic.Zlib.CompressionLevel compressLevel = Ionic.Zlib.CompressionLevel.Default;
+        private Zip64Option useZip64WhenSaving = Zip64Option.Default;
 
         /// <summary>
         /// Sets the TaskAction.
@@ -143,6 +147,27 @@ namespace MSBuild.ExtensionPack.Compression
         }
 
         /// <summary>
+        /// Sets the maximum output segment size, which typically results in a split archive (an archive split into multiple files).
+        /// This value is not required and if not set or set to 0 the resulting archive will not be split.
+        /// For more details see the DotNetZip documentation.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(AddFilesTaskAction, false)]
+        public int MaxOutputSegmentSize { get; set; }
+        
+        /// <summary>
+        /// Sets the UseZip64WhenSaving output of the DotNetZip library.
+        /// For more details see the DotNetZip documentation.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(AddFilesTaskAction, false)]
+        public string UseZip64WhenSaving 
+        {
+            get { return this.useZip64WhenSaving.ToString(); }
+            set { this.useZip64WhenSaving = (Zip64Option)Enum.Parse(typeof(Zip64Option), value, true); }
+        }
+
+        /// <summary>
         /// This is the main InternalExecute method that all tasks should implement
         /// </summary>
         protected override void InternalExecute()
@@ -176,6 +201,8 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
+                    zip.ParallelDeflateThreshold = -1;
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -195,6 +222,12 @@ namespace MSBuild.ExtensionPack.Compression
                         }
                     }
 
+                    if (this.MaxOutputSegmentSize > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize;
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save();
                 }
             }
@@ -202,6 +235,8 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = ZipFile.Read(this.ZipFileName.ItemSpec))
                 {
+                    zip.ParallelDeflateThreshold = -1;
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -219,6 +254,12 @@ namespace MSBuild.ExtensionPack.Compression
                         zip.UpdateDirectory(this.CompressPath.ItemSpec);
                     }
 
+                    if (this.MaxOutputSegmentSize > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize;
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save();
                 }
             }
@@ -236,6 +277,8 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.ParallelDeflateThreshold = -1;
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -255,6 +298,12 @@ namespace MSBuild.ExtensionPack.Compression
                         }
                     }
 
+                    if (this.MaxOutputSegmentSize > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize;
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save(this.ZipFileName.ItemSpec);
                 }
             }
@@ -262,6 +311,8 @@ namespace MSBuild.ExtensionPack.Compression
             {
                 using (ZipFile zip = new ZipFile())
                 {
+                    zip.ParallelDeflateThreshold = -1;
+                    zip.UseUnicodeAsNecessary = true;
                     zip.CompressionLevel = this.compressLevel;
                     if (!string.IsNullOrEmpty(this.Password))
                     {
@@ -280,6 +331,12 @@ namespace MSBuild.ExtensionPack.Compression
                         zip.AddDirectory(this.CompressPath.ItemSpec, d.Name);
                     }
 
+                    if (this.MaxOutputSegmentSize > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize;
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save(this.ZipFileName.ItemSpec);
                 }
             }

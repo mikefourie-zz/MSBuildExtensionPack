@@ -33,7 +33,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/3a47a393-8a00-ad50-a5e7-55b3f131a724.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/3a47a393-8a00-ad50-a5e7-55b3f131a724.htm")]
     public class TfsSourceAdmin : BaseTask
     {
         private const string BranchTaskAction = "Branch";
@@ -143,7 +143,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <param name="options">The options.</param>
         private void ExecuteCommand(string action, string options)
         {
-            string arguments = String.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
+            string arguments = string.Format(CultureInfo.CurrentCulture, "{0} {1}", action, options);
 
             this.shellWrapper = new ShellWrapper(this.teamFoundationExe, arguments);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)

@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/c4794935-065a-008d-4270-70c58451a3a6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/c4794935-065a-008d-4270-70c58451a3a6.htm")]
     public class Iis6ServiceExtensionFile : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -150,7 +150,7 @@ namespace MSBuild.ExtensionPack.Web
                     }
                     catch (COMException ex)
                     {
-                        throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to delete web service extension of '{0}'", this.Path), ex);
+                        throw new ApplicationException(string.Format(CultureInfo.InvariantCulture, "Unable to delete web service extension of '{0}'", this.Path), ex);
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Web
                 }
                 catch (Exception ex)
                 {
-                    throw new ApplicationException(String.Format(CultureInfo.InvariantCulture, "Unable to create the extension: {0}", this.Path), ex);
+                    throw new ApplicationException(string.Format(CultureInfo.InvariantCulture, "Unable to create the extension: {0}", this.Path), ex);
                 }
             }
         }

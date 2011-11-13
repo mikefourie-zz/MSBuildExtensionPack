@@ -102,3 +102,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "VirtualDirectory", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#DeleteVirtualDirectory()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "HttpResponseHeader", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#AddResponseHeaders()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#AddResponseHeaders()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "MimeType", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#AddMimeType()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#LogExtFileFlags")]

@@ -189,14 +189,17 @@
     <Compile Include="Communication\FTP\FtpException.cs" />
     <Compile Include="Communication\FTP\FtpFileInfo.cs" />
     <Compile Include="Communication\FTP\NativeMethods.cs" />
+    <Compile Include="Communication\MSMQ.cs" />
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\DNZip.cs" />
+    <Compile Include="Compression\Zip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
+    <Compile Include="Computer\Process.cs" />
     <Compile Include="Computer\HostsFile\HostsFile.cs" />
-    <Compile Include="Computer\HostsFile\HostsFileEntries.cs" />
-    <Compile Include="Computer\HostsFile\HostsFileReader.cs" />
-    <Compile Include="Computer\HostsFile\HostsFileWriter.cs" />
+    <Compile Include="Computer\HostsFile\IHostsFile.cs" />
+    <Compile Include="Computer\HostsFile\IHostsFileReader.cs" />
+    <Compile Include="Computer\HostsFile\IHostsFileWriter.cs" />
     <Compile Include="Computer\WshShell.cs" />
     <Compile Include="Computer\GetPasswordForm.cs">
       <SubType>Form</SubType>
@@ -213,6 +216,7 @@
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Framework\ILMerge.cs" />
+    <Compile Include="Framework\SmartExec.cs" />
     <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
@@ -385,6 +389,10 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\MSMQ.proj" />
+    <None Include="XmlSamples\Process.proj" />
+    <None Include="XmlSamples\SmartExec.proj" />
+    <None Include="XmlSamples\Zip.proj" />
     <None Include="XmlSamples\HostsFile.proj" />
     <None Include="XmlSamples\ILMerge.proj" />
     <None Include="XmlSamples\NUnit.proj" />
@@ -405,7 +413,9 @@
     <None Include="XmlSamples\Dialog.proj" />
     <None Include="XmlSamples\VB6.proj" />
     <None Include="XmlSamples\Certificate.proj" />
-    <None Include="XmlSamples\FxCop.proj" />
+    <None Include="XmlSamples\FxCop.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\Gac.proj" />
     <None Include="XmlSamples\Signing.proj" />
     <None Include="XmlSamples\Sound.proj" />

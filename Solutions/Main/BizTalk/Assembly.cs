@@ -17,7 +17,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, DeploymentPath, Database, Gac, Force, GacOnAddResource, GacOnMSIFileImport, GacOnMSIFileInstall) </para>
+    /// <para><i>Add</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, DeploymentPath, Database, Gac, Force, GacOnAddResource, GacOnMSIFileImport, GacOnMSIFileInstall, DestinationLocation) </para>
     /// <para><i>Remove</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>Application, Assemblies <b>Optional: </b>MachineName, DatabaseServer, Database <b>Output: </b>Exists)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -31,8 +31,8 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
-    ///       <ItemGroup>
-    ///             <BizTalkAssemblies Include="YOURASSEMBLY">
+    ///         <ItemGroup>
+    ///             <BizTalkAssemblies Include="YOURASSEMBLY"/>
     ///         </ItemGroup>
     ///         <!-- Add the Assemblies -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkAssembly TaskAction="Add" Force="true" Gac="true" MachineName="$(COMPUTERNAME)" Application="BizTalk Application 1" Assemblies="@(BizTalkAssemblies)" />
@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
     public class BizTalkAssembly : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -113,6 +113,12 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CheckExistsTaskAction, false)]
         [TaskAction(RemoveTaskAction, false)]
         public string DatabaseServer { get; set; }
+
+        /// <summary>
+        /// Sets the DestinationLocation
+        /// </summary>
+        [TaskAction(AddTaskAction, false)]
+        public string DestinationLocation { get; set; }
 
         /// <summary>
         /// Sets the Application Name
@@ -220,6 +226,9 @@ namespace MSBuild.ExtensionPack.BizTalk
             // gac on msi import 
             properties.Add("UpdateGacOnImport", this.GacOnMsiFileImport);
 
+            // DestinationLocation 
+            properties.Add("DestinationLocation", this.DestinationLocation);
+            
             // source location of assembly
             properties.Add("SourceLocation", Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileName(assemblyPath)));
 
@@ -229,9 +238,17 @@ namespace MSBuild.ExtensionPack.BizTalk
         private BizTalkResource CreateBizTalkResource(string assemblyPath, int order)
         {
             Reflection.Assembly assembly = Reflection.Assembly.LoadFile(assemblyPath);
-
-            // if the assembly has this attribute, then it's a BizTalk assembly - otherwise it's a standard .NET assembly
-            object[] bizTalkAssemblyAttribute = assembly.GetCustomAttributes(typeof(BizTalkAssemblyAttribute), false);
+            object[] bizTalkAssemblyAttribute = null;
+            try
+            {
+                // if the assembly has this attribute, then it's a BizTalk assembly - otherwise it's a standard .NET assembly
+                // if an exception is thrown, we assume it is a standard .NET assembly - see http://msbuildextensionpack.codeplex.com/workitem/9177
+                bizTalkAssemblyAttribute = assembly.GetCustomAttributes(typeof(BizTalkAssemblyAttribute), false);
+            }
+            catch
+            {
+                // do nothing
+            }
 
             return new BizTalkResource
             {
@@ -241,7 +258,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 Order = order,
                 SourcePath = assemblyPath,
                 DeploymentPath = Path.Combine(Path.GetDirectoryName(this.DeploymentPath) ?? string.Empty, Path.GetFileName(assemblyPath)),
-                ResourceType = bizTalkAssemblyAttribute.Length == 0 ? "System.BizTalk:Assembly" : "System.BizTalk:BizTalkAssembly"
+                ResourceType = (bizTalkAssemblyAttribute == null || bizTalkAssemblyAttribute.Length == 0) ? "System.BizTalk:Assembly" : "System.BizTalk:BizTalkAssembly"
             };
         }
 
@@ -290,7 +307,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                         Deployment.Application btsApplication = btsGroup.Applications[this.Application];
                         btsApplication.Log += this.DeploymentLog;
                         btsApplication.UILevel = 2;
-                        btsApplication.RemoveResource(String.Empty, r.FullName);
+                        btsApplication.RemoveResource(string.Empty, r.FullName);
                     }
                     catch
                     {
@@ -388,7 +405,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             {
                 if (string.IsNullOrEmpty(resource.DeploymentPath))
                 {
-                    throw new Exception("RemoteAssemblyPath is required for remote deployment");
+                    throw new Exception("DeploymentPath is required for remote deployment");
                 }
 
                 // the assembly needs to be copied to the remote server for gaccing.

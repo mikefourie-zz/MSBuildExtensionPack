@@ -68,18 +68,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="Microsoft.StyleCop, Version=4.3.0.8, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.StyleCop.CSharp, Version=4.3.0.8, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.StyleCop.CSharp.Rules, Version=4.3.0.8, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="StyleCop, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
+    <Reference Include="StyleCop.CSharp, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
+    <Reference Include="StyleCop.CSharp.Rules, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -112,9 +103,9 @@
     <None Include="XmlSamples\StyleCop.proj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AssemblyReferences\Microsoft.StyleCop.CSharp.dll" />
-    <Content Include="AssemblyReferences\Microsoft.StyleCop.CSharp.Rules.dll" />
-    <Content Include="AssemblyReferences\Microsoft.StyleCop.dll" />
+    <Content Include="AssemblyReferences\StyleCop.CSharp.dll" />
+    <Content Include="AssemblyReferences\StyleCop.CSharp.Rules.dll" />
+    <Content Include="AssemblyReferences\StyleCop.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

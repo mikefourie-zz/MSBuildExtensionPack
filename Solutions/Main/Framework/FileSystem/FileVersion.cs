@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/7b39151a-52da-890b-dc46-21c84b886e02.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/7b39151a-52da-890b-dc46-21c84b886e02.htm")]
     public class FileVersion : BaseTask
     {
         private const string IncrementTaskAction = "Increment";
@@ -147,12 +147,11 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (StreamReader streamReader = new StreamReader(this.versionFile.FullName, this.fileEncoding, true))
             {
+                currentValue = Convert.ToInt32(streamReader.ReadLine(), CultureInfo.InvariantCulture);
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
                 }
-
-                currentValue = Convert.ToInt32(streamReader.ReadLine(), CultureInfo.InvariantCulture);
             }
 
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Read: {0} from: {1}", currentValue, this.versionFile.FullName));

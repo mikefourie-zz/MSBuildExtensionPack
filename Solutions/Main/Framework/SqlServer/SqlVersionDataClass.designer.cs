@@ -78,7 +78,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 	public partial class BuildNumber : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(string.Empty);
 		
 		private string _SequenceName;
 		

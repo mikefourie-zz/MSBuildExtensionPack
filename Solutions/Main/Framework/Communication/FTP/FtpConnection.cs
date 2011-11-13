@@ -104,7 +104,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
             }
             else
             {
-                throw new InvalidDataException(String.Format(CultureInfo.InvariantCulture, "{0} is not a directory!", directory));
+                throw new InvalidDataException(string.Format(CultureInfo.InvariantCulture, "{0} is not a directory!", directory));
             }
         }
 
@@ -637,7 +637,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
         /// </summary>
         private void Open()
         {
-            if (String.IsNullOrEmpty(this.ftpHost))
+            if (string.IsNullOrEmpty(this.ftpHost))
             {
                 throw new ArgumentNullException(this.ftpHost);
             }

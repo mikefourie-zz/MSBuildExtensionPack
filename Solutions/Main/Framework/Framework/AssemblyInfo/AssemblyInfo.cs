@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {
         private AssemblyVersionSettings assemblyFileVersionSettings;
@@ -828,7 +828,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// &lt;AssemblyGuid&gt;56269a04-c55a-4c5a-92ba-dfdb569bc708&lt;/AssemblyGuid&gt;
         ///     </code>
         /// </example>
-        public string AssemblyGuid { get; set; }
+        public string Guid { get; set; }
 
         /// <summary>Controls whether assembly signing information is replaced in the AssemblyInfo files.</summary>
         /// <remarks>
@@ -895,7 +895,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         ///     <para>
         ///         To specify whether the assembly shoul be visible to COM set this to true and
-        ///         provide a valid GUID using the <see cref="AssemblyGuid">AssemblyGuid</see>
+        ///         provide a valid GUID using the <see cref="Guid">Guid</see>
         ///         property. The default value is <em>null</em>.
         ///     </para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
@@ -1034,7 +1034,7 @@ namespace MSBuild.ExtensionPack.Framework
                 this.UpdateProperty(assemblyInfo, "AssemblyCopyright");
                 this.UpdateProperty(assemblyInfo, "AssemblyTrademark");
                 this.UpdateProperty(assemblyInfo, "AssemblyCulture");
-                this.UpdateProperty(assemblyInfo, "AssemblyGuid");
+                this.UpdateProperty(assemblyInfo, "Guid");
                 if (this.AssemblyIncludeSigningInformation)
                 {
                     this.UpdateProperty(assemblyInfo, "AssemblyKeyName");
@@ -1273,7 +1273,7 @@ namespace MSBuild.ExtensionPack.Framework
         // returns false.
         private bool ParseIncrementProperties()
         {
-            string enumNames = String.Join(", ", Enum.GetNames(typeof(IncrementMethod)));
+            string enumNames = string.Join(", ", Enum.GetNames(typeof(IncrementMethod)));
 
             // Handle AssemblyBuildNumberType
             if (this.AssemblyBuildNumberType == null)

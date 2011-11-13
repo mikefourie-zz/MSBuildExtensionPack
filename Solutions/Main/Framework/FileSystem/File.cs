@@ -124,7 +124,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
         private const string CountLinesTaskAction = "CountLines";
@@ -215,7 +215,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public string RegexPattern { get; set; }
 
         /// <summary>
-        /// The replacement text to use. Default is String.Empty
+        /// The replacement text to use. Default is string.Empty
         /// </summary>
         [TaskAction(ReplaceTaskAction, false)]
         public string Replacement
@@ -509,6 +509,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Open the file and attempt to read the encoding from the BOM.
             using (StreamReader streamReader = new StreamReader(parseFile, this.fileEncoding, true))
             {
+                streamReader.Read();
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
@@ -608,6 +609,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Open the file and attempt to read the encoding from the BOM.
             using (StreamReader streamReader = new StreamReader(parseFile, this.fileEncoding, true))
             {
+                streamReader.Read();
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
@@ -655,13 +657,13 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (files == null || files.Length == 0)
             {
-                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "Please supply a value for either the Path or Files property."));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Please supply a value for either the Path or Files property."));
                 return;
             }
 
             if (this.Users == null || this.Users.Length == 0)
             {
-                this.Log.LogError(String.Format(CultureInfo.CurrentCulture, "Please supply a value for the Users property."));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Please supply a value for the Users property."));
                 return;
             }
 
@@ -1054,12 +1056,11 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             using (StreamReader streamReader = new StreamReader(parseFile, this.fileEncoding, true))
             {
+                entireFile = streamReader.ReadToEnd();
                 if (this.fileEncoding == null)
                 {
                     this.fileEncoding = streamReader.CurrentEncoding;
                 }
-
-                entireFile = streamReader.ReadToEnd();
             }
 
             // Parse the entire file.

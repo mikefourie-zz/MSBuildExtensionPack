@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Conformance, Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
-    /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Output: </b>IsValid, Output)</para>
+    /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Optional: </b> TargetNamespace <b>Output: </b>IsValid, Output)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -94,12 +94,13 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/3d383fd0-d8a7-4b93-3e03-39b48456dac1.htm")]
     public class XmlTask : BaseTask
     {
         private const string TransformTaskAction = "Transform";
         private const string ValidateTaskAction = "Validate";
 
+        private string targetNamespace = string.Empty;
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
         private ConformanceLevel conformanceLevel;
@@ -143,6 +144,16 @@ namespace MSBuild.ExtensionPack.Xml
         /// </summary>
         [TaskAction(TransformTaskAction, false)]
         public string OutputFile { get; set; }
+
+        /// <summary>
+        /// Sets the TargetNamespace for Validate. Default is ""
+        /// </summary>
+        [TaskAction(ValidateTaskAction, false)]
+        public string TargetNamespace
+        {
+            get { return this.targetNamespace; }
+            set { this.targetNamespace = value; }
+        }
 
         /// <summary>
         /// Sets the Schema Files collection
@@ -304,6 +315,7 @@ namespace MSBuild.ExtensionPack.Xml
                     using (FileStream stream = new FileStream(this.OutputFile, FileMode.Create))
                     {
                         StreamWriter streamWriter = null;
+
                         try
                         {
                             streamWriter = new StreamWriter(stream, Encoding.Default);
@@ -349,13 +361,12 @@ namespace MSBuild.ExtensionPack.Xml
 
         private void Validate()
         {
-            this.LogTaskMessage(!string.IsNullOrEmpty(this.XmlFile) ? string.Format(CultureInfo.CurrentCulture, "Validating: {0}", this.XmlFile) : "Validating Xml");
-
+            this.LogTaskMessage(!string.IsNullOrEmpty(this.XmlFile) ? string.Format(CultureInfo.CurrentCulture, "Validating: {0}", this.XmlFile) : "Validating Xml");           
             XmlSchemaSet schemas = new XmlSchemaSet();
             foreach (ITaskItem i in this.SchemaFiles)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Loading SchemaFile: {0}", i.ItemSpec));
-                schemas.Add(string.Empty, i.ItemSpec);
+                schemas.Add(this.TargetNamespace, i.ItemSpec);
             }
 
             bool errorEncountered = false;

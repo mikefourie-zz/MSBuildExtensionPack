@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckDriveSpace</i> (<b>Required: </b>Drive, MinSpace <b>Optional: </b>Unit)</para>
-    /// <para><i>GetDrives</i> (<b>Optional: </b>SkipDrives <b>Output: </b>Drives)</para>
+    /// <para><i>GetDrives</i> (<b>Optional: </b>SkipDrives, Unit <b>Output: </b>Drives)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -49,7 +49,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
     public class SystemDrive : BaseTask
     {
         private const string CheckDriveSpaceTaskAction = "CheckDriveSpace";
@@ -70,6 +70,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the unit. Supports Kb, Mb(default), Gb, Tb
         /// </summary>
         [TaskAction(CheckDriveSpaceTaskAction, false)]
+        [TaskAction(GetDrivesTaskAction, false)]
         public string Unit { get; set; }
 
         /// <summary>
@@ -135,27 +136,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking Drive Space: {0} (min {1}{2}) on: {3}", this.Drive, this.MinSpace, this.Unit, this.MachineName));
 
-            if (string.IsNullOrEmpty(this.Unit))
-            {
-                this.Unit = "Mb";
-            }
-
-            long unitSize;
-            switch (this.Unit.ToUpperInvariant())
-            {
-                case "TB":
-                    unitSize = 1099511627776;
-                    break;
-                case "GB":
-                    unitSize = 1073741824;
-                    break;
-                case "KB":
-                    unitSize = 1024;
-                    break;
-                default:
-                    unitSize = 1048576;
-                    break;
-            }
+            long unitSize = this.ReadUnitSize();
 
             if (this.MachineName == Environment.MachineName)
             {
@@ -218,12 +199,42 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
+        private long ReadUnitSize()
+        {
+            if (string.IsNullOrEmpty(this.Unit))
+            {
+                this.Unit = "Mb";
+            }
+
+            long unitSize; 
+
+            switch (this.Unit.ToUpperInvariant())
+            {
+                case "TB":
+                    unitSize = 1099511627776;
+                    break;
+                case "GB":
+                    unitSize = 1073741824;
+                    break;
+                case "KB":
+                    unitSize = 1024;
+                    break;
+                default:
+                    unitSize = 1048576;
+                    break;
+            }
+
+            return unitSize;
+        }
+
         /// <summary>
         /// Gets the drives.
         /// </summary>
         private void GetDrives()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting Drives from: {0}", this.MachineName));
+
+            long unitSize = this.ReadUnitSize();
 
             this.drives = new List<ITaskItem>();
             if (this.MachineName == Environment.MachineName)
@@ -245,10 +256,10 @@ namespace MSBuild.ExtensionPack.Computer
                         {
                             item.SetMetadata("Name", driveInfo.Name);
                             item.SetMetadata("VolumeLabel", driveInfo.VolumeLabel);
-                            item.SetMetadata("AvailableFreeSpace", driveInfo.AvailableFreeSpace.ToString(CultureInfo.CurrentCulture));
+                            item.SetMetadata("AvailableFreeSpace", (driveInfo.AvailableFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
                             item.SetMetadata("DriveFormat", driveInfo.DriveFormat);
-                            item.SetMetadata("TotalSize", driveInfo.TotalSize.ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("TotalFreeSpace", driveInfo.TotalFreeSpace.ToString(CultureInfo.CurrentCulture));
+                            item.SetMetadata("TotalSize", (driveInfo.TotalSize / unitSize).ToString(CultureInfo.CurrentCulture));
+                            item.SetMetadata("TotalFreeSpace", (driveInfo.TotalFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
                             item.SetMetadata("IsReady", driveInfo.IsReady.ToString());
                             item.SetMetadata("RootDirectory", driveInfo.RootDirectory.ToString());
                         }

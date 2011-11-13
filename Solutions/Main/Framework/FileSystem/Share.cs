@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
         private const string ModifyPermissionsTaskAction = "ModifyPermissions";
@@ -63,6 +63,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private int newPermissionCount;
 
         #region enums
+
         private enum ReturnCode : uint
         {
             /// <summary>
@@ -115,6 +116,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             /// </summary>
             NetNameNotFound = 25
         }
+
         #endregion
 
         [DropdownValue(CheckExistsTaskAction)]
@@ -377,77 +379,122 @@ namespace MSBuild.ExtensionPack.FileSystem
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating share: {0} on: {1}", this.ShareName, this.MachineName));
+            this.GetManagementScope(@"\root\cimv2");
+            ManagementPath path = new ManagementPath("Win32_Share");
 
-            if (!Directory.Exists(this.SharePath))
+            if (!this.TargetingLocalMachine(true))
             {
-                if (this.CreateSharePath)
+                // we need to operate remotely
+                string fullQuery = @"Select * From Win32_Directory Where Name = '" + this.SharePath.Replace("\\", "\\\\") + "'";
+                ObjectQuery query1 = new ObjectQuery(fullQuery);
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query1))
                 {
-                    Directory.CreateDirectory(this.SharePath);
+                    ManagementObjectCollection queryCollection = searcher.Get();
+                    if (queryCollection.Count == 0)
+                    {
+                        if (this.CreateSharePath)
+                        {
+                            this.LogTaskMessage(MessageImportance.Low, "Attempting to create remote folder for share");
+                            ManagementPath path2 = new ManagementPath("Win32_Process");
+                            ManagementClass managementClass2 = new ManagementClass(this.Scope, path2, null);
+
+                            ManagementBaseObject inParams1 = managementClass2.GetMethodParameters("Create");
+                            string tex = "cmd.exe /c md \"" + this.SharePath + "\"";
+                            inParams1["CommandLine"] = tex;
+
+                            ManagementBaseObject outParams1 = managementClass2.InvokeMethod("Create", inParams1, null);
+                            uint rc = Convert.ToUInt32(outParams1.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                            if (rc != 0)
+                            {
+                                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
+                                return;
+                            }
+
+                            // adding a sleep as it may take a while to register.
+                            System.Threading.Thread.Sleep(1000);
+                        }
+                        else
+                        {
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SharePath not found: {0}. Set CreateSharePath to true to create a SharePath that does not exist.", this.SharePath));
+                            return;
+                        }
+                    }
                 }
-                else
+            }
+            else
+            {
+                if (!Directory.Exists(this.SharePath))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SharePath not found: {0}. Set CreateSharePath to true to create a SharePath that does not exist.", this.SharePath));
-                    return;
+                    if (this.CreateSharePath)
+                    {
+                        Directory.CreateDirectory(this.SharePath);
+
+                        // adding a sleep as it may take a while to register.
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SharePath not found: {0}. Set CreateSharePath to true to create a SharePath that does not exist.", this.SharePath));
+                        return;
+                    }
                 }
             }
 
-            this.GetManagementScope(@"\root\cimv2");
-            ManagementPath path = new ManagementPath("Win32_Share");
             using (ManagementClass managementClass = new ManagementClass(this.Scope, path, null))
             {
-                // Set the input parameters
-                ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");
-                inParams["Description"] = this.Description;
-                inParams["Name"] = this.ShareName;
-                inParams["Path"] = this.SharePath;
+            // Set the input parameters
+            ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");
+            inParams["Description"] = this.Description;
+            inParams["Name"] = this.ShareName;
+            inParams["Path"] = this.SharePath;
 
-                // build the access permissions
-                if (this.AllowUsers != null | this.DenyUsers != null)
-                {
-                    inParams["Access"] = this.SetAccessPermissions();
-                }
+            // build the access permissions
+            if (this.AllowUsers != null | this.DenyUsers != null)
+            {
+                inParams["Access"] = this.SetAccessPermissions();
+            }
 
-                // Disk Drive
-                inParams["Type"] = 0x0;
+            // Disk Drive
+            inParams["Type"] = 0x0;
 
-                if (this.MaximumAllowed > 0)
-                {
-                    inParams["MaximumAllowed"] = this.MaximumAllowed;
-                }
+            if (this.MaximumAllowed > 0)
+            {
+                inParams["MaximumAllowed"] = this.MaximumAllowed;
+            }
 
-                ManagementBaseObject outParams = managementClass.InvokeMethod("Create", inParams, null);
-                ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
-                switch (returnCode)
-                {
-                    case ReturnCode.Success:
-                        break;
-                    case ReturnCode.AccessDenied:
-                        this.Log.LogError("Access Denied");
-                        break;
-                    case ReturnCode.UnknownFailure:
-                        this.Log.LogError("Unknown Failure");
-                        break;
-                    case ReturnCode.InvalidName:
-                        this.Log.LogError("Invalid Name");
-                        break;
-                    case ReturnCode.InvalidLevel:
-                        this.Log.LogError("Invalid Level");
-                        break;
-                    case ReturnCode.InvalidParameter:
-                        this.Log.LogError("Invalid Parameter");
-                        break;
-                    case ReturnCode.RedirectedPath:
-                        this.Log.LogError("Redirected Path");
-                        break;
-                    case ReturnCode.UnknownDeviceOrDirectory:
-                        this.Log.LogError("Unknown Device or Directory");
-                        break;
-                    case ReturnCode.NetNameNotFound:
-                        this.Log.LogError("Net name not found");
-                        break;
-                    case ReturnCode.ShareAlreadyExists:
-                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The share already exists: {0}", this.ShareName));
-                        break;
+            ManagementBaseObject outParams = managementClass.InvokeMethod("Create", inParams, null);
+            ReturnCode returnCode = (ReturnCode)Convert.ToUInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+            switch (returnCode)
+            {
+                case ReturnCode.Success:
+                    break;
+                case ReturnCode.AccessDenied:
+                    this.Log.LogError("Access Denied");
+                    break;
+                case ReturnCode.UnknownFailure:
+                    this.Log.LogError("Unknown Failure");
+                    break;
+                case ReturnCode.InvalidName:
+                    this.Log.LogError("Invalid Name");
+                    break;
+                case ReturnCode.InvalidLevel:
+                    this.Log.LogError("Invalid Level");
+                    break;
+                case ReturnCode.InvalidParameter:
+                    this.Log.LogError("Invalid Parameter");
+                    break;
+                case ReturnCode.RedirectedPath:
+                    this.Log.LogError("Redirected Path");
+                    break;
+                case ReturnCode.UnknownDeviceOrDirectory:
+                    this.Log.LogError("Unknown Device or Directory");
+                    break;
+                case ReturnCode.NetNameNotFound:
+                    this.Log.LogError("Net name not found");
+                    break;
+                case ReturnCode.ShareAlreadyExists:
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The share already exists: {0}", this.ShareName));
+                    break;
                 }
             }
         }

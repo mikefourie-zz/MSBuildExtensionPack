@@ -19,6 +19,9 @@
         <HttpResponseHeaders Include="DemoHeader">
             <Value>DemoHeaderValue</Value>
         </HttpResponseHeaders>
+        <MimeTypes Include=".test">
+            <Value>test/test1</Value>
+        </MimeTypes>
     </ItemGroup>
     <Target Name="Default">
         <!-- Create a site with a virtual directory -->
@@ -28,6 +31,8 @@
         <Message Text="NewSite SiteId: $(NewSiteId)"/>
         <!-- Add HTTP Response Headers -->
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddResponseHeaders" Name="NewSite" HttpResponseHeaders="@(HttpResponseHeaders)"/>
+        <!-- Add Mime Types -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddMimeType" Name="NewSite" MimeTypes="@(MimeTypes)"/>
         <!-- Check whether the virtual directory exists -->
         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
             <Output TaskParameter="Exists" PropertyName="VDirExists"/>

@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
     public class GenericTool : ToolTask
     {
         /// <summary>

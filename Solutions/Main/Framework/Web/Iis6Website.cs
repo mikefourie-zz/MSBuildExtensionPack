@@ -57,7 +57,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -89,6 +89,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
         /// Some properties may be split within the semi colon, e.g. to set multiple server bindings you could use Properties="ServerBindings=:80:first.host.header|:80:second.host.header"
+        /// If a property contains =, enter #~# as a special sequence which will be replaced with = during processing
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string Properties
@@ -301,7 +302,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Create()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Creating Website: {0}", this.Name));
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Creating Website: {0}", this.Name));
             using (DirectoryEntry webserviceEntry = this.LoadWebService())
             {
                 // We'll try and find the website first.
@@ -378,6 +379,9 @@ namespace MSBuild.ExtensionPack.Web
                             string[] propPair = s.Split(new[] { '=' });
                             string propName = propPair[0];
                             string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
+
+                            // handle the special character sequence to insert '=' if property requires it
+                            propValue = propValue.Replace("#~#", "=");
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
                             UpdateMetaBaseProperty(this.websiteEntry, propName, propValue);
                         }
@@ -394,6 +398,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (this.CheckWebsiteExists())
             {
+                this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentUICulture, "Deleting Website: {0}", this.Name));
                 using (DirectoryEntry webService = this.LoadWebService())
                 {
                     object[] args = { "IIsWebServer", Convert.ToInt32(this.websiteEntry.Name, CultureInfo.InvariantCulture) };

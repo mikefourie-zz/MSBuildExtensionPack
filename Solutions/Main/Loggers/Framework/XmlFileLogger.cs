@@ -171,7 +171,7 @@ namespace MSBuild.ExtensionPack.Loggers
             this.xmlWriter.WriteEndElement();
             this.xmlWriter.WriteStartElement("timeelapsed");
             TimeSpan s = DateTime.UtcNow - this.startTime;
-            this.xmlWriter.WriteValue(String.Format(CultureInfo.InvariantCulture, "{0}", s));
+            this.xmlWriter.WriteValue(string.Format(CultureInfo.InvariantCulture, "{0}", s));
             this.xmlWriter.WriteEndElement();
             this.LogFinished();
         }
@@ -328,7 +328,7 @@ namespace MSBuild.ExtensionPack.Loggers
             if (t == typeof(int))
             {
                 int number;
-                if (Int32.TryParse(value.ToString(), out number))
+                if (int.TryParse(value.ToString(), out number))
                 {
                     this.xmlWriter.WriteAttributeString(name, number.ToString(CultureInfo.InvariantCulture));
                 }
@@ -345,7 +345,7 @@ namespace MSBuild.ExtensionPack.Loggers
             else
             {
                 string text = value.ToString();
-                if (!String.IsNullOrEmpty(text))
+                if (!string.IsNullOrEmpty(text))
                 {
                     this.xmlWriter.WriteAttributeString(name, text);
                 }

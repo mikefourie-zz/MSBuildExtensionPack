@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/4ad82db2-621c-7172-87ab-86a587ef7856.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/4ad82db2-621c-7172-87ab-86a587ef7856.htm")]
     public class VC6 : BaseTask
     {
         private const string DefaultMSDEVPath = @"\Microsoft Visual Studio\Common\MSDev98\Bin\MSDEV.EXE";
@@ -157,7 +157,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private bool BuildProject(ITaskItem project)
         {
             string projectNames = project.GetMetadata(ProjectsMetadataName);
-            if (String.IsNullOrEmpty(projectNames))
+            if (string.IsNullOrEmpty(projectNames))
             {
                 Log.LogMessage(MessageImportance.Low, "No project names specified. Using 'ALL'.");
                 projectNames = "ALL";
@@ -168,7 +168,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             string platformName = project.GetMetadata(PlatformMetadataName);
-            if (String.IsNullOrEmpty(platformName))
+            if (string.IsNullOrEmpty(platformName))
             {
                 Log.LogMessage(MessageImportance.Low, "No platform name specified. Using 'Win32'.");
                 platformName = "Win32";
@@ -179,7 +179,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             string configurationName = project.GetMetadata(ConfigurationMetadataName);
-            if (String.IsNullOrEmpty(configurationName))
+            if (string.IsNullOrEmpty(configurationName))
             {
                 Log.LogMessage(MessageImportance.Low, "No configuration name specified. Using 'Debug'.");
                 configurationName = "Debug";

@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.Web
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Management;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.Web.Administration;
@@ -14,11 +15,12 @@ namespace MSBuild.ExtensionPack.Web
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
+    /// <para><i>AddMimeType</i> (<b>Required: </b> Name, MimeTypes)</para>
     /// <para><i>AddResponseHeaders</i> (<b>Required: </b> Name, HttpResponseHeaders)</para>
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
@@ -50,6 +52,9 @@ namespace MSBuild.ExtensionPack.Web
     ///         <HttpResponseHeaders Include="DemoHeader">
     ///             <Value>DemoHeaderValue</Value>
     ///         </HttpResponseHeaders>
+    ///         <MimeTypes Include=".test">
+    ///             <Value>test/test1</Value>
+    ///         </MimeTypes>
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Create a site with a virtual directory -->
@@ -59,6 +64,8 @@ namespace MSBuild.ExtensionPack.Web
     ///         <Message Text="NewSite SiteId: $(NewSiteId)"/>
     ///         <!-- Add HTTP Response Headers -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddResponseHeaders" Name="NewSite" HttpResponseHeaders="@(HttpResponseHeaders)"/>
+    ///         <!-- Add Mime Types -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddMimeType" Name="NewSite" MimeTypes="@(MimeTypes)"/>
     ///         <!-- Check whether the virtual directory exists -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="CheckVirtualDirectoryExists" Name="NewSite" VirtualDirectories="@(VirtualDirectory)">
     ///             <Output TaskParameter="Exists" PropertyName="VDirExists"/>
@@ -90,10 +97,11 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.3.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
+        private const string AddMimeTypeTaskAction = "AddMimeType";
         private const string AddVirtualDirectoryTaskAction = "AddVirtualDirectory";
         private const string AddResponseHeadersTaskAction = "AddResponseHeaders";
         private const string CheckExistsTaskAction = "CheckExists";
@@ -105,6 +113,8 @@ namespace MSBuild.ExtensionPack.Web
         private const string StopTaskAction = "Stop";
         private const string CheckVirtualDirectoryExistsTaskAction = "CheckVirtualDirectoryExists";
         private const string DeleteVirtualDirectoryTaskAction = "DeleteVirtualDirectory";
+        private bool anonymousAuthentication = true;
+        private bool serverAutoStart = true;
 
         private ServerManager iisServerManager;
         private Site website;
@@ -113,6 +123,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the TaskAction.
         /// </summary>
         [DropdownValue(AddApplicationTaskAction)]
+        [DropdownValue(AddMimeTypeTaskAction)]
         [DropdownValue(AddVirtualDirectoryTaskAction)]
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(CreateTaskAction)]
@@ -152,7 +163,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(AddApplicationTaskAction, true)]
         [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Applications { get; set; }
-
+        
         /// <summary>
         /// ITaskItem of VirtualDirectories. Use PhysicalPath metadata to specify applicable values
         /// </summary>
@@ -165,7 +176,14 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// A collection of headers to add. Specify Identity as name and add Value metadata
         /// </summary>
+        [TaskAction(AddResponseHeadersTaskAction, true)]
         public ITaskItem[] HttpResponseHeaders { get; set; }
+
+        /// <summary>
+        /// A collection of MimeTypes. Specify Identity as name and add Value metadata
+        /// </summary>
+        [TaskAction(AddMimeTypeTaskAction, true)]
+        public ITaskItem[] MimeTypes { get; set; }
 
         /// <summary>
         /// Sets the path.
@@ -184,12 +202,62 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public string EnabledProtocols { get; set; }
+        
+        /// <summary>
+        /// Sets AnonymousAuthentication for the website. Default is true
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool AnonymousAuthentication
+        {
+            get { return this.anonymousAuthentication; }
+            set { this.anonymousAuthentication = value; }
+        }
+         
+        /// <summary>
+        /// Sets DigestAuthentication for the website. Default is false;
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool DigestAuthentication { get; set; }
+
+        /// <summary>
+        /// Sets BasicAuthentication for the website. Default is false;
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool BasicAuthentication { get; set; }
+
+        /// <summary>
+        /// Sets ServerAutoStart for the website. Default is true.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool ServerAutoStart
+        {
+            get { return this.serverAutoStart; }
+            set { this.serverAutoStart = value; }
+        }
+
+        /// <summary>
+        /// Sets WindowsAuthentication for the website. Default is false;
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public bool WindowsAuthentication { get; set; }
 
         /// <summary>
         /// Sets the port.
         /// </summary>
         [TaskAction(CreateTaskAction, true)]
         public int Port { get; set; }
+
+        /// <summary>
+        /// Sets the LogExtFileFlags. Default is 1414 (logextfiletime | logextfileclientip |logextfilemethod | logextfileuristem | logextfilehttpstatus)
+        /// </summary>
+        [TaskAction(CreateTaskAction, true)]
+        public string LogExtFileFlags { get; set; }
+
+        /// <summary>
+        /// Sets the LogExtFileFlags. Default is W3c.
+        /// </summary>
+        [TaskAction(CreateTaskAction, true)]
+        public string LogFormat { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
@@ -241,6 +309,9 @@ namespace MSBuild.ExtensionPack.Web
                     case AddApplicationTaskAction:
                         this.AddApplication();
                         break;
+                    case AddMimeTypeTaskAction:
+                        this.AddMimeType();
+                        break;
                     case AddVirtualDirectoryTaskAction:
                         this.AddVirtualDirectory();
                         break;
@@ -283,6 +354,32 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
+        private void AddMimeType()
+        {
+            if (!this.SiteExists())
+            {
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            Configuration config = this.iisServerManager.GetWebConfiguration(this.Name);
+            foreach (ITaskItem mimetype in this.MimeTypes)
+            {
+                ConfigurationSection staticContentSection = config.GetSection("system.webServer/staticContent");
+                ConfigurationElementCollection staticContentCollection = staticContentSection.GetCollection();
+                ConfigurationElement mimeMapElement = staticContentCollection.CreateElement("mimeMap");
+                mimeMapElement["fileExtension"] = mimetype.ItemSpec;
+                mimeMapElement["mimeType"] = mimetype.GetMetadata("Value");
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding MimeType: {0} to: {1} on: {2}", mimetype.ItemSpec, this.Name, this.MachineName));
+                bool typeExists = staticContentCollection.Any(obj => obj.Attributes["fileExtension"].Value.ToString() == mimetype.ItemSpec);
+                if (!typeExists)
+                {
+                    staticContentCollection.Add(mimeMapElement);
+                    this.iisServerManager.CommitChanges();
+                }
+            }
+        }
+
         private void AddResponseHeaders()
         {
             if (!this.SiteExists())
@@ -294,22 +391,17 @@ namespace MSBuild.ExtensionPack.Web
             Configuration config = this.iisServerManager.GetWebConfiguration(this.Name);
             ConfigurationSection httpProtocolSection = config.GetSection("system.webServer/httpProtocol");
             ConfigurationElementCollection customHeadersCollection = httpProtocolSection.GetCollection("customHeaders");
-            
             foreach (ITaskItem header in this.HttpResponseHeaders)
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding HttpResponseHeader: {0} to: {1} on: {2}", header.ItemSpec, this.Name, this.MachineName));
                 ConfigurationElement addElement = customHeadersCollection.CreateElement("add");
                 addElement["name"] = header.ItemSpec;
                 addElement["value"] = header.GetMetadata("Value");
-                try
+                bool headerExists = customHeadersCollection.Any(obj => obj.Attributes["name"].Value.ToString() == header.ItemSpec);
+                if (!headerExists)
                 {
                     customHeadersCollection.Add(addElement);
                     this.iisServerManager.CommitChanges();
-                }
-                catch (Exception ex)
-                {
-                    // do nothing
-                    this.LogTaskWarning(ex.ToString());
                 }
             }
         }
@@ -350,9 +442,9 @@ namespace MSBuild.ExtensionPack.Web
                 {
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing VirtualDirectory: {0} from: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                     this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Remove(this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories[virDir.ItemSpec]);
-                    this.iisServerManager.CommitChanges();
-                    break;
                 }
+
+                this.iisServerManager.CommitChanges();
             }
         }
 
@@ -382,10 +474,7 @@ namespace MSBuild.ExtensionPack.Web
             foreach (ITaskItem app in this.Applications)
             {
                 string physicalPath = app.GetMetadata("PhysicalPath");
-                if (!Directory.Exists(physicalPath))
-                {
-                    Directory.CreateDirectory(physicalPath);
-                }
+                this.CreateDirectoryIfNecessary(physicalPath);
 
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
                 this.website.Applications.Add(app.ItemSpec, physicalPath);
@@ -407,6 +496,50 @@ namespace MSBuild.ExtensionPack.Web
                 if (!string.IsNullOrEmpty(app.GetMetadata("EnabledProtocols")))
                 {
                     this.website.Applications[app.ItemSpec].EnabledProtocols = app.GetMetadata("EnabledProtocols");
+                }
+            }
+        }
+
+        private void CreateDirectoryIfNecessary(string directoryPath)
+        {
+            if (!this.TargetingLocalMachine(true))
+            {
+                // we need to operate remotely
+                string fullQuery = @"Select * From Win32_Directory Where Name = '" + directoryPath.Replace("\\", "\\\\") + "'";
+                ObjectQuery query1 = new ObjectQuery(fullQuery);
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query1))
+                {
+                    ManagementObjectCollection queryCollection = searcher.Get();
+                    if (queryCollection.Count == 0)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, "Attempting to create remote folder for share");
+                        ManagementPath path2 = new ManagementPath("Win32_Process");
+                        using (ManagementClass managementClass2 = new ManagementClass(this.Scope, path2, null))
+                        {
+                            ManagementBaseObject inParams1 = managementClass2.GetMethodParameters("Create");
+                            string tex = "cmd.exe /c md \"" + directoryPath + "\"";
+                            inParams1["CommandLine"] = tex;
+
+                            ManagementBaseObject outParams1 = managementClass2.InvokeMethod("Create", inParams1, null);
+                            uint rc = Convert.ToUInt32(outParams1.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                            if (rc != 0)
+                            {
+                                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // we are working locally
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+
+                    // adding a sleep as it may take a while to register.
+                    System.Threading.Thread.Sleep(1000);
                 }
             }
         }
@@ -460,6 +593,7 @@ namespace MSBuild.ExtensionPack.Web
 
         private void Create()
         {
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
             if (this.SiteExists())
             {
                 if (!this.Force)
@@ -468,16 +602,12 @@ namespace MSBuild.ExtensionPack.Web
                     return;
                 }
 
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Website exists. Deleting website: {0} on: {1}", this.Name, this.MachineName));
                 this.iisServerManager.Sites.Remove(this.website);
                 this.iisServerManager.CommitChanges();
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName));
-            if (!Directory.Exists(this.Path))
-            {
-                Directory.CreateDirectory(this.Path);
-            }
+            this.CreateDirectoryIfNecessary(this.Path);
 
             this.website = this.iisServerManager.Sites.Add(this.Name, this.Path, this.Port);
             if (!string.IsNullOrEmpty(this.AppPool))
@@ -500,6 +630,27 @@ namespace MSBuild.ExtensionPack.Web
                this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
             }
 
+            if (!string.IsNullOrEmpty(this.LogExtFileFlags))
+            {
+                this.website.LogFile.LogExtFileFlags = (LogExtFileFlags)Enum.Parse(typeof(LogExtFileFlags), this.LogExtFileFlags);
+            }
+
+            if (!string.IsNullOrEmpty(this.LogFormat))
+            {
+                this.website.LogFile.LogFormat = (LogFormat)Enum.Parse(typeof(LogFormat), this.LogFormat);
+            }
+
+            this.website.ServerAutoStart = this.serverAutoStart;
+      
+            Configuration config = this.iisServerManager.GetApplicationHostConfiguration();
+            ConfigurationSection windowsAuthenticationSection = config.GetSection("system.webServer/security/authentication/windowsAuthentication", this.Name);
+            windowsAuthenticationSection["enabled"] = this.WindowsAuthentication;
+            ConfigurationSection anonyAuthentication = config.GetSection("system.webServer/security/authentication/anonymousAuthentication", this.Name);
+            anonyAuthentication["enabled"] = this.AnonymousAuthentication;
+            ConfigurationSection digestAuthentication = config.GetSection("system.webServer/security/authentication/digestAuthentication", this.Name);
+            digestAuthentication["enabled"] = this.DigestAuthentication;
+            ConfigurationSection basicAuthentication = config.GetSection("system.webServer/security/authentication/basicAuthentication", this.Name);
+            basicAuthentication["enabled"] = this.BasicAuthentication;
             this.iisServerManager.CommitChanges();
             this.SiteId = this.website.Id;
         }
@@ -509,10 +660,7 @@ namespace MSBuild.ExtensionPack.Web
             foreach (ITaskItem virDir in this.VirtualDirectories)
             {
                 string physicalPath = virDir.GetMetadata("PhysicalPath");
-                if (!Directory.Exists(physicalPath))
-                {
-                    Directory.CreateDirectory(physicalPath);
-                }
+                this.CreateDirectoryIfNecessary(physicalPath);
 
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
                 this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
@@ -528,11 +676,8 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying website: {0} on: {1}", this.Name, this.MachineName));
-            if (!Directory.Exists(this.Path))
-            {
-                Directory.CreateDirectory(this.Path);
-            }
-
+            this.CreateDirectoryIfNecessary(this.Path);
+            
             Application app = this.website.Applications["/"];
             if (app != null)
             {
