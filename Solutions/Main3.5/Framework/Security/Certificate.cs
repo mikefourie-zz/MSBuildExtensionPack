@@ -225,7 +225,7 @@ namespace MSBuild.ExtensionPack.Security
     /// </Project>
     /// ]]></code>    
     /// </example>    
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
     public class Certificate : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -511,7 +511,7 @@ namespace MSBuild.ExtensionPack.Security
                 }
             }
 
-            return keyFileName ?? String.Empty;
+            return keyFileName ?? string.Empty;
         }
 
         private void GetInfo()
@@ -573,11 +573,11 @@ namespace MSBuild.ExtensionPack.Security
                 this.CertInfo.SetMetadata("NotAfter", cert.NotAfter.ToString());
 
                 var privateKeyFileName = GetKeyFileName(cert);
-                if (!String.IsNullOrEmpty(privateKeyFileName))
+                if (!string.IsNullOrEmpty(privateKeyFileName))
                 {
                     // Adapted from the FindPrivateKey application.  See http://msdn.microsoft.com/en-us/library/aa717039(v=VS.90).aspx.
                     var keyFileDirectory = this.GetKeyFileDirectory(privateKeyFileName);
-                    if (!String.IsNullOrEmpty(privateKeyFileName) && !String.IsNullOrEmpty(keyFileDirectory))
+                    if (!string.IsNullOrEmpty(privateKeyFileName) && !string.IsNullOrEmpty(keyFileDirectory))
                     {
                         this.CertInfo.SetMetadata("PrivateKeyFileName", Path.Combine(keyFileDirectory, privateKeyFileName));
                     }
@@ -708,7 +708,7 @@ namespace MSBuild.ExtensionPack.Security
             }
 
             this.Log.LogError("Unable to locate private key file directory");
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>

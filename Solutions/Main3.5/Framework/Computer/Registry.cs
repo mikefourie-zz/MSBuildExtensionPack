@@ -60,7 +60,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
@@ -265,7 +265,7 @@ namespace MSBuild.ExtensionPack.Computer
                                 byte[] val = new byte[parts.Length];
                                 for (int i = 0; i < parts.Length; i++)
                                 {
-                                    val[i] = Byte.Parse(parts[i], CultureInfo.CurrentCulture);
+                                    val[i] = byte.Parse(parts[i], CultureInfo.CurrentCulture);
                                 }
 
                                 registryValue = val;

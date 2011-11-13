@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/b66e00d5-adec-2163-3878-e5812f7f53a5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/b66e00d5-adec-2163-3878-e5812f7f53a5.htm")]
     public class VSDevEnv : ToolTask
     {
         private string version = "9.0";
@@ -98,7 +98,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 if (this.OutputFile == null)
                 {
                     outputFolder = new DirectoryInfo(this.FilePath.GetMetadata("RootDir") + this.FilePath.GetMetadata("Directory") + @"\Output");
-                    outputfile = new FileInfo(outputFolder.FullName + String.Format(CultureInfo.InvariantCulture, @"\{0}.{1}.txt", this.FilePath.GetMetadata("Filename"), this.Configuration.Replace("|", " ")));                 
+                    outputfile = new FileInfo(outputFolder.FullName + string.Format(CultureInfo.InvariantCulture, @"\{0}.{1}.txt", this.FilePath.GetMetadata("Filename"), this.Configuration.Replace("|", " ")));                 
                 }
                 else
                 {
@@ -108,7 +108,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             else
             {
                 outputFolder = new DirectoryInfo(this.OutputFolder.ItemSpec);
-                outputfile = this.OutputFile == null ? new FileInfo(outputFolder.FullName + String.Format(CultureInfo.InvariantCulture, @"\{0}.{1}.txt", this.FilePath.GetMetadata("Filename"), this.Configuration.Replace("|", " "))) : new FileInfo(outputFolder.FullName + @"\" + this.OutputFile.GetMetadata("FileName") + this.OutputFile.GetMetadata("Extension"));
+                outputfile = this.OutputFile == null ? new FileInfo(outputFolder.FullName + string.Format(CultureInfo.InvariantCulture, @"\{0}.{1}.txt", this.FilePath.GetMetadata("Filename"), this.Configuration.Replace("|", " "))) : new FileInfo(outputFolder.FullName + @"\" + this.OutputFile.GetMetadata("FileName") + this.OutputFile.GetMetadata("Extension"));
             }
 
             if (outputfile.Exists)

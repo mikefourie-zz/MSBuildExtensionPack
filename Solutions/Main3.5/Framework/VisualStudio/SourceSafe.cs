@@ -49,7 +49,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/bed0ab5a-a18e-b41d-9809-75deacc056e3.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/bed0ab5a-a18e-b41d-9809-75deacc056e3.htm")]
     public class SourceSafe : BaseTask
     {
         private const string CheckoutTaskAction = "Checkout";
@@ -173,7 +173,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 }
             }
 
-            string args = String.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
+            string args = string.Format(CultureInfo.CurrentCulture, "{0} \"{1}\" {2}", this.TaskAction, this.FilePath, this.Arguments);
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Executing: {0} {1}", this.fileName, args));
             this.ExecuteVisualSourceSafe(args);
         }

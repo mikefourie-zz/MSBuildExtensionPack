@@ -97,7 +97,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
                     sqlCmdProcess.Start();
                     sqlCmdProcess.BeginOutputReadLine();
                     sqlCmdProcess.BeginErrorReadLine();
-                    sqlCmdProcess.WaitForExit(Int32.MaxValue);
+                    sqlCmdProcess.WaitForExit(int.MaxValue);
                 }
                 finally
                 {
@@ -123,7 +123,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         private void StandardErrorHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
         {
             // Collect the error output.
-            if (!String.IsNullOrEmpty(lineReceived.Data))
+            if (!string.IsNullOrEmpty(lineReceived.Data))
             {
                 // Add the text to the collected errors.
                 this.stdError.AppendLine(lineReceived.Data);
@@ -133,7 +133,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         private void StandardOutHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
         {
             // Collect the command output.
-            if (!String.IsNullOrEmpty(lineReceived.Data))
+            if (!string.IsNullOrEmpty(lineReceived.Data))
             {
                 // Add the text to the collected output.
                 this.stdOut.AppendLine(lineReceived.Data);

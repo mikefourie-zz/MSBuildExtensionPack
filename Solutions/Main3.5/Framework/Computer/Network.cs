@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/2719abfe-553d-226c-d75f-2964c24f1965.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/2719abfe-553d-226c-d75f-2964c24f1965.htm")]
     public class Network : BaseTask
     {
         private const string GetDnsHostNameTaskAction = "GetDnsHostName";
@@ -150,7 +150,7 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void GetDnsHostName()
         {
-            if (String.IsNullOrEmpty(this.HostName))
+            if (string.IsNullOrEmpty(this.HostName))
             {
                 Log.LogError("HostName is required");
                 return;

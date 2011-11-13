@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
         private const string ModifyPermissionsTaskAction = "ModifyPermissions";
@@ -369,23 +369,68 @@ namespace MSBuild.ExtensionPack.FileSystem
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating share: {0} on: {1}", this.ShareName, this.MachineName));
-
-            if (!Directory.Exists(this.SharePath))
-            {
-                if (this.CreateSharePath)
-                {
-                    Directory.CreateDirectory(this.SharePath);
-                }
-                else
-                {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SharePath not found: {0}. Set CreateSharePath to true to create a SharePath that does not exist.", this.SharePath));
-                    return;
-                }
-            }
-
             this.GetManagementScope(@"\root\cimv2");
             ManagementPath path = new ManagementPath("Win32_Share");
             ManagementClass managementClass = new ManagementClass(this.Scope, path, null);
+
+            if (!this.TargetingLocalMachine(true))
+            {
+                // we need to operate remotely
+                string fullQuery = @"Select * From Win32_Directory Where Name = '" + this.SharePath.Replace("\\", "\\\\") + "'";
+                ObjectQuery query1 = new ObjectQuery(fullQuery);
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query1))
+                {
+                    ManagementObjectCollection queryCollection = searcher.Get();
+                    if (queryCollection.Count == 0)
+                    {
+                        if (this.CreateSharePath)
+                        {
+                            this.LogTaskMessage(MessageImportance.Low, "Attempting to create remote folder for share");
+                            ManagementPath path2 = new ManagementPath("Win32_Process");
+                            ManagementClass managementClass2 = new ManagementClass(this.Scope, path2, null);
+
+                            ManagementBaseObject inParams1 = managementClass2.GetMethodParameters("Create");
+                            string tex = "cmd.exe /c md \"" + this.SharePath + "\"";
+                            inParams1["CommandLine"] = tex;
+
+                            ManagementBaseObject outParams1 = managementClass2.InvokeMethod("Create", inParams1, null);
+                            uint rc = Convert.ToUInt32(outParams1.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                            if (rc != 0)
+                            {
+                                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
+                                return;
+                            }
+                            
+                            // adding a sleep as it may take a while to register.
+                            System.Threading.Thread.Sleep(1000);
+                        }
+                        else
+                        {
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SharePath not found: {0}. Set CreateSharePath to true to create a SharePath that does not exist.", this.SharePath));
+                            return;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // we are working locally
+                if (!Directory.Exists(this.SharePath))
+                {
+                    if (this.CreateSharePath)
+                    {
+                        Directory.CreateDirectory(this.SharePath);
+
+                        // adding a sleep as it may take a while to register.
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SharePath not found: {0}. Set CreateSharePath to true to create a SharePath that does not exist.", this.SharePath));
+                        return;
+                    }
+                }
+            }
 
             // Set the input parameters
             ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");

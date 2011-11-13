@@ -12,12 +12,12 @@ namespace MSBuild.ExtensionPack.Web
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional: </b>Force, IdentityType, PoolIdentity, IdentityPassword, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, PipelineMode, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional: </b>Force, IdentityType, UseDefaultIdentity, PoolIdentity, IdentityPassword, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, PipelineMode, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name)</para>
     /// <para><i>Modify</i> (<b>Required: </b> Name <b>Optional: </b>Force, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes)</para>
     /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
-    /// <para><i>SetIdentity</i> (<b>Optional: </b>IdentityType, PoolIdentity, IdentityPassword)</para>
+    /// <para><i>SetIdentity</i> (<b>Optional: </b>UseDefaultIdentity, IdentityType, PoolIdentity, IdentityPassword)</para>
     /// <para><i>SetPipelineMode</i> (<b>Optional: </b>  PipelineMode)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/628dad3f-8d9e-7287-53f0-d96dbf2be0e6.htm")]
     public class Iis7AppPool : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -160,7 +160,14 @@ namespace MSBuild.ExtensionPack.Web
         public bool Enable32BitAppOnWin64 { get; set; }
 
         /// <summary>
-        /// Sets the ProcessModelIdentityType. Default is LocalService
+        /// Sets whether to use the default settings for ProcessModel Identity that have been defined in IIS for an AppPool. Default is false.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(SetIdentityTaskAction, false)]
+        public bool UseDefaultIdentity { get; set; }
+
+        /// <summary>
+        /// Sets the ProcessModelIdentityType. Default is LocalService unless UseDefaultIdentity is specified
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(SetIdentityTaskAction, false)]
@@ -339,20 +346,30 @@ namespace MSBuild.ExtensionPack.Web
                 return;
             }
 
-            if (this.IdentityType == "SpecificUser" && (string.IsNullOrEmpty(this.PoolIdentity) || string.IsNullOrEmpty(this.IdentityPassword)))
-            {
-                Log.LogError("PoolIdentity and PoolPassword must be specified if the IdentityType is SpecificUser");
-                return;
-            }
-
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
-            this.pool.ProcessModel.IdentityType = this.processModelType;
 
-            if (this.IdentityType == "SpecificUser")
+            if (this.UseDefaultIdentity)
             {
-                this.pool.ProcessModel.UserName = this.PoolIdentity;
-                this.pool.ProcessModel.Password = this.IdentityPassword;
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.iisServerManager.ApplicationPoolDefaults.ProcessModel.IdentityType));
+
+                this.pool.ProcessModel.IdentityType = this.iisServerManager.ApplicationPoolDefaults.ProcessModel.IdentityType;
+            }
+            else
+            {
+                if (this.IdentityType == "SpecificUser" && (string.IsNullOrEmpty(this.PoolIdentity) || string.IsNullOrEmpty(this.IdentityPassword)))
+                {
+                    Log.LogError("PoolIdentity and PoolPassword must be specified if the IdentityType is SpecificUser");
+                    return;
+                }
+
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
+                this.pool.ProcessModel.IdentityType = this.processModelType;
+
+                if (this.IdentityType == "SpecificUser")
+                {
+                    this.pool.ProcessModel.UserName = this.PoolIdentity;
+                    this.pool.ProcessModel.Password = this.IdentityPassword;
+                }
             }
 
             this.iisServerManager.CommitChanges();
@@ -417,17 +434,22 @@ namespace MSBuild.ExtensionPack.Web
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating ApplicationPool: {0} on: {1}", this.Name, this.MachineName));
 
-            if (this.IdentityType == "SpecificUser" && (string.IsNullOrEmpty(this.PoolIdentity) || string.IsNullOrEmpty(this.IdentityPassword)))
+            this.pool = this.iisServerManager.ApplicationPools.Add(this.Name);
+            if (!this.UseDefaultIdentity)
             {
-                Log.LogError("PoolIdentity and PoolPassword must be specified if the IdentityType is SpecificUser");
-                return;
+                if (this.IdentityType == "SpecificUser" && (string.IsNullOrEmpty(this.PoolIdentity) || string.IsNullOrEmpty(this.IdentityPassword)))
+                {
+                    Log.LogError("PoolIdentity and PoolPassword must be specified if the IdentityType is SpecificUser");
+                    return;
+                }
+
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
+                this.pool.ProcessModel.IdentityType = this.processModelType;
             }
 
-            this.pool = this.iisServerManager.ApplicationPools.Add(this.Name);
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode));
             this.pool.ManagedPipelineMode = this.managedPM;
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType));
-            this.pool.ProcessModel.IdentityType = this.processModelType;
+
             if (this.IdentityType == "SpecificUser")
             {
                 this.pool.ProcessModel.UserName = this.PoolIdentity;
@@ -475,7 +497,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.QueueLength = this.iisServerManager.ApplicationPoolDefaults.QueueLength;
             }
 
-            if (this.IdleTimeout > 0)
+            if (this.IdleTimeout >= 0)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting IdleTimeout to: {0} minutes", this.IdleTimeout));
                 this.pool.ProcessModel.IdleTimeout = TimeSpan.FromMinutes(this.IdleTimeout);
@@ -536,7 +558,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.Recycling.PeriodicRestart.Schedule.Clear();
             }
 
-            if (this.RecycleRequests > 0)
+            if (this.RecycleRequests >= 0)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.RecycleRequests to: {0}", this.RecycleRequests));
                 this.pool.Recycling.PeriodicRestart.Requests = this.RecycleRequests;
@@ -547,7 +569,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.Recycling.PeriodicRestart.Requests = this.iisServerManager.ApplicationPoolDefaults.Recycling.PeriodicRestart.Requests;
             }
 
-            if (this.RecycleInterval > 0)
+            if (this.RecycleInterval >= 0)
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.Time to: {0}", this.RecycleInterval));
                 this.pool.Recycling.PeriodicRestart.Time = TimeSpan.FromMinutes(this.RecycleInterval);

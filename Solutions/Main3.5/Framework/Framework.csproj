@@ -105,7 +105,7 @@
     <Reference Include="Accessibility" />
     <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
-    <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Engine, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Tasks.v3.5" />
@@ -179,6 +179,7 @@
       <Link>StringExtension.cs</Link>
     </Compile>
     <Compile Include="CodeQuality\NUnit.cs" />
+    <Compile Include="Communication\MSMQ.cs" />
     <Compile Include="Communication\Ftp.cs" />
     <Compile Include="Communication\FTP\Extensions.cs" />
     <Compile Include="Communication\FTP\FtpConnection.cs" />
@@ -187,13 +188,15 @@
     <Compile Include="Communication\FTP\FtpFileInfo.cs" />
     <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\Twitter.cs" />
+    <Compile Include="Compression\Zip.cs" />
     <Compile Include="Compression\DNZip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
     <Compile Include="Computer\ActiveDirectoryNativeMethods.cs" />
     <Compile Include="Computer\HostsFile\HostsFile.cs" />
-    <Compile Include="Computer\HostsFile\HostsFileEntries.cs" />
-    <Compile Include="Computer\HostsFile\HostsFileReader.cs" />
-    <Compile Include="Computer\HostsFile\HostsFileWriter.cs" />
+    <Compile Include="Computer\HostsFile\IHostsFile.cs" />
+    <Compile Include="Computer\HostsFile\IHostsFileReader.cs" />
+    <Compile Include="Computer\HostsFile\IHostsFileWriter.cs" />
+    <Compile Include="Computer\Process.cs" />
     <Compile Include="Computer\WshShell.cs" />
     <Compile Include="Computer\GetPasswordForm.cs">
       <SubType>Form</SubType>
@@ -210,6 +213,7 @@
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Framework\ILMerge.cs" />
+    <Compile Include="Framework\SmartExec.cs" />
     <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
@@ -376,6 +380,10 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\MSMQ.proj" />
+    <None Include="XmlSamples\Process.proj" />
+    <None Include="XmlSamples\SmartExec.proj" />
+    <None Include="XmlSamples\Zip.proj" />
     <None Include="XmlSamples\HostsFile.proj" />
     <None Include="XmlSamples\ILMerge.proj" />
     <None Include="XmlSamples\NUnit.proj" />

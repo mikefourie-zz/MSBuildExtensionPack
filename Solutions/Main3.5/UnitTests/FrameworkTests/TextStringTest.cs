@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.FrameworkTests
             bool result = target.Execute();
             Assert.IsFalse(result);
 
-            target.String1 = String.Empty;
+            target.String1 = string.Empty;
             result = target.Execute();
             Assert.IsFalse(result);
         }
@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.FrameworkTests
             bool result = target.Execute();
             Assert.IsFalse(result);
 
-            target.String2 = String.Empty;
+            target.String2 = string.Empty;
             result = target.Execute();
             Assert.IsFalse(result);
         }

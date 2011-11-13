@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Management;
     using System.Security.AccessControl;
     using System.Text.RegularExpressions;
@@ -88,7 +89,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
         private const string AddSecurityTaskAction = "AddSecurity";
@@ -255,7 +256,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 
                 try
                 {
-                    DirectoryInfo f = new DirectoryInfo(i.FullName);
+                    FileInfo f = new FileInfo(i.FullName);
                     if (f.Exists)
                     {
                         System.IO.File.Delete(i.FullName);
@@ -273,7 +274,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         count++;
                         try
                         {
-                            DirectoryInfo f = new DirectoryInfo(i.FullName);
+                            FileInfo f = new FileInfo(i.FullName);
                             if (f.Exists)
                             {
                                 System.IO.File.Delete(i.FullName);
@@ -392,13 +393,8 @@ namespace MSBuild.ExtensionPack.FileSystem
                 foreach (ITaskItem user in this.Users)
                 {
                     string userName = user.ItemSpec;
-                    FileSystemRights userRights = new FileSystemRights();
                     string[] permissions = string.IsNullOrEmpty(this.Permission) ? user.GetMetadata("Permission").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : this.Permission.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string s in permissions)
-                    {
-                        userRights |= (FileSystemRights)Enum.Parse(typeof(FileSystemRights), s);
-                    }
+                    FileSystemRights userRights = permissions.Aggregate(new FileSystemRights(), (current, s) => current | (FileSystemRights)Enum.Parse(typeof(FileSystemRights), s));
 
                     if (action == "Add")
                     {

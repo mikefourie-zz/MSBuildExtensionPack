@@ -69,5 +69,12 @@
             <Output TaskParameter="Members" ItemName="FullGroups"/>
         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
         <Message Text="FULL %(FullGroups.Identity)"/>
+        <!-- Group Group Operations -->
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt" GroupType="Global"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt" GroupType="Global"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="RemoveGroupFromGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+        <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
     </Target>
 </Project>

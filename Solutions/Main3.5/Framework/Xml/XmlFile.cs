@@ -8,12 +8,14 @@ namespace MSBuild.ExtensionPack.Xml
     using System.Globalization;
     using System.Xml;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
     /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Prefix, Key, Value, Namespaces, RetryCount, InnerText, InnerXml, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>ReadAttribute</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
+    /// <para><i>ReadElements</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output: </b> Elements). Attributes are added as metadata</para>
     /// <para><i>ReadElementText</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElementXml</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Key, Element or XPath <b>Optional:</b> Namespaces, RetryCount)</para>
@@ -128,12 +130,13 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
     public class XmlFile : BaseTask
     {
         private const string AddAttributeTaskAction = "AddAttribute";
         private const string AddElementTaskAction = "AddElement";
         private const string ReadAttributeTaskAction = "ReadAttribute";
+        private const string ReadElementsTaskAction = "ReadElements";
         private const string ReadElementTextTaskAction = "ReadElementText";
         private const string ReadElementXmlTaskAction = "ReadElementXml";
         private const string RemoveAttributeTaskAction = "RemoveAttribute";
@@ -154,6 +157,7 @@ namespace MSBuild.ExtensionPack.Xml
         [DropdownValue(RemoveElementTaskAction)]
         [DropdownValue(UpdateAttributeTaskAction)]
         [DropdownValue(UpdateElementTaskAction)]
+        [DropdownValue(ReadElementsTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -213,6 +217,13 @@ namespace MSBuild.ExtensionPack.Xml
         public string Value { get; set; }
 
         /// <summary>
+        /// Gets the elements selected using ReadElements
+        /// </summary>
+        [TaskAction(ReadElementsTaskAction, true)]
+        [Output]
+        public ITaskItem[] Elements { get; set; }
+
+        /// <summary>
         /// Sets the file.
         /// </summary>
         [Required]
@@ -223,6 +234,7 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(ReadElementXmlTaskAction, true)]
         [TaskAction(RemoveAttributeTaskAction, true)]
         [TaskAction(RemoveElementTaskAction, true)]
+        [TaskAction(ReadElementsTaskAction, true)]
         public ITaskItem File { get; set; }
 
         /// <summary>
@@ -236,6 +248,7 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(RemoveAttributeTaskAction, false)]
         [TaskAction(RemoveElementTaskAction, false)]
         [TaskAction(UpdateElementTaskAction, false)]
+        [TaskAction(ReadElementsTaskAction, true)]
         public string XPath { get; set; }
 
         /// <summary>
@@ -262,6 +275,7 @@ namespace MSBuild.ExtensionPack.Xml
         [TaskAction(RemoveElementTaskAction, false)]
         [TaskAction(UpdateAttributeTaskAction, false)]
         [TaskAction(UpdateElementTaskAction, false)]
+        [TaskAction(ReadElementsTaskAction, false)]
         public ITaskItem[] Namespaces { get; set; }
 
         /// <summary>
@@ -340,6 +354,9 @@ namespace MSBuild.ExtensionPack.Xml
                 case ReadAttributeTaskAction:
                     this.ReadAttribute();
                     break;
+                case ReadElementsTaskAction:
+                    this.ReadElements();
+                    break;
                 case ReadElementTextTaskAction:
                 case ReadElementXmlTaskAction:
                     this.ReadElement();
@@ -359,6 +376,37 @@ namespace MSBuild.ExtensionPack.Xml
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void ReadElements()
+        {
+            if (string.IsNullOrEmpty(this.XPath))
+            {
+                this.Log.LogError("XPath is Required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Read Elements: {0}", this.XPath));
+            XmlNodeList nodelist = this.xmlFileDoc.SelectNodes(this.XPath, this.namespaceManager);
+            if (nodelist != null)
+            {
+                this.Elements = new ITaskItem[nodelist.Count];
+                int i = 0;
+                foreach (XmlNode node in nodelist)
+                {
+                    ITaskItem newItem = new TaskItem(node.Name);
+                    if (node.Attributes != null)
+                    {
+                        foreach (XmlAttribute a in node.Attributes)
+                        {
+                            newItem.SetMetadata(a.Name, a.Value);
+                        }
+                    }
+
+                    this.Elements[i] = newItem;
+                    i++;
+                }
             }
         }
 
@@ -651,7 +699,7 @@ namespace MSBuild.ExtensionPack.Xml
             XmlNode newNode;
             if (string.IsNullOrEmpty(this.Prefix))
             {
-                newNode = this.xmlFileDoc.CreateElement(this.Element);
+                newNode = this.xmlFileDoc.CreateElement(this.Element, this.xmlFileDoc.DocumentElement.NamespaceURI);
             }
             else
             {

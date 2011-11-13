@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
     public class FxCop : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
@@ -106,7 +106,61 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         public bool SearchGac { get; set; }
+        
+        /// <summary>
+        /// Set to true to create .lastcodeanalysissucceeded file in output report directory if no build-breaking messages occur during analysis. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool SuccessFile { get; set; }
+        
+        /// <summary>
+        /// Set to true to run all overridable rules against all targets. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool OverrideRuleVisibilities { get; set; }
 
+        /// <summary>
+        /// Set the override timeout for analysis deadlock detection. Analysis will be aborted when analysis of a single item by a single rule exceeds the specified amount of time. Default is 0 to disable deadlock detection.
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public int Timeout { get; set; }
+
+        /// <summary>
+        /// Set to true to treat missing rules or rule sets as an error and halt execution. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool FailOnMissingRules { get; set; }
+        
+        /// <summary>
+        /// Set to true to suppress analysis results against generated code. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool IgnoreGeneratedCode { get; set; }
+        
+        /// <summary>
+        /// Set to true to analyze only ASP.NET-generated binaries and honor global suppressions in App_Code.dll for all assemblies under analysis. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool AspNetOnly { get; set; }
+        
+        /// <summary>
+        /// Set to true to silently ignore invalid target files. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool IgnoreInvalidTargets { get; set; }
+        
+        /// <summary>
+        /// Set to true to suppress all console output other than the reporting implied by /console or /consolexsl. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool Quiet { get; set; }
+        
+        /// <summary>
+        /// Set to true to write output XML and project files even in the case where no violations occurred. Default is false
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public bool ForceOutput { get; set; }
+        
         /// <summary>
         /// Set to true to output verbose information during analysis (/verbose option)
         /// </summary>
@@ -136,6 +190,20 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public string Types { get; set; }
 
         /// <summary>
+        /// Specifies the directory to search for rule set files that are specified by the Ruleset switch or are included by one of the specified rule sets.
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public string RulesetDirectory { get; set; }
+
+        /// <summary>
+        /// Specifies the Rule set to be used for the analysis. It can be a file path to the rule set file or the file name of 
+        /// a built-in rule set. '+' enables all rules in the rule set; '-' disables all rules in the rule set; '=' sets rules 
+        /// to match the rule set and disables all rules that are not enabled in the rule set
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public string Ruleset { get; set; }
+
+        /// <summary>
         /// Sets the path to FxCopCmd.exe. Default is [Program Files]\Microsoft FxCop 1.36\FxCopCmd.exe
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
@@ -159,6 +227,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         [TaskAction(AnalyseTaskAction, false)]
         public string ConsoleXsl { get; set; }
+
+        /// <summary>
+        /// Sets the custom dictionary used by spelling rules.Default is no custom dictionary
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public ITaskItem Dictionary { get; set; }
 
         /// <summary>
         /// Set the name of the .fxcop project to use
@@ -247,6 +321,16 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 }
             }
 
+            if (!string.IsNullOrEmpty(this.Ruleset))
+            {
+                arguments += " /ruleset:\"" + this.Ruleset + "\"";
+            }
+
+            if (!string.IsNullOrEmpty(this.RulesetDirectory))
+            {
+                arguments += " /rulesetdirectory:\"" + this.RulesetDirectory + "\""; 
+            }
+            
             if (this.UpdateProject)
             {
                 arguments += " /update";
@@ -255,6 +339,56 @@ namespace MSBuild.ExtensionPack.CodeQuality
             if (this.SearchGac)
             {
                 arguments += " /gac";
+            }
+
+            if (this.SuccessFile)
+            {
+                arguments += " /successfile";
+            }
+
+            if (this.FailOnMissingRules)
+            {
+                arguments += " /failonmissingrules";
+            }
+
+            if (this.IgnoreGeneratedCode)
+            {
+                arguments += " /ignoregeneratedcode";
+            }
+
+            if (this.OverrideRuleVisibilities)
+            {
+                arguments += " /overriderulevisibilities";
+            }
+            
+            if (this.AspNetOnly)
+            {
+                arguments += " /aspnet";
+            }
+
+            if (this.IgnoreInvalidTargets)
+            {
+                arguments += " /ignoreinvalidtargets";
+            }
+
+            if (this.Timeout > 0)
+            {
+                arguments += " /timeout:" + this.Timeout;
+            }
+
+            if (this.Quiet)
+            {
+                arguments += " /quiet";
+            }
+
+            if (this.ForceOutput)
+            {
+                arguments += " /forceoutput";
+            }
+
+            if (this.Dictionary != null)
+            {
+                arguments += "/dictionary:\"" + this.Dictionary.GetMetadata("FullPath") + "\"";
             }
 
             if (this.ShowSummary)

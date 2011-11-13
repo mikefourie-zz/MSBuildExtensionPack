@@ -40,7 +40,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/ceb07d01-751c-0c5a-09b3-fc712ace6f13.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/ceb07d01-751c-0c5a-09b3-fc712ace6f13.htm")]
     public class Guid : BaseTask
     {
         private const string CreateTaskAction = "Create";

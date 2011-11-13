@@ -107,6 +107,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddUser</i> (<b>Required: </b> User <b>Optional: </b>Domain, FullName, Description, Password, PasswordExpired, PasswordNeverExpires)</para>
     /// <para><i>AddGroup</i> (<b>Required: </b> Group <b>Optional: </b>Domain, Description, GroupType)</para>
+    /// <para><i>AddGroupToGroup</i> (<b>Required: </b> Parent, Group). Windows Server 2008 only.</para>
     /// <para><i>AddUserToGroup</i> (<b>Required: </b> User, Group)</para>
     /// <para><i>CheckUserExists</i> (<b>Required: </b> User <b>Output:</b> Exists)</para>
     /// <para><i>CheckUserPassword</i> (<b>Required: </b> User, Password <b>Optional:</b> BindingContextOptions, ContextTypeStore, Domain <b>Output:</b> Exists)</para>
@@ -117,6 +118,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>GetGroupMembers</i> (<b>Required: </b> Group <b>Optional: </b>GetFullMemberName <b>Output:</b> Members)</para>
     /// <para><i>GetUserPassword</i> (<b>Required: </b>User  <b>Optional: </b>BindingContextOptions, ContextTypeStore, Domain <b>Output:</b> Password)</para>
     /// <para><i>GrantPrivilege</i> (<b>Required: </b>User, Privilege  <b>Optional: </b>Domain)</para>
+    /// <para><i>RemoveGroupFromGroup</i> (<b>Required: </b> Parent, Group). Windows Server 2008 only.</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -194,11 +196,18 @@ namespace MSBuild.ExtensionPack.Computer
     ///             <Output TaskParameter="Members" ItemName="FullGroups"/>
     ///         </MSBuild.ExtensionPack.Computer.ActiveDirectory>
     ///         <Message Text="FULL %(FullGroups.Identity)"/>
+    ///         <!-- Group Group Operations -->
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup1" Description="Elgnt" GroupType="Global"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroup" Group="NewGroup2" Description="Elgnt" GroupType="Global"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="RemoveGroupFromGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
+    ///         <MSBuild.ExtensionPack.Computer.ActiveDirectory TaskAction="AddGroupToGroup" ParentGroup="NewGroup1" Group="NewGroup2"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
     public class ActiveDirectory : BaseTask
     {
         private const string AddUserTaskAction = "AddUser";
@@ -214,6 +223,8 @@ namespace MSBuild.ExtensionPack.Computer
         private const string GetGroupMembersTaskAction = "GetGroupMembers";
         private const string GrantPrivilegeTaskAction = "GrantPrivilege";
         private const string RemovePrivilegeTaskAction = "RemovePrivilege";
+        private const string AddGroupToGroupTaskAction = "AddGroupToGroup";
+        private const string RemoveGroupFromGroupTaskAction = "RemoveGroupFromGroup";
         private string target;
         private string domain;
         private int passwordExpired;
@@ -234,6 +245,8 @@ namespace MSBuild.ExtensionPack.Computer
         [DropdownValue(DeleteGroupTaskAction)]
         [DropdownValue(DeleteUserFromGroupTaskAction)]
         [DropdownValue(GrantPrivilegeTaskAction)]
+        [DropdownValue(AddGroupToGroupTaskAction)]
+        [DropdownValue(RemoveGroupFromGroupTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -255,7 +268,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Sets the User name
+        /// Sets the User name. Supports DirectoryPath metadata for AddUserToGroup. Use this to supply different domain users.
         /// </summary>
         [TaskAction(AddUserTaskAction, true)]
         [TaskAction(AddUserToGroupTaskAction, true)]
@@ -272,6 +285,8 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(AddUserToGroupTaskAction, true)]
         [TaskAction(DeleteGroupTaskAction, true)]
         [TaskAction(DeleteUserFromGroupTaskAction, true)]
+        [TaskAction(AddGroupToGroupTaskAction, true)]
+        [TaskAction(RemoveGroupFromGroupTaskAction, true)]
         public ITaskItem[] Group { get; set; }
 
         /// <summary>
@@ -387,6 +402,13 @@ namespace MSBuild.ExtensionPack.Computer
         public string UserDomain { get; set; }
 
         /// <summary>
+        /// Sets the Parent group
+        /// </summary>
+        [TaskAction(AddGroupToGroupTaskAction, true)]
+        [TaskAction(RemoveGroupFromGroupTaskAction, true)]
+        public string ParentGroup { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -420,6 +442,10 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 switch (this.TaskAction)
                 {
+                    case AddGroupToGroupTaskAction:
+                    case RemoveGroupFromGroupTaskAction:
+                        this.GroupGroup();
+                        break;
                     case AddUserTaskAction:
                         this.AddUser();
                         break;
@@ -528,6 +554,62 @@ namespace MSBuild.ExtensionPack.Computer
             catch
             {
                 // ignore exceptions on invoke
+            }
+        }
+
+        private void GroupGroup()
+        {
+            if (this.Group == null)
+            {
+                Log.LogError("Group is required");
+                return;
+            }
+
+            if (this.ParentGroup == null)
+            {
+                Log.LogError("ParentGroup is required");
+                return;
+            }
+
+            this.CheckExists("group", this.ParentGroup);
+            if (!this.Exists)
+            {
+                this.Log.LogError("Parent Group not found");
+                return;
+            }
+
+            foreach (ITaskItem g in this.Group)
+            {
+                DirectoryEntry child;
+                try
+                {
+                    child = this.activeDirEntry.Children.Find(g.ItemSpec, "group");
+                }
+                catch
+                {
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                    return;
+                }
+
+                DirectoryEntry parent = this.activeDirEntry.Children.Find(this.ParentGroup, "group");
+                try
+                {
+                    switch (this.TaskAction)
+                    {
+                        case AddGroupToGroupTaskAction:
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding {0} to {1}", g.ItemSpec, this.ParentGroup));
+                            parent.Invoke("Add", new object[] { child.Path });
+                            break;
+                        case RemoveGroupFromGroupTaskAction:
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing {0} from {1}", g.ItemSpec, this.ParentGroup));
+                            parent.Invoke("Remove", new object[] { child.Path });
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // do nothing
+                }
             }
         }
 
@@ -751,8 +833,13 @@ namespace MSBuild.ExtensionPack.Computer
                 DirectoryEntry user;
                 var username = u.ItemSpec;
                 var userAdEntry = this.activeDirEntry;
+                var userDirPath = u.GetMetadata("DirectoryPath");
 
-                if (username.Contains(@"\"))
+                if (!string.IsNullOrEmpty(userDirPath))
+                {
+                    userAdEntry = new DirectoryEntry(userDirPath);
+                }
+                else if (username.Contains(@"\"))
                 {
                     var userDomain = username.Substring(0, username.IndexOf(@"\", StringComparison.OrdinalIgnoreCase));
                     username = username.Substring(username.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) + 1);

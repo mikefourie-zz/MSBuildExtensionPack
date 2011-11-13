@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/581fb9b8-67dd-ec9d-8c61-77e0d202993c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/581fb9b8-67dd-ec9d-8c61-77e0d202993c.htm")]
     public class BuildDeploymentManifest : Task
     {
         private bool allowConfigurationChanges = true;
@@ -74,7 +74,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 if (!File.Exists(file.ItemSpec))
                 {
-                    this.Log.LogError(String.Format(CultureInfo.InvariantCulture, "File not found: {0}", file.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "File not found: {0}", file.ItemSpec));
                     return false;
                 }
 

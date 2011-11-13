@@ -25,8 +25,10 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>Delete</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>DisableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>EnableAllReceiveLocations</i> (<b>Required: </b>Applications <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>DisableReceiveLocations</i> (<b>Required: </b>Applications, ReceiveLocations <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
+    /// <para><i>EnableReceiveLocations</i> (<b>Required: </b>Applications, ReceiveLocations <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><i>ExportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
-    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding)</para>
+    /// <para><i>ExportToMsi</i> (<b>Required: </b>Application, MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, IncludeGlobalPartyBinding, Resources)</para>
     /// <para><i>ImportBindings</i> (<b>Required: </b>BindingFile <b>Optional: </b>Application, MachineName, DatabaseServer, Database)</para>
     /// <para><i>ImportFromMsi</i> (<b>Required: </b>MsiPath <b>Optional: </b>MachineName, DatabaseServer, Database, Application, Overwrite)</para>
     /// <para><i>Get</i> (<b>Optional: </b>MachineName, DatabaseServer, Database)</para>
@@ -89,10 +91,25 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         <!-- Exports a BizTalk application bindings to the specified file -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
     ///     </Target>
+    ///     <!-- Export an Application to a partial/incremental MSI -->
+    ///     <Target Name="ExportToMsi">
+    ///         <MSBuild Projects="@(Compile)" Targets="Build">
+    ///             <Output TaskParameter="TargetOutputs" ItemName="CompiledAssemblies" />
+    ///         </MSBuild>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="%(CompiledAssemblies.Identity)">
+    ///             <Output TaskParameter="OutputItems" ItemName="NetAssemblies" />
+    ///         </MSBuild.ExtensionPack.Framework.Assembly>
+    ///         <ItemGroup>
+    ///             <Resources Include="@(NetAssemblies->'%(FullName)')" />
+    ///             <Resources Include="Application/$(BtsApplicationName)" Condition=" '$(ExportBindings)'=='True' " />
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="$(BtsApplicationName)" Resources="@(Resources)" MsiPath="$(TargetMsi)" IncludeGlobalPartyBinding="$(ExportBindings)"/>
+    ///     </Target>
+    /// </Project>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";
@@ -100,9 +117,11 @@ namespace MSBuild.ExtensionPack.BizTalk
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
         private const string DisableAllReceiveLocationsTaskAction = "DisableAllReceiveLocations";
+        private const string DisableReceiveLocationsTaskAction = "DisableReceiveLocations";
         private const string ExportToMsiTaskAction = "ExportToMsi";
         private const string ImportFromMsiTaskAction = "ImportFromMsi";
         private const string EnableAllReceiveLocationsTaskAction = "EnableAllReceiveLocations";
+        private const string EnableReceiveLocationsTaskAction = "EnableReceiveLocations";
         private const string GetTaskAction = "Get";
         private const string RemoveReferenceTaskAction = "RemoveReference";
         private const string StartAllTaskAction = "StartAll";
@@ -130,6 +149,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [DropdownValue(CreateTaskAction)]
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(DisableAllReceiveLocationsTaskAction)]
+        [DropdownValue(DisableReceiveLocationsTaskAction)]
+        [DropdownValue(EnableReceiveLocationsTaskAction)]
         [DropdownValue(EnableAllReceiveLocationsTaskAction)]
         [DropdownValue(GetTaskAction)]
         [DropdownValue(RemoveReferenceTaskAction)]
@@ -162,6 +183,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(DisableReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableReceiveLocationsTaskAction, false)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(RemoveReferenceTaskAction, false)]
@@ -194,6 +217,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(DisableReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableReceiveLocationsTaskAction, false)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(RemoveReferenceTaskAction, false)]
@@ -221,6 +246,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, true)]
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, true)]
+        [TaskAction(DisableReceiveLocationsTaskAction, true)]
+        [TaskAction(EnableReceiveLocationsTaskAction, true)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, true)]
         [TaskAction(StartAllTaskAction, true)]
         [TaskAction(StartAllOrchestrationsTaskAction, true)]
@@ -243,6 +270,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         public ITaskItem[] References { get; set; }
 
         /// <summary>
+        /// sets the ReceiveLocations to operate on.
+        /// </summary>
+        [TaskAction(DisableReceiveLocationsTaskAction, true)]
+        [TaskAction(EnableReceiveLocationsTaskAction, true)]
+        public ITaskItem[] ReceiveLocations { get; set; }
+
+        /// <summary>
         /// Sets the Application Name
         /// </summary>
         [TaskAction(AddReferenceTaskAction, true)]
@@ -253,6 +287,12 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(ImportBindingsTaskAction, false)]
         [TaskAction(ExportBindingsTaskAction, false)]
         public string Application { get; set; }
+
+        /// <summary>
+        /// Sets the Resources to export. If not supplied, all resources are exported.
+        /// </summary>
+        [TaskAction(ExportToMsiTaskAction, false)]
+        public ITaskItem[] Resources { get; set; }
 
         /// <summary>
         /// Sets the Application description
@@ -272,7 +312,9 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(CreateTaskAction, false)]
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(DisableReceiveLocationsTaskAction, false)]
         [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
+        [TaskAction(EnableReceiveLocationsTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(RemoveReferenceTaskAction, false)]
         [TaskAction(StartAllTaskAction, false)]
@@ -380,6 +422,10 @@ namespace MSBuild.ExtensionPack.BizTalk
                     case StopReferencedApplicationsTaskAction:
                         this.StopApplication();
                         break;
+                    case EnableReceiveLocationsTaskAction:
+                    case DisableReceiveLocationsTaskAction:
+                        this.ControlReceiveLocations();
+                        break;
                     case DeleteTaskAction:
                         this.Delete();
                         break;
@@ -406,6 +452,38 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
         }
 
+        private void ControlReceiveLocations()
+        {
+            if (this.ReceiveLocations == null)
+            {
+                Log.LogError("ReceiveLocations is required");
+                return;
+            }
+
+            foreach (ITaskItem item in this.ReceiveLocations)
+            {
+                foreach (Microsoft.BizTalk.ExplorerOM.ReceivePort rport in this.explorer.ReceivePorts)
+                {
+                    foreach (Microsoft.BizTalk.ExplorerOM.ReceiveLocation rl in rport.ReceiveLocations.Cast<Microsoft.BizTalk.ExplorerOM.ReceiveLocation>().Where(rl => string.Compare(rl.Name, item.ItemSpec, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        switch (this.TaskAction)
+                        {
+                            case EnableReceiveLocationsTaskAction:
+                                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Enabling {1} for {0}", rport.Name, rl.Name));
+                                rl.Enable = true;
+                                break;
+                            case DisableReceiveLocationsTaskAction:
+                                this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Disabling {1} for {0}", rport.Name, rl.Name));
+                                rl.Enable = false;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            this.explorer.SaveChanges();
+        }
+
         private void ImportBindings()
         {
             // not supported, only import bindings at application level
@@ -425,7 +503,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                 return;
             }
 
-            if (String.IsNullOrEmpty(this.Application))
+            if (string.IsNullOrEmpty(this.Application))
             {
                 // -ApplicationName   Optional. The name of the BizTalk application.
                 this.Application = this.explorer.DefaultApplication.Name;
@@ -434,12 +512,12 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             using (DeployerComponent dc = new DeployerComponent())
             {
-                string resultMessage = String.Empty;
+                string resultMessage = string.Empty;
 
                 switch (dc.ImportBindingWithValidation(this.explorer.ConnectionString, this.BindingFile.ItemSpec, this.Application, false, ref resultMessage))
                 {
                     case ImportBindingError.Succeeded:
-                        // resultMessage is unchanged (String.Empty), use custom message
+                        // resultMessage is unchanged (string.Empty), use custom message
                         this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Imported {0} into application {1}", this.BindingFile.ItemSpec, this.Application));
                         break;
                     case ImportBindingError.SucceededWithWarning:
@@ -469,7 +547,7 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
 
             // use default app if no app name is provided
-            if (String.IsNullOrEmpty(this.Application))
+            if (string.IsNullOrEmpty(this.Application))
             {
                 // -ApplicationName   Optional. The name of the BizTalk application.
                 this.Application = this.explorer.DefaultApplication.Name;
@@ -567,6 +645,11 @@ namespace MSBuild.ExtensionPack.BizTalk
                 return;
             }
 
+            if (this.Resources == null)
+            {
+                this.Resources = new ITaskItem[] { };
+            }
+
             if (!this.CheckExists(this.Application))
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application does not exist: {0}", this.Application));
@@ -592,12 +675,18 @@ namespace MSBuild.ExtensionPack.BizTalk
                         resource.Properties["IncludeGlobalPartyBinding"] = this.IncludeGlobalPartyBinding;
                     }
 
+                    // only export specified resources
+                    if (this.Resources.Length != 0 && !this.Resources.Any(item => item.ItemSpec == resource.Luid))
+                    {
+                        continue;
+                    }
+
                     this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Exporting Resource {0}", resource.Luid));
                     exportedResources.Add(resource);
                 }
 
                 appl.Export(this.MsiPath.ItemSpec, exportedResources);
-             }
+            }
         }
 
         private void ImportFromMsi()
@@ -611,7 +700,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Importing from {0}", this.MsiPath.ItemSpec));
 
-            if (String.IsNullOrEmpty(this.Application))
+            if (string.IsNullOrEmpty(this.Application))
             {
                 // -ApplicationName   Optional. The name of the BizTalk application.
                 this.Application = this.explorer.DefaultApplication.Name;
@@ -636,7 +725,7 @@ namespace MSBuild.ExtensionPack.BizTalk
 
                 // used to specify custom properties for import, i.e. TargetEnvironment
                 IDictionary<string, object> requestProperties = null;
-                if (!String.IsNullOrEmpty(this.Environment))
+                if (!string.IsNullOrEmpty(this.Environment))
                 {
                     // -Environment       Optional. The environment to deploy.
                     requestProperties = new Dictionary<string, object> { { "TargetEnvironment", this.Environment } };

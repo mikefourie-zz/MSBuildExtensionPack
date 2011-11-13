@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/072b0fa3-2739-f3aa-124c-71955299d206.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/072b0fa3-2739-f3aa-124c-71955299d206.htm")]
     public class EventSource : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -178,7 +178,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 using (System.Diagnostics.EventLog log = new System.Diagnostics.EventLog("Application", this.MachineName, this.Source))
                 {
-                    log.WriteEntry(this.Description, this.logType, Int32.Parse(this.EventId, CultureInfo.CurrentCulture));
+                    log.WriteEntry(this.Description, this.logType, int.Parse(this.EventId, CultureInfo.CurrentCulture));
                 }
             }
         }

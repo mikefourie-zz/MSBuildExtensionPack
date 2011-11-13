@@ -50,7 +50,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/3b72c130-7fc9-8b8a-132c-62999e5b1183.htm")]
     public class SqlCmd : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
@@ -74,6 +74,9 @@ namespace MSBuild.ExtensionPack.SqlServer
         private int queryTimeout;
         private string server = ".";
 
+        /// <summary>
+        /// Initializes a new instance of the SqlCmd class
+        /// </summary>
         public SqlCmd()
         {
             this.DisableVariableSubstitution = false;
@@ -333,6 +336,12 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         protected override void InternalExecute()
         {
+            if (this.InputFiles == null && this.CommandLineQuery == null)
+            {
+                this.Log.LogError("InputFiles or CommandLineQuery is required");
+                return;
+            }
+
             switch (this.TaskAction)
             {
                 case ExecuteTaskAction:

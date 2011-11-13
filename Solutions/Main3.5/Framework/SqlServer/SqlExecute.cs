@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: </b> ConnectionString, Sql or Files <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> FailedScripts)</para>
+    /// <para><i>Execute</i> (<b>Required: </b> ConnectionString, Sql or Files <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors, StripMultiLineComments <b>Output: </b> FailedScripts)</para>
     /// <para><i>ExecuteRawReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> RawReaderResult, FailedScripts)</para>
     /// <para><i>ExecuteReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ReaderResult, FailedScripts)</para>
     /// <para><i>ExecuteScalar</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ScalarResult, FailedScripts)</para>
@@ -59,7 +59,7 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
         private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -69,6 +69,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         private const string ExecuteRawReaderTaskAction = "ExecuteRawReader";
         private int commandTimeout = 30;
         private DateTime timer;
+        private bool stripMultiLineComments = true;
 
         internal delegate void ScriptExecutionEventHandler(object sender, ExecuteEventArgs e);
 
@@ -112,6 +113,16 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         [TaskAction(ExecuteTaskAction, false)]
         public bool Retry { get; set; }
+
+        /// <summary>
+        /// Specifies whether to parse out multi-line comments before executing. This can be handy if your comments contain GO statements. Please note that if your sql contains code with /* in it, then you should set this to false. Default is true.
+        /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
+        public bool StripMultiLineComments
+        {
+            get { return this.stripMultiLineComments; }
+            set { this.stripMultiLineComments = value; }
+        }
 
         /// <summary>
         /// Set to true to run the sql within a transaction
@@ -166,12 +177,12 @@ namespace MSBuild.ExtensionPack.SqlServer
             }
         }
 
-        private static string LoadScript(string fileName)
+        private static string LoadScript(string fileName, bool stripMultiLineComments)
         {
             string retValue;
             using (StreamReader textFileReader = new StreamReader(fileName, System.Text.Encoding.Default, true))
             {
-                retValue = new SqlScriptLoader(textFileReader).ReadToEnd();
+                retValue = new SqlScriptLoader(textFileReader, stripMultiLineComments).ReadToEnd();
             }
 
             return retValue;
@@ -234,7 +245,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                         try
                         {
                             this.LogTaskMessage(MessageImportance.Low, "Loading {0}.", new[] { fileInfo.ItemSpec });
-                            sqlCommandText = this.SubstituteParameters(LoadScript(fileInfo.ItemSpec)) + Environment.NewLine;
+                            sqlCommandText = this.SubstituteParameters(LoadScript(fileInfo.ItemSpec, this.StripMultiLineComments)) + Environment.NewLine;
                             string[] batches = splitter.Split(sqlCommandText);
                             this.LogTaskMessage(MessageImportance.Low, "Split {0} into {1} batches.", new object[] { fileInfo.ItemSpec, batches.Length });
                             SqlTransaction sqlTransaction = null;

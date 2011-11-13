@@ -84,7 +84,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
     public class VirtualPc : BaseTask
     {
         private const string AddHardDiskConnectionTaskAction = "AddHardDiskConnection";
@@ -387,7 +387,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
                 return;
             }
 
-            this.LogTaskMessage(String.Format(CultureInfo.CurrentCulture, "Taking screenshot of: {0}", this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Taking screenshot of: {0}", this.Name));
             VMDisplay display = this.virtualMachine.Display;
             if (display != null)
             {
@@ -445,7 +445,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
                 return;
             }
 
-            this.LogTaskMessage(String.Format(CultureInfo.CurrentCulture, "Waiting for low CPU utilisation on: {0}", this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Waiting for low CPU utilisation on: {0}", this.Name));
             int belowMaxCount = 0;
             while (belowMaxCount < this.MaxCpuThreshold)
             {
@@ -469,7 +469,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
                 return;
             }
 
-            this.LogTaskMessage(String.Format(CultureInfo.CurrentCulture, "{0} Virtual Machine: {1}", this.TaskAction, this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} Virtual Machine: {1}", this.TaskAction, this.Name));
             switch (this.TaskAction)
             {
                 case TypeAsciiTextTaskAction:
@@ -516,7 +516,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
                 return;
             }
 
-            this.LogTaskMessage(String.Format(CultureInfo.CurrentCulture, "{0} Virtual Machine: {1}", this.TaskAction, this.Name));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "{0} Virtual Machine: {1}", this.TaskAction, this.Name));
             switch (this.TaskAction)
             {
                 case LogoffTaskAction:

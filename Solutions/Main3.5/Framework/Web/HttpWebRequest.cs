@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.9.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
@@ -235,7 +235,7 @@ namespace MSBuild.ExtensionPack.Web
                 }
                 catch (WebException ex)
                 {
-                    var failureMessage = String.Format(CultureInfo.CurrentCulture, "{0}. Status: {1}", ex.Message, ex.Status);
+                    var failureMessage = string.Format(CultureInfo.CurrentCulture, "{0}. Status: {1}", ex.Message, ex.Status);
                     var responseBody = new StringBuilder();
                     if (ex.Response != null)
                     {
