@@ -1,0 +1,71 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Schema Include="c:\Demo1\demo.xsd"/>
+        </ItemGroup>
+        <PropertyGroup>
+            <MyXml>
+                <![CDATA[
+                <Parent>
+                    <Child1>Child1 data</Child1>
+                    <Child2>Child2 data</Child2>
+                </Parent>]]>
+            </MyXml>
+            <MyXsl>
+                <![CDATA[<?xml version='1.0'?>
+                <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+                    <xsl:template match='/Parent'>
+                        <Root>
+                            <C1>
+                                <xsl:value-of select='Child1'/>
+                            </C1>
+                            <C2>
+                                <xsl:value-of select='Child2'/>
+                            </C2>
+                        </Root>
+                    </xsl:template>
+                </xsl:stylesheet>]]>
+            </MyXsl>
+            <MyValidXml>
+                <![CDATA[
+                <D>
+                    <Name full="Mike" type="3f3">
+                        <Place>aPlace</Place>
+                    </Name>
+                </D>]]>
+            </MyValidXml>
+        </PropertyGroup>
+        <!-- Validate an XmlFile -->
+        <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Validate" XmlFile="c:\Demo1\demo.xml" SchemaFiles="@(Schema)">
+            <Output PropertyName="Validated" TaskParameter="IsValid"/>
+            <Output PropertyName="Out" TaskParameter="Output"/>
+        </MSBuild.ExtensionPack.Xml.XmlTask>
+        <Message Text="Valid File: $(Validated)"/>
+        <Message Text="Output: $(Out)"/>
+        <!-- Validate a piece of Xml -->
+        <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Validate" Xml="$(MyValidXml)" SchemaFiles="@(Schema)">
+            <Output PropertyName="Validated" TaskParameter="IsValid"/>
+        </MSBuild.ExtensionPack.Xml.XmlTask>
+        <Message Text="Valid File: $(Validated)"/>
+        <!-- Transform an Xml file with an Xslt file -->
+        <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Transform" XmlFile="C:\Demo1\XmlForTransform.xml" XslTransformFile="C:\Demo1\Transform.xslt">
+            <Output PropertyName="Out" TaskParameter="Output"/>
+        </MSBuild.ExtensionPack.Xml.XmlTask>
+        <Message Text="Transformed Xml: $(Out)"/>
+        <!-- Transfrom a piece of Xml with an Xslt file -->
+        <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Transform" Xml="$(MyXml)" XslTransformFile="C:\Demo1\Transform.xslt">
+            <Output PropertyName="Out" TaskParameter="Output"/>
+        </MSBuild.ExtensionPack.Xml.XmlTask>
+        <Message Text="Transformed Xml: $(Out)"/>
+        <!-- Transfrom a piece of Xml with a piece of Xslt and write it out to a file with indented formatting -->
+        <MSBuild.ExtensionPack.Xml.XmlTask TaskAction="Transform" Xml="$(MyXml)" XslTransform="$(MyXsl)" OutputFile="C:\newxml.xml" Indent="true">
+            <Output PropertyName="Out" TaskParameter="Output"/>
+        </MSBuild.ExtensionPack.Xml.XmlTask>
+        <Message Text="Transformed Xml: $(Out)"/>
+    </Target>
+</Project>
