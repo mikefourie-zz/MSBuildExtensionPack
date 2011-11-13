@@ -1,0 +1,41 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Allow Include="TFS">
+                <Permissions>DeleteMessage,ReceiveMessage</Permissions>
+            </Allow>
+            <Deny Include="TFS">
+                <Permissions>GetQueueProperties</Permissions>
+            </Deny>
+        </ItemGroup>
+        <!-- Create queue -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="Create" Path=".\private$\3" Label="Test Queue" Force="true"/>
+        <!-- Check if the queue exists -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="CheckExists" Path=".\private$\3">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Communication.MSMQ>
+        <Message Text="Exists: $(DoesExist)"/>
+        <!-- Delete the queue -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="Delete" Path=".\private$\3"/>
+        <!-- Check if the queue exists -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="CheckExists" Path=".\private$\3">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Communication.MSMQ>
+        <Message Text="Exists: $(DoesExist)"/>
+        <!-- Delete the queue again to see that no error is thrown -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="Delete" Path=".\private$\3"/>
+        <!-- Create queue -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="Create" Path=".\private$\3" Label="Test Queue" Force="true" Transactional="false" Authenticated="" MaximumQueueSize="220"/>
+        <!-- Send Message -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="Send" Path=".\private$\3" Message="Mike" Label="Hi2"/>
+        <!-- Send Message -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="Send" Path=".\private$\3" Message="" Label=""/>
+        <!-- Set permissions -->
+        <MSBuild.ExtensionPack.Communication.MSMQ TaskAction="SetPermissions" Path=".\private$\3" Allow="@(Allow)" Deny="@(Deny)"/>
+    </Target>
+</Project>
