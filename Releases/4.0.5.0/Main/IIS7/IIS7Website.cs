@@ -504,6 +504,8 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.TargetingLocalMachine(true))
             {
+                this.GetManagementScope(@"\root\cimv2");
+
                 // we need to operate remotely
                 string fullQuery = @"Select * From Win32_Directory Where Name = '" + directoryPath.Replace("\\", "\\\\") + "'";
                 ObjectQuery query1 = new ObjectQuery(fullQuery);
