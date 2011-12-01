@@ -388,7 +388,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             if (this.Dictionary != null)
             {
-                arguments += "/dictionary:\"" + this.Dictionary.GetMetadata("FullPath") + "\"";
+                arguments += " /dictionary:\"" + this.Dictionary.GetMetadata("FullPath") + "\"";
             }
 
             if (this.ShowSummary)
