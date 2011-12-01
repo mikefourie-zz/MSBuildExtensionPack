@@ -481,6 +481,9 @@
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />
+    <Content Include="Computer\lock-open.png" />
+    <Content Include="Computer\lock.ico" />
+    <Content Include="Computer\lock.png" />
     <Content Include="XmlSamples\MotorData\Cars\Dodge.txt" />
     <Content Include="XmlSamples\MotorData\Cars\lexus.txt" />
     <Content Include="XmlSamples\MotorData\rootfile1.txt" />

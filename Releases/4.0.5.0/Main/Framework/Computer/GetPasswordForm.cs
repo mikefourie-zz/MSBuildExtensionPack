@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.Computer.Extended
         private readonly ContextType contextType;
         private string password;
         private Exception exception;
-        
+
         public GetPasswordForm(string user, string domain, ContextType type, ContextOptions options)
         {
             this.InitializeComponent();
@@ -34,6 +34,8 @@ namespace MSBuild.ExtensionPack.Computer.Extended
             this.contextType = type;
             this.contextOptions = options;
         }
+
+        public bool UserCanceled { get; set; }
 
         public string Password
         {
@@ -63,15 +65,18 @@ namespace MSBuild.ExtensionPack.Computer.Extended
                     {
                         this.labelPassword.ForeColor = System.Drawing.Color.DarkRed;
                         this.textBoxPassword.BackColor = System.Drawing.Color.Coral;
-                        this.labelPassword.Focus();
+                        this.pictureBoxLock.Visible = true;
+                        this.textBoxPassword.Select();
                     }
                     else
                     {
                         this.password = this.textBoxPassword.Text;
                         this.labelPassword.ForeColor = System.Drawing.Color.DarkGreen;
                         this.textBoxPassword.BackColor = System.Drawing.Color.WhiteSmoke;
+                        this.pictureBoxLock.Visible = false;
+                        this.pictureBoxOpenLock.Visible = true;
                         this.Refresh();
-                        System.Threading.Thread.Sleep(300);
+                        System.Threading.Thread.Sleep(400);
                         this.Close();
                     }
                 }
@@ -90,6 +95,7 @@ namespace MSBuild.ExtensionPack.Computer.Extended
 
         private void ProcessCancel()
         {
+            this.UserCanceled = true;
             this.password = string.Empty;
             this.Close();
         }
@@ -109,6 +115,14 @@ namespace MSBuild.ExtensionPack.Computer.Extended
                 case Keys.Escape:
                     this.ProcessCancel();
                     break;
+            }
+        }
+
+        private void GetPasswordForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                this.UserCanceled = true;
             }
         }
     }
