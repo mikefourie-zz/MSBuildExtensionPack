@@ -23,12 +23,12 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
     /// <para><i>GetTempFileName</i> (<b>Output: </b>Path)</para>
-    /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
+    /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Optional: </b>RegexOptionList <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
     /// <para><i>Move</i> (<b>Required: </b>Path, TargetPath)</para>
     /// <para><i>RemoveAttributes</i> (<b>Required: </b>Files)</para>
-    /// <para><i>RemoveLines</i> (<b>Required: </b>Files, Lines). This will remove lines from a file. Lines is a regular expression</para>
+    /// <para><i>RemoveLines</i> (<b>Required: </b>Files, Lines <b>Optional: </b>RegexOptionList). This will remove lines from a file. Lines is a regular expression</para>
     /// <para><i>RemoveSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
-    /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files)</para>
+    /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files, RegexOptionList)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>WriteLines</i> (<b>Required: </b>Files, Lines). This will add lines to a file if the file does NOT contain them. The match is case insensitive.</para>
     /// <para><b>Remote Execution Support:</b> No</para>
@@ -99,7 +99,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         </MSBuild.ExtensionPack.FileSystem.File>
     ///         <Message Text="$(chksm)"/>
     ///         <!-- Replace file content using a regular expression -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="iiiii" Files="@(FilesToParse)"/>
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" RegexOptionList="IgnoreCase|Singleline" Replacement="iiiii" Files="@(FilesToParse)"/>
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="idi" Path="c:\Demo*"/>
     ///         <!-- Count the number of lines in a file and exclude comments -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(FilesToCount)" CommentIdentifiers="//">
@@ -143,6 +143,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private Encoding fileEncoding = Encoding.UTF8;
         private string replacement = string.Empty;
+        private RegexOptions regexOptions = RegexOptions.Compiled;
         private Regex parseRegex;
         private string[] commentIdentifiers;
         private List<ITaskItem> excludedFiles;
@@ -222,6 +223,76 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             get { return this.replacement; }
             set { this.replacement = value; }
+        }
+
+        /// <summary>
+        /// Sets the Regular Expression options, e.g. None|IgnoreCase|Multiline|ExplicitCapture|Compiled|Singleline|IgnorePatternWhitespace|RightToLeft|RightToLeft|ECMAScript|CultureInvariant  Default is RegexOptions.Compiled
+        /// </summary>
+        [TaskAction(FilterByContentTaskAction, false)]
+        [TaskAction(RemoveLinesTaskAction, false)]
+        [TaskAction(ReplaceTaskAction, false)]
+        public string RegexOptionList
+        {
+            get
+            {
+                return null;
+            }
+
+            set
+            {
+                if (string.IsNullOrEmpty(value) || value == "None")
+                {
+                    return;
+                }
+
+                this.regexOptions = new RegexOptions();
+
+                var strTemp = value.Split('|');
+                if (strTemp.Contains("IgnoreCase"))
+                {
+                    this.regexOptions |= RegexOptions.IgnoreCase;
+                }
+
+                if (strTemp.Contains("Multiline"))
+                {
+                    this.regexOptions |= RegexOptions.Multiline;
+                }
+
+                if (strTemp.Contains("ExplicitCapture"))
+                {
+                    this.regexOptions |= RegexOptions.ExplicitCapture;
+                }
+
+                if (strTemp.Contains("Compiled"))
+                {
+                    this.regexOptions |= RegexOptions.Compiled;
+                }
+
+                if (strTemp.Contains("Singleline"))
+                {
+                    this.regexOptions |= RegexOptions.Singleline;
+                }
+
+                if (strTemp.Contains("IgnorePatternWhitespace"))
+                {
+                    this.regexOptions |= RegexOptions.IgnorePatternWhitespace;
+                }
+
+                if (strTemp.Contains("RightToLeft"))
+                {
+                    this.regexOptions |= RegexOptions.RightToLeft;
+                }
+
+                if (strTemp.Contains("ECMAScript"))
+                {
+                    this.regexOptions |= RegexOptions.ECMAScript;
+                }
+
+                if (strTemp.Contains("CultureInvariant"))
+                {
+                    this.regexOptions |= RegexOptions.CultureInvariant;
+                }
+            }
         }
 
         /// <summary>
@@ -623,7 +694,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 bool match = false;
                 foreach (ITaskItem line in this.Lines)
                 {
-                    this.parseRegex = new Regex(line.ItemSpec, RegexOptions.Compiled);
+                    this.parseRegex = new Regex(line.ItemSpec, this.regexOptions);
                     Match m = this.parseRegex.Match(fileLine);
                     if (m.Success)
                     {
@@ -739,7 +810,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
 
                 // Load the regex to use
-                this.parseRegex = new Regex(this.RegexPattern, RegexOptions.Compiled);
+                this.parseRegex = new Regex(this.RegexPattern, this.regexOptions);
 
                 // Match the regular expression pattern against a text string.
                 Match m = this.parseRegex.Match(entireFile);
@@ -935,7 +1006,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // Load the regex to use
-            this.parseRegex = new Regex(this.RegexPattern, RegexOptions.Compiled);
+            this.parseRegex = new Regex(this.RegexPattern, this.regexOptions);
 
             // Check to see if we are processing a file collection or a path
             if (this.Path != null)
