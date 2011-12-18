@@ -21,7 +21,7 @@ namespace MSBuild.ExtensionPack.Loggers
     /// <para>     /l:XmlFileLogger,MSBuild.ExtensionPack.Loggers.dll;logfile=YOURLOGFILE;verbosity=YOURVERBOSITY;encoding=YOURENCODING</para>
     /// <para><b>Parameters: </b></para>
     /// <para>Logfile: A optional parameter that specifies the file in which to store the log information. Defaults to msbuild.xml</para>
-    /// <para>Verbosity: An optional parameter that overrides the global verbosity setting for this file logger only. This enables you to log to several loggers, each with a different verbosity.</para>
+    /// <para>Verbosity: An optional parameter that overrides the global verbosity setting for this file logger only. This enables you to log to several loggers, each with a different verbosity. The verbosity setting is case sensitive.</para>
     /// <para>Encoding: An optional parameter that specifies the encoding for the file, for example, UTF-8.</para>
     /// </summary>
     public class XmlFileLogger : Logger
