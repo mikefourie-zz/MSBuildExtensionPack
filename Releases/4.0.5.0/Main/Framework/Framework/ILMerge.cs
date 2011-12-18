@@ -5,6 +5,7 @@ namespace MSBuild.ExtensionPack.Framework
 {
     using System;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
@@ -36,6 +37,9 @@ namespace MSBuild.ExtensionPack.Framework
         private int fileAlignment = 512;
         private bool publicKeyTokens = true;
 
+        /// <summary>
+        /// AllowDuplicateResources
+        /// </summary>
         public bool AllowDuplicateResources { get; set; }
 
         /// <summary>
@@ -127,6 +131,11 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [Required]
         public ITaskItem[] InputAssemblies { get; set; }
+
+        /// <summary>
+        /// Set to true to delete the InputAssemblies after the merged file has been created. Default is false;
+        /// </summary>
+        public bool DeleteInputAssemblies { get; set; }
 
         /// <summary>
         /// This controls whether types in assemblies other than the primary assembly have their visibility modified. When it is true, then all non-exempt types that are visible outside of their assembly 
@@ -364,6 +373,15 @@ namespace MSBuild.ExtensionPack.Framework
         {
             Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+            
+            if (this.DeleteInputAssemblies)
+            {
+                foreach (ITaskItem file in this.InputAssemblies.Where(file => File.Exists(file.ItemSpec)))
+                {
+                    File.Delete(file.ItemSpec);
+                }
+            }
+
             return retVal;
         }
 
