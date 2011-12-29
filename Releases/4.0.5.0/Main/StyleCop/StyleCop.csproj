@@ -69,21 +69,11 @@
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="StyleCop, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
-    <Reference Include="StyleCop.CSharp, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
-    <Reference Include="StyleCop.CSharp.Rules, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\Attributes.cs">
