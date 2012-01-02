@@ -227,7 +227,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 {
                     foreach (ITaskItem i in this.FailedFiles)
                     {
-                        streamWriter.WriteLine(i.ItemSpec + " (" + i.GetMetadata("CheckId") + ": " + i.GetMetadata("Message") + " Line: " + i.GetMetadata("LineNumber") + ")");
+                        string checkid = i.GetMetadata("CheckId") ?? "NoCheckIdFound";
+                        string message = i.GetMetadata("Message") ?? "NoMessageFound";
+                        string linenumber = i.GetMetadata("LineNumber") ?? "NoLineNumberFound";
+                        streamWriter.WriteLine(i.ItemSpec + " (" + checkid + ": " + message + " Line: " + linenumber + ")");
                     }
                 }
             }
@@ -248,7 +251,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         {
             this.Succeeded = false;
             string file = string.Empty;
-            if (((e.SourceCode != null) && (e.SourceCode.Path != null)) && (e.SourceCode.Path.Length > 0))
+            if (((e.SourceCode != null) && (!string.IsNullOrEmpty(e.SourceCode.Path))))
             {
                 file = e.SourceCode.Path;
             }
