@@ -223,6 +223,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServer\SqlScriptLoader.cs" />
+    <Compile Include="Subversion\Svn.cs" />
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -489,6 +490,9 @@
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
+      <Link>CodeAnalysis.Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />
