@@ -5,29 +5,93 @@
  * TODO:
  * - recognize more svn installations (ankh?, collabnet, sliksvn, visualsvn, wandisco, win32svn)
  * - implement the actual tasks
- * - figure out how to do 32/64 bit stuff in the 3.5 release
+ * - required attribute validation
  * - documentation
  */
 namespace MSBuild.ExtensionPack.Subversion
 {
     using System;
+    using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
     using Microsoft.Win32;
 
+    /// <summary>
+    /// <b>Valid TaskActions are:</b>
+    /// <para><i>Version</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
+    /// </summary>
+    /// <example>
+    /// <code lang="xml"><![CDATA[
+    /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <!-- Version -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Version" Item="c:\path\to\working\copy">
+    ///             <Output TaskParameter="Info" ItemName="Info"/>
+    ///         </MSBuild.ExtensionPack.Subversion.Svn>
+    ///         <Message Text="MinRevision: %(Info.MinRevision), MaxRevision: %(Info.MaxRevision), IsMixed: %(Info.IsMixed), IsModified: %(Info.IsModified), IsSwitched: %(Info.IsSwitched), IsPartial: %(Info.IsPartial)"/>
+    ///     </Target>
+    /// </Project>
+    /// ]]></code>    
+    /// </example>
     public class Svn : BaseTask
     {
+        protected const string SvnExecutableName = "svn.exe";
+        protected const string SvnVersionExecutableName = "svnversion.exe";
+
+        private const string VersionTaskAction = "Version";
+
         private static readonly string SvnPath = FindSvnPath();
 
-        private const string SvnExecutableName = "svn.exe";
-        private const string SvnVersionExecutableName = "svnversion.exe";
+        [DropdownValue(VersionTaskAction)]
+        public override string TaskAction
+        {
+            get { return base.TaskAction; }
+            set { base.TaskAction = value; }
+        }
+
+        [TaskAction(VersionTaskAction, true)]
+        public ITaskItem Item { get; set; }
+
+        [Output]
+        [TaskAction(VersionTaskAction, false)]
+        public ITaskItem Info { get; set; }
 
         protected override void InternalExecute()
         {
-            throw new NotImplementedException(SvnPath);
+            if (!this.TargetingLocalMachine())
+            {
+                return;
+            }
+
+            if (SvnPath == null)
+            {
+                Log.LogError("A supported SVN client installation was not found");
+                return;
+            }
+
+            switch (this.TaskAction)
+            {
+                case VersionTaskAction:
+                    this.Version();
+                    break;
+
+                default:
+                    this.Log.LogError("Invalid TaskAction passed: {0}", this.TaskAction);
+                    return;
+            }
         }
 
-        #region finding SVN command-line tools
+        #region finding SVN command-line tools, all static
         /// <summary>
         /// Checks if a path is a valid SVN path where svn.exe and svnversion.exe can be found.
         /// </summary>
@@ -171,6 +235,114 @@ namespace MSBuild.ExtensionPack.Subversion
 
             // didn't find it, will report it as an error from where it's used
             return null;
+        }
+        #endregion
+
+        #region task implementations
+        private void Version()
+        {
+            var output = new StringBuilder();
+            this.Execute(SvnVersionExecutableName, string.Format(CultureInfo.CurrentCulture, "-q \"{0}\"", this.Item.ItemSpec), output);
+
+            if (!this.Log.HasLoggedErrors)
+            {
+                var s = output.ToString();
+
+                // unversioned/uncommitted, sadly there's no better way to tell, at least the help is explicit about these strings
+                if (s.StartsWith("Unversioned", StringComparison.Ordinal) || s.StartsWith("Uncommitted", StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                // decode the response
+                var m = Regex.Match(s, @"^\s?(?<min>[0-9]+)(:(?<max>[0-9]+))?(?<sw>[MSP]*)\s?$");
+                if (!m.Success)
+                {
+                    Log.LogError("Invalid output from SVN tool");
+                    return;
+                }
+
+                // fill up the output
+                this.Info = new TaskItem(this.Item);
+                this.Info.SetMetadata("MinRevision", m.Groups["min"].Value);
+                var mixed = !string.IsNullOrEmpty(m.Groups["max"].Value);
+                this.Info.SetMetadata("MaxRevision", m.Groups[mixed ? "max" : "min"].Value);
+                this.Info.SetMetadata("IsMixed", mixed.ToString());
+                this.Info.SetMetadata("IsModified", m.Groups["sw"].Value.Contains("M").ToString());
+                this.Info.SetMetadata("IsSwitched", m.Groups["sw"].Value.Contains("S").ToString());
+                this.Info.SetMetadata("IsPartial", m.Groups["sw"].Value.Contains("P").ToString());
+            }
+        }
+        #endregion
+
+        #region helper methods
+        /// <summary>
+        /// Executes a tool. Standard error is output as task errors. Standard output is either gathered in
+        /// <paramref name="output"/> if it's not null or output as task messages. A non-zero exit code is also treated as an
+        /// error.
+        /// </summary>
+        /// <param name="executable">the name of the executable</param>
+        /// <param name="args">the command line arguments</param>
+        /// <param name="output">will gather output if not null</param>
+        private void Execute(string executable, string args, StringBuilder output)
+        {
+            var filename = Path.Combine(SvnPath, executable);
+            Log.LogMessage(MessageImportance.Low, "Executing tool: {0} {1}", filename, args);
+
+            // set up the process
+            using (var proc = new Process())
+            {
+                proc.StartInfo = new ProcessStartInfo
+                {
+                    FileName = filename,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true
+                };
+
+                // handler stderr
+                proc.ErrorDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null)
+                    {
+                        return;
+                    }
+
+                    Log.LogError(e.Data);
+                };
+
+                // handler stdout
+                proc.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null)
+                    {
+                        return;
+                    }
+
+                    if (output != null)
+                    {
+                        output.AppendLine(e.Data);
+                    }
+                    else
+                    {
+                        Log.LogMessage(MessageImportance.Normal, e.Data);
+                    }
+                };
+
+                // run the process
+                proc.Start();
+                proc.StandardInput.Close();
+                proc.BeginErrorReadLine();
+                proc.BeginOutputReadLine();
+                proc.WaitForExit();
+
+                if (proc.ExitCode != 0)
+                {
+                    Log.LogError("The tool {0} exited with error code {1}", executable, proc.ExitCode);
+                }
+            }
         }
         #endregion
     }
