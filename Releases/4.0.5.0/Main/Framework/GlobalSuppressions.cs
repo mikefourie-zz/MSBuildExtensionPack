@@ -1057,3 +1057,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "MSBuild.ExtensionPack.Subversion")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Changeset", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.TfsSource.#GetWorkingChangesetDetails()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Changeset", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.TfsSource.#GetWorkingChangesetTaskAction")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Collab", Scope = "member", Target = "MSBuild.ExtensionPack.Subversion.Svn.#TryCollabNet(Microsoft.Win32.RegistryView)")]

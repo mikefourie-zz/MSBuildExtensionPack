@@ -3,10 +3,17 @@
 //-----------------------------------------------------------------------
 /*
  * TODO:
- * - recognize more svn installations (ankh?, collabnet, sliksvn, visualsvn, wandisco, win32svn)
+ * - recognize more svn installations
+ *   - sliksvn
+ *   - visualsvn
+ *   - wandisco
+ *   - win32svn
  * - implement the actual tasks
- * - required attribute validation
- * - documentation
+ *   - info
+ *   - update
+ *   - propget
+ *   - propset
+ *   - what else?
  */
 namespace MSBuild.ExtensionPack.Subversion
 {
@@ -25,6 +32,16 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Version</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
     /// </summary>
+    /// <remarks>
+    /// The task needs a command-line SVN client (svn.exe and svnversion.exe) to be available. The following are supported
+    /// (but versions other than those indicated may also work):
+    /// <list type="bullet">
+    ///     <item>any SVN client in the PATH environment variable, so the user can set a preference</item>
+    ///     <item>Cygwin 1.7, with the subversion package installed</item>
+    ///     <item>TortoiseSVN 1.7, 32 and 64 bit, with the command line components installed</item>
+    ///     <item>CollabNet Subversion Client 1.7, 32 and 64 bit</item>
+    /// </list>
+    /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -52,6 +69,7 @@ namespace MSBuild.ExtensionPack.Subversion
 
         private static readonly string SvnPath = FindSvnPath();
 
+        [Required]
         [DropdownValue(VersionTaskAction)]
         public override string TaskAction
         {
@@ -171,7 +189,7 @@ namespace MSBuild.ExtensionPack.Subversion
         }
 
         /// <summary>
-        /// Tries to find a TortoiseSVN installation from the given registry key name.
+        /// Tries to find a TortoiseSVN installation in the given registry view.
         /// </summary>
         /// <param name="view">registry view</param>
         /// <returns>the path if it is found, null otherwise</returns>
@@ -181,18 +199,81 @@ namespace MSBuild.ExtensionPack.Subversion
             using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
             using (var key = basekey.OpenSubKey(@"SOFTWARE\TortoiseSVN"))
             {
-                var dir = key.GetValue("Directory") as string;
-                if (dir != null)
+                if (key != null)
                 {
-                    dir = Path.Combine(dir, "bin");
-                    if (IsSvnPath(dir))
+                    var dir = key.GetValue("Directory") as string;
+                    if (dir != null)
                     {
-                        return dir;
+                        dir = Path.Combine(dir, "bin");
+                        if (IsSvnPath(dir))
+                        {
+                            return dir;
+                        }
                     }
                 }
 
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Tries to find a CollabNet Subversion Client installation in the given registry view.
+        /// </summary>
+        /// <param name="view">registry view</param>
+        /// <returns>the path if it is found, null otherwise</returns>
+        private static string TryCollabNet(RegistryView view)
+        {
+            // HKLM\SOFTWARE\CollabNet\Subversion!Client Version contains the version number
+            // HKLM\SOFTWARE\CollabNet\Subversion\[version]\Client!Install Location contains the actual directory
+            using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+            using (var key = basekey.OpenSubKey(@"SOFTWARE\CollabNet\Subversion"))
+            {
+                if (key != null)
+                {
+                    var version = key.GetValue("Client Version") as string;
+                    if (version != null)
+                    {
+                        using (var subkey = key.OpenSubKey(version + @"\Client"))
+                        {
+                            var dir = subkey.GetValue(@"Install Location") as string;
+                            if (IsSvnPath(dir))
+                            {
+                                return dir;
+                            }
+                        }
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// It first invokes the given delegate in the native registry. If it doesn't return a path, and we're on a 64 bit OS,
+        /// then it invokes the delegate in the non-native registry. So a 32 bit process will look into the 64 bit registry and
+        /// vice versa.
+        /// </summary>
+        /// <param name="inner">the actual function to check the registry</param>
+        /// <returns>the path if it is found, null otherwise</returns>
+        private static string TryRegistry3264(Func<RegistryView, string> inner)
+        {
+            string ret;
+
+            // try the native registry first
+            if ((ret = inner(RegistryView.Default)) != null)
+            {
+                return ret;
+            }
+
+            // in a 32 or 64 bit process, the default view above refers to the 32 or 64 bit registry respectively, but
+            // on a 64 bit system, a 32 or 64 bit process can also look into the 64 or 32 bit registry respectively
+            var view = Environment.Is64BitProcess ? RegistryView.Registry32 : RegistryView.Registry64;
+            if ((ret = inner(view)) != null)
+            {
+                return ret;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -215,22 +296,16 @@ namespace MSBuild.ExtensionPack.Subversion
                 return ret;
             }
 
-            // TortoiseSVN native
-            if ((ret = TryTortoiseSvn(RegistryView.Default)) != null)
+            // TortoiseSVN
+            if ((ret = TryRegistry3264(TryTortoiseSvn)) != null)
             {
                 return ret;
             }
 
-            // TortoiseSVN 32<->64
-            if (Environment.Is64BitOperatingSystem)
+            // CollabNet
+            if ((ret = TryRegistry3264(TryCollabNet)) != null)
             {
-                // in a 32 or 64 bit process, the default view above refers to the 32 or 64 bit registry respectively, but
-                // on a 64 bit system, a 32 or 64 bit process can also look into the 64 or 32 bit registry respectively
-                var view = Environment.Is64BitProcess ? RegistryView.Registry32 : RegistryView.Registry64;
-                if ((ret = TryTortoiseSvn(view)) != null)
-                {
-                    return ret;
-                }
+                return ret;
             }
 
             // didn't find it, will report it as an error from where it's used
@@ -241,6 +316,12 @@ namespace MSBuild.ExtensionPack.Subversion
         #region task implementations
         private void Version()
         {
+            if (this.Item == null)
+            {
+                Log.LogError("The Item parameter is required");
+                return;
+            }
+
             var output = new StringBuilder();
             this.Execute(SvnVersionExecutableName, string.Format(CultureInfo.CurrentCulture, "-q \"{0}\"", this.Item.ItemSpec), output);
 
