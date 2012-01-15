@@ -4,7 +4,6 @@
 /*
  * TODO:
  * - recognize more svn installations
- *   - sliksvn
  *   - visualsvn
  *   - wandisco
  *   - win32svn
@@ -38,8 +37,9 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <list type="bullet">
     ///     <item>any SVN client in the PATH environment variable, so the user can set a preference</item>
     ///     <item>Cygwin 1.7, with the subversion package installed</item>
-    ///     <item>TortoiseSVN 1.7, 32 and 64 bit, with the command line components installed</item>
-    ///     <item>CollabNet Subversion Client 1.7, 32 and 64 bit</item>
+    ///     <item>TortoiseSVN 1.7, with the command line component installed</item>
+    ///     <item>CollabNet Subversion Client 1.7</item>
+    ///     <item>Slik SVN 1.7, with the Subversion client component installed</item>
     /// </list>
     /// </remarks>
     /// <example>
@@ -249,6 +249,33 @@ namespace MSBuild.ExtensionPack.Subversion
         }
 
         /// <summary>
+        /// Tries to find a SlikSvn installation in the given registry view.
+        /// </summary>
+        /// <param name="view">registry view</param>
+        /// <returns>the path if it is found, null otherwise</returns>
+        private static string TrySlikSvn(RegistryView view)
+        {
+            // HKLM\SOFTWARE\SlikSvn\Install!Location points to the binaries directory
+            using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+            using (var key = basekey.OpenSubKey(@"SOFTWARE\SlikSvn\Install"))
+            {
+                if (key != null)
+                {
+                    var dir = key.GetValue("Location") as string;
+                    if (dir != null)
+                    {
+                        if (IsSvnPath(dir))
+                        {
+                            return dir;
+                        }
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
         /// It first invokes the given delegate in the native registry. If it doesn't return a path, and we're on a 64 bit OS,
         /// then it invokes the delegate in the non-native registry. So a 32 bit process will look into the 64 bit registry and
         /// vice versa.
@@ -304,6 +331,12 @@ namespace MSBuild.ExtensionPack.Subversion
 
             // CollabNet
             if ((ret = TryRegistry3264(TryCollabNet)) != null)
+            {
+                return ret;
+            }
+
+            // SlikSvn
+            if ((ret = TryRegistry3264(TrySlikSvn)) != null)
             {
                 return ret;
             }
