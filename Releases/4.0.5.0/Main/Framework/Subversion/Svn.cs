@@ -140,13 +140,13 @@ namespace MSBuild.ExtensionPack.Subversion
         /// <summary>
         /// Tries to find an SVN installation in all Cygwin installations.
         /// </summary>
+        /// <param name="software">the HKLM\SOFTWARE registry key</param>
         /// <returns>the path if it is found, null otherwise</returns>
-        private static string TryCygwin()
+        private static string TryCygwin(RegistryKey software)
         {
             // Cygwin installations are registered at HKLM\SOFTWARE\Cygwin\Installations (32 bit only), and they are NT object
             // manager paths. SVN is installed under /usr/bin.
-            using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
-            using (var key = basekey.OpenSubKey(@"SOFTWARE\Cygwin\Installations"))
+            using (var key = software.OpenSubKey(@"Cygwin\Installations"))
             {
                 foreach (var value in key.GetValueNames().Select(name => key.GetValue(name) as string))
                 {
@@ -191,13 +191,12 @@ namespace MSBuild.ExtensionPack.Subversion
         /// <summary>
         /// Tries to find a TortoiseSVN installation in the given registry view.
         /// </summary>
-        /// <param name="view">registry view</param>
+        /// <param name="software">the HKLM\SOFTWARE registry key</param>
         /// <returns>the path if it is found, null otherwise</returns>
-        private static string TryTortoiseSvn(RegistryView view)
+        private static string TryTortoiseSvn(RegistryKey software)
         {
             // HKLM\SOFTWARE\TortoiseSVN!Directory points to the base installation dir, binaries are under \bin
-            using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-            using (var key = basekey.OpenSubKey(@"SOFTWARE\TortoiseSVN"))
+            using (var key = software.OpenSubKey(@"TortoiseSVN"))
             {
                 if (key != null)
                 {
@@ -219,14 +218,13 @@ namespace MSBuild.ExtensionPack.Subversion
         /// <summary>
         /// Tries to find a CollabNet Subversion Client installation in the given registry view.
         /// </summary>
-        /// <param name="view">registry view</param>
+        /// <param name="software">the HKLM\SOFTWARE registry key</param>
         /// <returns>the path if it is found, null otherwise</returns>
-        private static string TryCollabNet(RegistryView view)
+        private static string TryCollabNet(RegistryKey software)
         {
             // HKLM\SOFTWARE\CollabNet\Subversion!Client Version contains the version number
             // HKLM\SOFTWARE\CollabNet\Subversion\[version]\Client!Install Location contains the actual directory
-            using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-            using (var key = basekey.OpenSubKey(@"SOFTWARE\CollabNet\Subversion"))
+            using (var key = software.OpenSubKey(@"CollabNet\Subversion"))
             {
                 if (key != null)
                 {
@@ -251,13 +249,12 @@ namespace MSBuild.ExtensionPack.Subversion
         /// <summary>
         /// Tries to find a SlikSvn installation in the given registry view.
         /// </summary>
-        /// <param name="view">registry view</param>
+        /// <param name="software">the HKLM\SOFTWARE registry key</param>
         /// <returns>the path if it is found, null otherwise</returns>
-        private static string TrySlikSvn(RegistryView view)
+        private static string TrySlikSvn(RegistryKey software)
         {
             // HKLM\SOFTWARE\SlikSvn\Install!Location points to the binaries directory
-            using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-            using (var key = basekey.OpenSubKey(@"SOFTWARE\SlikSvn\Install"))
+            using (var key = software.OpenSubKey(@"SlikSvn\Install"))
             {
                 if (key != null)
                 {
@@ -276,28 +273,49 @@ namespace MSBuild.ExtensionPack.Subversion
         }
 
         /// <summary>
-        /// It first invokes the given delegate in the native registry. If it doesn't return a path, and we're on a 64 bit OS,
-        /// then it invokes the delegate in the non-native registry. So a 32 bit process will look into the 64 bit registry and
-        /// vice versa.
+        /// Runs the specified delegate with the HKLM\SOFTWARE key in the 32 and/or 64 bit registry. If both parameters are true,
+        /// then the native registry will be used first (according to whether the current process is a 32 or 64 bit one). There is
+        /// no 64 bit registry in a 32 bit OS, so naturally that is never checked.
         /// </summary>
-        /// <param name="inner">the actual function to check the registry</param>
+        /// <remarks>
+        /// We could use a RegistryView parameter in the delegate, but instead we use the HKLM\SOFTWARE key itself because it
+        /// allows for easier migration to the 3.5 release where we can use HKLM\SOFTWARE\Wow6432Node only.
+        /// </remarks>
+        /// <param name="try32">try 32 bit registry</param>
+        /// <param name="try64">try 64 bit registry</param>
+        /// <param name="inner">the function to check the registry, should expect the HKLM\SOFTWARE key and return a path</param>
         /// <returns>the path if it is found, null otherwise</returns>
-        private static string TryRegistry3264(Func<RegistryView, string> inner)
+        private static string TryRegistry3264(bool try32, bool try64, Func<RegistryKey, string> inner)
         {
             string ret;
 
-            // try the native registry first
-            if ((ret = inner(RegistryView.Default)) != null)
+            // try the native registry
+            if ((Environment.Is64BitProcess && try64) || (!Environment.Is64BitProcess && try32))
             {
-                return ret;
+                using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE"))
+                {
+                    if ((ret = inner(key)) != null)
+                    {
+                        return ret;
+                    }
+                }
             }
 
-            // in a 32 or 64 bit process, the default view above refers to the 32 or 64 bit registry respectively, but
-            // on a 64 bit system, a 32 or 64 bit process can also look into the 64 or 32 bit registry respectively
-            var view = Environment.Is64BitProcess ? RegistryView.Registry32 : RegistryView.Registry64;
-            if ((ret = inner(view)) != null)
+            // try the non-native registry if it exists
+            if (Environment.Is64BitOperatingSystem)
             {
-                return ret;
+                if ((Environment.Is64BitProcess && try32) || (!Environment.Is64BitProcess && try64))
+                {
+                    var view = Environment.Is64BitProcess ? RegistryView.Registry32 : RegistryView.Registry64;
+                    using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+                    using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE"))
+                    {
+                        if ((ret = inner(key)) != null)
+                        {
+                            return ret;
+                        }
+                    }
+                }
             }
 
             return null;
@@ -318,25 +336,25 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // Cygwin
-            if ((ret = TryCygwin()) != null)
+            if ((ret = TryRegistry3264(true, false, TryCygwin)) != null)
             {
                 return ret;
             }
 
             // TortoiseSVN
-            if ((ret = TryRegistry3264(TryTortoiseSvn)) != null)
+            if ((ret = TryRegistry3264(true, true, TryTortoiseSvn)) != null)
             {
                 return ret;
             }
 
             // CollabNet
-            if ((ret = TryRegistry3264(TryCollabNet)) != null)
+            if ((ret = TryRegistry3264(true, true, TryCollabNet)) != null)
             {
                 return ret;
             }
 
             // SlikSvn
-            if ((ret = TryRegistry3264(TrySlikSvn)) != null)
+            if ((ret = TryRegistry3264(true, true, TrySlikSvn)) != null)
             {
                 return ret;
             }
