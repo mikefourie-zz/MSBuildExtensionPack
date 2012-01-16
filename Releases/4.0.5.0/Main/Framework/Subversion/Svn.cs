@@ -55,7 +55,7 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Version" Item="c:\path\to\working\copy">
     ///             <Output TaskParameter="Info" ItemName="Info"/>
     ///         </MSBuild.ExtensionPack.Subversion.Svn>
-    ///         <Message Text="MinRevision: %(Info.MinRevision), MaxRevision: %(Info.MaxRevision), IsMixed: %(Info.IsMixed), IsModified: %(Info.IsModified), IsSwitched: %(Info.IsSwitched), IsPartial: %(Info.IsPartial)"/>
+    ///         <Message Text="MinRevision: %(Info.MinRevision), MaxRevision: %(Info.MaxRevision), IsMixed: %(Info.IsMixed), IsModified: %(Info.IsModified), IsSwitched: %(Info.IsSwitched), IsPartial: %(Info.IsPartial), IsClean: %(Info.IsClean)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -394,15 +394,18 @@ namespace MSBuild.ExtensionPack.Subversion
                     return;
                 }
 
+                var mixed = !string.IsNullOrEmpty(m.Groups["max"].Value);
+                var sw = m.Groups["sw"].Value;
+
                 // fill up the output
                 this.Info = new TaskItem(this.Item);
                 this.Info.SetMetadata("MinRevision", m.Groups["min"].Value);
-                var mixed = !string.IsNullOrEmpty(m.Groups["max"].Value);
                 this.Info.SetMetadata("MaxRevision", m.Groups[mixed ? "max" : "min"].Value);
                 this.Info.SetMetadata("IsMixed", mixed.ToString());
-                this.Info.SetMetadata("IsModified", m.Groups["sw"].Value.Contains("M").ToString());
-                this.Info.SetMetadata("IsSwitched", m.Groups["sw"].Value.Contains("S").ToString());
-                this.Info.SetMetadata("IsPartial", m.Groups["sw"].Value.Contains("P").ToString());
+                this.Info.SetMetadata("IsModified", sw.Contains("M").ToString());
+                this.Info.SetMetadata("IsSwitched", sw.Contains("S").ToString());
+                this.Info.SetMetadata("IsPartial", sw.Contains("P").ToString());
+                this.Info.SetMetadata("IsClean", (!mixed && sw.Length == 0).ToString());
             }
         }
         #endregion
