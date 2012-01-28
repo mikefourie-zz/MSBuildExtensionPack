@@ -8,11 +8,6 @@
  *   - wandisco
  *   - win32svn
  * - implement the actual tasks
- *   - info
- *   - update
- *   - propget
- *   - propset
- *   - what else?
  */
 namespace MSBuild.ExtensionPack.Subversion
 {
@@ -30,6 +25,17 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Version</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
+    /// <para><i>Info</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
+    /// <para><i>GetProperty</i> (<b>Required: </b>Item, PropertyName <b>Output: </b>PropertyValue</para>
+    /// <para><i>SetProperty</i> (<b>Required: </b>Item, PropertyName, PropertyValue</para>
+    /// <para><i>Checkout</i> (<b>Required: </b>Items, Destination)</para>
+    /// <para><i>Update</i> (<b>Required: </b>Items)</para>
+    /// <para><i>Add</i> (<b>Required: </b>Items)</para>
+    /// <para><i>Copy</i> (<b>Required: </b>Items, Destination)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>Items)</para>
+    /// <para><i>Move</i> (<b>Required: </b>Items, Destination)</para>
+    /// <para><i>Commit</i> (<b>Required: </b>Items)</para>
+    /// <para><i>Export</i> (<b>Required: </b>Item, Destination)</para>
     /// </summary>
     /// <remarks>
     /// The task needs a command-line SVN client (svn.exe and svnversion.exe) to be available. The following are supported
@@ -41,6 +47,8 @@ namespace MSBuild.ExtensionPack.Subversion
     ///     <item>CollabNet Subversion Client 1.7</item>
     ///     <item>Slik SVN 1.7, with the Subversion client component installed</item>
     /// </list>
+    /// The Version action calls svnversion.exe, all other actions call subcommands of svn.exe. Some parameters also accept URL's,
+    /// not just local paths. Please refer to SVN's documentation for more information.
     /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -62,15 +70,40 @@ namespace MSBuild.ExtensionPack.Subversion
     /// </example>
     public class Svn : BaseTask
     {
+        #region constants
         protected const string SvnExecutableName = "svn.exe";
         protected const string SvnVersionExecutableName = "svnversion.exe";
 
         private const string VersionTaskAction = "Version";
+        private const string InfoTaskAction = "Info";
+        private const string GetPropertyTaskAction = "GetProperty";
+        private const string SetPropertyTaskAction = "SetProperty";
+        private const string CheckoutTaskAction = "Checkout";
+        private const string UpdateTaskAction = "Update";
+        private const string AddTaskAction = "Add";
+        private const string CopyTaskAction = "Copy";
+        private const string DeleteTaskAction = "Delete";
+        private const string MoveTaskAction = "Move";
+        private const string CommitTaskAction = "Commit";
+        private const string ExportTaskAction = "Export";
+        #endregion
 
         private static readonly string SvnPath = FindSvnPath();
 
+        #region task properties
         [Required]
         [DropdownValue(VersionTaskAction)]
+        [DropdownValue(InfoTaskAction)]
+        [DropdownValue(GetPropertyTaskAction)]
+        [DropdownValue(SetPropertyTaskAction)]
+        [DropdownValue(CheckoutTaskAction)]
+        [DropdownValue(UpdateTaskAction)]
+        [DropdownValue(AddTaskAction)]
+        [DropdownValue(CopyTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
+        [DropdownValue(MoveTaskAction)]
+        [DropdownValue(CommitTaskAction)]
+        [DropdownValue(ExportTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -78,11 +111,41 @@ namespace MSBuild.ExtensionPack.Subversion
         }
 
         [TaskAction(VersionTaskAction, true)]
+        [TaskAction(InfoTaskAction, true)]
+        [TaskAction(GetPropertyTaskAction, true)]
+        [TaskAction(SetPropertyTaskAction, true)]
+        [TaskAction(ExportTaskAction, true)]
         public ITaskItem Item { get; set; }
+
+        [TaskAction(CheckoutTaskAction, true)]
+        [TaskAction(UpdateTaskAction, true)]
+        [TaskAction(AddTaskAction, true)]
+        [TaskAction(CopyTaskAction, true)]
+        [TaskAction(DeleteTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
+        [TaskAction(CommitTaskAction, true)]
+        public ITaskItem[] Items { get; set; }
+
+        [TaskAction(CheckoutTaskAction, true)]
+        [TaskAction(CopyTaskAction, true)]
+        [TaskAction(MoveTaskAction, true)]
+        [TaskAction(ExportTaskAction, true)]
+        public ITaskItem Destination { get; set; }
 
         [Output]
         [TaskAction(VersionTaskAction, false)]
+        [TaskAction(InfoTaskAction, false)]
         public ITaskItem Info { get; set; }
+
+        [TaskAction(GetPropertyTaskAction, true)]
+        [TaskAction(SetPropertyTaskAction, true)]
+        public string PropertyName { get; set; }
+
+        [TaskAction(GetPropertyTaskAction, false)]
+        [TaskAction(SetPropertyTaskAction, true)]
+        [Output]
+        public string PropertyValue { get; set; }
+        #endregion
 
         protected override void InternalExecute()
         {
