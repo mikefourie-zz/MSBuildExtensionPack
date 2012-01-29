@@ -456,7 +456,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new CommandLineBuilder();
+            var cmd = new MyCommandLineBuilder();
             cmd.AppendSwitch("-q");
             cmd.AppendFileNameIfNotNull(this.Item);
             var output = new StringBuilder();
@@ -497,7 +497,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new CommandLineBuilder();
+            var cmd = new MyCommandLineBuilder();
             cmd.AppendSwitch("info");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("--xml");
@@ -570,10 +570,11 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new CommandLineBuilder();
+            var cmd = new MyCommandLineBuilder();
             cmd.AppendSwitch("propget");
             cmd.AppendSwitch("--non-interactive");
-            cmd.AppendSwitchIfNotNull("--xml ", this.PropertyName); // AppendTextWithQuoting is protected :(
+            cmd.AppendSwitch("--xml");
+            cmd.AppendFixedParameter(this.PropertyName);
             cmd.AppendFileNameIfNotNull(this.Item);
             var output = new StringBuilder();
             this.Execute(SvnExecutableName, cmd.ToString(), output);
@@ -687,5 +688,25 @@ namespace MSBuild.ExtensionPack.Subversion
             }
         }
         #endregion
+
+        private class MyCommandLineBuilder : CommandLineBuilder
+        {
+            /// <summary>
+            /// Appends a fixed argument. This means that it is appended even if it is empty (as ""). It is quoted if necessary.
+            /// </summary>
+            /// <param name="value">the string to append</param>
+            public void AppendFixedParameter(string value)
+            {
+                AppendSpaceIfNotEmpty();
+                if (string.IsNullOrEmpty(value))
+                {
+                    AppendTextUnquoted("\"\"");
+                }
+                else
+                {
+                    AppendTextWithQuoting(value);
+                }
+            }
+        }
     }
 }
