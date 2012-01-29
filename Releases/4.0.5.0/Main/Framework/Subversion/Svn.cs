@@ -191,6 +191,10 @@ namespace MSBuild.ExtensionPack.Subversion
                     this.ExecSetProperty();
                     break;
 
+                case CheckoutTaskAction:
+                    this.ExecCheckout();
+                    break;
+
                 default:
                     this.Log.LogError("Invalid TaskAction passed: {0}", this.TaskAction);
                     return;
@@ -455,6 +459,7 @@ namespace MSBuild.ExtensionPack.Subversion
         #region task implementations
         private void ExecVersion()
         {
+            // required params
             if (this.Item == null)
             {
                 Log.LogError("The Item parameter is required");
@@ -496,6 +501,7 @@ namespace MSBuild.ExtensionPack.Subversion
 
         private void ExecInfo()
         {
+            // required params
             if (this.Item == null)
             {
                 Log.LogError("The Item parameter is required");
@@ -569,6 +575,7 @@ namespace MSBuild.ExtensionPack.Subversion
 
         private void ExecGetProperty()
         {
+            // required params
             if (this.Item == null || string.IsNullOrEmpty(this.PropertyName))
             {
                 Log.LogError("The Item and PropertyName parameters are required");
@@ -625,6 +632,7 @@ namespace MSBuild.ExtensionPack.Subversion
 
         private void ExecSetProperty()
         {
+            // required params
             if (this.Item == null || string.IsNullOrEmpty(this.PropertyName))
             {
                 Log.LogError("The Item and PropertyName parameters are required");
@@ -635,9 +643,27 @@ namespace MSBuild.ExtensionPack.Subversion
             var cmd = new MyCommandLineBuilder();
             cmd.AppendSwitch("propset");
             cmd.AppendSwitch("--non-interactive");
-            cmd.AppendFixedParameter(PropertyName);
-            cmd.AppendFixedParameter(PropertyValue);
+            cmd.AppendFixedParameter(this.PropertyName);
+            cmd.AppendFixedParameter(this.PropertyValue);
             cmd.AppendFileNameIfNotNull(this.Item);
+            this.Execute(SvnExecutableName, cmd.ToString(), null);
+        }
+
+        private void ExecCheckout()
+        {
+            // required params
+            if (this.Items == null || this.Items.Length == 0 || this.Destination == null)
+            {
+                Log.LogError("The Items and Destination parameters are required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new MyCommandLineBuilder();
+            cmd.AppendSwitch("checkout");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendFileNamesIfNotNull(this.Items, " ");
+            cmd.AppendFileNameIfNotNull(this.Destination);
             this.Execute(SvnExecutableName, cmd.ToString(), null);
         }
         #endregion
