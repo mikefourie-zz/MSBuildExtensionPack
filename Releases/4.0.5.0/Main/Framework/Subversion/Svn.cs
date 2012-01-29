@@ -18,6 +18,7 @@ namespace MSBuild.ExtensionPack.Subversion
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Xml.Serialization;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.Win32;
@@ -60,10 +61,19 @@ namespace MSBuild.ExtensionPack.Subversion
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Version -->
-    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Version" Item="c:\path\to\working\copy">
-    ///             <Output TaskParameter="Info" ItemName="Info"/>
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Version" Item="c:\path">
+    ///             <Output TaskParameter="Info" ItemName="VInfo"/>
     ///         </MSBuild.ExtensionPack.Subversion.Svn>
-    ///         <Message Text="MinRevision: %(Info.MinRevision), MaxRevision: %(Info.MaxRevision), IsMixed: %(Info.IsMixed), IsModified: %(Info.IsModified), IsSwitched: %(Info.IsSwitched), IsPartial: %(Info.IsPartial), IsClean: %(Info.IsClean)"/>
+    ///         <Message Text="MinRevision: %(VInfo.MinRevision), MaxRevision: %(VInfo.MaxRevision), IsMixed: %(VInfo.IsMixed), IsModified: %(VInfo.IsModified)"/>
+    ///         <Message Text="IsSwitched: %(VInfo.IsSwitched), IsPartial: %(VInfo.IsPartial), IsClean: %(VInfo.IsClean)"/>
+    ///         <!-- Info -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Info" Item="c:\path">
+    ///             <Output TaskParameter="Info" ItemName="IInfo"/>
+    ///         </MSBuild.ExtensionPack.Subversion.Svn>
+    ///         <Message Text="EntryKind: %(IInfo.EntryKind), EntryRevision: %(IInfo.EntryRevision), EntryURL: %(IInfo.EntryURL)"/>
+    ///         <Message Text="RepositoryRoot: %(IInfo.RepositoryRoot), RepositoryUUID: %(IInfo.RepositoryUUID)"/>
+    ///         <Message Text="WorkingCopySchedule: %(IInfo.WorkingCopySchedule), WorkingCopyDepth: %(IInfo.WorkingCopyDepth)"/>
+    ///         <Message Text="CommitAuthor: %(IInfo.CommitAuthor), CommitRevision: %(IInfo.CommitRevision), CommitDate: %(IInfo.CommitDate)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -163,7 +173,11 @@ namespace MSBuild.ExtensionPack.Subversion
             switch (this.TaskAction)
             {
                 case VersionTaskAction:
-                    this.Version();
+                    this.ExecVersion();
+                    break;
+
+                case InfoTaskAction:
+                    this.ExecInfo();
                     break;
 
                 default:
@@ -428,7 +442,7 @@ namespace MSBuild.ExtensionPack.Subversion
         #endregion
 
         #region task implementations
-        private void Version()
+        private void ExecVersion()
         {
             if (this.Item == null)
             {
@@ -436,21 +450,17 @@ namespace MSBuild.ExtensionPack.Subversion
                 return;
             }
 
+            // execute the tool
+            var cmd = new CommandLineBuilder();
+            cmd.AppendSwitch("-q");
+            cmd.AppendFileNameIfNotNull(this.Item);
             var output = new StringBuilder();
-            this.Execute(SvnVersionExecutableName, string.Format(CultureInfo.CurrentCulture, "-q \"{0}\"", this.Item.ItemSpec), output);
+            this.Execute(SvnVersionExecutableName, cmd.ToString(), output);
 
             if (!this.Log.HasLoggedErrors)
             {
-                var s = output.ToString();
-
-                // unversioned/uncommitted, sadly there's no better way to tell, at least the help is explicit about these strings
-                if (s.StartsWith("Unversioned", StringComparison.Ordinal) || s.StartsWith("Uncommitted", StringComparison.Ordinal))
-                {
-                    return;
-                }
-
                 // decode the response
-                var m = Regex.Match(s, @"^\s?(?<min>[0-9]+)(:(?<max>[0-9]+))?(?<sw>[MSP]*)\s?$");
+                var m = Regex.Match(output.ToString(), @"^\s?(?<min>[0-9]+)(:(?<max>[0-9]+))?(?<sw>[MSP]*)\s?$");
                 if (!m.Success)
                 {
                     Log.LogError("Invalid output from SVN tool");
@@ -469,6 +479,77 @@ namespace MSBuild.ExtensionPack.Subversion
                 this.Info.SetMetadata("IsSwitched", sw.Contains("S").ToString());
                 this.Info.SetMetadata("IsPartial", sw.Contains("P").ToString());
                 this.Info.SetMetadata("IsClean", (!mixed && sw.Length == 0).ToString());
+            }
+        }
+
+        private void ExecInfo()
+        {
+            if (this.Item == null)
+            {
+                Log.LogError("The Item parameter is required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new CommandLineBuilder();
+            cmd.AppendSwitch("info");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendSwitch("--xml");
+            cmd.AppendFileNameIfNotNull(this.Item);
+            var output = new StringBuilder();
+            this.Execute(SvnExecutableName, cmd.ToString(), output);
+
+            if (!this.Log.HasLoggedErrors)
+            {
+                // deserialize the response
+                var xs = new XmlSerializer(typeof(Schema.infoType));
+                Schema.infoType info;
+                try
+                {
+                    using (var sr = new StringReader(output.ToString()))
+                    {
+                        info = (Schema.infoType)xs.Deserialize(sr);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    Log.LogError("Invalid output from SVN tool");
+                    return;
+                }
+
+                // check the response
+                if (info.entry == null || info.entry.Length != 1)
+                {
+                    Log.LogError("Invalid output from SVN tool");
+                    return;
+                }
+
+                var entry = info.entry[0];
+
+                // fill up the output
+                this.Info = new TaskItem(this.Item);
+                this.Info.SetMetadata("EntryKind", entry.kind);
+                this.Info.SetMetadata("EntryRevision", entry.revision.ToString(CultureInfo.InvariantCulture));
+                this.Info.SetMetadata("EntryURL", entry.url);
+                
+                if (entry.repository != null)
+                {
+                    this.Info.SetMetadata("RepositoryRoot", entry.repository.root);
+                    this.Info.SetMetadata("RepositoryUUID", entry.repository.uuid);
+                }
+                
+                if (entry.wcinfo != null)
+                {
+                    this.Info.SetMetadata("WorkingCopySchedule", entry.wcinfo.schedule);
+                    this.Info.SetMetadata("WorkingCopyDepth", entry.wcinfo.depth);
+                }
+                
+                if (entry.commit != null)
+                {
+                    this.Info.SetMetadata("CommitAuthor", entry.commit.author);
+                    this.Info.SetMetadata("CommitRevision", entry.commit.revision.ToString(CultureInfo.InvariantCulture));
+                    this.Info.SetMetadata("CommitDate", entry.commit.date.ToString("o", CultureInfo.InvariantCulture));
+                }
             }
         }
         #endregion

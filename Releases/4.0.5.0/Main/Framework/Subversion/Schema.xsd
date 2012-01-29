@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="info" type="infoType">
+  </xs:element>
+
+  <xs:complexType name="infoType">
+    <xs:sequence>
+      <xs:element name="entry" type="entryType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="entryType">
+    <xs:sequence>
+      <xs:element name="url" type="xs:string"/>
+      <xs:element name="repository" type="repositoryType"/>
+      <xs:element name="wc-info" type="wc-infoType"/>
+      <xs:element name="commit" type="commitType"/>
+    </xs:sequence>
+    <xs:attribute name="kind" type="xs:string"/>
+    <xs:attribute name="path" type="xs:string"/>
+    <xs:attribute name="revision" type="xs:long"/>
+  </xs:complexType>
+
+  <xs:complexType name="repositoryType">
+    <xs:sequence>
+      <xs:element name="root" type="xs:string"/>
+      <xs:element name="uuid" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="wc-infoType">
+    <xs:sequence>
+      <xs:element name="wcroot-abspath" type="xs:string"/>
+      <xs:element name="schedule" type="xs:string"/>
+      <xs:element name="depth" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="commitType">
+    <xs:sequence>
+      <xs:element name="author" type="xs:string"/>
+      <xs:element name="date" type="xs:dateTime"/>
+    </xs:sequence>
+    <xs:attribute name="revision" type="xs:long"/>
+  </xs:complexType>
+
+</xs:schema>

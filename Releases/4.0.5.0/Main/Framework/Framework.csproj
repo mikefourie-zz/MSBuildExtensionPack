@@ -223,6 +223,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServer\SqlScriptLoader.cs" />
+    <Compile Include="Subversion\Schema.cs">
+      <DependentUpon>Schema.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Subversion\Svn.cs" />
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
@@ -375,6 +378,9 @@
     <None Include="SqlServer\SqlVersionDataClass.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Subversion\Schema.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="VisualStudio\MSBuild.ExtensionPack.VC6.targets" />
