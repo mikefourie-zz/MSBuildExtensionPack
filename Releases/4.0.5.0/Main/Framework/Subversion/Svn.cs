@@ -75,6 +75,8 @@ namespace MSBuild.ExtensionPack.Subversion
     ///             <Output TaskParameter="PropertyValue" PropertyName="GProp"/>
     ///         </MSBuild.ExtensionPack.Subversion.Svn>
     ///         <Message Text="PropertyValue: $(GProp)"/>
+    ///         <!-- SetProperty -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="SetProperty" Item="c:\path" PropertyName="test" PropertyValue="hello"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -183,6 +185,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case GetPropertyTaskAction:
                     this.ExecGetProperty();
+                    break;
+
+                case SetPropertyTaskAction:
+                    this.ExecSetProperty();
                     break;
 
                 default:
@@ -615,6 +621,24 @@ namespace MSBuild.ExtensionPack.Subversion
                 // fill up the output
                 this.PropertyValue = props.target[0].property[0].Value;
             }
+        }
+
+        private void ExecSetProperty()
+        {
+            if (this.Item == null || string.IsNullOrEmpty(this.PropertyName))
+            {
+                Log.LogError("The Item and PropertyName parameters are required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new MyCommandLineBuilder();
+            cmd.AppendSwitch("propset");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendFixedParameter(PropertyName);
+            cmd.AppendFixedParameter(PropertyValue);
+            cmd.AppendFileNameIfNotNull(this.Item);
+            this.Execute(SvnExecutableName, cmd.ToString(), null);
         }
         #endregion
 
