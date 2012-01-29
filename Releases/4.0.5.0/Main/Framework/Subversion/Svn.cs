@@ -74,6 +74,11 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <Message Text="RepositoryRoot: %(IInfo.RepositoryRoot), RepositoryUUID: %(IInfo.RepositoryUUID)"/>
     ///         <Message Text="WorkingCopySchedule: %(IInfo.WorkingCopySchedule), WorkingCopyDepth: %(IInfo.WorkingCopyDepth)"/>
     ///         <Message Text="CommitAuthor: %(IInfo.CommitAuthor), CommitRevision: %(IInfo.CommitRevision), CommitDate: %(IInfo.CommitDate)"/>
+    ///         <!-- GetProperty -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="GetProperty" Item="c:\path" PropertyName="svn:externals">
+    ///             <Output TaskParameter="PropertyValue" PropertyName="GProp"/>
+    ///         </MSBuild.ExtensionPack.Subversion.Svn>
+    ///         <Message Text="PropertyValue: $(GProp)"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -178,6 +183,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case InfoTaskAction:
                     this.ExecInfo();
+                    break;
+
+                case GetPropertyTaskAction:
+                    this.ExecGetProperty();
                     break;
 
                 default:
@@ -463,6 +472,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 var m = Regex.Match(output.ToString(), @"^\s?(?<min>[0-9]+)(:(?<max>[0-9]+))?(?<sw>[MSP]*)\s?$");
                 if (!m.Success)
                 {
+                    // not versioned or really an error, we don't care
                     Log.LogError("Invalid output from SVN tool");
                     return;
                 }
@@ -513,6 +523,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 }
                 catch (InvalidOperationException)
                 {
+                    // not versioned or really an error, we don't care
                     Log.LogError("Invalid output from SVN tool");
                     return;
                 }
@@ -520,6 +531,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 // check the response
                 if (info.entry == null || info.entry.Length != 1)
                 {
+                    // this really shouldn't happen
                     Log.LogError("Invalid output from SVN tool");
                     return;
                 }
@@ -531,25 +543,80 @@ namespace MSBuild.ExtensionPack.Subversion
                 this.Info.SetMetadata("EntryKind", entry.kind);
                 this.Info.SetMetadata("EntryRevision", entry.revision.ToString(CultureInfo.InvariantCulture));
                 this.Info.SetMetadata("EntryURL", entry.url);
-                
+
                 if (entry.repository != null)
                 {
                     this.Info.SetMetadata("RepositoryRoot", entry.repository.root);
                     this.Info.SetMetadata("RepositoryUUID", entry.repository.uuid);
                 }
-                
+
                 if (entry.wcinfo != null)
                 {
                     this.Info.SetMetadata("WorkingCopySchedule", entry.wcinfo.schedule);
                     this.Info.SetMetadata("WorkingCopyDepth", entry.wcinfo.depth);
                 }
-                
+
                 if (entry.commit != null)
                 {
                     this.Info.SetMetadata("CommitAuthor", entry.commit.author);
                     this.Info.SetMetadata("CommitRevision", entry.commit.revision.ToString(CultureInfo.InvariantCulture));
                     this.Info.SetMetadata("CommitDate", entry.commit.date.ToString("o", CultureInfo.InvariantCulture));
                 }
+            }
+        }
+
+        private void ExecGetProperty()
+        {
+            if (this.Item == null || string.IsNullOrEmpty(this.PropertyName))
+            {
+                Log.LogError("The Item and PropertyName parameters are required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new CommandLineBuilder();
+            cmd.AppendSwitch("propget");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendSwitchIfNotNull("--xml ", this.PropertyName); // AppendTextWithQuoting is protected :(
+            cmd.AppendFileNameIfNotNull(this.Item);
+            var output = new StringBuilder();
+            this.Execute(SvnExecutableName, cmd.ToString(), output);
+
+            if (!Log.HasLoggedErrors)
+            {
+                // deserialize the response
+                var xs = new XmlSerializer(typeof(Schema.propertiesType));
+                Schema.propertiesType props;
+                try
+                {
+                    using (var sr = new StringReader(output.ToString()))
+                    {
+                        props = (Schema.propertiesType)xs.Deserialize(sr);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    Log.LogError("Invalid output from SVN tool");
+                    return;
+                }
+
+                // check the response
+                if (props.target == null || (props.target.Length == 1 && props.target[0].property == null))
+                {
+                    // the property is not set, we handle it with a warning
+                    Log.LogWarning("The SVN property doesn't exist");
+                    return;
+                }
+
+                if (props.target.Length != 1 || props.target[0].property.Length != 1 || props.target[0].property[0].name != this.PropertyName)
+                {
+                    // this really shouldn't happen
+                    Log.LogError("Invalid output from SVN tool");
+                    return;
+                }
+
+                // fill up the output
+                this.PropertyValue = props.target[0].property[0].Value;
             }
         }
         #endregion

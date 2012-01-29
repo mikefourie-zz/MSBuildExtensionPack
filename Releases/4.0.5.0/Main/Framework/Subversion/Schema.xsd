@@ -45,4 +45,28 @@
     <xs:attribute name="revision" type="xs:long"/>
   </xs:complexType>
 
+  <xs:element name="properties" type="propertiesType">
+  </xs:element>
+
+  <xs:complexType name="propertiesType">
+    <xs:sequence>
+      <xs:element name="target" type="targetType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="targetType">
+    <xs:sequence>
+      <xs:element name="property" type="propertyType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="path" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="propertyType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
 </xs:schema>
