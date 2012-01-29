@@ -1,14 +1,7 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="Svn.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// The code was written by Jozsef Fejes (http://joco.name).
 //-----------------------------------------------------------------------
-/*
- * TODO:
- * - recognize more svn installations
- *   - visualsvn
- *   - wandisco
- *   - win32svn
- * - implement the actual tasks
- */
 namespace MSBuild.ExtensionPack.Subversion
 {
     using System;
@@ -39,17 +32,20 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <para><i>Export</i> (<b>Required: </b>Item, Destination)</para>
     /// </summary>
     /// <remarks>
-    /// The task needs a command-line SVN client (svn.exe and svnversion.exe) to be available. The following are supported
-    /// (but versions other than those indicated may also work):
+    /// <para>The task needs a command-line SVN client (svn.exe and svnversion.exe) to be available. The following are supported
+    /// and automatically detected:</para>
     /// <list type="bullet">
-    ///     <item>any SVN client in the PATH environment variable, so the user can set a preference</item>
+    ///     <item>any SVN client in the PATH environment variable</item>
     ///     <item>Cygwin 1.7, with the subversion package installed</item>
     ///     <item>TortoiseSVN 1.7, with the command line component installed</item>
     ///     <item>CollabNet Subversion Client 1.7</item>
     ///     <item>Slik SVN 1.7, with the Subversion client component installed</item>
     /// </list>
-    /// The Version action calls svnversion.exe, all other actions call subcommands of svn.exe. Some parameters also accept URL's,
-    /// not just local paths. Please refer to SVN's documentation for more information.
+    /// <para>If you publish a project that uses this task, remember to notify your users that they need one of the mentioned
+    /// clients in order to build your code. The PATH detection allows everyone to set a preference, the other detections are
+    /// there so that it will just work for most users.</para>
+    /// <para>The Version action calls svnversion.exe, all other actions call subcommands of svn.exe. Some parameters also accept
+    /// URL's, not just local paths. Please refer to SVN's documentation for more information.</para>
     /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -81,7 +77,7 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <Message Text="PropertyValue: $(GProp)"/>
     ///     </Target>
     /// </Project>
-    /// ]]></code>    
+    /// ]]></code>
     /// </example>
     public class Svn : BaseTask
     {
