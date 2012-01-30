@@ -400,7 +400,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 {
                     var view = Environment.Is64BitProcess ? RegistryView.Registry32 : RegistryView.Registry64;
                     using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-                    using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE"))
+                    using (var key = basekey.OpenSubKey("SOFTWARE"))
                     {
                         if ((ret = inner(key)) != null)
                         {
