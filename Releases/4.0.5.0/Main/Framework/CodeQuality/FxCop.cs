@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory, References <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -72,6 +72,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         [TaskAction(AnalyseTaskAction, true)]
         public ITaskItem[] Files { get; set; }
+
+        /// <summary>
+        /// Sets the Item Collection of assemblies to reference (/reference option)
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public ITaskItem[] References { get; set; }
 
         /// <summary>
         /// Sets the DependencyDirectories :(/directory option)
@@ -444,6 +450,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
             if (this.Files != null)
             {
                 arguments = this.Files.Aggregate(arguments, (current, i) => current + (" /file:\"" + i.ItemSpec + "\""));
+            }
+
+            if (this.References != null)
+            {
+                arguments = this.References.Aggregate(arguments, (current, i) => current + (" /reference:\"" + i.ItemSpec + "\""));
             }
 
             arguments += " /out:\"" + this.OutputFile + "\"";
