@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>Backup</i> (<b>Required: </b> LogName, BackupPath <b>Optional: </b>MachineName)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>LogName <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
     /// <para><i>Clear</i> (<b>Required: </b> LogName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Create</i> (<b>Required: </b>LogName <b>Optional: </b>MaxSize, Retention, MachineName)</para>
+    /// <para><i>Create</i> (<b>Required: </b>LogName <b>Optional: </b>MaxSize, Retention, MachineName, CategoryCount, MessageResourceFile, CategoryResourceFile, ParameterResourceFile)</para>
     /// <para><i>Delete</i> (<b>Required: </b>LogName <b>Optional: </b>MachineName)</para>
     /// <para><i>Modify</i> (<b>Required: </b>LogName <b>Optional: </b>MaxSize, Retention, MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -122,6 +122,30 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
+        /// Sets the number of categories in the category resource file
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public int CategoryCount { get; set; }
+
+        /// <summary>
+        /// Sets the path of the message resource file to configure an event log source to write localized event messages
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string MessageResourceFile { get; set; }
+
+        /// <summary>
+        /// Sets the path of the category resource file to write events with localized category strings
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string CategoryResourceFile { get; set; }
+
+        /// <summary>
+        /// Sets the path of the parameter resource file to configure an event log source to write localized event messages with inserted parameter strings
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string ParameterResourceFile { get; set; }
+
+        /// <summary>
         /// Sets the Backup Path
         /// </summary>
         [TaskAction(BackupTaskAction, true)]
@@ -194,7 +218,15 @@ namespace MSBuild.ExtensionPack.Computer
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventLog: {0} on: {1}", this.LogName, this.MachineName));
             if (!System.Diagnostics.EventLog.Exists(this.LogName, this.MachineName))
             {
-                EventSourceCreationData ecd = new EventSourceCreationData(this.LogName, this.LogName) { MachineName = this.MachineName };
+                EventSourceCreationData ecd = new EventSourceCreationData(this.LogName, this.LogName)
+                {
+                    MachineName = this.MachineName,
+                    CategoryCount = this.CategoryCount,
+                    MessageResourceFile = this.MessageResourceFile ?? string.Empty,
+                    CategoryResourceFile = this.CategoryResourceFile ?? string.Empty,
+                    ParameterResourceFile = this.ParameterResourceFile ?? string.Empty
+                };
+
                 System.Diagnostics.EventLog.CreateEventSource(ecd);
 
                 using (System.Diagnostics.EventLog el = new System.Diagnostics.EventLog(this.LogName, this.MachineName))
@@ -307,7 +339,6 @@ namespace MSBuild.ExtensionPack.Computer
             else
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Invalid LogName Supplied: {0}", this.LogName));
-                return;
             }
         }
     }
