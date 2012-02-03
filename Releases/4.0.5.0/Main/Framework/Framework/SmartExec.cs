@@ -93,8 +93,6 @@ namespace MSBuild.ExtensionPack.Framework
                     {
                         this.process = Process.Start(startInfo);
 
-                        this.process.Start();
-
                         // Invoke stdOut and stdErr readers - each has its own thread to guarantee that they aren't
                         // blocked by, or cause a block to, the actual process running (or the gui).
                         DataReceivedHandler stdOutHandler = this.ReadStdOut;
