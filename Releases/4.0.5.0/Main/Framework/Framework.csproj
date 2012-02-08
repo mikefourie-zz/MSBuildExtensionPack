@@ -233,6 +233,7 @@
     <Compile Include="UI\ConfirmForm.Designer.cs">
       <DependentUpon>ConfirmForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
     <Compile Include="VisualStudio\VBPProject.cs" />
     <Compile Include="VisualStudio\VC6.cs" />
     <Compile Include="VisualStudio\VSDevEnv.cs" />
