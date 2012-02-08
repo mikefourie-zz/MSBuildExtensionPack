@@ -418,10 +418,10 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new MyCommandLineBuilder();
+            var cmd = new Utilities.CommandLineBuilder2();
             cmd.AppendSwitch("-q");
             cmd.AppendFileNameIfNotNull(this.Item);
-            var output = this.Execute(SvnVersionExecutableName, cmd.ToString(), false);
+            var output = Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnVersionExecutableName), cmd.ToString(), false);
 
             if (!this.Log.HasLoggedErrors)
             {
@@ -459,12 +459,12 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new MyCommandLineBuilder();
+            var cmd = new Utilities.CommandLineBuilder2();
             cmd.AppendSwitch("info");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("--xml");
             cmd.AppendFileNameIfNotNull(this.Item);
-            var output = this.Execute(SvnExecutableName, cmd.ToString(), false);
+            var output = Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), false);
 
             if (!this.Log.HasLoggedErrors)
             {
@@ -532,13 +532,13 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new MyCommandLineBuilder();
+            var cmd = new Utilities.CommandLineBuilder2();
             cmd.AppendSwitch("propget");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("--xml");
             cmd.AppendFixedParameter(this.PropertyName);
             cmd.AppendFileNameIfNotNull(this.Item);
-            var output = this.Execute(SvnExecutableName, cmd.ToString(), false);
+            var output = Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), false);
 
             if (!Log.HasLoggedErrors)
             {
@@ -588,13 +588,13 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new MyCommandLineBuilder();
+            var cmd = new Utilities.CommandLineBuilder2();
             cmd.AppendSwitch("propset");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFixedParameter(this.PropertyName);
             cmd.AppendFixedParameter(this.PropertyValue);
             cmd.AppendFileNameIfNotNull(this.Item);
-            this.Execute(SvnExecutableName, cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecCheckout()
@@ -607,82 +607,13 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new MyCommandLineBuilder();
+            var cmd = new Utilities.CommandLineBuilder2();
             cmd.AppendSwitch("checkout");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
-            this.Execute(SvnExecutableName, cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
         #endregion
-
-        #region helper methods
-        /// <summary>
-        /// Executes a tool.
-        /// </summary>
-        /// <param name="executable">the name of the executable</param>
-        /// <param name="args">the command line arguments</param>
-        /// <param name="logOutput">should we log the output in real time</param>
-        /// <returns>the output of the tool</returns>
-        private string Execute(string executable, string args, bool logOutput)
-        {
-            var filename = Path.Combine(SvnPath, executable);
-            Log.LogMessage(MessageImportance.Low, "Executing tool: {0} {1}", filename, args);
-
-            var exec = new ShellWrapper(executable, args);
-
-            // stderr is logged as errors
-            exec.ErrorDataReceived += (sender, e) =>
-            {
-                if (e.Data != null)
-                {
-                    Log.LogError(e.Data);
-                }
-            };
-
-            // stdout is logged normally if requested
-            if (logOutput)
-            {
-                exec.OutputDataReceived += (sender, e) =>
-                {
-                    if (e.Data != null)
-                    {
-                        Log.LogMessage(MessageImportance.Normal, e.Data);
-                    }
-                };
-            }
-
-            // execute the process
-            exec.Execute();
-
-            // check the exit code
-            if (exec.ExitCode != 0)
-            {
-                Log.LogError("The tool {0} exited with error code {1}", executable, exec.ExitCode);
-            }
-
-            return exec.StandardOutput;
-        }
-        #endregion
-
-        private class MyCommandLineBuilder : CommandLineBuilder
-        {
-            /// <summary>
-            /// Appends a fixed argument. This means that it is appended even if it is empty (as ""). It is quoted if necessary.
-            /// </summary>
-            /// <param name="value">the string to append</param>
-            public void AppendFixedParameter(string value)
-            {
-                AppendSpaceIfNotEmpty();
-                if (string.IsNullOrEmpty(value))
-                {
-                    AppendTextUnquoted("\"\"");
-                }
-                else
-                {
-                    AppendTextWithQuoting(value);
-                }
-            }
-        }
     }
 }
