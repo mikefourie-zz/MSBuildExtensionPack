@@ -470,13 +470,12 @@ namespace MSBuild.ExtensionPack.Subversion
             var cmd = new MyCommandLineBuilder();
             cmd.AppendSwitch("-q");
             cmd.AppendFileNameIfNotNull(this.Item);
-            var output = new StringBuilder();
-            this.Execute(SvnVersionExecutableName, cmd.ToString(), output);
+            var output = this.Execute(SvnVersionExecutableName, cmd.ToString(), false);
 
             if (!this.Log.HasLoggedErrors)
             {
                 // decode the response
-                var m = Regex.Match(output.ToString(), @"^\s?(?<min>[0-9]+)(:(?<max>[0-9]+))?(?<sw>[MSP]*)\s?$");
+                var m = Regex.Match(output, @"^\s?(?<min>[0-9]+)(:(?<max>[0-9]+))?(?<sw>[MSP]*)\s?$");
                 if (!m.Success)
                 {
                     // not versioned or really an error, we don't care
@@ -514,8 +513,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("--xml");
             cmd.AppendFileNameIfNotNull(this.Item);
-            var output = new StringBuilder();
-            this.Execute(SvnExecutableName, cmd.ToString(), output);
+            var output = this.Execute(SvnExecutableName, cmd.ToString(), false);
 
             if (!this.Log.HasLoggedErrors)
             {
@@ -524,7 +522,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 Schema.infoType info;
                 try
                 {
-                    using (var sr = new StringReader(output.ToString()))
+                    using (var sr = new StringReader(output))
                     {
                         info = (Schema.infoType)xs.Deserialize(sr);
                     }
@@ -589,8 +587,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--xml");
             cmd.AppendFixedParameter(this.PropertyName);
             cmd.AppendFileNameIfNotNull(this.Item);
-            var output = new StringBuilder();
-            this.Execute(SvnExecutableName, cmd.ToString(), output);
+            var output = this.Execute(SvnExecutableName, cmd.ToString(), false);
 
             if (!Log.HasLoggedErrors)
             {
@@ -599,7 +596,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 Schema.propertiesType props;
                 try
                 {
-                    using (var sr = new StringReader(output.ToString()))
+                    using (var sr = new StringReader(output))
                     {
                         props = (Schema.propertiesType)xs.Deserialize(sr);
                     }
@@ -646,7 +643,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendFixedParameter(this.PropertyName);
             cmd.AppendFixedParameter(this.PropertyValue);
             cmd.AppendFileNameIfNotNull(this.Item);
-            this.Execute(SvnExecutableName, cmd.ToString(), null);
+            this.Execute(SvnExecutableName, cmd.ToString(), true);
         }
 
         private void ExecCheckout()
@@ -664,78 +661,56 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
-            this.Execute(SvnExecutableName, cmd.ToString(), null);
+            this.Execute(SvnExecutableName, cmd.ToString(), true);
         }
         #endregion
 
         #region helper methods
         /// <summary>
-        /// Executes a tool. Standard error is output as task errors. Standard output is either gathered in
-        /// <paramref name="output"/> if it's not null or output as task messages. A non-zero exit code is also treated as an
-        /// error.
+        /// Executes a tool.
         /// </summary>
         /// <param name="executable">the name of the executable</param>
         /// <param name="args">the command line arguments</param>
-        /// <param name="output">will gather output if not null</param>
-        private void Execute(string executable, string args, StringBuilder output)
+        /// <param name="logOutput">should we log the output in real time</param>
+        /// <returns>the output of the tool</returns>
+        private string Execute(string executable, string args, bool logOutput)
         {
             var filename = Path.Combine(SvnPath, executable);
             Log.LogMessage(MessageImportance.Low, "Executing tool: {0} {1}", filename, args);
 
-            // set up the process
-            using (var proc = new Process())
+            var exec = new ShellWrapper(executable, args);
+
+            // stderr is logged as errors
+            exec.ErrorDataReceived += (sender, e) =>
             {
-                proc.StartInfo = new ProcessStartInfo
+                if (e.Data != null)
                 {
-                    FileName = filename,
-                    Arguments = args,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardInput = true
-                };
-
-                // handler stderr
-                proc.ErrorDataReceived += (sender, e) =>
-                {
-                    if (e.Data == null)
-                    {
-                        return;
-                    }
-
                     Log.LogError(e.Data);
-                };
+                }
+            };
 
-                // handler stdout
-                proc.OutputDataReceived += (sender, e) =>
+            // stdout is logged normally if requested
+            if (logOutput)
+            {
+                exec.OutputDataReceived += (sender, e) =>
                 {
-                    if (e.Data == null)
-                    {
-                        return;
-                    }
-
-                    if (output != null)
-                    {
-                        output.AppendLine(e.Data);
-                    }
-                    else
+                    if (e.Data != null)
                     {
                         Log.LogMessage(MessageImportance.Normal, e.Data);
                     }
                 };
-
-                // run the process
-                proc.Start();
-                proc.StandardInput.Close();
-                proc.BeginErrorReadLine();
-                proc.BeginOutputReadLine();
-                proc.WaitForExit();
-
-                if (proc.ExitCode != 0)
-                {
-                    Log.LogError("The tool {0} exited with error code {1}", executable, proc.ExitCode);
-                }
             }
+
+            // execute the process
+            exec.Execute();
+
+            // check the exit code
+            if (exec.ExitCode != 0)
+            {
+                Log.LogError("The tool {0} exited with error code {1}", executable, exec.ExitCode);
+            }
+
+            return exec.StandardOutput;
         }
         #endregion
 

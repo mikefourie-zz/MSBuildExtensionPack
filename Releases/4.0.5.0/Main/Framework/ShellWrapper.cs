@@ -28,6 +28,16 @@ namespace MSBuild.ExtensionPack
         }
 
         /// <summary>
+        /// A proxy for <see cref="Process.OutputDataReceived"/>.
+        /// </summary>
+        public event DataReceivedEventHandler OutputDataReceived;
+
+        /// <summary>
+        /// A proxy for <see cref="Process.ErrorDataReceived"/>.
+        /// </summary>
+        public event DataReceivedEventHandler ErrorDataReceived;
+
+        /// <summary>
         /// Gets the standard output.
         /// </summary>
         public string StandardOutput
@@ -127,6 +137,11 @@ namespace MSBuild.ExtensionPack
                 // Add the text to the collected errors.
                 this.stdError.AppendLine(lineReceived.Data);
             }
+
+            if (this.ErrorDataReceived != null)
+            {
+                this.ErrorDataReceived(sendingProcess, lineReceived);
+            }
         }
 
         private void StandardOutHandler(object sendingProcess, DataReceivedEventArgs lineReceived)
@@ -136,6 +151,11 @@ namespace MSBuild.ExtensionPack
             {
                 // Add the text to the collected output.
                 this.stdOut.AppendLine(lineReceived.Data);
+            }
+
+            if (this.OutputDataReceived != null)
+            {
+                this.OutputDataReceived(sendingProcess, lineReceived);
             }
         }
     }
