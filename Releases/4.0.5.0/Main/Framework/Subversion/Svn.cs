@@ -89,6 +89,8 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Delete" Items="c:\path\something"/>
     ///         <!-- Move -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Move" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
+    ///         <!-- Commit -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -225,6 +227,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case MoveTaskAction:
                     this.ExecMove();
+                    break;
+
+                case CommitTaskAction:
+                    this.ExecCommit();
                     break;
 
                 default:
@@ -731,6 +737,25 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+        }
+
+        private void ExecCommit()
+        {
+            // required params
+            if (this.Items == null || this.Items.Length == 0)
+            {
+                Log.LogError("The Items parameter is required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new Utilities.CommandLineBuilder2();
+            cmd.AppendSwitch("commit");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendSwitch("-m");
+            cmd.AppendFixedParameter("MSBuild");
+            cmd.AppendFileNamesIfNotNull(this.Items, " ");
             Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
         #endregion
