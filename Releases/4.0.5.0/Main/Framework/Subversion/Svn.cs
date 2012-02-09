@@ -77,6 +77,10 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <Message Text="PropertyValue: $(GProp)"/>
     ///         <!-- SetProperty -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="SetProperty" Item="c:\path" PropertyName="test" PropertyValue="hello"/>
+    ///         <!-- Checkout -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Checkout" Items="http://repository/url" Destination="c:\path"/>
+    ///         <!-- Update -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Update" Items="c:\path1;c:\path2"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -193,6 +197,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case CheckoutTaskAction:
                     this.ExecCheckout();
+                    break;
+
+                case UpdateTaskAction:
+                    this.ExecUpdate();
                     break;
 
                 default:
@@ -612,6 +620,23 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+        }
+
+        private void ExecUpdate()
+        {
+            // required params
+            if (this.Items == null || this.Items.Length == 0)
+            {
+                Log.LogError("The Items parameter is required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new Utilities.CommandLineBuilder2();
+            cmd.AppendSwitch("update");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendFileNamesIfNotNull(this.Items, " ");
             Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
         #endregion
