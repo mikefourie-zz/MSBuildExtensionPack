@@ -81,6 +81,8 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Checkout" Items="http://repository/url" Destination="c:\path"/>
     ///         <!-- Update -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Update" Items="c:\path1;c:\path2"/>
+    ///         <!-- Add -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Add" Items="c:\path\newfile"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -201,6 +203,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case UpdateTaskAction:
                     this.ExecUpdate();
+                    break;
+
+                case AddTaskAction:
+                    this.ExecAdd();
                     break;
 
                 default:
@@ -635,6 +641,23 @@ namespace MSBuild.ExtensionPack.Subversion
             // execute the tool
             var cmd = new Utilities.CommandLineBuilder2();
             cmd.AppendSwitch("update");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendFileNamesIfNotNull(this.Items, " ");
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+        }
+
+        private void ExecAdd()
+        {
+            // required params
+            if (this.Items == null || this.Items.Length == 0)
+            {
+                Log.LogError("The Items parameter is required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new Utilities.CommandLineBuilder2();
+            cmd.AppendSwitch("add");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
