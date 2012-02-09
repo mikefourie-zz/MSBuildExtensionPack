@@ -84,9 +84,11 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <!-- Add -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Add" Items="c:\path\newfile"/>
     ///         <!-- Copy -->
-    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Copy" Items="c:\path\file1;c:\path\file2" Destionation="c:\path\directory"/>
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Copy" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
     ///         <!-- Delete -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Delete" Items="c:\path\something"/>
+    ///         <!-- Move -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Move" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -219,6 +221,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case DeleteTaskAction:
                     this.ExecDelete();
+                    break;
+
+                case MoveTaskAction:
+                    this.ExecMove();
                     break;
 
                 default:
@@ -707,6 +713,24 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("delete");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+        }
+
+        private void ExecMove()
+        {
+            // required params
+            if (this.Items == null || this.Items.Length == 0 || this.Destination == null)
+            {
+                Log.LogError("The Items and Destination parameters are required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new Utilities.CommandLineBuilder2();
+            cmd.AppendSwitch("move");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendFileNamesIfNotNull(this.Items, " ");
+            cmd.AppendFileNameIfNotNull(this.Destination);
             Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
         #endregion
