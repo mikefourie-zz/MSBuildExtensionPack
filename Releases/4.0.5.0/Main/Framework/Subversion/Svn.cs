@@ -91,6 +91,8 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Move" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
     ///         <!-- Commit -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something"/>
+    ///         <!-- Export -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Export" Item="c:\path\workingcopy" Destination="c:\path\exported"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>
@@ -231,6 +233,10 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 case CommitTaskAction:
                     this.ExecCommit();
+                    break;
+
+                case ExportTaskAction:
+                    this.ExecExport();
                     break;
 
                 default:
@@ -756,6 +762,24 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("-m");
             cmd.AppendFixedParameter("MSBuild");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
+            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+        }
+
+        private void ExecExport()
+        {
+            // required params
+            if (this.Item == null || this.Destination == null)
+            {
+                Log.LogError("The Item and Destination parameters are required");
+                return;
+            }
+
+            // execute the tool
+            var cmd = new Utilities.CommandLineBuilder2();
+            cmd.AppendSwitch("export");
+            cmd.AppendSwitch("--non-interactive");
+            cmd.AppendFileNameIfNotNull(this.Item);
+            cmd.AppendFileNameIfNotNull(this.Destination);
             Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
         #endregion
