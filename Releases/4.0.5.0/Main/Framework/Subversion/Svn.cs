@@ -5,11 +5,9 @@
 namespace MSBuild.ExtensionPack.Subversion
 {
     using System;
-    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Text.RegularExpressions;
     using System.Xml.Serialization;
     using Microsoft.Build.Framework;
@@ -20,8 +18,8 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Version</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
     /// <para><i>Info</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
-    /// <para><i>GetProperty</i> (<b>Required: </b>Item, PropertyName <b>Output: </b>PropertyValue</para>
-    /// <para><i>SetProperty</i> (<b>Required: </b>Item, PropertyName, PropertyValue</para>
+    /// <para><i>GetProperty</i> (<b>Required: </b>Item, PropertyName <b>Output: </b>PropertyValue)</para>
+    /// <para><i>SetProperty</i> (<b>Required: </b>Item, PropertyName, PropertyValue)</para>
     /// <para><i>Checkout</i> (<b>Required: </b>Items, Destination)</para>
     /// <para><i>Update</i> (<b>Required: </b>Items)</para>
     /// <para><i>Add</i> (<b>Required: </b>Items)</para>
@@ -485,11 +483,11 @@ namespace MSBuild.ExtensionPack.Subversion
                 this.Info = new TaskItem(this.Item);
                 this.Info.SetMetadata("MinRevision", m.Groups["min"].Value);
                 this.Info.SetMetadata("MaxRevision", m.Groups[mixed ? "max" : "min"].Value);
-                this.Info.SetMetadata("IsMixed", mixed.ToString());
-                this.Info.SetMetadata("IsModified", sw.Contains("M").ToString());
-                this.Info.SetMetadata("IsSwitched", sw.Contains("S").ToString());
-                this.Info.SetMetadata("IsPartial", sw.Contains("P").ToString());
-                this.Info.SetMetadata("IsClean", (!mixed && sw.Length == 0).ToString());
+                this.Info.SetMetadata("IsMixed", mixed.ToString(CultureInfo.InvariantCulture));
+                this.Info.SetMetadata("IsModified", sw.Contains("M").ToString(CultureInfo.InvariantCulture));
+                this.Info.SetMetadata("IsSwitched", sw.Contains("S").ToString(CultureInfo.InvariantCulture));
+                this.Info.SetMetadata("IsPartial", sw.Contains("P").ToString(CultureInfo.InvariantCulture));
+                this.Info.SetMetadata("IsClean", (!mixed && sw.Length == 0).ToString(CultureInfo.InvariantCulture));
             }
         }
 
