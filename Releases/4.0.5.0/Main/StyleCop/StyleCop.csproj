@@ -68,7 +68,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="StyleCop, Version=4.6.3.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
+    <Reference Include="StyleCop, Version=4.7.11.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>

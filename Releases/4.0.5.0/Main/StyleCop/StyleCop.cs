@@ -27,24 +27,24 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///     <PropertyGroup>
-    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///     </PropertyGroup>
-    ///     <Import Project="$(TPath)"/>
-    ///     <Target Name="Default">
-    ///         <!-- Create a collection of files to scan -->
-    ///         <CreateItem Include="C:\Demo\**\*.cs">
-    ///             <Output TaskParameter="Include" ItemName="StyleCopFiles"/>
-    ///         </CreateItem>
-    ///         <!-- Run the StyleCop MSBuild task -->
-    ///         <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="C:\StyleCopLog.txt" SettingsFile="C:\Program Files (x86)\StyleCop 4.5\Settings.StyleCop">
-    ///             <Output TaskParameter="Succeeded" PropertyName="AllPassed"/>
-    ///             <Output TaskParameter="ViolationCount" PropertyName="Violations"/>
-    ///             <Output TaskParameter="FailedFiles" ItemName="Failures"/>
-    ///         </MSBuild.ExtensionPack.CodeQuality.StyleCop>
-    ///         <Message Text="Succeeded: $(AllPassed), Violations: $(Violations)"/>
-    ///         <!-- FailedFile format is:
+    ///   <PropertyGroup>
+    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///   </PropertyGroup>
+    ///   <Import Project="$(TPath)"/>
+    ///   <Target Name="Default">
+    ///     <!-- Create a collection of files to scan -->
+    ///     <CreateItem Include="C:\Demo\**\*.cs">
+    ///       <Output TaskParameter="Include" ItemName="StyleCopFiles"/>
+    ///     </CreateItem>
+    ///     <!-- Run the StyleCop MSBuild task -->
+    ///     <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="C:\StyleCopLog.txt" SettingsFile="C:\Program Files (x86)\StyleCop 4.7\Settings.StyleCop">
+    ///       <Output TaskParameter="Succeeded" PropertyName="AllPassed"/>
+    ///       <Output TaskParameter="ViolationCount" PropertyName="Violations"/>
+    ///       <Output TaskParameter="FailedFiles" ItemName="Failures"/>
+    ///     </MSBuild.ExtensionPack.CodeQuality.StyleCop>
+    ///     <Message Text="Succeeded: $(AllPassed), Violations: $(Violations)" Importance="high"/>
+    ///     <!-- FailedFile format is:
     ///         <ItemGroup>
     ///             <FailedFile Include="filename">
     ///                 <CheckId>SA Rule Number</CheckId>
@@ -54,8 +54,8 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///                 <Message>SA violation message</Message>
     ///             </FailedFile>
     ///         </ItemGroup>-->
-    ///         <Message Text="%(Failures.Identity) - Failed on Line %(Failures.LineNumber). %(Failures.CheckId): %(Failures.Message)"/>
-    ///     </Target>
+    ///     <Message Text="%(Failures.Identity) - Failed on Line %(Failures.LineNumber). %(Failures.CheckId): %(Failures.Message)"/>
+    ///   </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
