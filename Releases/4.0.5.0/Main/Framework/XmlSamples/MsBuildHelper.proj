@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="4.0" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default;UpdateMetadata;FilterItemsOnMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -123,5 +123,30 @@
             <SolutionToBuild Include="@(SolutionToBuildTemp)"/>
         </ItemGroup>
         <Message Text="After  = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)"/>
+    </Target>
+    <ItemGroup>
+        <MyItems Include="$(AssembliesPath)\Assembly1.dll">
+            <Roles>Role1</Roles>
+            <GAC>true</GAC>
+        </MyItems>
+        <MyItems Include="$(AssembliesPath)\Assembly2.dll">
+            <Roles>Role2</Roles>
+            <GAC>true</GAC>
+        </MyItems>
+        <MyItems Include="$(AssembliesPath)\Assembly2.dll">
+            <Roles>Role2</Roles>
+            <GAC>false</GAC>
+        </MyItems>
+        <Roles Include="Role2;Role1"/>
+    </ItemGroup>
+
+    <Target Name="FilterItemsOnMetadata" DependsOnTargets="GetWorkingSets">
+        <Message Text="1 = %(MyItemsWorkingSet.Identity) - %(MyItemsWorkingSet.GAC)"/>
+    </Target>
+
+    <Target Name="GetWorkingSets">
+        <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItemsOnMetadata" InputItems1="@(MyItems)" InputItems2="@(Roles)" Separator=";" MetaData="Roles">
+            <Output TaskParameter="OutputItems" ItemName="MyItemsWorkingSet"/>
+        </MSBuild.ExtensionPack.Framework.MsBuildHelper>
     </Target>
 </Project>

@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
@@ -17,6 +18,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Escape</i> (<b>Required: </b> InputString <b>Output: </b> OutputString)</para>
     /// <para><i>FilterItems</i> (<b>Required: </b> InputItems1, RegexPattern <b>Optional:</b> Metadata <b>Output: </b> OutputItems)</para>
+    /// <para><i>FilterItemsOnMetadata</i> (<b>Required: </b> InputItems1, InputItems2, Metadata <b>Optional: </b>Separator <b>Output: </b> OutputItems)</para>
     /// <para><i>GetCommonItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
     /// <para><i>GetCurrentDirectory</i> (<b>Output: </b> CurrentDirectory)</para>
     /// <para><i>GetDistinctItems</i> (<b>Required: </b> InputItems1, InputItems2 <b>Output: </b> OutputItems, ItemCount)</para>
@@ -32,7 +34,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default;UpdateMetadata;FilterItemsOnMetadata" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -158,6 +160,29 @@ namespace MSBuild.ExtensionPack.Framework
     ///         </ItemGroup>
     ///         <Message Text="After  = %(SolutionToBuild.Identity) %(SolutionToBuild.Meta1) %(SolutionToBuild.Meta2)"/>
     ///     </Target>
+    ///     <ItemGroup>
+    ///         <MyItems Include="$(AssembliesPath)\Assembly1.dll">
+    ///             <Roles>Role1</Roles>
+    ///             <GAC>true</GAC>
+    ///         </MyItems>
+    ///         <MyItems Include="$(AssembliesPath)\Assembly2.dll">
+    ///             <Roles>Role2</Roles>
+    ///             <GAC>true</GAC>
+    ///         </MyItems>
+    ///         <MyItems Include="$(AssembliesPath)\Assembly2.dll">
+    ///             <Roles>Role2</Roles>
+    ///             <GAC>false</GAC>
+    ///         </MyItems>
+    ///         <Roles Include="Role2;Role1"/>
+    ///     </ItemGroup>
+    ///     <Target Name="FilterItemsOnMetadata" DependsOnTargets="GetWorkingSets">
+    ///         <Message Text="1 = %(MyItemsWorkingSet.Identity) - %(MyItemsWorkingSet.GAC)"/>
+    ///     </Target>
+    ///     <Target Name="GetWorkingSets">
+    ///         <MSBuild.ExtensionPack.Framework.MsBuildHelper TaskAction="FilterItemsOnMetadata" InputItems1="@(MyItems)" InputItems2="@(Roles)" Separator=";" MetaData="Roles">
+    ///             <Output TaskParameter="OutputItems" ItemName="MyItemsWorkingSet"/>
+    ///         </MSBuild.ExtensionPack.Framework.MsBuildHelper>
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
@@ -177,7 +202,8 @@ namespace MSBuild.ExtensionPack.Framework
         private const string StringToItemColTaskAction = "StringToItemCol";
         private const string ItemColToStringTaskAction = "ItemColToString";
         private const string UpdateMetadataTaskAction = "UpdateMetadata";
-        
+        private const string FilterItemsOnMetadataTaskAction = "FilterItemsOnMetadata";
+
         private List<ITaskItem> inputItems1;
         private List<ITaskItem> inputItems2;
         private List<ITaskItem> outputItems;
@@ -195,6 +221,7 @@ namespace MSBuild.ExtensionPack.Framework
         [DropdownValue(SortTaskAction)]
         [DropdownValue(StringToItemColTaskAction)]
         [DropdownValue(UpdateMetadataTaskAction)]
+        [DropdownValue(FilterItemsOnMetadataTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -221,10 +248,11 @@ namespace MSBuild.ExtensionPack.Framework
         public string ItemString { get; set; }
 
         /// <summary>
-        /// Sets the separator to use for splitting the ItemString when calling StringToItemCol
+        /// Sets the separator to use for splitting the ItemString when calling StringToItemCol. Also used in FilterItemsOnMetadata
         /// </summary>
         [TaskAction(ItemColToStringTaskAction, false)]
         [TaskAction(StringToItemColTaskAction, true)]
+        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public string Separator { get; set; }
 
         /// <summary>
@@ -237,8 +265,9 @@ namespace MSBuild.ExtensionPack.Framework
         /// Sets the Metadata
         /// </summary>
         [TaskAction(FilterItemsTaskAction, false)]
+        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public string Metadata { get; set; }
-        
+
         /// <summary>
         /// Gets the output string
         /// </summary>
@@ -258,6 +287,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(RemoveDuplicateFilesTaskAction, true)]
         [TaskAction(SortTaskAction, true)]
         [TaskAction(UpdateMetadataTaskAction, true)]
+        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public ITaskItem[] InputItems1
         {
             get { return this.inputItems1.ToArray(); }
@@ -270,6 +300,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(GetCommonItemsTaskAction, true)]
         [TaskAction(GetDistinctItemsTaskAction, true)]
         [TaskAction(UpdateMetadataTaskAction, true)]
+        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public ITaskItem[] InputItems2
         {
             get { return this.inputItems2.ToArray(); }
@@ -288,6 +319,7 @@ namespace MSBuild.ExtensionPack.Framework
         [TaskAction(RemoveDuplicateFilesTaskAction, false)]
         [TaskAction(SortTaskAction, true)]
         [TaskAction(StringToItemColTaskAction, false)]
+        [TaskAction(FilterItemsOnMetadataTaskAction, false)]
         public ITaskItem[] OutputItems
         {
             get { return this.outputItems == null ? null : this.outputItems.ToArray(); }
@@ -320,6 +352,9 @@ namespace MSBuild.ExtensionPack.Framework
 
             switch (this.TaskAction)
             {
+                case FilterItemsOnMetadataTaskAction:
+                    this.FilterItemsOnMetadata();
+                    break;
                 case "Escape":
                     this.Escape();
                     break;
@@ -362,6 +397,46 @@ namespace MSBuild.ExtensionPack.Framework
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void FilterItemsOnMetadata()
+        {
+            this.LogTaskMessage("Filtering Items on metadata");
+            if (this.InputItems1 == null)
+            {
+                Log.LogError("InputItems1 is required");
+                return;
+            }
+
+            if (this.inputItems2 == null)
+            {
+                Log.LogError("InputItems2 is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.Separator))
+            {
+                Log.LogError("Separator is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.Metadata))
+            {
+                Log.LogError("Metadata is required");
+                return;
+            }
+
+            this.outputItems = new List<ITaskItem>();
+            foreach (ITaskItem item in this.InputItems1)
+            {
+                string[] filters1 = item.GetMetadata(this.Metadata).Split(new[] { this.Separator }, StringSplitOptions.RemoveEmptyEntries);
+                List<string> filters1List = new List<string>(filters1.Length);
+                filters1List.AddRange(filters1);
+                if (this.InputItems2.Any(item2 => filters1List.Contains(item2.ItemSpec)))
+                {
+                    this.outputItems.Add(item);
+                }
             }
         }
 

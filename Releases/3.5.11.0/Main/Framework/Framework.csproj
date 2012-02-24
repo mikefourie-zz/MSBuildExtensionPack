@@ -415,7 +415,9 @@
     <None Include="XmlSamples\Folder.proj" />
     <None Include="XmlSamples\Guid.proj" />
     <None Include="XmlSamples\Maths.proj" />
-    <None Include="XmlSamples\MsBuildHelper.proj" />
+    <None Include="XmlSamples\MsBuildHelper.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\File.proj" />
     <None Include="XmlSamples\TextString.proj" />
     <None Include="XmlSamples\Thread.proj" />
@@ -448,7 +450,9 @@
     <None Include="XmlSamples\Metadata.proj" />
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
-    <None Include="XmlSamples\XmlFile.proj" />
+    <None Include="XmlSamples\XmlFile.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\DNZip.proj" />
     <EmbeddedResource Include="Computer\GetPasswordForm.resx">
       <DependentUpon>GetPasswordForm.cs</DependentUpon>
