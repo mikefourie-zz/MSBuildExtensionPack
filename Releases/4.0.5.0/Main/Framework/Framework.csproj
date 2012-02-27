@@ -205,6 +205,7 @@
     <Compile Include="Framework\AsyncExec.cs" />
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\ConfigManager.cs" />
+    <Compile Include="Framework\Parallel.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Framework\ILMerge.cs" />
@@ -394,6 +395,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\Parallel.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\MSMQ.proj" />
     <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
