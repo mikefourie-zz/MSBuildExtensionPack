@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory, References <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory, References, AssemblyCompareMode <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -59,6 +59,25 @@ namespace MSBuild.ExtensionPack.CodeQuality
         private const string AnalyseTaskAction = "Analyse";
         private bool logToConsole = true;
         private bool showSummary = true;
+        private CompareMode assemblyCompareMode = CompareMode.StrongName;
+
+        private enum CompareMode
+        {
+            /// <summary>
+            /// None
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// StrongName
+            /// </summary>
+            StrongName,
+
+            /// <summary>
+            /// StrongNameIgnoringVersion
+            /// </summary>
+            StrongNameIgnoringVersion
+        }
 
         [DropdownValue(AnalyseTaskAction)]
         public override string TaskAction
@@ -67,6 +86,16 @@ namespace MSBuild.ExtensionPack.CodeQuality
             set { base.TaskAction = value; }
         }
 
+        /// <summary>
+        /// Set the assembly comparison mode. Supports None, StrongName, StrongNameIgnoringVersion. Default is StrongName.
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public string AssemblyCompareMode
+        {
+            get { return this.assemblyCompareMode.ToString(); }
+            set { this.assemblyCompareMode = (CompareMode)Enum.Parse(typeof(CompareMode), value, true); }
+        }
+        
         /// <summary>
         /// Sets the Item Collection of assemblies to analyse (/file option)
         /// </summary>
@@ -405,7 +434,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
             if (this.Verbose)
             {
                 arguments += " /verbose";
-            }          
+            }
+
+            if (this.assemblyCompareMode != CodeQuality.FxCop.CompareMode.StrongName)
+            {
+                arguments += " /assemblyCompareMode:" + this.assemblyCompareMode.ToString();
+            }
 
             if (!string.IsNullOrEmpty(this.Types))
             {
