@@ -21,6 +21,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>AddAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>AddSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
+    /// <para><i>Create</i> (<b>Required: </b>Files <b>Optional: Size</b>). Creates file(s)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
     /// <para><i>GetTempFileName</i> (<b>Output: </b>Path)</para>
     /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Optional: </b>RegexOptionList <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
@@ -64,8 +65,16 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <LinesToRemove Include="192\.156\.23sss4\.25 www\.myurl\.com"/>
     ///         <Lines Include="192.156.236.25 www.myurl.com"/>
     ///         <Lines Include="192.156.234.25 www.myurl.com"/>
+    ///         <FilesToCreate Include="d:\a\File1-100.txt"/>
+    ///         <FilesToCreate Include="d:\a\File2-100.txt"/>
+    ///         <FilesToCreate Include="d:\a\File3-5000000.txt">
+    ///             <size>5000000</size>
+    ///         </FilesToCreate>
+    ///         <FilesToCreate Include="d:\a\File4-100.txt"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
+    ///         <!-- Create some files. Defaults the size to 1000 bytes, but one file overrides this using metadata -->
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Create" Files="@(FilesToCreate)" Size="1000"/>
     ///         <!-- Write lines to a file. Lines only added if file does not contain them -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="WriteLines" Files="@(FilesToWriteTo)" Lines="@(Lines)"/>
     ///         <!-- Remove lines from a file based on regular expressions -->
@@ -128,6 +137,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     public class File : BaseTask
     {
         private const string CountLinesTaskAction = "CountLines";
+        private const string CreateTaskAction = "Create";
         private const string GetChecksumTaskAction = "GetChecksum";
         private const string FilterByContentTaskAction = "FilterByContent";
         private const string ReplaceTaskAction = "Replace";
@@ -171,6 +181,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         [DropdownValue(AddAttributesTaskAction)]
         [DropdownValue(CountLinesTaskAction)]
+        [DropdownValue(CreateTaskAction)]
         [DropdownValue(GetChecksumTaskAction)]
         [DropdownValue(GetTempFileNameTaskAction)]
         [DropdownValue(FilterByContentTaskAction)]
@@ -315,7 +326,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         [TaskAction(CountLinesTaskAction, false)]
         public string CommentIdentifiers
-        {
+        { 
             set { this.commentIdentifiers = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); }
         }
 
@@ -323,6 +334,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// An ItemList of files to process. If calling SetAttributes, RemoveAttributes or AddAttributes, include the attributes in an Attributes metadata tag, separated by a semicolon.
         /// </summary>
         [TaskAction(CountLinesTaskAction, true)]
+        [TaskAction(CreateTaskAction, true)]
         [TaskAction(SetAttributesTaskAction, true)]
         [TaskAction(AddAttributesTaskAction, true)]
         [TaskAction(MoveTaskAction, true)]
@@ -399,10 +411,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         public int MaxSize { get; set; }
 
         /// <summary>
-        /// sets the minimum size of files to count
+        /// Sets the minimum size of files to count
         /// </summary>
         [TaskAction(CountLinesTaskAction, false)]
         public int MinSize { get; set; }
+
+        /// <summary>
+        /// Sets the size of the file in bytes for TaskAction="Create". This can be overridden by using a metadata tag called size on the Files items.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public int Size { get; set; }
 
         /// <summary>
         /// Gets the time taken to count the files. Value in seconds.
@@ -456,6 +474,9 @@ namespace MSBuild.ExtensionPack.FileSystem
             {
                 case CountLinesTaskAction:
                     this.CountLines();
+                    break;
+                case CreateTaskAction:
+                    this.Create();
                     break;
                 case FilterByContentTaskAction:
                     this.FilterByContent();
@@ -533,6 +554,21 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             return flags;
+        }
+
+        private void Create()
+        {
+            if (this.Files == null)
+            {
+                Log.LogError("Files is required");
+                return;
+            }
+
+            foreach (ITaskItem file in this.Files)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating File: {0}", file.ItemSpec));
+                System.IO.File.WriteAllBytes(file.ItemSpec, !string.IsNullOrEmpty(file.GetMetadata("size")) ? new byte[Convert.ToInt32(file.GetMetadata("size"), CultureInfo.CurrentCulture)] : new byte[this.Size]);
+            }
         }
 
         private void WriteLinesToFile()
