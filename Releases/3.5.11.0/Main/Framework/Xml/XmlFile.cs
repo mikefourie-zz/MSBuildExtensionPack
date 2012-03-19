@@ -12,7 +12,7 @@ namespace MSBuild.ExtensionPack.Xml
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b> Namespaces, RetryCount)</para>
+    /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b>Prefix, Namespaces, RetryCount)</para>
     /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Prefix, Key, Value, Namespaces, RetryCount, InnerText, InnerXml, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>ReadAttribute</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElements</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output: </b> Elements). Attributes are added as metadata</para>
@@ -188,9 +188,10 @@ namespace MSBuild.ExtensionPack.Xml
         public string InnerXml { get; set; }
 
         /// <summary>
-        /// Sets the Prefix used for an added element, prefix must exists in Namespaces.
+        /// Sets the Prefix used for an added element/attribute, prefix must exists in Namespaces.
         /// </summary>
         [TaskAction(AddElementTaskAction, false)]
+        [TaskAction(AddAttributeTaskAction, false)]
         public string Prefix { get; set; }
 
         /// <summary>
@@ -563,17 +564,8 @@ namespace MSBuild.ExtensionPack.Xml
                     return;
                 }
 
-                XmlAttribute attNode = elementNode.Attributes.GetNamedItem(this.Key) as XmlAttribute;
-                if (attNode == null)
-                {
-                    attNode = this.xmlFileDoc.CreateAttribute(this.Key);
-                    attNode.Value = this.Value;
-                    elementNode.Attributes.Append(attNode);
-                }
-                else
-                {
-                    attNode.Value = this.Value;
-                }
+                XmlNode attNode = elementNode.Attributes[this.Key] ?? elementNode.Attributes.Append(this.CreateAttribute());
+                attNode.Value = this.Value;
 
                 this.TrySave();
             }
@@ -584,13 +576,35 @@ namespace MSBuild.ExtensionPack.Xml
                 {
                     foreach (XmlNode element in this.elements)
                     {
-                        XmlNode attrib = element.Attributes[this.Key] ?? element.Attributes.Append(this.xmlFileDoc.CreateAttribute(this.Key));
+                        XmlNode attrib = element.Attributes[this.Key] ?? element.Attributes.Append(this.CreateAttribute());
                         attrib.Value = this.Value;
                     }
 
                     this.TrySave();
                 }
             }
+        }
+
+        private XmlAttribute CreateAttribute()
+        {
+            XmlAttribute xmlAttribute;
+            if (string.IsNullOrEmpty(this.Prefix))
+            {
+                xmlAttribute = this.xmlFileDoc.CreateAttribute(this.Key);
+            }
+            else
+            {
+                string prefixNamespace = this.namespaceManager.LookupNamespace(this.Prefix);
+                if (string.IsNullOrEmpty(prefixNamespace))
+                {
+                    Log.LogError("Prefix not defined in Namespaces in parameters: " + this.Prefix);
+                    return null;
+                }
+
+                xmlAttribute = this.xmlFileDoc.CreateAttribute(this.Prefix, this.Key, prefixNamespace);
+            }
+
+            return xmlAttribute;
         }
 
         private XmlNamespaceManager GetNamespaceManagerForDoc()
@@ -715,7 +729,7 @@ namespace MSBuild.ExtensionPack.Xml
 
             if (!string.IsNullOrEmpty(this.InnerText))
             {
-                newNode.InnerText = this.InnerText;    
+                newNode.InnerText = this.InnerText;
             }
             else if (!string.IsNullOrEmpty(this.InnerXml))
             {
