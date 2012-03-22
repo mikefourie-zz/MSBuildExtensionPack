@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -64,6 +65,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
     public class BizTalkHostInstance : BaseTask
     {
+        private const string GetTaskAction = "Get";
         private const string CheckExistsTaskAction = "CheckExists";
         private const string CreateTaskAction = "Create";
         private const string DeleteTaskAction = "Delete";
@@ -78,9 +80,11 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// </summary>
         [DropdownValue(CheckExistsTaskAction)]
         [DropdownValue(CreateTaskAction)]
+        [DropdownValue(GetStateTaskAction)]
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(StartTaskAction)]
         [DropdownValue(StopTaskAction)]
+        [DropdownValue(GetTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -95,6 +99,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(StartTaskAction, false)]
         [TaskAction(StopTaskAction, false)]
+        [TaskAction(GetTaskAction, false)]
         public override string MachineName
         {
             get { return base.MachineName; }
@@ -109,7 +114,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(StartTaskAction, true)]
         [TaskAction(StopTaskAction, true)]
-        [Required]
         public string HostName { get; set; }
 
         /// <summary>
@@ -137,6 +141,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         public string AccountPassword { get; set; }
 
         /// <summary>
+        /// The Host Instances returned by Get. The name of the Host Instance is used as the Identity. Metadata includes: Caption, ConfigurationState, Description, HostType, InstallDate, IsDisabled, MgmtDbNameOverride, MgmtDbServerOverride, NTGroupName, RunningServer, ServiceState, Status, UniqueID
+        /// </summary>
+        [TaskAction(GetTaskAction, false)]
+        [Output]
+        public ITaskItem[] HostInstances { get; set; }
+
+        /// <summary>
         /// Gets the state of the host instance
         /// </summary>
         [Output]
@@ -147,10 +158,19 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// </summary>
         protected override void InternalExecute()
         {
+            if (this.TaskAction != GetTaskAction && string.IsNullOrEmpty(this.HostName))
+            {
+                this.Log.LogError("HostName is required");
+                return;
+            }
+
             this.GetManagementScope(WmiBizTalkNamespace);
 
             switch (this.TaskAction)
             {
+                case GetTaskAction:
+                    this.Get();
+                    break;
                 case StartTaskAction:
                     this.Start();
                     break;
@@ -172,6 +192,39 @@ namespace MSBuild.ExtensionPack.BizTalk
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void Get()
+        {
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting Host Instances from: {0}", this.MachineName));
+
+            EnumerationOptions wmiEnumerationOptions = new EnumerationOptions { ReturnImmediately = false };
+            ObjectQuery wmiQuery = new ObjectQuery("SELECT * FROM MSBTS_HostInstance");
+            using (ManagementObjectSearcher wmiSearcher = new ManagementObjectSearcher(this.Scope, wmiQuery, wmiEnumerationOptions))
+            {
+                ManagementObjectCollection hostInstanceCollection = wmiSearcher.Get();
+                this.HostInstances = new ITaskItem[hostInstanceCollection.Count];
+                int i = 0;
+                foreach (ManagementObject instance in hostInstanceCollection.Cast<ManagementObject>().Where(instance => instance["Name"].ToString().IndexOf(this.MachineName, StringComparison.OrdinalIgnoreCase) > 0))
+                {
+                    ITaskItem hostInstanceItem = new TaskItem(instance["HostName"].ToString());
+                    hostInstanceItem.SetMetadata("HostType", instance["HostType"].ToString());
+                    hostInstanceItem.SetMetadata("IsDisabled", instance["IsDisabled"].ToString());
+                    hostInstanceItem.SetMetadata("ServiceState", instance["ServiceState"].ToString());
+                    hostInstanceItem.SetMetadata("Caption", instance["Caption"] == null ? string.Empty : instance["Caption"].ToString());
+                    hostInstanceItem.SetMetadata("ConfigurationState", instance["ConfigurationState"] == null ? string.Empty : instance["ConfigurationState"].ToString());
+                    hostInstanceItem.SetMetadata("Description", instance["Description"] == null ? string.Empty : instance["Description"].ToString());
+                    hostInstanceItem.SetMetadata("InstallDate", instance["InstallDate"] == null ? string.Empty : instance["InstallDate"].ToString());
+                    hostInstanceItem.SetMetadata("MgmtDbNameOverride", instance["MgmtDbNameOverride"] == null ? string.Empty : instance["MgmtDbNameOverride"].ToString());
+                    hostInstanceItem.SetMetadata("MgmtDbServerOverride", instance["MgmtDbServerOverride"] == null ? string.Empty : instance["MgmtDbServerOverride"].ToString());
+                    hostInstanceItem.SetMetadata("RunningServer", instance["RunningServer"] == null ? string.Empty : instance["RunningServer"].ToString());
+                    hostInstanceItem.SetMetadata("Status", instance["Status"] == null ? string.Empty : instance["Status"].ToString());
+                    hostInstanceItem.SetMetadata("UniqueID", instance["UniqueID"] == null ? string.Empty : instance["UniqueID"].ToString());
+                    hostInstanceItem.SetMetadata("NTGroupName", instance["NTGroupName"] == null ? string.Empty : instance["NTGroupName"].ToString());
+                    this.HostInstances[i] = hostInstanceItem;
+                    i++;
+                }
             }
         }
 
