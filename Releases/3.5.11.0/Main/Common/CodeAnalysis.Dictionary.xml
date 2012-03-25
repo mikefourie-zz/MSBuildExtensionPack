@@ -4,6 +4,12 @@
     <Recognized>
       <Word>Changesets</Word>
     </Recognized>
+    <Recognized>
+      <Word>svn</Word>
+    </Recognized>
+    <Recognized>
+      <Word>Cygwin</Word>
+    </Recognized>
     <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->

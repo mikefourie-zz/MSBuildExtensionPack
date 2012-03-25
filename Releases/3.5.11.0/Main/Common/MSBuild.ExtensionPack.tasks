@@ -62,6 +62,7 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.SqlServer.SqlCmd"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.SqlServer.SqlExecute"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.SqlServer.SqlVersion"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Subversion.Svn"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.UI.Console"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.UI.Dialog"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.SourceSafe"/>
