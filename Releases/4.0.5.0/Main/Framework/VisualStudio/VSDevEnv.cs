@@ -78,12 +78,18 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         protected override string GenerateFullPathToTool()
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\" + this.Version);
-            if (key != null)
+            using (RegistryKey sw = Utilities.SoftwareRegistry32Bit)
             {
-                string path = Convert.ToString(key.GetValue("InstallDir"), CultureInfo.InvariantCulture);
-                key.Close();
-                return System.IO.Path.Combine(path, this.ToolName);
+                if (sw != null)
+                {
+                    RegistryKey key = sw.OpenSubKey(@"Microsoft\VisualStudio\" + this.Version);
+                    if (key != null)
+                    {
+                        string path = Convert.ToString(key.GetValue("InstallDir"), CultureInfo.InvariantCulture);
+                        key.Close();
+                        return System.IO.Path.Combine(path, this.ToolName);
+                    }
+                }
             }
 
             throw new Exception(string.Format(CultureInfo.InvariantCulture, "Visual Studio Registry Key not found: {0}", @"SOFTWARE\Microsoft\VisualStudio\" + this.Version));
