@@ -257,6 +257,36 @@ namespace MSBuild.ExtensionPack.Subversion
         }
 
         /// <summary>
+        /// Runs the specified try-delegate in the 32 and the 64 bit registry. The registry native to the process is checked first.
+        /// </summary>
+        /// <param name="inner">the try-delegate</param>
+        /// <returns>whatever the try-delegate returns</returns>
+        private static string TryRegistry3264(Func<RegistryKey, string> inner)
+        {
+            string ret;
+
+            // native first
+            using (var key = Utilities.SoftwareRegistryNative)
+            {
+                if (key != null && (ret = inner(key)) != null)
+                {
+                    return ret;
+                }
+            }
+
+            // non-native second
+            using (var key = Utilities.SoftwareRegistryNonnative)
+            {
+                if (key != null && (ret = inner(key)) != null)
+                {
+                    return ret;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Tries to find an SVN installation in the PATH environment variable.
         /// </summary>
         /// <returns>the path if it is found, null otherwise</returns>
@@ -282,6 +312,11 @@ namespace MSBuild.ExtensionPack.Subversion
             // manager paths. SVN is installed under /usr/bin.
             using (var key = software.OpenSubKey(@"Cygwin\Installations"))
             {
+                if (key == null)
+                {
+                    return null;
+                }
+
                 foreach (var value in key.GetValueNames().Select(name => key.GetValue(name) as string))
                 {
                     if (value == null)
@@ -421,25 +456,25 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // Cygwin
-            if ((ret = Utilities.TryRegistry3264(true, false, TryCygwin)) != null)
+            if ((ret = TryRegistry3264(TryCygwin)) != null)
             {
                 return ret;
             }
 
             // TortoiseSVN
-            if ((ret = Utilities.TryRegistry3264(true, true, TryTortoiseSvn)) != null)
+            if ((ret = TryRegistry3264(TryTortoiseSvn)) != null)
             {
                 return ret;
             }
 
             // CollabNet
-            if ((ret = Utilities.TryRegistry3264(true, true, TryCollabNet)) != null)
+            if ((ret = TryRegistry3264(TryCollabNet)) != null)
             {
                 return ret;
             }
 
             // SlikSvn
-            if ((ret = Utilities.TryRegistry3264(true, true, TrySlikSvn)) != null)
+            if ((ret = TryRegistry3264(TrySlikSvn)) != null)
             {
                 return ret;
             }

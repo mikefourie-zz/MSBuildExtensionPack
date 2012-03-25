@@ -10,55 +10,76 @@ namespace MSBuild.ExtensionPack
     using Microsoft.Build.Utilities;
     using Microsoft.Win32;
 
-    internal static class Utilities
+    public static class Utilities
     {
         /// <summary>
-        /// Runs the specified delegate with the HKLM\SOFTWARE key in the 32 and/or 64 bit registry. If both parameters are true,
-        /// then the native registry will be used first (according to whether the current process is a 32 or 64 bit one). There is
-        /// no 64 bit registry in a 32 bit OS, so naturally that is never checked.
+        /// For a 32 bit process, it returns the 32 bit HKLM\SOFTWARE registry key, otherwise the 64 bit one. May return null if
+        /// it doesn't exist. Dispose of the return value.
         /// </summary>
-        /// <remarks>
-        /// We could use a RegistryView parameter in the delegate, but instead we use the HKLM\SOFTWARE key itself because it
-        /// allows for easier migration to the 3.5 release where we can use HKLM\SOFTWARE\Wow6432Node only.
-        /// </remarks>
-        /// <param name="try32">try 32 bit registry</param>
-        /// <param name="try64">try 64 bit registry</param>
-        /// <param name="inner">the function to check the registry, should expect the HKLM\SOFTWARE key and return a path</param>
-        /// <returns>the path if it is found, null otherwise</returns>
-        public static string TryRegistry3264(bool try32, bool try64, Func<RegistryKey, string> inner)
+        public static RegistryKey SoftwareRegistryNative
         {
-            string ret;
-
-            // try the native registry
-            if ((Environment.Is64BitProcess && try64) || (!Environment.Is64BitProcess && try32))
+            get
             {
-                using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE"))
-                {
-                    if ((ret = inner(key)) != null)
-                    {
-                        return ret;
-                    }
-                }
+                // no need to play with RegistryView, it is the simplest case
+                return Registry.LocalMachine.OpenSubKey("SOFTWARE");
             }
+        }
 
-            // try the non-native registry if it exists
-            if (Environment.Is64BitOperatingSystem)
+        /// <summary>
+        /// For a 32 bit process, it returns the 64 bit HKLM\SOFTWARE registry key, otherwise the 32 bit one. May return null if
+        /// it doesn't exist. Dispose of the return value.
+        /// </summary>
+        public static RegistryKey SoftwareRegistryNonnative
+        {
+            get
             {
-                if ((Environment.Is64BitProcess && try32) || (!Environment.Is64BitProcess && try64))
+                // a non-native registry only exists on 64 bit OS'es
+                if (Environment.Is64BitOperatingSystem)
                 {
+                    // use RegistryView to get the other one
                     var view = Environment.Is64BitProcess ? RegistryView.Registry32 : RegistryView.Registry64;
                     using (var basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-                    using (var key = basekey.OpenSubKey("SOFTWARE"))
                     {
-                        if ((ret = inner(key)) != null)
-                        {
-                            return ret;
-                        }
+                        return basekey.OpenSubKey("SOFTWARE");
                     }
                 }
-            }
 
-            return null;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns the 32 bit HKLM\SOFTWARE registry key. May return null if it doesn't exist. Dispose of the return value.
+        /// </summary>
+        public static RegistryKey SoftwareRegistry32Bit
+        {
+            get
+            {
+                // simple logic
+                if (Environment.Is64BitProcess)
+                {
+                    return SoftwareRegistryNonnative;
+                }
+
+                return SoftwareRegistryNative;
+            }
+        }
+
+        /// <summary>
+        /// Returns the 64 bit HKLM\SOFTWARE registry key. May return null if it doesn't exist. Dispose of the return value.
+        /// </summary>
+        public static RegistryKey SoftwareRegistry64Bit
+        {
+            get
+            {
+                // simple logic
+                if (Environment.Is64BitProcess)
+                {
+                    return SoftwareRegistryNative;
+                }
+
+                return SoftwareRegistryNonnative;
+            }
         }
 
         /// <summary>
@@ -72,6 +93,11 @@ namespace MSBuild.ExtensionPack
         /// <returns>the output of the tool</returns>
         public static string ExecuteWithLogging(TaskLoggingHelper log, string executable, string args, bool logOutput)
         {
+            if (log == null)
+            {
+                throw new ArgumentNullException("log");
+            }
+
             log.LogMessage(MessageImportance.Low, "Executing tool: {0} {1}", executable, args);
 
             var exec = new ShellWrapper(executable, args);
@@ -109,7 +135,7 @@ namespace MSBuild.ExtensionPack
             return exec.StandardOutput;
         }
 
-        public class CommandLineBuilder2 : CommandLineBuilder
+        internal class CommandLineBuilder2 : CommandLineBuilder
         {
             /// <summary>
             /// Appends a fixed argument. This means that it is appended even if it is empty (as ""). It is quoted if necessary.
