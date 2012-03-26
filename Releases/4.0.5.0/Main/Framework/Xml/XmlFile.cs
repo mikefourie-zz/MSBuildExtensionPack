@@ -130,7 +130,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
     public class XmlFile : BaseTask
     {
         private const string AddAttributeTaskAction = "AddAttribute";

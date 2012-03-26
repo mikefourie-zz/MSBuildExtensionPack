@@ -104,7 +104,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
     public class TfsSource : BaseTask
     {
         private const string AddTaskAction = "Add";

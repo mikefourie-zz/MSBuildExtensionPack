@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/fbcabc54-e80e-3176-dcd0-8be24fc60602.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/fbcabc54-e80e-3176-dcd0-8be24fc60602.htm")]
     public class WebClient : BaseTask
     {
         private const string DownloadFileTaskAction = "DownloadFile";

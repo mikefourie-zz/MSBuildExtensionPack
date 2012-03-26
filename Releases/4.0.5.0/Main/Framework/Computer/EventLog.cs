@@ -55,7 +55,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/13fd881e-bc34-d8a6-8f2c-9f086044c17a.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/13fd881e-bc34-d8a6-8f2c-9f086044c17a.htm")]
     public class EventLog : BaseTask
     {
         private const string BackupTaskAction = "Backup";
