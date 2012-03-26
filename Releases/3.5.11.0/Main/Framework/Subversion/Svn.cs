@@ -95,6 +95,7 @@ namespace MSBuild.ExtensionPack.Subversion
     /// </Project>
     /// ]]></code>
     /// </example>
+    [HelpUrl("")]
     public class Svn : BaseTask
     {
         #region constants

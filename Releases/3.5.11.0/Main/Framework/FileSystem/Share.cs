@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
         private const string ModifyPermissionsTaskAction = "ModifyPermissions";

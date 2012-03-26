@@ -73,7 +73,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/5eddaaa1-5a75-e314-d96e-6e8ecc2b2997.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/5eddaaa1-5a75-e314-d96e-6e8ecc2b2997.htm")]
     public class Zip : BaseTask
     {
         private const string CreateTaskAction = "Create";

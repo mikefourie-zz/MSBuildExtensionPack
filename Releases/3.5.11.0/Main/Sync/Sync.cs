@@ -39,7 +39,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
     public class Sync : BaseTask
     {
         private const string SyncFoldersTaskAction = "SyncFolders";

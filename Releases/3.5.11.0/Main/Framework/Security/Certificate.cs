@@ -225,7 +225,7 @@ namespace MSBuild.ExtensionPack.Security
     /// </Project>
     /// ]]></code>    
     /// </example>    
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
     public class Certificate : BaseTask
     {
         private const string AddTaskAction = "Add";
