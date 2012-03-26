@@ -665,10 +665,9 @@ namespace MSBuild.ExtensionPack.FileSystem
             
             // If the TargetPath has multiple folders, then we need to create the parent
             DirectoryInfo f = new DirectoryInfo(this.TargetPath.GetMetadata("FullPath"));
-            string parentPath = this.TargetPath.GetMetadata("FullPath").Replace(@"\" + f.Name, string.Empty);
-            if (!Directory.Exists(parentPath))
+            if (f.Parent != null && !f.Parent.Exists)
             {
-                Directory.CreateDirectory(parentPath);
+                Directory.CreateDirectory(f.Parent.FullName);
             }
 
             Directory.Move(this.Path.GetMetadata("FullPath"), this.TargetPath.GetMetadata("FullPath"));
