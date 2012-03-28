@@ -67,8 +67,8 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override void InternalExecute()
         {
-            var tokens = this.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var commands = new List<string>(tokens.Length);
+            string[] tokens = this.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> commands = new List<string>();
             foreach (string command in tokens.Select(token => token.Trim()).Where(command => !string.IsNullOrEmpty(command)))
             {
                 commands.Add(command);
@@ -85,8 +85,7 @@ namespace MSBuild.ExtensionPack.Framework
             foreach (string fileName in commands.Select(command => HasCommandArguments(command) ? CreateBatchProgram(command) : command))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Execute: {0}", fileName));
-                var startInfo = GetCommandLine(fileName);
-
+                ProcessStartInfo startInfo = GetCommandLine(fileName);
                 using (BackgroundWorker worker = new BackgroundWorker())
                 {
                     worker.DoWork += (s, e) =>
@@ -112,12 +111,11 @@ namespace MSBuild.ExtensionPack.Framework
                     this.process.Close();
                     if (!(this.IgnoreExitCode || (exitCode == this.SuccessExitCode)))
                     {
-                        return;
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} failed with exit code: {1}", fileName, exitCode));
+                        break;
                     }
                 }
             }
-
-            return;
         }
 
         /// <summary>
