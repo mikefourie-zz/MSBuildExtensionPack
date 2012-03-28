@@ -549,7 +549,6 @@ namespace MSBuild.ExtensionPack.Web
                             if (rc != 0)
                             {
                                 this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
-                                return;
                             }
                         }
                     }
@@ -702,7 +701,13 @@ namespace MSBuild.ExtensionPack.Web
                     this.website = this.iisServerManager.Sites[this.Name];
                 }
 
-                this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
+                VirtualDirectory virtualDirectory = this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
+                if (!string.IsNullOrEmpty(virDir.GetMetadata("UserName")))
+                {
+                    virtualDirectory.LogonMethod = AuthenticationLogonMethod.Batch;
+                    virtualDirectory.UserName = virDir.GetMetadata("UserName");
+                    virtualDirectory.Password = virDir.GetMetadata("Password");
+                }
             }
         }
 
