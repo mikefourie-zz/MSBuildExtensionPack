@@ -116,7 +116,7 @@ namespace MSBuild.ExtensionPack.Xml
     ///             <Uri>http://mynamespace</Uri>
     ///         </Namespaces>
     ///         <XMLConfigElementsToDelete1 Include="c:\test.xml">
-    ///             <XPath>//me:MyNodes/sources</XPath>
+    ///             <XPath>//me:MyNodes/me:sources</XPath>
     ///         </XMLConfigElementsToDelete1>
     ///         <XMLConfigElementsToAdd1 Include="c:\test.xml">
     ///             <XPath>//me:MyNodes</XPath>
@@ -126,6 +126,23 @@ namespace MSBuild.ExtensionPack.Xml
     ///     <Target Name="DefaultWithNameSpace">
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToDelete1.Identity)" XPath="%(XMLConfigElementsToDelete1.XPath)" Condition="'%(XMLConfigElementsToDelete1.Identity)'!=''"/>
     ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToAdd1.Identity)" Key="%(XMLConfigElementsToAdd1.KeyAttributeName)" Value="%(XMLConfigElementsToAdd1.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd1.Name)" XPath="%(XMLConfigElementsToAdd1.XPath)" Condition="'%(XMLConfigElementsToAdd1.Identity)'!=''"/>
+    ///     </Target>
+    ///     <ItemGroup>
+    ///         <Namespaces2 Include="Mynamespace">
+    ///             <Prefix>xs</Prefix>
+    ///             <Uri>http://www.w3.org/2001/XMLSchema</Uri>
+    ///         </Namespaces2>
+    ///     </ItemGroup>
+    ///     <Target Name="InsertBeforeXPath">
+    ///         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement"
+    ///         File="d:\a\tempinsertbeforexpath.xml"
+    ///         Namespaces="@(Namespaces2)"
+    ///         ParentElement="/xs:schema"
+    ///         Prefix="xs"
+    ///         Element="test"
+    ///         Key="name"
+    ///         Value ="new"
+    ///         InsertBeforeXPath="/xs:schema/xs:log[@name='logger']"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -337,9 +354,9 @@ namespace MSBuild.ExtensionPack.Xml
                 }
             }
 
+            this.namespaceManager = this.GetNamespaceManagerForDoc();
             if (!string.IsNullOrEmpty(this.XPath))
             {
-                this.namespaceManager = this.GetNamespaceManagerForDoc();
                 this.elements = this.xmlFileDoc.SelectNodes(this.XPath, this.namespaceManager);
             }
 
@@ -520,7 +537,7 @@ namespace MSBuild.ExtensionPack.Xml
             if (string.IsNullOrEmpty(this.XPath))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Attribute: {0}", this.Key));
-                XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element);
+                XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element, this.namespaceManager);
                 if (elementNode == null)
                 {
                     Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
@@ -557,7 +574,7 @@ namespace MSBuild.ExtensionPack.Xml
             if (string.IsNullOrEmpty(this.XPath))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Set Attribute: {0}={1}", this.Key, this.Value));
-                XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element);
+                XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element, this.namespaceManager);
                 if (elementNode == null)
                 {
                     Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
@@ -631,7 +648,7 @@ namespace MSBuild.ExtensionPack.Xml
             if (string.IsNullOrEmpty(this.XPath))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Element: {0}", this.Element));
-                XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement);
+                XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement, this.namespaceManager);
                 if (parentNode == null)
                 {
                     Log.LogError("ParentElement not found: " + this.ParentElement);
@@ -639,7 +656,7 @@ namespace MSBuild.ExtensionPack.Xml
                 }
 
                 // Ensure node does not already exist
-                XmlNode newNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement + "/" + this.Element);
+                XmlNode newNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement + "/" + this.Element, this.namespaceManager);
                 if (newNode == null)
                 {
                     newNode = this.CreateElement();
@@ -659,11 +676,11 @@ namespace MSBuild.ExtensionPack.Xml
                     }
                     else if (!string.IsNullOrEmpty(this.InsertAfterXPath))
                     {
-                        parentNode.InsertAfter(newNode, parentNode.SelectSingleNode(this.InsertAfterXPath));
+                        parentNode.InsertAfter(newNode, parentNode.SelectSingleNode(this.InsertAfterXPath, this.namespaceManager));
                     }
                     else if (!string.IsNullOrEmpty(this.InsertBeforeXPath))
                     {
-                        parentNode.InsertBefore(newNode, parentNode.SelectSingleNode(this.InsertBeforeXPath));
+                        parentNode.InsertBefore(newNode, parentNode.SelectSingleNode(this.InsertBeforeXPath, this.namespaceManager));
                     }
 
                     this.TrySave();
@@ -744,14 +761,14 @@ namespace MSBuild.ExtensionPack.Xml
             if (string.IsNullOrEmpty(this.XPath))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Element: {0}", this.Element));
-                XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement);
+                XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement, this.namespaceManager);
                 if (parentNode == null)
                 {
                     Log.LogError("ParentElement not found: " + this.ParentElement);
                     return;
                 }
 
-                XmlNode nodeToRemove = this.xmlFileDoc.SelectSingleNode(this.ParentElement + "/" + this.Element);
+                XmlNode nodeToRemove = this.xmlFileDoc.SelectSingleNode(this.ParentElement + "/" + this.Element, this.namespaceManager);
                 if (nodeToRemove != null)
                 {
                     parentNode.RemoveChild(nodeToRemove);

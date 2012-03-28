@@ -88,7 +88,7 @@
             <Uri>http://mynamespace</Uri>
         </Namespaces>
         <XMLConfigElementsToDelete1 Include="c:\test.xml">
-            <XPath>//me:MyNodes/sources</XPath>
+            <XPath>//me:MyNodes/me:sources</XPath>
         </XMLConfigElementsToDelete1>
         <XMLConfigElementsToAdd1 Include="c:\test.xml">
             <XPath>//me:MyNodes</XPath>
@@ -98,5 +98,22 @@
     <Target Name="DefaultWithNameSpace">
         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="RemoveElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToDelete1.Identity)" XPath="%(XMLConfigElementsToDelete1.XPath)" Condition="'%(XMLConfigElementsToDelete1.Identity)'!=''"/>
         <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement" Namespaces="@(Namespaces)" File="%(XMLConfigElementsToAdd1.Identity)" Key="%(XMLConfigElementsToAdd1.KeyAttributeName)" Value="%(XMLConfigElementsToAdd1.KeyAttributeValue)" Element="%(XMLConfigElementsToAdd1.Name)" XPath="%(XMLConfigElementsToAdd1.XPath)" Condition="'%(XMLConfigElementsToAdd1.Identity)'!=''"/>
+    </Target>
+    <ItemGroup>
+        <Namespaces2 Include="Mynamespace">
+            <Prefix>xs</Prefix>
+            <Uri>http://www.w3.org/2001/XMLSchema</Uri>
+        </Namespaces2>
+    </ItemGroup>
+    <Target Name="InsertBeforeXPath">
+        <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="AddElement"
+        File="d:\a\tempinsertbeforexpath.xml"
+        Namespaces="@(Namespaces2)"
+        ParentElement="/xs:schema"
+        Prefix="xs"
+        Element="test"
+        Key="name"
+        Value ="new"
+        InsertBeforeXPath="/xs:schema/xs:log[@name='logger']"/>
     </Target>
 </Project>
