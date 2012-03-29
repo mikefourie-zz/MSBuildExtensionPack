@@ -681,7 +681,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The title of the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyTitleAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/zf8bbayf(v=vs.100).aspx">
         ///     assembly title</a> set this to the specific title you want. For example, for Visual
         ///     Studio 2005 this is set to "Microsoft® Visual Studio® 2005".</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
@@ -697,7 +697,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The description of the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyDescriptionAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/05bfs1hb(v=vs.100).aspx">
         ///     assembly description</a> set this to the specific description you want. For
         ///     example, for Visual Studio 2005 this is set to "Microsoft Visual Studio
         ///     2005".</para>
@@ -714,7 +714,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The configuration of the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemreflectionassemblyconfigurationattributeclasstopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/zf72c7kz(v=vs.100).aspx">
         ///     assembly configuration text</a> set this to the specific configuration text you
         ///     want.</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
@@ -730,7 +730,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The company that created the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyCompanyAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/bw6s9761(v=vs.100).aspx">
         ///     assembly company</a> set this to the specific company name you want. For example,
         ///     for Visual Studio 2005 this is set to "Microsoft Corporation".</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
@@ -746,7 +746,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The product name of the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyCompanyAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/system.reflection.assemblyproductattribute.aspx">
         ///     assembly company</a> set this to the specific company name you want. For example,
         ///     for Visual Studio 2005 assemblies this is set to "Microsoft® Visual Studio®
         ///     2005".</para>
@@ -763,7 +763,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The copyright information for the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyCopyrightAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/system.reflection.assemblycopyrightattribute(v=vs.100).aspx">
         ///     assembly copyright</a> set this to the specific copyright text you want. For
         ///     example, for Visual Studio 2005 assemblies this is set to "© Microsoft Corporation.
         ///     All rights reserved.".</para>
@@ -780,7 +780,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>The trademark information for the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyTrademarkAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/hk2dbf64(v=vs.100).aspx">
         ///     assembly trademark</a> set this to the specific trademark text you want.</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
         ///     <em>AssemblyTrademark</em> property.</para>
@@ -792,18 +792,27 @@ namespace MSBuild.ExtensionPack.Framework
         /// </example>
         public string AssemblyTrademark { get; set; }
 
-        /// <summary>Defines additional version information for an assembly manifest.</summary>
+        /// <summary>The AssemblyInformationalVersion for the assembly.</summary>
         /// <remarks>
-        ///     <para>The attribute defined by this class attaches additional version information to an assembly. If this attribute is applied to an assembly, the string it specifies can be obtained at run time by using the Application.ProductVersion property. </para>
-        ///     <para>The string is also used in the path and registry key provided by the Application.UserAppDataPath property and the Application.UserAppDataRegistry property. If the AssemblyInformationalVersionAttribute is not applied to an assembly, the version number specified by the AssemblyVersionAttribute attribute is used instead.</para>
-        ///     <para>Although you can specify any text, a warning message appears on compilation if the string is not in the format used by the assembly version number, or if it is in that format but contains wildcard characters. This warning is harmless.</para>
+        ///     <para>The 
+        ///     <a href="http://msdn.microsoft.com/en-us/library/system.reflection.assemblyinformationalversionattribute(v=vs.100).aspx">
+        /// AssemblyInformationalVersion </a> attribute attaches additional version information to an assembly. If this attribute is applied to an assembly, the string it specifies can be obtained at run time by using the Application.ProductVersion property. The string is also used in the path and registry key provided by the Application.UserAppDataPath property and the Application.UserAppDataRegistry property. If the AssemblyInformationalVersionAttribute is not applied to an assembly, the version number specified by the AssemblyVersionAttribute attribute is used instead.
+        /// Although you can specify any text, a warning message appears on compilation if the string is not in the format used by the assembly version number, or if it is in that format but contains wildcard characters. This warning is harmless. </para>
         /// </remarks>
+        /// <example>
+        ///     <code lang="xml">
+        /// &lt;AssemblyInformationalVersion&gt;1.2.3.4&lt;/AssemblyInformationalVersion&gt;
+        ///     </code>
+        /// </example>
+        public string AssemblyInformationalVersion { get; set; }
+
+        /// <summary>Set to true to update the AssemblyInformationalVersion.</summary>
         public bool UpdateAssemblyInformationalVersion { get; set; }
 
         /// <summary>The culture information for the assembly.</summary>
         /// <remarks>
         ///     <para>To change the
-        ///     <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfSystemReflectionAssemblyCultureAttributeClassTopic.asp">
+        ///     <a href="http://msdn.microsoft.com/en-us/library/de8csy41(v=vs.100).aspx">
         ///     assembly culture</a> set this to the specific culture text you want. For example,
         ///     for the English satellite resources this is set to "en".</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
@@ -1015,7 +1024,14 @@ namespace MSBuild.ExtensionPack.Framework
                     {
                         if (this.ValidateFileEntry("AssemblyInformationalVersion", assemblyInfo, "AssemblyInformationalVersion", item.ItemSpec))
                         {
-                            assemblyInfo["AssemblyInformationalVersion"] = versionToUpdate.ToString();
+                            if (string.IsNullOrEmpty(this.AssemblyInformationalVersion))
+                            {
+                                assemblyInfo["AssemblyInformationalVersion"] = versionToUpdate.ToString();
+                            }
+                            else
+                            {
+                                assemblyInfo["AssemblyInformationalVersion"] = this.AssemblyInformationalVersion;
+                            }
                         }
                     }
                     
