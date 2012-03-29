@@ -91,11 +91,11 @@ namespace MSBuild.ExtensionPack.Framework
     /// Right-click on the project in Solution Explorer and select Edit [project file]
     /// If the AssemblyInfoTask was installed into the Global Assembly Cache add the following line at the end of the project file after the last &lt;Import&gt; tag:
     /// <para/>
-    /// &lt;Import Project="$(MSBuildExtensionsPath)\Microsoft\AssemblyInfoTask\MSBuild.ExtensionPack.VersionNumber.targets"/&gt;
+    /// &lt;Import Project="$(MSBuildExtensionsPath)\Microsoft\ExtensionPack\MSBuild.ExtensionPack.VersionNumber.targets"/&gt;
     /// <para/>
     /// If the AssemblyInfoTask was installed into the user's Application Data folder add the following line at the end of the project file after the last &lt;Import&gt; tag:
     /// <para/>
-    /// &lt;Import Project="$(APPDATA)\Microsoft\MSBuild\AssemblyInfoTask\MSBuild.ExtensionPack.VersionNumber.targets"/&gt;
+    /// &lt;Import Project="$(APPDATA)\Microsoft\MSBuild\ExtensionPack\MSBuild.ExtensionPack.VersionNumber.targets"/&gt;
     /// Save and close the project file 
     /// Right-click on the project in Solution Explorer and select Reload Project
     /// With these project file modifications all builds will have auto-incrementing assembly and file versions of the following format:
