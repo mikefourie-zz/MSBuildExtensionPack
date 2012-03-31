@@ -138,6 +138,9 @@ namespace MSBuild.ExtensionPack.Subversion
             set { base.TaskAction = value; }
         }
 
+        /// <summary>
+        /// The item that the Version, Info, GetProperty, SetProperty and Export actions use.
+        /// </summary>
         [TaskAction(VersionTaskAction, true)]
         [TaskAction(InfoTaskAction, true)]
         [TaskAction(GetPropertyTaskAction, true)]
@@ -145,6 +148,9 @@ namespace MSBuild.ExtensionPack.Subversion
         [TaskAction(ExportTaskAction, true)]
         public ITaskItem Item { get; set; }
 
+        /// <summary>
+        /// The items that the Checkout, Update, Add, Copy, Delete, Move and Commit actions use.
+        /// </summary>
         [TaskAction(CheckoutTaskAction, true)]
         [TaskAction(UpdateTaskAction, true)]
         [TaskAction(AddTaskAction, true)]
@@ -154,21 +160,33 @@ namespace MSBuild.ExtensionPack.Subversion
         [TaskAction(CommitTaskAction, true)]
         public ITaskItem[] Items { get; set; }
 
+        /// <summary>
+        /// The destination that the Checkout, Copy, Move and Export actions use.
+        /// </summary>
         [TaskAction(CheckoutTaskAction, true)]
         [TaskAction(CopyTaskAction, true)]
         [TaskAction(MoveTaskAction, true)]
         [TaskAction(ExportTaskAction, true)]
         public ITaskItem Destination { get; set; }
 
+        /// <summary>
+        /// Filled up by the Version and Info actions.
+        /// </summary>
         [Output]
         [TaskAction(VersionTaskAction, false)]
         [TaskAction(InfoTaskAction, false)]
         public ITaskItem Info { get; set; }
 
+        /// <summary>
+        /// The name of the property that the GetProperty and SetProperty actions use.
+        /// </summary>
         [TaskAction(GetPropertyTaskAction, true)]
         [TaskAction(SetPropertyTaskAction, true)]
         public string PropertyName { get; set; }
 
+        /// <summary>
+        /// The value of the property that the GetProperty action returns and the SetProperty action sets.
+        /// </summary>
         [TaskAction(GetPropertyTaskAction, false)]
         [TaskAction(SetPropertyTaskAction, true)]
         [Output]
