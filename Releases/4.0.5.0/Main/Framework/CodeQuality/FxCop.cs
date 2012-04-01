@@ -506,6 +506,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = arguments;
+                proc.StartInfo.CreateNoWindow = true;
                 this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
 
