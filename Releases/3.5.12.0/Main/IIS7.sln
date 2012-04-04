@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IIS7", "IIS7\IIS7.csproj", "{A2B689B5-516B-4E6F-87D6-0EE111E0F049}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs08.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IIS7\\IIS7.csproj
+		SccProjectName1 = IIS7
+		SccLocalPath1 = IIS7
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2B689B5-516B-4E6F-87D6-0EE111E0F049}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

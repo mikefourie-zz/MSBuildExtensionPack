@@ -1,0 +1,27 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <DrivesToSkip Include="A:\"/>
+    </ItemGroup>
+    <Target Name="Default">
+        <!--- Check drive space -->
+        <MSBuild.ExtensionPack.Computer.SystemDrive TaskAction="CheckDriveSpace" Drive="c:\" MachineName="AMachine" UserName="Administrator" UserPassword="APassword" MinSpace="46500" Unit="Mb" ContinueOnError="true"/>
+        <!--- Check drive space on a remote machine -->
+        <MSBuild.ExtensionPack.Computer.SystemDrive TaskAction="GetDrives" SkipDrives="@(DrivesToSkip)" MachineName="AMachine" UserName="Administrator" UserPassword="APassword">
+            <Output TaskParameter="Drives" ItemName="SystemDrivesRemote"/>
+        </MSBuild.ExtensionPack.Computer.SystemDrive>
+        <Message Text="Remote Drive: %(SystemDrivesRemote.Identity), DriveType: %(SystemDrivesRemote.DriveType), Name: %(SystemDrivesRemote.Name), VolumeLabel: %(SystemDrivesRemote.VolumeLabel), DriveFormat: %(SystemDrivesRemote.DriveFormat), TotalSize: %(SystemDrivesRemote.TotalSize), TotalFreeSpace=%(SystemDrivesRemote.TotalFreeSpace), AvailableFreeSpace=%(SystemDrivesRemote.AvailableFreeSpace)IsReady=%(SystemDrivesRemote.IsReady), RootDirectory=%(SystemDrivesRemote.RootDirectory)"/>
+        <!--- Check drive space using different units -->
+        <MSBuild.ExtensionPack.Computer.SystemDrive TaskAction="CheckDriveSpace" Drive="c:\" MinSpace="46500" Unit="Mb" ContinueOnError="true"/>
+        <MSBuild.ExtensionPack.Computer.SystemDrive TaskAction="CheckDriveSpace" Drive="c:\" MinSpace="1" Unit="Gb"/>
+        <!-- Get the drives on a machine -->
+        <MSBuild.ExtensionPack.Computer.SystemDrive TaskAction="GetDrives" SkipDrives="@(DrivesToSkip)">
+            <Output TaskParameter="Drives" ItemName="SystemDrives"/>
+        </MSBuild.ExtensionPack.Computer.SystemDrive>
+        <Message Text="Drive: %(SystemDrives.Identity), DriveType: %(SystemDrives.DriveType), Name: %(SystemDrives.Name), VolumeLabel: %(SystemDrives.VolumeLabel), DriveFormat: %(SystemDrives.DriveFormat), TotalSize: %(SystemDrives.TotalSize), TotalFreeSpace=%(SystemDrives.TotalFreeSpace), AvailableFreeSpace=%(SystemDrives.AvailableFreeSpace)IsReady=%(SystemDrives.IsReady), RootDirectory=%(SystemDrives.RootDirectory)"/>
+    </Target>
+</Project>

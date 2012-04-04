@@ -1,0 +1,34 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <Namespaces Include="XmlSchema">
+            <Prefix>xs</Prefix>
+            <Uri>http://www.w3.org/2001/XMLSchema</Uri>
+        </Namespaces>
+        <Database Include="Wat">
+            <ObjectsToScript>Work Item;Tfs_AnalysisDataSourceView</ObjectsToScript>
+        </Database>
+    </ItemGroup>
+    <Target Name="Default">
+        <!-- Generate Script for Alter on a database -->
+        <MSBuild.ExtensionPack.Sql2008.AnalysisServices TaskAction="Process" DatabaseItem="Wat" OutputFile="C:\a\testScriptAlter.xml"/>
+
+    
+        <!-- Generate Script for Alter on a database restricting to some objects -->
+        <!--
+    <MSBuild.ExtensionPack.Sql2008.AnalysisServices TaskAction="ScriptAlter" DatabaseItem="@(Database)" OutputFile="testScriptAlterSomeObjects.xml"/>
+
+    -->
+        <!-- Execute a script -->
+        <!--
+    <MSBuild.ExtensionPack.Sql2008.AnalysisServices TaskAction="Execute" InputFile="testScriptAlter.xml"/>-->
+
+        <!-- Process a cube with Default or Full process type -->
+        <!--<MSBuild.ExtensionPack.Sql2008.AnalysisServices TaskAction="Process" DatabaseItem="@(Database)" />
+        <MSBuild.ExtensionPack.Sql2008.AnalysisServices TaskAction="Process" DatabaseItem="@(Database)" ProcessType="ProcessFull"/>-->
+    </Target>
+</Project>
