@@ -103,7 +103,6 @@
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility" />
     <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
@@ -113,7 +112,6 @@
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System">
       <Name>System</Name>
@@ -124,9 +122,6 @@
     </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -146,9 +141,6 @@
     </Reference>
     <Reference Include="System.Messaging">
       <Name>System.Messaging</Name>
-    </Reference>
-    <Reference Include="System.Security">
-      <Name>System.Security</Name>
     </Reference>
     <Reference Include="System.ServiceProcess">
       <Name>System.ServiceProcess</Name>
@@ -213,10 +205,16 @@
     <Compile Include="Framework\AsyncExec.cs" />
     <Compile Include="Framework\CommandLine.cs" />
     <Compile Include="Framework\ConfigManager.cs" />
+    <Compile Include="Framework\Parallel.cs" />
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Framework\ILMerge.cs" />
     <Compile Include="Framework\SmartExec.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Security\CertificateNativeMethods.cs" />
     <Compile Include="SqlServer\BuildDeploymentManifest.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs">
@@ -226,12 +224,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServer\SqlScriptLoader.cs" />
+    <Compile Include="Subversion\Schema.cs">
+      <DependentUpon>Schema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Subversion\Svn.cs" />
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ConfirmForm.Designer.cs">
       <DependentUpon>ConfirmForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
     <Compile Include="VisualStudio\VBPProject.cs" />
     <Compile Include="VisualStudio\VC6.cs" />
     <Compile Include="VisualStudio\VSDevEnv.cs" />
@@ -379,6 +382,9 @@
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="Subversion\Schema.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="VisualStudio\MSBuild.ExtensionPack.VC6.targets" />
     <None Include="XmlSamples\AsyncExec.proj" />
     <None Include="XmlSamples\ConfigManager.proj" />
@@ -389,6 +395,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\Parallel.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\MSMQ.proj" />
     <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
@@ -471,6 +480,10 @@
     <EmbeddedResource Include="Computer\GetPasswordForm.resx">
       <DependentUpon>GetPasswordForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\ConfirmForm.resx">
       <DependentUpon>ConfirmForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -488,9 +501,15 @@
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
+      <Link>CodeAnalysis.Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />
+    <Content Include="Computer\lock-open.png" />
+    <Content Include="Computer\lock.ico" />
+    <Content Include="Computer\lock.png" />
     <Content Include="XmlSamples\MotorData\Cars\Dodge.txt" />
     <Content Include="XmlSamples\MotorData\Cars\lexus.txt" />
     <Content Include="XmlSamples\MotorData\rootfile1.txt" />

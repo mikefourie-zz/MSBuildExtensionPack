@@ -7,6 +7,12 @@
     <Recognized>
       <Word>Dlr</Word>
     </Recognized>
+    <Recognized>
+      <Word>svn</Word>
+    </Recognized>
+    <Recognized>
+      <Word>Cygwin</Word>
+    </Recognized>
     <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->

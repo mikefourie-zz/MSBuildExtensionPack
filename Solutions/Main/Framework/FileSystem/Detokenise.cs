@@ -18,7 +18,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> SearchAllStores, IgnoreUnknownTokens, CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
     /// <para><i>Report</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TokenPattern, ReportUnusedTokens <b>Output: </b>FilesProcessed, TokenReport, UnusedTokens)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
@@ -197,6 +197,18 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
         public bool ForceWrite { get; set; }
+
+        /// <summary>
+        /// Specifies whether to search in the ReplacementValues, CommandLineValues and the ProjectFile for token values. Default is false.
+        /// </summary>
+        [TaskAction(DetokeniseTaskAction, false)]
+        public bool SearchAllStores { get; set; }
+        
+        /// <summary>
+        /// Specifies whether to ignore tokens which are not matched. Default is false.
+        /// </summary>
+        [TaskAction(DetokeniseTaskAction, false)]
+        public bool IgnoreUnknownTokens { get; set; }
 
         /// <summary>
         /// Sets the TargetPath.
@@ -383,16 +395,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                 if (this.ReplacementValues == null && string.IsNullOrEmpty(this.CommandLineValues))
                 {
                     this.collectionMode = false;
-
-                    // Read the project file to get the tokens
-                    string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
-                    this.project = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFile).FirstOrDefault();
-                    if (this.project == null)
-                    {
-                        ProjectCollection.GlobalProjectCollection.LoadProject(projectFile);
-                        this.project = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFile).FirstOrDefault();
-                    }
                 }
                 else if (!string.IsNullOrEmpty(this.CommandLineValues))
                 {
@@ -402,6 +404,19 @@ namespace MSBuild.ExtensionPack.FileSystem
                     {
                         string[] temp = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                         this.commandLineDictionary.Add(temp[0], temp[1]);
+                    }
+                }
+
+                if (this.project == null)
+                {
+                    // Read the project file to get the tokens
+                    string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
+                    this.project = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFile).FirstOrDefault();
+                    if (this.project == null)
+                    {
+                        ProjectCollection.GlobalProjectCollection.LoadProject(projectFile);
+                        this.project = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFile).FirstOrDefault();
                     }
                 }
 
@@ -613,7 +628,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                     }
 
-                    if (!this.report)
+                    if (!this.report && !this.SearchAllStores && !this.IgnoreUnknownTokens)
                     {
                         Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                         throw new ArgumentException("Review error log");
@@ -621,25 +636,28 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
 
                 // we need to look in the CommandLineValues
-                try
+                if (this.commandLineDictionary != null)
                 {
-                    string replacement = this.commandLineDictionary[extractedProperty];
-
-                    // set the bool so we can write the new file content
-                    this.tokenMatched = true;
-                    if (this.report)
+                    try
                     {
-                        this.UpdateTokenDictionary(extractedProperty);
+                        string replacement = this.commandLineDictionary[extractedProperty];
+
+                        // set the bool so we can write the new file content
+                        this.tokenMatched = true;
+                        if (this.report)
+                        {
+                            this.UpdateTokenDictionary(extractedProperty);
+                        }
+
+                        return replacement;
                     }
-
-                    return replacement;
-                }
-                catch
-                {
-                    if (!this.report)
+                    catch
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
-                        throw new ArgumentException("Review error log");
+                        if (!this.report && !this.SearchAllStores && !this.IgnoreUnknownTokens)
+                        {
+                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                            throw new ArgumentException("Review error log");
+                        }
                     }
                 }
             }
@@ -647,10 +665,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             // we need to look in the calling project's properties collection
             if (this.project.GetProperty(extractedProperty) == null)
             {
-                if (!this.report)
+                if (!this.report && !this.IgnoreUnknownTokens)
                 {
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                     throw new ArgumentException("Review error log");
+                }
+                
+                if (this.IgnoreUnknownTokens)
+                {
+                    return string.Format(CultureInfo.InvariantCulture, "$({0})", extractedProperty);
                 }
             }
 
@@ -661,7 +684,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 this.UpdateTokenDictionary(extractedProperty);
             }
 
-            return this.report ? string.Empty : (from p in this.project.AllEvaluatedProperties where p.Name == extractedProperty select p.EvaluatedValue).FirstOrDefault();
+            return this.report ? string.Empty : (from p in this.project.AllEvaluatedProperties where string.Equals(p.Name, extractedProperty, StringComparison.OrdinalIgnoreCase) select p.EvaluatedValue).FirstOrDefault();
         }
 
         private void UpdateTokenDictionary(string extractedProperty)

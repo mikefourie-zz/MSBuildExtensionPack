@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/b66e00d5-adec-2163-3878-e5812f7f53a5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/b66e00d5-adec-2163-3878-e5812f7f53a5.htm")]
     public class VSDevEnv : ToolTask
     {
         private string version = "9.0";
@@ -78,12 +78,18 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         protected override string GenerateFullPathToTool()
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\" + this.Version);
-            if (key != null)
+            using (RegistryKey sw = Utilities.SoftwareRegistry32Bit)
             {
-                string path = Convert.ToString(key.GetValue("InstallDir"), CultureInfo.InvariantCulture);
-                key.Close();
-                return System.IO.Path.Combine(path, this.ToolName);
+                if (sw != null)
+                {
+                    RegistryKey key = sw.OpenSubKey(@"Microsoft\VisualStudio\" + this.Version);
+                    if (key != null)
+                    {
+                        string path = Convert.ToString(key.GetValue("InstallDir"), CultureInfo.InvariantCulture);
+                        key.Close();
+                        return System.IO.Path.Combine(path, this.ToolName);
+                    }
+                }
             }
 
             throw new Exception(string.Format(CultureInfo.InvariantCulture, "Visual Studio Registry Key not found: {0}", @"SOFTWARE\Microsoft\VisualStudio\" + this.Version));

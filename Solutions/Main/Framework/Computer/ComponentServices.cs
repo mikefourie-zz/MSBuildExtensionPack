@@ -27,10 +27,13 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddComponent</i> (<b>Required: </b>Path, ApplicationName <b>Optional: </b>Activation, Identity, Password, Framework)</para>
+    /// <para><i>AddNativeComponent</i> (<b>Required: </b>Path, ApplicationName <b>Optional: </b>Activation, Identity, Password, Framework)</para>
     /// <para><i>CheckApplicationExists</i> (<b>Required: </b> ApplicationName <b>Output: </b>Exists)</para>
+    /// <para><i>CreateApplication</i> (<b>Required: </b> ApplicationName <b>Optional: </b>Activation, EnforceAccessChecks, Identity, Password)</para>
     /// <para><i>DeleteApplication</i> (<b>Required: </b>ApplicationName)</para>
     /// <para><i>RemoveComponent</i> (<b>Required: </b>Path <b>Optional: </b>Framework)</para>
     /// <para><i>SetConstructor</i> (<b>Required: </b>ApplicationName, ComponentName, ConstructorString)</para>
+    /// <para><i>SetAccessIisIntrinsicProperties</i> (<b>Required: </b>ApplicationName, ComponentName <b>Optional: </b>AllowIntrinsicIisProperties)</para>
     /// <para><i>SetTransactionSupport</i> (<b>Required: </b>ApplicationName, ComponentName, Transaction)</para>
     /// <para><i>ShutDownApplication</i> (<b>Required: </b>ApplicationName)</para>
     /// <para><i>UpdateApplication</i> (<b>Required: </b>ApplicationName <b>Optional: </b>Activation, Identity, Password)</para>
@@ -77,15 +80,18 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/dab48c6f-9775-22d4-988b-81eba0e3a3a6.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/dab48c6f-9775-22d4-988b-81eba0e3a3a6.htm")]
     public class ComponentServices : BaseTask
     {
         private const string AddComponentTaskAction = "AddComponent";
+        private const string AddNativeComponentTaskAction = "AddNativeComponent";
         private const string CheckApplicationExistsTaskAction = "CheckApplicationExists";
+        private const string CreateApplicationTaskAction = "CreateApplication";
         private const string DeleteApplicationTaskAction = "DeleteApplication";
         private const string RemoveComponentTaskAction = "RemoveComponent";
         private const string SetConstructorTaskAction = "SetConstructor";
         private const string SetTransactionSupportTaskAction = "SetTransactionSupport";
+        private const string SetAccessIisIntrinsicPropertiesTaskAction = "SetAccessIisIntrinsicProperties";
         private const string ShutDownApplicationTaskAction = "ShutDownApplication";
         private const string UpdateApplicationTaskAction = "UpdateApplication";
         private ShellWrapper shellWrapper;
@@ -93,13 +99,17 @@ namespace MSBuild.ExtensionPack.Computer
         private CSActivation activation = CSActivation.Local;
         private string pathToFramework;
         private TransactionOption compTransaction = TransactionOption.NotSupported;
+        private bool enforceAccessChecks = true;
 
         [DropdownValue(AddComponentTaskAction)]
+        [DropdownValue(AddNativeComponentTaskAction)]
         [DropdownValue(CheckApplicationExistsTaskAction)]
+        [DropdownValue(CreateApplicationTaskAction)]
         [DropdownValue(DeleteApplicationTaskAction)]
         [DropdownValue(RemoveComponentTaskAction)]
         [DropdownValue(SetConstructorTaskAction)]
         [DropdownValue(SetTransactionSupportTaskAction)]
+        [DropdownValue(SetAccessIisIntrinsicPropertiesTaskAction)]
         [DropdownValue(ShutDownApplicationTaskAction)]
         [DropdownValue(UpdateApplicationTaskAction)]
         public override string TaskAction
@@ -142,7 +152,9 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the name of the COM+ Application.
         /// </summary>
         [TaskAction(AddComponentTaskAction, true)]
+        [TaskAction(AddNativeComponentTaskAction, true)]
         [TaskAction(CheckApplicationExistsTaskAction, true)]
+        [TaskAction(CreateApplicationTaskAction, true)]
         [TaskAction(DeleteApplicationTaskAction, true)]
         [TaskAction(SetConstructorTaskAction, true)]
         [TaskAction(SetTransactionSupportTaskAction, true)]
@@ -154,6 +166,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the path to the DLL to be added to the application
         /// </summary>
         [TaskAction(AddComponentTaskAction, true)]
+        [TaskAction(AddNativeComponentTaskAction, true)]
         [TaskAction(RemoveComponentTaskAction, true)]
         public string Path { get; set; }
 
@@ -161,6 +174,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the process identity for the application. Specify a valid user account or "Interactive User" to have the application assume the identity of the current logged-on user.
         /// </summary>
         [TaskAction(AddComponentTaskAction, false)]
+        [TaskAction(AddNativeComponentTaskAction, false)]
         [TaskAction(UpdateApplicationTaskAction, false)]
         public string Identity { get; set; }
 
@@ -179,8 +193,27 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the type of activation for the application. Defaults to "Local". Supports: Local (server application), Inproc (library application)
         /// </summary>
         [TaskAction(AddComponentTaskAction, false)]
+        [TaskAction(AddNativeComponentTaskAction, false)]
         [TaskAction(UpdateApplicationTaskAction, false)]
         public string Activation { get; set; }
+
+        /// <summary>
+        /// Sets whether or not component services enforces access checks for this application. Defaults to "True". Supports: True (Enforce access checks), False 
+        /// </summary>
+        [TaskAction(CreateApplicationTaskAction, false)]
+        [TaskAction(UpdateApplicationTaskAction, false)]
+        public bool EnforceAccessChecks
+        {
+            get { return this.enforceAccessChecks; }
+            set { this.enforceAccessChecks = value; }
+        }
+
+        /// <summary>
+        /// Sets whether or not component services allows access to Intrinsic IIS properties, used for Windows 2003
+        /// components on Windows 2008 and later. Defaults to "False". Supports: True, False (allow access to Intrinsic IIS properties)
+        /// </summary>
+        [TaskAction(SetAccessIisIntrinsicPropertiesTaskAction, true)]
+        public bool AllowIntrinsicIisProperties { get; set; }
 
         protected override void InternalExecute()
         {
@@ -196,11 +229,17 @@ namespace MSBuild.ExtensionPack.Computer
                 case "AddComponent":
                     this.AddComponent();
                     break;
+                case "AddNativeComponent":
+                    this.AddNativeComponent();
+                    break;
                 case "SetTransactionSupport":
                     this.SetTransactionSupport();
                     break;
                 case "SetConstructor":
                     this.SetConstructor();
+                    break;
+                case "SetAccessIisIntrinsicProperties":
+                    this.SetAccessIisIntrinsicProperties();
                     break;
                 case "DeleteApplication":
                     this.DeleteApplication();
@@ -219,6 +258,9 @@ namespace MSBuild.ExtensionPack.Computer
                     break;
                 case "RemoveComponent":
                     this.RemoveComponent();
+                    break;
+                case "CreateApplication":
+                    this.CreateApplication();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -326,8 +368,40 @@ namespace MSBuild.ExtensionPack.Computer
                     {
                         if (component.Name.ToString() == this.ComponentName)
                         {
-                            component.set_Value("ConstructorString", this.ConstructorString ?? string.Empty);
                             component.set_Value("ConstructionEnabled", !string.IsNullOrEmpty(this.ConstructorString));
+                            component.set_Value("ConstructorString", this.ConstructorString ?? string.Empty);
+                            componentCollection.SaveChanges();
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            appCollection.SaveChanges();
+        }
+
+        private void SetAccessIisIntrinsicProperties()
+        {
+            if (!this.CheckApplicationExists())
+            {
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SetAccessIisIntrinsicProperties on Component: {0}", this.ComponentName));
+            COMAdminCatalogCollection appCollection = GetApplications();
+            foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
+            {
+                if (app.Name.ToString() == this.ApplicationName)
+                {
+                    COMAdmin.ICatalogCollection componentCollection = (COMAdmin.ICatalogCollection)appCollection.GetCollection("Components", app.Key);
+                    componentCollection.Populate();
+                    foreach (COMAdmin.COMAdminCatalogObject component in componentCollection)
+                    {
+                        if (component.Name.ToString() == this.ComponentName)
+                        {
+                            component.set_Value("IISIntrinsics", this.AllowIntrinsicIisProperties);
                             componentCollection.SaveChanges();
                             break;
                         }
@@ -360,6 +434,7 @@ namespace MSBuild.ExtensionPack.Computer
                     }
 
                     app.set_Value("Activation", this.activation.ToString());
+                    app.set_Value("ApplicationAccessChecksEnabled", this.EnforceAccessChecks);
                     appCollection.SaveChanges();
                     break;
                 }
@@ -431,6 +506,31 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
+        private void CreateApplication()
+        {
+            if (this.CheckApplicationExists())
+            {
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application: {0}", this.ApplicationName));
+
+            COMAdminCatalogCollection appCollection = GetApplications();
+            COMAdminCatalogObject app = (COMAdminCatalogObject)appCollection.Add();
+            app.set_Value("Name", this.ApplicationName);
+            
+            if (!string.IsNullOrEmpty(this.Identity))
+            {
+                app.set_Value("Identity", this.Identity);
+                app.set_Value("Password", this.UserPassword ?? string.Empty);
+            }
+
+            app.set_Value("Activation", this.activation.ToString());
+            app.set_Value("ApplicationAccessChecksEnabled", this.EnforceAccessChecks);
+
+            appCollection.SaveChanges();
+        }
+
         private void AddComponent()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Component: {0} to Application: {1}", this.Path, this.ApplicationName));
@@ -447,8 +547,35 @@ namespace MSBuild.ExtensionPack.Computer
                 if (this.shellWrapper.Execute() != 0)
                 {
                     this.Log.LogError("Shell execute failed: " + this.shellWrapper.StandardOutput);
-                    return;
                 }
+            }
+        }
+
+        private void AddNativeComponent()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Native Component: {0} to Application: {1}", this.Path, this.ApplicationName));
+            if (System.IO.File.Exists(this.Path) == false)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path not found: {0}", this.Path));
+                return;
+            }
+
+            COMAdminCatalogCollection appCollection = GetApplications();
+            bool appExists = false;
+            foreach (COMAdmin.COMAdminCatalogObject app in appCollection)
+            {
+                if (app.Name.ToString() == this.ApplicationName)
+                {
+                    appExists = true;
+                    var cat = new COMAdminCatalog();
+                    cat.InstallComponent(app.Key.ToString(), this.Path, string.Empty, string.Empty);
+                    break;
+                }
+            }
+
+            if (!appExists)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Application not found: {0}", this.ApplicationName));
             }
         }
     }

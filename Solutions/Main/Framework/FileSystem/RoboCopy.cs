@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
     public class RoboCopy : ToolTask
     {
         /// <summary>

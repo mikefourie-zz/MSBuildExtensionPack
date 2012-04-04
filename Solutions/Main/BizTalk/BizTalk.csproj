@@ -79,14 +79,7 @@
     </Reference>
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\Attributes.cs">
@@ -128,6 +121,7 @@
     <Content Include="AssemblyReferences\Microsoft.BizTalk.ApplicationDeployment.Engine.dll" />
     <Content Include="AssemblyReferences\Microsoft.BizTalk.Deployment.dll" />
     <Content Include="AssemblyReferences\Microsoft.BizTalk.ExplorerOM.dll" />
+    <Content Include="AssemblyReferences\Microsoft.BizTalk.Operations.dll" />
     <Content Include="AssemblyReferences\Microsoft.XLANGs.BaseTypes.dll" />
   </ItemGroup>
   <ItemGroup>

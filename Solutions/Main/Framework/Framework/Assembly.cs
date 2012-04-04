@@ -57,6 +57,7 @@ namespace MSBuild.ExtensionPack.Framework
     ///         <Message Text="CultureDisplayName: %(Info.CultureDisplayName)" />
     ///         <Message Text="FileVersion: %(Info.FileVersion)" />
     ///         <Message Text="AssemblyVersion: %(Info.AssemblyVersion)" />
+    ///         <Message Text="AssemblyInformationalVersion: %(Info.AssemblyInformationalVersion)" />
     ///         <!-- This will cause a default constructor call only -->
     ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
     ///         <!--Invoke the assembly with the args collection of arguments -->
@@ -79,7 +80,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
     public class Assembly : BaseAppDomainIsolatedTask
     {
         private const string GetInfoTaskAction = "GetInfo";
@@ -128,7 +129,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Gets the outputitems.
         /// <para/>For a call to GetMethodInfo, OutputItems provides the following metadata: Parameters
-        /// <para/>For a call to GetInfo, OutputItems provides the following metadata: AssemblyVersion, FileVersion, Culture, CultureDisplayName, FullName, PublicKeyToken
+        /// <para/>For a call to GetInfo, OutputItems provides the following metadata: AssemblyVersion, FileVersion, Culture, CultureDisplayName, FullName, PublicKeyToken, AssemblyInformationalVersion
         /// </summary>
         [Output]
         [TaskAction(GetInfoTaskAction, false)]
@@ -205,7 +206,8 @@ namespace MSBuild.ExtensionPack.Framework
                 t.SetMetadata("Culture", this.loadedAssembly.GetName().CultureInfo.Name);
                 t.SetMetadata("CultureDisplayName", this.loadedAssembly.GetName().CultureInfo.DisplayName);
                 t.SetMetadata("AssemblyVersion", this.loadedAssembly.GetName().Version.ToString());
-
+                t.SetMetadata("AssemblyInformationalVersion", FileVersionInfo.GetVersionInfo(this.loadedAssembly.Location).ProductVersion);
+                
                 // get the assembly file version
                 FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(this.loadedAssembly.Location);
                 System.Version v = new System.Version(versionInfo.FileMajorPart, versionInfo.FileMinorPart, versionInfo.FileBuildPart, versionInfo.FilePrivatePart);

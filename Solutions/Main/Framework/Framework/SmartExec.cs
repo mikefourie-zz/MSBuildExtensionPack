@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/a8806f52-767f-44b1-6416-98f44cb0234c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/a8806f52-767f-44b1-6416-98f44cb0234c.htm")]
     public class SmartExec : BaseAppDomainIsolatedTask
     {
         private Process process;
@@ -67,8 +67,8 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override void InternalExecute()
         {
-            var tokens = this.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var commands = new List<string>(tokens.Length);
+            string[] tokens = this.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> commands = new List<string>();
             foreach (string command in tokens.Select(token => token.Trim()).Where(command => !string.IsNullOrEmpty(command)))
             {
                 commands.Add(command);
@@ -85,15 +85,12 @@ namespace MSBuild.ExtensionPack.Framework
             foreach (string fileName in commands.Select(command => HasCommandArguments(command) ? CreateBatchProgram(command) : command))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Execute: {0}", fileName));
-                var startInfo = GetCommandLine(fileName);
-
+                ProcessStartInfo startInfo = GetCommandLine(fileName);
                 using (BackgroundWorker worker = new BackgroundWorker())
                 {
                     worker.DoWork += (s, e) =>
                     {
                         this.process = Process.Start(startInfo);
-
-                        this.process.Start();
 
                         // Invoke stdOut and stdErr readers - each has its own thread to guarantee that they aren't
                         // blocked by, or cause a block to, the actual process running (or the gui).
@@ -114,12 +111,11 @@ namespace MSBuild.ExtensionPack.Framework
                     this.process.Close();
                     if (!(this.IgnoreExitCode || (exitCode == this.SuccessExitCode)))
                     {
-                        return;
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} failed with exit code: {1}", fileName, exitCode));
+                        break;
                     }
                 }
             }
-
-            return;
         }
 
         /// <summary>

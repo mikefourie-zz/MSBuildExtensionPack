@@ -1,0 +1,40 @@
+﻿<Project ToolsVersion="4.0" InitialTargets="Throttle" DefaultTargets="Normal;BuildTargetSetsInParallel;BuildTargetsInParallel" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <MyTargetSets Include="1">
+            <Targets>Target1;Target2</Targets>
+            <Properties>MyPropValue=MyPropValue1</Properties>
+        </MyTargetSets>
+        <MyTargetSets Include="2">
+            <Targets>Target3</Targets>
+        </MyTargetSets>
+        <MyTargets Include="Target1">
+            <Properties>MyPropValue=MyPropValue1</Properties>
+        </MyTargets>
+        <MyTargets Include="Target2;Target3"/>
+    </ItemGroup>
+    <Target Name="Normal" DependsOnTargets="Target1;Target2;Target3"/>
+    <Target Name="BuildTargetSetsInParallel">
+        <MSBuild.ExtensionPack.Framework.Parallel TaskAction="BuildTargetSetsInParallel" Targets="@(MyTargetSets)" AdditionalProperties="SkipInitial=true"/>
+    </Target>
+    <Target Name="BuildTargetsInParallel">
+        <MSBuild.ExtensionPack.Framework.Parallel TaskAction="BuildTargetsInParallel" Targets="@(MyTargets)" AdditionalProperties="SkipInitial=true"/>
+    </Target>
+    <Target Name="Target1">
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="1000"/>
+        <Message Text="MyPropValue = $(MyPropValue)" Importance="High"/>
+    </Target>
+    <Target Name="Target2">
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="4000"/>
+    </Target>
+    <Target Name="Target3">
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="2000"/>
+    </Target>
+    <Target Name="Throttle" Condition="$(SkipInitial) != 'true'">
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="1000"/>
+    </Target>
+</Project>

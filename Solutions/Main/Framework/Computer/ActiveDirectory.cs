@@ -116,7 +116,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>DeleteGroup</i> (<b>Required: </b> Group)</para>
     /// <para><i>DeleteUserFromGroup</i> (<b>Required: </b> User, Group)</para>
     /// <para><i>GetGroupMembers</i> (<b>Required: </b> Group <b>Optional: </b>GetFullMemberName <b>Output:</b> Members)</para>
-    /// <para><i>GetUserPassword</i> (<b>Required: </b>User  <b>Optional: </b>BindingContextOptions, ContextTypeStore, Domain <b>Output:</b> Password)</para>
+    /// <para><i>GetUserPassword</i> (<b>Required: </b>User  <b>Optional: </b>BindingContextOptions, ContextTypeStore, Domain, ErrorOnCancel<b>Output:</b> Password)</para>
     /// <para><i>GrantPrivilege</i> (<b>Required: </b>User, Privilege  <b>Optional: </b>Domain)</para>
     /// <para><i>RemoveGroupFromGroup</i> (<b>Required: </b> Parent, Group). Windows Server 2008 only.</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -207,7 +207,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
     public class ActiveDirectory : BaseTask
     {
         private const string AddUserTaskAction = "AddUser";
@@ -365,6 +365,12 @@ namespace MSBuild.ExtensionPack.Computer
             set { this.contextType = (ContextType)Enum.Parse(typeof(ContextType), value); }
         }
 
+        /// <summary>
+        /// Set to true to raise an error if the user clicks cancel on GetPassword form.
+        /// </summary>
+        [TaskAction(GetUserPasswordTaskAction, false)]
+        public bool ErrorOnCancel { get; set; }
+        
         /// <summary>
         /// Specifies the options that are used for binding to the server. Default is Negotiate
         /// </summary>
@@ -714,6 +720,12 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 form.ShowDialog();
                 this.Password = form.Password;
+
+                if (form.UserCanceled && this.ErrorOnCancel)
+                {
+                    this.Log.LogError("User Cancelled");
+                }
+
                 if (form.Exception != null)
                 {
                     this.Log.LogErrorFromException(form.Exception, this.LogExceptionStack, true, null);

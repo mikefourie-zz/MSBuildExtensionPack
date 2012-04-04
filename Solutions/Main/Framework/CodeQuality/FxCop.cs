@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// The FxCop task provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
+    /// <para><i>Analyse</i> (<b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory, References, AssemblyCompareMode <b>Output: </b>AnalysisFailed, OutputText, ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -53,12 +53,31 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/a111be65-19a8-05e0-5787-c187c3ee65f2.htm")]
     public class FxCop : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
         private bool logToConsole = true;
         private bool showSummary = true;
+        private CompareMode assemblyCompareMode = CompareMode.StrongName;
+
+        private enum CompareMode
+        {
+            /// <summary>
+            /// None
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// StrongName
+            /// </summary>
+            StrongName,
+
+            /// <summary>
+            /// StrongNameIgnoringVersion
+            /// </summary>
+            StrongNameIgnoringVersion
+        }
 
         [DropdownValue(AnalyseTaskAction)]
         public override string TaskAction
@@ -68,10 +87,26 @@ namespace MSBuild.ExtensionPack.CodeQuality
         }
 
         /// <summary>
+        /// Set the assembly comparison mode. Supports None, StrongName, StrongNameIgnoringVersion. Default is StrongName.
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public string AssemblyCompareMode
+        {
+            get { return this.assemblyCompareMode.ToString(); }
+            set { this.assemblyCompareMode = (CompareMode)Enum.Parse(typeof(CompareMode), value, true); }
+        }
+        
+        /// <summary>
         /// Sets the Item Collection of assemblies to analyse (/file option)
         /// </summary>
         [TaskAction(AnalyseTaskAction, true)]
         public ITaskItem[] Files { get; set; }
+
+        /// <summary>
+        /// Sets the Item Collection of assemblies to reference (/reference option)
+        /// </summary>
+        [TaskAction(AnalyseTaskAction, false)]
+        public ITaskItem[] References { get; set; }
 
         /// <summary>
         /// Sets the DependencyDirectories :(/directory option)
@@ -388,7 +423,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             if (this.Dictionary != null)
             {
-                arguments += "/dictionary:\"" + this.Dictionary.GetMetadata("FullPath") + "\"";
+                arguments += " /dictionary:\"" + this.Dictionary.GetMetadata("FullPath") + "\"";
             }
 
             if (this.ShowSummary)
@@ -399,7 +434,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
             if (this.Verbose)
             {
                 arguments += " /verbose";
-            }          
+            }
+
+            if (this.assemblyCompareMode != CodeQuality.FxCop.CompareMode.StrongName)
+            {
+                arguments += " /assemblyCompareMode:" + this.assemblyCompareMode.ToString();
+            }
 
             if (!string.IsNullOrEmpty(this.Types))
             {
@@ -446,6 +486,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 arguments = this.Files.Aggregate(arguments, (current, i) => current + (" /file:\"" + i.ItemSpec + "\""));
             }
 
+            if (this.References != null)
+            {
+                arguments = this.References.Aggregate(arguments, (current, i) => current + (" /reference:\"" + i.ItemSpec + "\""));
+            }
+
             arguments += " /out:\"" + this.OutputFile + "\"";
 
             // if the output file exists, delete it.
@@ -461,6 +506,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = arguments;
+                proc.StartInfo.CreateNoWindow = true;
                 this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
 

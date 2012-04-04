@@ -54,6 +54,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
     /// <para><i>GetChangeset</i> (<b>Required: </b>VersionSpec <b>Optional: </b>Login, Server, WorkingDirectory <b>Output:</b> ExitCode, Changeset)</para>
+    /// <para><i>GetWorkingChangeset</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, WorkingDirectory, Recursive <b>Output:</b> ExitCode, Changeset)</para>
     /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Login, Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
     /// <para><i>Resolve</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Recursive, Version, Auto, NewName)</para>
     /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode, PendingChangesExistItem)</para>
@@ -103,7 +104,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.4.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
     public class TfsSource : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -115,6 +116,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string GetPendingChangesTaskAction = "GetPendingChanges";
         private const string ResolveTaskAction = "Resolve";
         private const string GetChangesetTaskAction = "GetChangeset";
+        private const string GetWorkingChangesetTaskAction = "GetWorkingChangeset";
         private const string UndoCheckoutTaskAction = "UndoCheckout";
         private const string UndeleteTaskAction = "Undelete";
 
@@ -133,6 +135,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [DropdownValue(MergeTaskAction)]
         [DropdownValue(ResolveTaskAction)]
         [DropdownValue(GetChangesetTaskAction)]
+        [DropdownValue(GetWorkingChangesetTaskAction)]
         [DropdownValue(GetPendingChangesTaskAction)]
         [DropdownValue(UndoCheckoutTaskAction)]
         [DropdownValue(UndeleteTaskAction)]
@@ -211,6 +214,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(GetTaskAction, false)]
         [TaskAction(MergeTaskAction, false)]
         [TaskAction(ResolveTaskAction, false)]
+        [TaskAction(GetWorkingChangesetTaskAction, false)]
         [TaskAction(GetPendingChangesTaskAction, true)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
@@ -239,6 +243,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(DeleteTaskAction, false)]
         [TaskAction(GetTaskAction, false)]
         [TaskAction(ResolveTaskAction, false)]
+        [TaskAction(GetWorkingChangesetTaskAction, false)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
         public string WorkingDirectory { get; set; }
@@ -295,6 +300,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [TaskAction(GetTaskAction, false)]
         [TaskAction(MergeTaskAction, false)]
         [TaskAction(ResolveTaskAction, false)]
+        [TaskAction(GetWorkingChangesetTaskAction, false)]
         [TaskAction(GetPendingChangesTaskAction, true)]
         [TaskAction(UndoCheckoutTaskAction, false)]
         [TaskAction(UndeleteTaskAction, false)]
@@ -368,6 +374,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 case GetPendingChangesTaskAction:
                     this.GetPendingChanges();
                     break;
+                case GetWorkingChangesetTaskAction:
+                    this.GetWorkingChangesetDetails();
+                    break;
                 case GetChangesetTaskAction:
                     this.GetChangesetDetails();
                     break;
@@ -389,6 +398,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
+            }
+        }
+
+        private void GetWorkingChangesetDetails()
+        {
+            this.ExecuteCommand("history", string.IsNullOrEmpty(this.ItemPath) ? "." : this.ItemPath, "/recursive /noprompt /stopafter:1 /version:W");
+
+            if (this.returnOutput.StartsWith("Changeset", StringComparison.OrdinalIgnoreCase))
+            {
+                this.Changeset = this.returnOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[2].Split(new[] { "\t", " " }, StringSplitOptions.RemoveEmptyEntries)[0];
             }
         }
 
@@ -574,7 +593,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private void ExecuteCommand(string action, string options, string lastOptions)
         {
             this.itemSpec = string.Empty;
-            if ((this.TaskAction != GetChangesetTaskAction) && !this.DetermineItemSpec())
+            if ((this.TaskAction != GetChangesetTaskAction) && (this.TaskAction != GetWorkingChangesetTaskAction) && !this.DetermineItemSpec())
             {
                 return;
             }
