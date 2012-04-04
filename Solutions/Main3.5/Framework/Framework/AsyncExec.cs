@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/68cdc023-8926-4ac9-9e7c-0297592fec29.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/68cdc023-8926-4ac9-9e7c-0297592fec29.htm")]
     public class AsyncExec : Task
     {
         /// <summary>
@@ -69,10 +69,9 @@ namespace MSBuild.ExtensionPack.Framework
             // Execute commands and collect input
             foreach (string fileName in commands.Select(command => HasCommandArguments(command) ? CreateBatchProgram(command) : command))
             {
-                this.Log.LogMessage("Execute: {0}", fileName);
+                this.Log.LogMessage("\tExecute: {0}", fileName);
                 var startInfo = GetCommandLine(fileName);
-                Process process = Process.Start(startInfo);
-                process.Start();
+                Process.Start(startInfo);
             }
 
             return true;

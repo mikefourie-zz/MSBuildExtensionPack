@@ -53,7 +53,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/591882fc-0534-dc0b-fe48-c2e7ec8608e0.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/591882fc-0534-dc0b-fe48-c2e7ec8608e0.htm")]
     public class TfsVersion : BaseTask
     {
         private const string GetVersionTaskAction = "GetVersion";

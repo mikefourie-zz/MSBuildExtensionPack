@@ -11,9 +11,9 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b>Source <b>Optional: </b>MachineName <b>Output: </b>Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b>Source, LogName <b>Optional: </b>Force, MachineName)</para>
+    /// <para><i>Create</i> (<b>Required: </b>Source, LogName <b>Optional: </b>Force, MachineName, CategoryCount, MessageResourceFile, CategoryResourceFile, ParameterResourceFile)</para>
     /// <para><i>Delete</i> (<b>Required: </b>Source <b>Optional: </b>MachineName)</para>
-    /// <para><i>Log</i> (<b>Required: </b> Source, Description, LogType, EventId <b>Optional: </b>MachineName)</para>
+    /// <para><i>Log</i> (<b>Required: </b> Source, Description, LogType, EventId, LogName<b>Optional: </b>MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/072b0fa3-2739-f3aa-124c-71955299d206.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/072b0fa3-2739-f3aa-124c-71955299d206.htm")]
     public class EventSource : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -100,6 +100,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the name of the log the source's entries are written to, e.g Application, Security, System, YOUREVENTLOG.
         /// </summary>
         [TaskAction(CreateTaskAction, true)]
+        [TaskAction(LogTaskAction, false)]
         public string LogName { get; set; }
 
         /// <summary>
@@ -107,6 +108,30 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
+
+        /// <summary>
+        /// Sets the number of categories in the category resource file
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public int CategoryCount { get; set; }
+
+        /// <summary>
+        /// Sets the path of the message resource file to configure an event log source to write localized event messages
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string MessageResourceFile { get; set; }
+
+        /// <summary>
+        /// Sets the path of the category resource file to write events with localized category strings
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string CategoryResourceFile { get; set; }
+
+        /// <summary>
+        /// Sets the path of the parameter resource file to configure an event log source to write localized event messages with inserted parameter strings
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        public string ParameterResourceFile { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the EventSource exists.
@@ -176,7 +201,8 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                using (System.Diagnostics.EventLog log = new System.Diagnostics.EventLog("Application", this.MachineName, this.Source))
+                string logName = this.LogName ?? "Application";
+                using (System.Diagnostics.EventLog log = new System.Diagnostics.EventLog(logName, this.MachineName, this.Source))
                 {
                     log.WriteEntry(this.Description, this.logType, int.Parse(this.EventId, CultureInfo.CurrentCulture));
                 }
@@ -192,7 +218,15 @@ namespace MSBuild.ExtensionPack.Computer
         private void Create()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating EventSource: {0}", this.Source));
-            EventSourceCreationData data = new EventSourceCreationData(this.Source, this.LogName) { MachineName = this.MachineName };
+            EventSourceCreationData data = new EventSourceCreationData(this.Source, this.LogName)
+            {
+                MachineName = this.MachineName,
+                CategoryCount = this.CategoryCount,
+                MessageResourceFile = this.MessageResourceFile ?? string.Empty,
+                CategoryResourceFile = this.CategoryResourceFile ?? string.Empty,
+                ParameterResourceFile = this.ParameterResourceFile ?? string.Empty
+            };
+
             if (!System.Diagnostics.EventLog.SourceExists(this.Source, this.MachineName))
             {
                 System.Diagnostics.EventLog.CreateEventSource(data);
@@ -209,7 +243,6 @@ namespace MSBuild.ExtensionPack.Computer
                 else
                 {
                     this.Log.LogError("The event source already exists. Use Force to delete and create.");
-                    return;
                 }
             }
         }

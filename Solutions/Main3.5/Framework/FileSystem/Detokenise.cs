@@ -17,7 +17,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Analyse</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed)</para>
-    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
+    /// <para><i>Detokenise</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> SearchAllStores, IgnoreUnknownTokens, CommandLineValues, DisplayFiles, TextEncoding, ForceWrite, ReplacementValues, Separator, TokenPattern, TokenExtractionPattern <b>Output: </b>FilesProcessed, FilesDetokenised)</para>
     /// <para><i>Report</i> (<b>Required: </b>TargetFiles or TargetPath <b>Optional: </b> DisplayFiles, TokenPattern, ReportUnusedTokens <b>Output: </b>FilesProcessed, TokenReport, UnusedTokens)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
@@ -90,7 +90,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
@@ -196,6 +196,18 @@ namespace MSBuild.ExtensionPack.FileSystem
         [TaskAction(AnalyseTaskAction, false)]
         [TaskAction(DetokeniseTaskAction, false)]
         public bool ForceWrite { get; set; }
+
+        /// <summary>
+        /// Specifies whether to search in the ReplacementValues, CommandLineValues and the ProjectFile for token values. Default is false.
+        /// </summary>
+        [TaskAction(DetokeniseTaskAction, false)]
+        public bool SearchAllStores { get; set; }
+        
+        /// <summary>
+        /// Specifies whether to ignore tokens which are not matched. Default is false.
+        /// </summary>
+        [TaskAction(DetokeniseTaskAction, false)]
+        public bool IgnoreUnknownTokens { get; set; }
 
         /// <summary>
         /// Sets the TargetPath.
@@ -405,6 +417,15 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                 }
 
+                if (this.project == null)
+                {
+                    // Read the project file to get the tokens
+                    this.project = new Project();
+                    string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
+                    this.project.Load(projectFile);
+                }
+
                 if (!string.IsNullOrEmpty(this.TextEncoding))
                 {
                     try
@@ -572,14 +593,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Re-writing file content: {0}", file));
                     }
 
-                        streamWriter.Write(newFile);
-                        this.FilesDetokenised++;
-                    }
+                    streamWriter.Write(newFile);
+                    this.FilesDetokenised++;
+                }
 
-                    if (changedAttribute)
-                    {
-                        this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
-                        System.IO.File.SetAttributes(file, FileAttributes.ReadOnly);
+                if (changedAttribute)
+                {
+                    this.LogTaskMessage(MessageImportance.Low, "Making file readonly");
+                    System.IO.File.SetAttributes(file, FileAttributes.ReadOnly);
                 }
             }
         }
@@ -613,7 +634,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                         }
                     }
 
-                    if (!this.report)
+                    if (!this.report && !this.SearchAllStores && !this.IgnoreUnknownTokens)
                     {
                         Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                         throw new ArgumentException("Review error log");
@@ -621,25 +642,28 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
 
                 // we need to look in the CommandLineValues
-                try
+                if (this.commandLineDictionary != null)
                 {
-                    string replacement = this.commandLineDictionary[extractedProperty];
-
-                    // set the bool so we can write the new file content
-                    this.tokenMatched = true;
-                    if (this.report)
+                    try
                     {
-                        this.UpdateTokenDictionary(extractedProperty);
+                        string replacement = this.commandLineDictionary[extractedProperty];
+
+                        // set the bool so we can write the new file content
+                        this.tokenMatched = true;
+                        if (this.report)
+                        {
+                            this.UpdateTokenDictionary(extractedProperty);
+                        }
+
+                        return replacement;
                     }
-
-                    return replacement;
-                }
-                catch
-                {
-                    if (!this.report)
+                    catch
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
-                        throw new ArgumentException("Review error log");
+                        if (!this.report && !this.SearchAllStores && !this.IgnoreUnknownTokens)
+                        {
+                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                            throw new ArgumentException("Review error log");
+                        }
                     }
                 }
             }
@@ -647,10 +671,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             // we need to look in the calling project's properties collection
             if (this.project.EvaluatedProperties[extractedProperty] == null)
             {
-                if (!this.report)
+                if (!this.report && !this.IgnoreUnknownTokens)
                 {
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                     throw new ArgumentException("Review error log");
+                }
+                
+                if (this.IgnoreUnknownTokens)
+                {
+                    return string.Format(CultureInfo.InvariantCulture, "$({0})", extractedProperty);
                 }
             }
 

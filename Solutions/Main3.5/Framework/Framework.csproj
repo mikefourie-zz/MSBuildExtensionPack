@@ -102,13 +102,11 @@
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility" />
     <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Engine, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Build.Tasks.v3.5" />
     <Reference Include="Microsoft.Build.Utilities.v3.5">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -121,9 +119,6 @@
     </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -143,9 +138,6 @@
     </Reference>
     <Reference Include="System.Messaging">
       <Name>System.Messaging</Name>
-    </Reference>
-    <Reference Include="System.Security">
-      <Name>System.Security</Name>
     </Reference>
     <Reference Include="System.ServiceProcess">
       <Name>System.ServiceProcess</Name>
@@ -223,12 +215,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServer\SqlScriptLoader.cs" />
+    <Compile Include="Subversion\Schema.cs">
+      <DependentUpon>Schema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Subversion\Svn.cs" />
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ConfirmForm.Designer.cs">
       <DependentUpon>ConfirmForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
     <Compile Include="VisualStudio\VC6.cs" />
     <Compile Include="VisualStudio\VSDevEnv.cs" />
     <Compile Include="VisualStudio\VBPProject.cs" />
@@ -371,6 +368,9 @@
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="Subversion\Schema.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="VisualStudio\MSBuild.ExtensionPack.VC6.targets" />
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
     <None Include="XmlSamples\ConfigManager.proj" />
@@ -423,7 +423,9 @@
     <None Include="XmlSamples\Folder.proj" />
     <None Include="XmlSamples\Guid.proj" />
     <None Include="XmlSamples\Maths.proj" />
-    <None Include="XmlSamples\MsBuildHelper.proj" />
+    <None Include="XmlSamples\MsBuildHelper.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\File.proj" />
     <None Include="XmlSamples\TextString.proj" />
     <None Include="XmlSamples\Thread.proj" />
@@ -456,7 +458,9 @@
     <None Include="XmlSamples\Metadata.proj" />
     <None Include="XmlSamples\Twitter.proj" />
     <None Include="XmlSamples\SqlVersion.proj" />
-    <None Include="XmlSamples\XmlFile.proj" />
+    <None Include="XmlSamples\XmlFile.proj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="XmlSamples\DNZip.proj" />
     <EmbeddedResource Include="Computer\GetPasswordForm.resx">
       <DependentUpon>GetPasswordForm.cs</DependentUpon>
@@ -478,9 +482,15 @@
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
+      <Link>CodeAnalysis.Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />
+    <Content Include="Computer\lock-open.png" />
+    <Content Include="Computer\lock.ico" />
+    <Content Include="Computer\lock.png" />
     <Content Include="XmlSamples\MotorData\Cars\Dodge.txt" />
     <Content Include="XmlSamples\MotorData\Cars\lexus.txt" />
     <Content Include="XmlSamples\MotorData\rootfile1.txt" />

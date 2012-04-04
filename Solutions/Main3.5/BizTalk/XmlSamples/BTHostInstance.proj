@@ -34,5 +34,22 @@
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance>
         <Message Text="BizTalkHostInstance Exists: $(DoesExist)"/>
+        <!-- Get a list of Host Instances -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance TaskAction="Get">
+            <Output TaskParameter="HostInstances" ItemName="His"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance>
+        <Message Text="HI: %(His.Identity) - ServiceState: %(His.ServiceState)"/>
+        <Message Text="HI: %(His.Identity) - HostType: %(His.HostType)"/>
+        <Message Text="HI: %(His.Identity) - IsDisabled: %(His.IsDisabled)"/>
+        <Message Text="HI: %(His.Identity) - Caption: %(His.Caption)"/>
+        <Message Text="HI: %(His.Identity) - ConfigurationState: %(His.ConfigurationState)"/>
+        <Message Text="HI: %(His.Identity) - Description: %(His.Description)"/>
+        <Message Text="HI: %(His.Identity) - InstallDate: %(His.InstallDate)"/>
+        <Message Text="HI: %(His.Identity) - MgmtDbNameOverride: %(His.MgmtDbNameOverride)"/>
+        <Message Text="HI: %(His.Identity) - MgmtDbServerOverride: %(His.MgmtDbServerOverride)"/>
+        <Message Text="HI: %(His.Identity) - RunningServer: %(His.RunningServer)"/>
+        <Message Text="HI: %(His.Identity) - Status: %(His.Status)"/>
+        <Message Text="HI: %(His.Identity) - UniqueID: %(His.UniqueID)"/>
+        <Message Text="HI: %(His.Identity) - NTGroupName: %(His.NTGroupName)"/>
     </Target>
 </Project>

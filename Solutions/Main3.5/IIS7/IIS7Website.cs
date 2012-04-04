@@ -14,10 +14,10 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications)</para>
+    /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications <b>Optional: </b>Force)</para>
     /// <para><i>AddMimeType</i> (<b>Required: </b> Name, MimeTypes)</para>
     /// <para><i>AddResponseHeaders</i> (<b>Required: </b> Name, HttpResponseHeaders)</para>
-    /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
+    /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories <b>Optional: </b>Force)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
@@ -97,7 +97,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
@@ -263,6 +263,8 @@ namespace MSBuild.ExtensionPack.Web
         /// Set to true to force the creation of a website, even if it exists.
         /// </summary>
         [TaskAction(CreateTaskAction, false)]
+        [TaskAction(AddApplicationTaskAction, false)]
+        [TaskAction(AddVirtualDirectoryTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -469,14 +471,34 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
+        private bool ApplicationExists(string name)
+        {
+            return this.website.Applications[name] != null;
+        }
+
         private void ProcessApplications()
         {
             foreach (ITaskItem app in this.Applications)
             {
                 string physicalPath = app.GetMetadata("PhysicalPath");
                 this.CreateDirectoryIfNecessary(physicalPath);
-
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
+
+                if (this.ApplicationExists(app.ItemSpec))
+                {
+                    if (!this.Force)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "The application: {0} already exists on: {1}. Use Force=\"true\" to remove the existing application.", app.ItemSpec, this.Name));
+                        return;
+                    }
+
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Removing existing Application: {0}", app.ItemSpec));
+
+                    this.website.Applications[app.ItemSpec].Delete();
+                    this.iisServerManager.CommitChanges();
+                    this.website = this.iisServerManager.Sites[this.Name];
+                }
+
                 this.website.Applications.Add(app.ItemSpec, physicalPath);
 
                 // Set Application Pool if given
@@ -504,6 +526,8 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.TargetingLocalMachine(true))
             {
+                this.GetManagementScope(@"\root\cimv2");
+
                 // we need to operate remotely
                 string fullQuery = @"Select * From Win32_Directory Where Name = '" + directoryPath.Replace("\\", "\\\\") + "'";
                 ObjectQuery query1 = new ObjectQuery(fullQuery);
@@ -525,7 +549,6 @@ namespace MSBuild.ExtensionPack.Web
                             if (rc != 0)
                             {
                                 this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
-                                return;
                             }
                         }
                     }
@@ -663,7 +686,28 @@ namespace MSBuild.ExtensionPack.Web
                 this.CreateDirectoryIfNecessary(physicalPath);
 
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
-                this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
+                if (this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Any(v => v.Path.Equals(virDir.ItemSpec.ToUpperInvariant(), StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    if (!this.Force)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "The VirtualDirectory: {0} already exists on: {1}. Use Force=\"true\" to remove the existing VirtualDirectory.", virDir.ItemSpec, virDir.GetMetadata("ApplicationPath")));
+                        return;
+                    }
+
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Removing existing VirtualDirectory: {0}", virDir.ItemSpec));
+
+                    this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Remove(this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories[virDir.ItemSpec]);
+                    this.iisServerManager.CommitChanges();
+                    this.website = this.iisServerManager.Sites[this.Name];
+                }
+
+                VirtualDirectory virtualDirectory = this.website.Applications[virDir.GetMetadata("ApplicationPath")].VirtualDirectories.Add(virDir.ItemSpec, physicalPath);
+                if (!string.IsNullOrEmpty(virDir.GetMetadata("UserName")))
+                {
+                    virtualDirectory.LogonMethod = AuthenticationLogonMethod.Batch;
+                    virtualDirectory.UserName = virDir.GetMetadata("UserName");
+                    virtualDirectory.Password = virDir.GetMetadata("Password");
+                }
             }
         }
 

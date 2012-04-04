@@ -9,8 +9,8 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>DownloadFile</i> (<b>Required: </b> Url, FileName <b>Output:</b> Response)</para>
-    /// <para><i>OpenRead</i> (<b>Required: </b> Url <b>Optional:</b> DisplayToConsole <b>Output:</b> Data)</para>
+    /// <para><i>DownloadFile</i> (<b>Required: </b> Url, FileName <b>Optional:</b>Proxy, BypassOnLocal<b>Output:</b> Response)</para>
+    /// <para><i>OpenRead</i> (<b>Required: </b> Url <b>Optional:</b> DisplayToConsole, Proxy, BypassOnLocal<b>Output:</b> Data)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -24,6 +24,8 @@ namespace MSBuild.ExtensionPack.Web
     ///     <Target Name="Default">
     ///         <!-- Download a File-->
     ///         <MSBuild.ExtensionPack.Web.WebClient TaskAction="DownloadFile" Url="http://hlstiw.bay.livefilestore.com/y1p7GhsJWeF4ig_Yb-8QXeA1bL0nY_MdOGaRQ3opRZS0YVvfshMfoZYe_cb1wSzPhx4nL_yidkG8Ji9msjRcTt0ew/Team%20Build%202008%20DeskSheet%202.0.pdf?download" FileName="C:\TFS Build 2008 DeskSheet.pdf"/>
+    ///         <!-- Download a File using a proxy to connect to the remote server -->
+    ///         <MSBuild.ExtensionPack.Web.WebClient TaskAction="DownloadFile" Url="http://download.sysinternals.com/Files/SysinternalsSuite.zip" FileName="MySysinternalsCopy.zip" Proxy="myproxy.fabrikam.com:8080"/>
     ///         <!-- Get the contents of a Url-->
     ///         <MSBuild.ExtensionPack.Web.WebClient TaskAction="OpenRead" Url="http://www.msbuildextensionpack.com">
     ///             <Output TaskParameter="Data" PropertyName="Out"/>
@@ -33,7 +35,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/fbcabc54-e80e-3176-dcd0-8be24fc60602.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/fbcabc54-e80e-3176-dcd0-8be24fc60602.htm")]
     public class WebClient : BaseTask
     {
         private const string DownloadFileTaskAction = "DownloadFile";
@@ -56,6 +58,13 @@ namespace MSBuild.ExtensionPack.Web
         public string Url { get; set; }
 
         /// <summary>
+        /// Sets the URI of a proxy
+        /// </summary>
+        [TaskAction(OpenReadTaskAction, false)]
+        [TaskAction(DownloadFileTaskAction, false)]
+        public string Proxy { get; set; }
+        
+        /// <summary>
         /// Sets the name of the file
         /// </summary>
         [TaskAction(DownloadFileTaskAction, true)]
@@ -66,6 +75,13 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         [TaskAction(OpenReadTaskAction, false)]
         public bool DisplayToConsole { get; set; }
+
+        /// <summary>
+        /// Sets whether to bypass the proxy for local addresses. Default is false.
+        /// </summary>
+        [TaskAction(OpenReadTaskAction, false)]
+        [TaskAction(DownloadFileTaskAction, false)]
+        public bool BypassOnLocal { get; set; }
 
         /// <summary>
         /// Gets the Data downloaded.
@@ -95,8 +111,14 @@ namespace MSBuild.ExtensionPack.Web
         private void DownloadFile()
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Downloading: {0} to {1}", this.Url, this.FileName));
+           
             using (System.Net.WebClient client = new System.Net.WebClient())
             {
+                if (!string.IsNullOrEmpty(this.Proxy))
+                {
+                    client.Proxy = new System.Net.WebProxy(this.Proxy, this.BypassOnLocal);
+                }
+
                 client.DownloadFile(this.Url, this.FileName.ItemSpec);              
             }
         }
@@ -106,6 +128,11 @@ namespace MSBuild.ExtensionPack.Web
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Reading: {0}", this.Url));
             using (System.Net.WebClient client = new System.Net.WebClient())
             {
+                if (!string.IsNullOrEmpty(this.Proxy))
+                {
+                    client.Proxy = new System.Net.WebProxy(this.Proxy, this.BypassOnLocal);
+                }
+
                 Stream myStream = client.OpenRead(this.Url);
                 using (StreamReader sr = new StreamReader(myStream))
                 {

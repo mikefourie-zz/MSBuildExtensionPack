@@ -68,7 +68,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.10.0/html/0a950eab-38f1-306b-3851-50fc27ef8609.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/0a950eab-38f1-306b-3851-50fc27ef8609.htm")]
     public sealed class ConfigManager : BaseTask
     {
         private const string RemoveAppSettingTaskAction = "RemoveAppSetting";

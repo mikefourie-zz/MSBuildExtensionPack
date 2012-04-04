@@ -201,7 +201,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.3.0/html/1c668832-24f2-d646-1f66-7ea1f3e76415.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/1c668832-24f2-d646-1f66-7ea1f3e76415.htm")]
     public class DateAndTime : BaseTask
     {
         private const string GetTaskAction = "Get";
