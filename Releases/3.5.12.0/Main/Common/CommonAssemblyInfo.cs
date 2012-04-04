@@ -6,7 +6,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("3.5.0.0")]
-[assembly: AssemblyFileVersion("3.5.11.0")]
+[assembly: AssemblyFileVersion("3.5.12.0")]
 [assembly: AssemblyInformationalVersion("3.5.0.0")]
 [assembly: AssemblyCompany("http://www.MSBuildExtensionPack.com")]
 [assembly: AssemblyCopyright("Copyright © 2012 http://www.MSBuildExtensionPack.com")]
