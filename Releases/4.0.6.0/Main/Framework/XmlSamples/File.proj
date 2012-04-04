@@ -1,0 +1,95 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <FilesToParse Include="c:\demo\file.txt"/>
+        <FilesToCount Include="C:\Demo\**\*.cs"/>
+        <AllFilesToCount Include="C:\Demo\**\*"/>
+        <AtFiles Include="c:\demo\file1.txt">
+            <Attributes>ReadOnly;Hidden</Attributes>
+        </AtFiles>
+        <AtFiles2 Include="c:\demo\file1.txt">
+            <Attributes>Normal</Attributes>
+        </AtFiles2>
+        <MyFiles Include="C:\demo\**\*.csproj"/>
+        <FilesToSecure Include="C:\demo\file1.txt" />
+        <FilesToSecure Include="C:\demo\file2.txt" />
+        <Users Include="MyUser" />
+        <UsersWithPermissions Include="MyUser">
+            <Permission>Read,Write</Permission>
+        </UsersWithPermissions>
+        <FilesToWriteTo Include="C:\a\hosts"/>
+        <LinesToRemove Include="192\.156\.236\.25 www\.myurl\.com"/>
+        <LinesToRemove Include="192\.156\.234\.25 www\.myurl\.com"/>
+        <LinesToRemove Include="192\.156\.23sss4\.25 www\.myurl\.com"/>
+        <Lines Include="192.156.236.25 www.myurl.com"/>
+        <Lines Include="192.156.234.25 www.myurl.com"/>
+        <FilesToCreate Include="d:\a\File1-100.txt"/>
+        <FilesToCreate Include="d:\a\File2-100.txt"/>
+        <FilesToCreate Include="d:\a\File3-5000000.txt">
+            <size>5000000</size>
+        </FilesToCreate>
+        <FilesToCreate Include="d:\a\File4-100.txt"/>
+    </ItemGroup>
+    <Target Name="Default">
+        <!-- Create some files. Defaults the size to 1000 bytes, but one file overrides this using metadata -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Create" Files="@(FilesToCreate)" Size="1000"/>
+        <!-- Write lines to a file. Lines only added if file does not contain them -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="WriteLines" Files="@(FilesToWriteTo)" Lines="@(Lines)"/>
+        <!-- Remove lines from a file based on regular expressions -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveLines" Files="@(FilesToWriteTo)" Lines="@(LinesToRemove)"/>
+        <!-- adding security -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Path="C:\demo\file3.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="AddSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
+        <!-- remove security -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Path="C:\demo\file4.txt" Users="@(Users)" AccessType="Allow" Permission="Read,Write" />
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="RemoveSecurity" Files="@(FilesToSecure)" Users="@(UsersWithPermissions)" AccessType="Deny" />
+        <!-- Get a temp file -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetTempFileName">
+            <Output TaskParameter="Path" PropertyName="TempPath"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="TempPath: $(TempPath)"/>
+        <!-- Filter a collection of files based on their content -->
+        <Message Text="MyProjects %(MyFiles.Identity)"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="FilterByContent" RegexPattern="Microsoft.WebApplication.targets" Files="@(MyFiles)">
+            <Output TaskParameter="IncludedFiles" ItemName="WebProjects"/>
+            <Output TaskParameter="ExcludedFiles" ItemName="NonWebProjects"/>
+            <Output TaskParameter="IncludedFileCount" PropertyName="WebProjectsCount"/>
+            <Output TaskParameter="ExcludedFileCount" PropertyName="NonWebProjectsCount"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="WebProjects: %(WebProjects.Identity)"/>
+        <Message Text="NonWebProjects: %(NonWebProjects.Identity)"/>
+        <Message Text="WebProjectsCount: $(WebProjectsCount)"/>
+        <Message Text="NonWebProjectsCount: $(NonWebProjectsCount)"/>
+        <!-- Get the checksum of a file -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+            <Output TaskParameter="Checksum" PropertyName="chksm"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="$(chksm)"/>
+        <!-- Replace file content using a regular expression -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="iiiii" Files="@(FilesToParse)"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="regex" Replacement="idi" Path="c:\Demo*"/>
+        <!-- Count the number of lines in a file and exclude comments -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(FilesToCount)" CommentIdentifiers="//">
+            <Output TaskParameter="CodeLinecount" PropertyName="csharplines"/>
+            <Output TaskParameter="IncludedFiles" ItemName="MyIncludedFiles"/>
+            <Output TaskParameter="ExcludedFiles" ItemName="MyExcludedFiles"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="C# CodeLinecount: $(csharplines)"/>
+        <Message Text="MyIncludedFiles: %(MyIncludedFiles.Identity)"/>
+        <Message Text="MyExcludedFiles: %(MyExcludedFiles.Identity)"/>
+        <!-- Count all lines in a file -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="CountLines" Files="@(AllFilesToCount)">
+            <Output TaskParameter="TotalLinecount" PropertyName="AllLines"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="All Files TotalLinecount: $(AllLines)"/>
+        <!-- Set some attributes -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles)"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(AtFiles2)"/>
+        <!-- Move a file -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="c:\demo\file.txt" TargetPath="c:\dddd\d\oo\d\mee.txt"/>
+    </Target>
+</Project>

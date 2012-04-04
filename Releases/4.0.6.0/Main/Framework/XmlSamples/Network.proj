@@ -1,0 +1,29 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+  <Target Name="Default">
+    <!-- Get the Machine IP Addresses -->
+    <MSBuild.ExtensionPack.Computer.Network TaskAction="GetInternalIP">
+      <Output TaskParameter="IP" ItemName="TheIP"/>
+    </MSBuild.ExtensionPack.Computer.Network>
+    <Message Text="The IP: %(TheIP.Identity)"/>
+    <!-- Get Remote IP Addresses -->
+    <MSBuild.ExtensionPack.Computer.Network TaskAction="GetRemoteIP" HostName="www.freetodev.com">
+      <Output TaskParameter="IP" ItemName="TheRemoteIP"/>
+    </MSBuild.ExtensionPack.Computer.Network>
+    <Message Text="The Remote IP: %(TheRemoteIP.Identity)"/>
+    <!-- Ping a host -->
+    <MSBuild.ExtensionPack.Computer.Network TaskAction="Ping" HostName="www.freetodev.com">
+      <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    </MSBuild.ExtensionPack.Computer.Network>
+    <Message Text="Exists: $(DoesExist)"/>
+    <!-- Gets the fully-qualified domain name for a hostname. -->
+    <MSBuild.ExtensionPack.Computer.Network TaskAction="GetDnsHostName" HostName="192.168.0.15">
+      <Output TaskParameter="DnsHostName" PropertyName="HostEntryName" />
+    </MSBuild.ExtensionPack.Computer.Network>
+    <Message Text="Host Entry name: $(HostEntryName)" />
+  </Target>
+</Project>

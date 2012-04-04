@@ -1,0 +1,41 @@
+<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <MSBuild.ExtensionPack.Virtualisation.VirtualPc TaskAction="List">
+            <Output ItemName="VMList" TaskParameter="VirtualMachines"/>
+        </MSBuild.ExtensionPack.Virtualisation.VirtualPc>
+        <Message Text="VM BaseBoardSerialNumber: %(VMList.BaseBoardSerialNumber)"/>
+        <Message Text="VM BIOSGUID: %(VMList.BIOSGUID)"/>
+        <Message Text="VM BIOSSerialNumber: %(VMList.BIOSSerialNumber)"/>
+        <Message Text="VM ChassisAssetTag: %(VMList.ChassisAssetTag)"/>
+        <Message Text="VM ChassisSerialNumber: %(VMList.ChassisSerialNumber)"/>
+        <Message Text="VM Memory: %(VMList.Memory)"/>
+        <Message Text="VM Name: %(VMList.Name)"/>
+        <Message Text="VM Notes: %(VMList.Notes)"/>
+        <Message Text="VM Undoable: %(VMList.Undoable)"/>
+        <Message Text="VM CanShutdown: %(VMList.CanShutdown)"/>
+        <Message Text="VM ComputerName: %(VMList.ComputerName)"/>
+        <Message Text="VM IntegrationComponentsVersion: %(VMList.IntegrationComponentsVersion)"/>
+        <Message Text="VM IsHeartbeating: %(VMList.IsHeartbeating)"/>
+        <Message Text="VM IsHostTimeSyncEnabled: %(VMList.IsHostTimeSyncEnabled)"/>
+        <Message Text="VM MultipleUserSessionsAllowed: %(VMList.MultipleUserSessionsAllowed)"/>
+        <Message Text="VM OSBuildNumber: %(VMList.OSBuildNumber)"/>
+        <Message Text="VM OSMajorVersion: %(VMList.OSMajorVersion)"/>
+        <Message Text="VM OSMinorVersion: %(VMList.OSMinorVersion)"/>
+        <Message Text="VM OSName: %(VMList.OSName)"/>
+        <Message Text="VM OSPlatformId: %(VMList.OSPlatformId)"/>
+        <Message Text="VM OSVersion: %(VMList.OSVersion)"/>
+        <Message Text="VM ScreenLocked: %(VMList.ScreenLocked)"/>
+        <Message Text="VM ServicePackMajor: %(VMList.ServicePackMajor)"/>
+        <Message Text="VM ServicePackMinor: %(VMList.ServicePackMinor)"/>
+        <Message Text="VM TerminalServerPort: %(VMList.TerminalServerPort)"/>
+        <Message Text="VM TerminalServicesInitialized: %(VMList.TerminalServicesInitialized)"/>
+
+        <MSBuild.ExtensionPack.Virtualisation.VirtualPc TaskAction="Startup" Name="Demo"/>
+        <MSBuild.ExtensionPack.Virtualisation.VirtualPc TaskAction="TakeScreenshot" Name="Demo" FileName="C:\demo.bmp"/>
+    </Target>
+</Project>
