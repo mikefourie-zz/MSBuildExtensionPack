@@ -438,7 +438,7 @@ namespace MSBuild.ExtensionPack.Xml
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Read Element: {0}", this.XPath));
             XmlNode node = this.xmlFileDoc.SelectSingleNode(this.XPath, this.namespaceManager);
-            if (node != null && node.NodeType == XmlNodeType.Element)
+            if (node != null && (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Document))
             {
                 this.Value = this.TaskAction == ReadElementTextTaskAction ? node.InnerText : node.InnerXml;
             }
