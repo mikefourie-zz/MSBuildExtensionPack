@@ -145,15 +145,21 @@ namespace MSBuild.ExtensionPack.Computer
                     if (string.Compare(this.Drive, drive1, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         DriveInfo driveInfo = new DriveInfo(drive1);
-                        long freespace = driveInfo.AvailableFreeSpace;
-
-                        if ((freespace / unitSize) < this.MinSpace)
+                        if (driveInfo.IsReady)
                         {
-                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Insufficient free space. Drive {0} has {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            long freespace = driveInfo.AvailableFreeSpace;
+                            if ((freespace / unitSize) < this.MinSpace)
+                            {
+                                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Insufficient free space. Drive {0} has {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            }
+                            else
+                            {
+                                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            }
                         }
                         else
                         {
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            this.Log.LogWarning("Drive not ready to be read: {0}", drive1);
                         }
                     }
                 }
@@ -249,22 +255,29 @@ namespace MSBuild.ExtensionPack.Computer
 
                     if (skip == false)
                     {
-                        ITaskItem item = new TaskItem(drive1);
                         DriveInfo driveInfo = new DriveInfo(drive1);
-                        item.SetMetadata("DriveType", driveInfo.DriveType.ToString());
-                        if (driveInfo.DriveType == DriveType.Fixed || driveInfo.DriveType == DriveType.Removable)
+                        if (driveInfo.IsReady)
                         {
-                            item.SetMetadata("Name", driveInfo.Name);
-                            item.SetMetadata("VolumeLabel", driveInfo.VolumeLabel);
-                            item.SetMetadata("AvailableFreeSpace", (driveInfo.AvailableFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("DriveFormat", driveInfo.DriveFormat);
-                            item.SetMetadata("TotalSize", (driveInfo.TotalSize / unitSize).ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("TotalFreeSpace", (driveInfo.TotalFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("IsReady", driveInfo.IsReady.ToString());
-                            item.SetMetadata("RootDirectory", driveInfo.RootDirectory.ToString());
-                        }
+                            ITaskItem item = new TaskItem(drive1);
+                            item.SetMetadata("DriveType", driveInfo.DriveType.ToString());
+                            if (driveInfo.DriveType == DriveType.Fixed || driveInfo.DriveType == DriveType.Removable)
+                            {
+                                item.SetMetadata("Name", driveInfo.Name);
+                                item.SetMetadata("VolumeLabel", driveInfo.VolumeLabel);
+                                item.SetMetadata("AvailableFreeSpace", (driveInfo.AvailableFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
+                                item.SetMetadata("DriveFormat", driveInfo.DriveFormat);
+                                item.SetMetadata("TotalSize", (driveInfo.TotalSize / unitSize).ToString(CultureInfo.CurrentCulture));
+                                item.SetMetadata("TotalFreeSpace", (driveInfo.TotalFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
+                                item.SetMetadata("IsReady", driveInfo.IsReady.ToString());
+                                item.SetMetadata("RootDirectory", driveInfo.RootDirectory.ToString());
+                            }
 
-                        this.drives.Add(item);
+                            this.drives.Add(item);
+                        }
+                        else
+                        {
+                            this.Log.LogWarning("Drive not ready to be read: {0}", drive1);
+                        }
                     }
                 }
             }
