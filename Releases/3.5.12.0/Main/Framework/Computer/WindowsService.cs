@@ -10,6 +10,7 @@ namespace MSBuild.ExtensionPack.Computer
     using System.Management;
     using System.ServiceProcess;
     using Microsoft.Build.Framework;
+    using Microsoft.Win32;
 
     /// <summary>
     /// Start mode of the Windows base service.
@@ -285,8 +286,9 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RemoteUser, RemoteUserPassword <b>Output: </b>Exists)</para>
+    /// <para><i>Delete</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>Disable</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>ServiceDependencies, ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
+    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>Force, Description, ServiceDependencies, ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
     /// <para><i>Restart</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName). Any running directly dependent services will be restarted too.</para>
     /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
@@ -365,6 +367,7 @@ namespace MSBuild.ExtensionPack.Computer
     public class WindowsService : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
+        private const string DeleteTaskAction = "Delete";
         private const string DisableTaskAction = "Disable";
         private const string InstallTaskAction = "Install";
         private const string RestartTaskAction = "Restart";
@@ -379,6 +382,7 @@ namespace MSBuild.ExtensionPack.Computer
         private int retryAttempts = 60;
 
         [DropdownValue(CheckExistsTaskAction)]
+        [DropdownValue(DeleteTaskAction)]
         [DropdownValue(DisableTaskAction)]
         [DropdownValue(InstallTaskAction)]
         [DropdownValue(SetAutomaticTaskAction)]
@@ -405,6 +409,7 @@ namespace MSBuild.ExtensionPack.Computer
             set { this.retryAttempts = value; }
         }
 
+        [TaskAction(DeleteTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(DisableTaskAction, true)]
         [TaskAction(InstallTaskAction, true)]
@@ -439,6 +444,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// The Name of the service. Note, this is the 'Service Name' as displayed in services.msc, NOT the 'Display Name'
         /// </summary>
+        [TaskAction(DeleteTaskAction, true)]
         [TaskAction(CheckExistsTaskAction, true)]
         [TaskAction(DisableTaskAction, true)]
         [TaskAction(InstallTaskAction, true)]
@@ -473,6 +479,18 @@ namespace MSBuild.ExtensionPack.Computer
         public string Password { get; set; }
 
         /// <summary>
+        /// Sets a value indicating whether to delete a service if it already exists when calling Install
+        /// </summary>
+        [TaskAction(InstallTaskAction, false)]
+        public bool Force { get; set; }
+
+        /// <summary>
+        /// Sets the service description
+        /// </summary>
+        [TaskAction(InstallTaskAction, true)]
+        public string Description { get; set; }
+
+        /// <summary>
         /// Sets the user to impersonate on remote server.
         /// </summary>
         [TaskAction(CheckExistsTaskAction, true)]
@@ -504,11 +522,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the services upon which the installed service depends.
         /// </summary>
         [TaskAction(InstallTaskAction, false)]
-        public ITaskItem[] ServiceDependencies
-        {
-            get;
-            set;
-        }
+        public ITaskItem[] ServiceDependencies { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -525,7 +539,7 @@ namespace MSBuild.ExtensionPack.Computer
                 this.LogTaskMessage(MessageImportance.Low, "No RemoteUser or RemoteUserPassword supplied. Attempting Integrated Security.");
             }
 
-            if (this.ServiceDoesExist() == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction)
+            if (this.ServiceDoesExist() == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction && this.TaskAction != DeleteTaskAction)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceDisplayName));
                 return;
@@ -535,6 +549,9 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 case InstallTaskAction:
                     this.Install();
+                    break;
+                case DeleteTaskAction:
+                    this.DeleteService();
                     break;
                 case UninstallTaskAction:
                     this.Uninstall();
@@ -620,7 +637,6 @@ namespace MSBuild.ExtensionPack.Computer
                 if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
                 {
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error changing service identity of {0} on '{1}' to '{2}'", this.ServiceDisplayName, this.MachineName, userName));
-                    return;
                 }
             }
             else
@@ -747,8 +763,6 @@ namespace MSBuild.ExtensionPack.Computer
 
                 System.Threading.Thread.Sleep(2000);
             }
-
-            return;
         }
 
         private void StartService()
@@ -955,6 +969,20 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
+            if (this.ServiceDoesExist() && !this.Force)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Install Service failed with code: '{0}'", ServiceReturnCode.StatusServiceExists));
+                return;
+            }
+
+            if (this.ServiceDoesExist() && this.Force)
+            {
+                if (!this.DeleteService())
+                {
+                    return;
+                }
+            }
+
             // check to see if the correct path has been provided
             if (targetLocal && (System.IO.File.Exists(this.ServicePath.GetMetadata("FullPath")) == false))
             {
@@ -976,7 +1004,50 @@ namespace MSBuild.ExtensionPack.Computer
             else
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Install Service succeeded for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
+                if (!string.IsNullOrEmpty(this.Description))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Setting Description for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
+                    using (RegistryKey registryKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, this.MachineName))
+                    {
+                        RegistryKey subKey = registryKey.OpenSubKey(@"System\CurrentControlSet\Services\" + this.ServiceName, true);
+                        subKey.SetValue("Description", this.Description);
+                        subKey.Close();
+                    }
+                }
             }
+        }
+
+        private bool DeleteService()
+        {
+            bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Attempting to Delete the '{0}' service on '{1}' machine", this.ServiceName, this.MachineName));
+            if (!this.ServiceDoesExist())
+            {
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0} on '{1}'", this.ServiceDisplayName, this.MachineName));
+                return true;
+            }
+
+            bool noErrors = true;
+            try
+            {
+                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                
+                // Execute the method and obtain the return values.
+                ManagementBaseObject result = wmi.InvokeMethod("delete", null, null);
+                int returnCode = Convert.ToInt32(result["ReturnValue"], CultureInfo.InvariantCulture);
+                if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Delete Service failed with return code '[{0}] {1}'", returnCode, ((ServiceReturnCode)returnCode)));
+                    noErrors = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Delete Service [{0}on {1}] failed with error '{2}'", this.ServiceDisplayName, this.MachineName, ex.Message));
+                throw;
+            }
+
+            return noErrors;
         }
 
         private ServiceReturnCode Install(string machineName, string name, string displayName, string physicalLocation, ServiceStartMode startMode, string userName, string password, string[] dependencies, bool interactWithDesktop, string installingUser, string installingUserPassword)
