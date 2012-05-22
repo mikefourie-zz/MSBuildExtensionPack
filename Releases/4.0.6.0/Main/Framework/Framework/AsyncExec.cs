@@ -69,10 +69,9 @@ namespace MSBuild.ExtensionPack.Framework
             // Execute commands and collect input
             foreach (string fileName in commands.Select(command => HasCommandArguments(command) ? CreateBatchProgram(command) : command))
             {
-                this.Log.LogMessage("Execute: {0}", fileName);
+                this.Log.LogMessage("\tExecute: {0}", fileName);
                 var startInfo = GetCommandLine(fileName);
-                Process process = Process.Start(startInfo);
-                process.Start();
+                Process.Start(startInfo);
             }
 
             return true;
