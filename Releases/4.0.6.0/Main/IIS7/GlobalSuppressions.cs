@@ -105,3 +105,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "MimeType", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#AddMimeType()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#LogExtFileFlags")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ip", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Binding.#Add()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "LogDirectory", Scope = "member", Target = "MSBuild.ExtensionPack.Web.Iis7Website.#ModifyLogDirectory()")]

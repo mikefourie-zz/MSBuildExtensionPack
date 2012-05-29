@@ -20,11 +20,12 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories <b>Optional: </b>Force)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogDirectory, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
     /// <para><i>ModifyPath</i> (<b>Required: </b> Name, Path <b>Output: </b>SiteId)</para>
+    /// <para><i>ModifyLogDirectory</i> (<b>Required: </b> Name, LogDirectory)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -109,6 +110,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string DeleteTaskAction = "Delete";
         private const string GetInfoTaskAction = "GetInfo";
         private const string ModifyPathTaskAction = "ModifyPath";
+        private const string ModifyLogDirectoryAction = "ModifyLogDirectory";
         private const string StartTaskAction = "Start";
         private const string StopTaskAction = "Stop";
         private const string CheckVirtualDirectoryExistsTaskAction = "CheckVirtualDirectoryExists";
@@ -130,6 +132,7 @@ namespace MSBuild.ExtensionPack.Web
         [DropdownValue(DeleteTaskAction)]
         [DropdownValue(GetInfoTaskAction)]
         [DropdownValue(ModifyPathTaskAction)]
+        [DropdownValue(ModifyLogDirectoryAction)]
         [DropdownValue(StartTaskAction)]
         [DropdownValue(StopTaskAction)]
         [DropdownValue(CheckVirtualDirectoryExistsTaskAction)]
@@ -151,6 +154,7 @@ namespace MSBuild.ExtensionPack.Web
         [TaskAction(DeleteTaskAction, true)]
         [TaskAction(GetInfoTaskAction, true)]
         [TaskAction(ModifyPathTaskAction, true)]
+        [TaskAction(ModifyLogDirectoryAction, true)]
         [TaskAction(StartTaskAction, true)]
         [TaskAction(StopTaskAction, true)]
         [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
@@ -190,6 +194,13 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         [TaskAction(CreateTaskAction, true)]
         public string Path { get; set; }
+
+        /// <summary>
+        /// Sets the directory the website writes logfiles to.
+        /// </summary>
+        [TaskAction(CreateTaskAction, false)]
+        [TaskAction(ModifyLogDirectoryAction, true)]
+        public ITaskItem LogDirectory { get; set; }
 
         /// <summary>
         /// Sets the app pool.
@@ -322,6 +333,9 @@ namespace MSBuild.ExtensionPack.Web
                         break;
                     case ModifyPathTaskAction:
                         this.ModifyPath();
+                        break;
+                    case ModifyLogDirectoryAction:
+                        this.ModifyLogDirectory();
                         break;
                     case GetInfoTaskAction:
                         this.GetInfo();
@@ -663,6 +677,12 @@ namespace MSBuild.ExtensionPack.Web
                 this.website.LogFile.LogFormat = (LogFormat)Enum.Parse(typeof(LogFormat), this.LogFormat);
             }
 
+            if (this.LogDirectory != null)
+            {
+                this.CreateDirectoryIfNecessary(this.LogDirectory.ItemSpec);
+                this.website.LogFile.Directory = this.LogDirectory.ItemSpec;
+            }
+            
             this.website.ServerAutoStart = this.serverAutoStart;
       
             Configuration config = this.iisServerManager.GetApplicationHostConfiguration();
@@ -737,6 +757,20 @@ namespace MSBuild.ExtensionPack.Web
             this.SiteId = this.website.Id;
         }
 
+        private void ModifyLogDirectory()
+        {
+            if (!this.SiteExists())
+            {
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Modifying LogDirectory for website: {0} on: {1}", this.Name, this.MachineName));
+            this.CreateDirectoryIfNecessary(this.LogDirectory.ItemSpec);
+            this.website.LogFile.Directory = this.LogDirectory.ItemSpec;
+            this.iisServerManager.CommitChanges();
+        }
+        
         private void GetInfo()
         {
             if (!this.SiteExists())
