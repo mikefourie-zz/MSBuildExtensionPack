@@ -1097,3 +1097,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "std", Scope = "member", Target = "MSBuild.ExtensionPack.SqlServer.Extended.SqlCmdWrapper.#stdError")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dir", Scope = "member", Target = "MSBuild.ExtensionPack.Subversion.Svn.#IsSvnPath(System.String)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ms", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.Thread.#InternalExecute()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "CodePage", Scope = "member", Target = "MSBuild.ExtensionPack.SqlServer.SqlExecute.#LoadScript(System.String)")]
