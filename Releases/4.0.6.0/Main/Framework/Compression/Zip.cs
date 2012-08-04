@@ -264,7 +264,6 @@ namespace MSBuild.ExtensionPack.Compression
             else
             {
                 Log.LogError("CompressFiles or CompressPath must be specified");
-                return;
             }
         }
 
@@ -341,7 +340,6 @@ namespace MSBuild.ExtensionPack.Compression
             else
             {
                 Log.LogError("CompressFiles or CompressPath must be specified");
-                return;
             }
         }
 

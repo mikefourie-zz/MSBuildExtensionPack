@@ -5,9 +5,8 @@
 namespace MSBuild.ExtensionPack.Security.Extended
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Runtime.CompilerServices;
-    using System.Text;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Static class containing all PInvoke methods for WinInet API

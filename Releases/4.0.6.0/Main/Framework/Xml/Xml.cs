@@ -343,15 +343,7 @@ namespace MSBuild.ExtensionPack.Xml
                             XmlWriterSettings writerSettings = new XmlWriterSettings { ConformanceLevel = this.conformanceLevel, Encoding = this.fileEncoding, Indent = this.Indent, OmitXmlDeclaration = this.OmitXmlDeclaration, CloseOutput = true };
                             using (XmlWriter xw = XmlWriter.Create(this.OutputFile, writerSettings))
                             {
-                                if (xw != null)
-                                {
-                                    newxmlDoc.WriteTo(xw);
-                                }
-                                else
-                                {
-                                    Log.LogError("There was an error creating the XmlWriter for the OutputFile");
-                                    return;
-                                }
+                                newxmlDoc.WriteTo(xw);
                             }
                         }
                     }

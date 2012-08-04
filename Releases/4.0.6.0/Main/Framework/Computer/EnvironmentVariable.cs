@@ -106,7 +106,6 @@ namespace MSBuild.ExtensionPack.Computer
                 else
                 {
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The value '{0}' is not in the EnvironmentVariableTarget Enum. Use Process, User or Machine.", value));
-                    return;
                 }
             }
         }

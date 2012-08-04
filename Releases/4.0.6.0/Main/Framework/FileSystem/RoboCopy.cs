@@ -161,8 +161,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case 16:
                     Log.LogError("Return Code 16. Serious error. RoboCopy did not copy any files. This is either a usage error or an error due to insufficient access privileges on the source or destination directories.");
                     break;
-                default:
-                    break;
             }
 
             return retVal;

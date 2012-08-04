@@ -472,7 +472,6 @@ namespace MSBuild.ExtensionPack.Security
             const uint AcquireFlags = 0;
             int keyNumber = 0;
             string keyFileName = null;
-            byte[] keyFileBytes;
 
             // Determine whether there is private key information available for this certificate in the key store
             if (NativeMethods.CryptAcquireCertificatePrivateKey(cert.Handle, AcquireFlags, IntPtr.Zero, ref hprovider, ref keyNumber, ref freeProvider))
@@ -487,7 +486,7 @@ namespace MSBuild.ExtensionPack.Security
 
                         if (NativeMethods.CryptGetProvParam(hprovider, CryptGetProvParamType.PP_UNIQUE_CONTAINER, pbytes, ref cbbytes, 0))
                         {
-                            keyFileBytes = new byte[cbbytes];
+                            byte[] keyFileBytes = new byte[cbbytes];
 
                             Marshal.Copy(pbytes, keyFileBytes, 0, cbbytes);
 

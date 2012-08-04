@@ -228,7 +228,6 @@ namespace MSBuild.ExtensionPack.Web
             if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation)))
             {
                 this.Exists = true;
-                return;
             }
         }
 

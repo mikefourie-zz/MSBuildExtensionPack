@@ -283,7 +283,6 @@ namespace MSBuild.ExtensionPack.Framework
             if (!typeFound)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "Type not Found: {0}", this.NetClass));
-                return;
             }
         }
 

@@ -151,7 +151,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.LogTaskMessage("VC6 Task Execution Completed [" + DateTime.Now.ToString("HH:MM:ss", CultureInfo.CurrentCulture) + "]");
-            return;
         }
 
         private bool BuildProject(ITaskItem project)

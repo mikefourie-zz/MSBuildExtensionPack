@@ -180,7 +180,7 @@ namespace MSBuild.ExtensionPack.Framework
                 string str;
                 while ((str = this.process.StandardOutput.ReadLine()) != null)
                 {
-                    LogTaskMessage(MessageImportance.High, str);
+                    this.LogTaskMessage(MessageImportance.High, str);
                 }
             }
             catch (IOException)

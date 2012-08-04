@@ -172,7 +172,6 @@ namespace MSBuild.ExtensionPack.Framework
             if (result != 0)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
-                return;
             }
         }
 
@@ -248,7 +247,6 @@ namespace MSBuild.ExtensionPack.Framework
                     else
                     {
                         this.Log.LogError("Remote Remove returned null");
-                        return;
                     }
                 }
             }
@@ -307,7 +305,6 @@ namespace MSBuild.ExtensionPack.Framework
                         else
                         {
                             Log.LogError("Remote Create returned null");
-                            return;
                         }
                     }
                 }

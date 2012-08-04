@@ -307,8 +307,8 @@ namespace MSBuild.ExtensionPack.Computer
                                 registryValue = uint.Parse(this.Data, CultureInfo.CurrentCulture);
                                 break;
                             case RegistryValueKind.MultiString:
-                                parts = this.Data.Split(separator);
-                                registryValue = parts;
+                                string[] parts1 = this.Data.Split(separator);
+                                registryValue = parts1;
                                 break;
                             case RegistryValueKind.QWord:
                                 registryValue = ulong.Parse(this.Data, CultureInfo.CurrentCulture);

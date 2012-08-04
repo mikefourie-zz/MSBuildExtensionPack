@@ -20,6 +20,7 @@ namespace MSBuild.ExtensionPack.Computer
 
     internal sealed class HostsFileEntries : IHostsFile
     {
+        private const string Separator = "   ";
         private static readonly string[] Pads = new[]
                                                     {
                                                         string.Empty,
@@ -43,7 +44,6 @@ namespace MSBuild.ExtensionPack.Computer
         private readonly Regex hostsEntryRegex = new Regex(@"^((\d{1,3}\.){3}\d{1,3})\s+(?<HostName>[^\s#]+)(?<Tail>.*)$");
         private readonly Dictionary<string, HostsEntry> hosts;
         private readonly List<string> hostsFileLines;
-        private const string Separator = "   ";
 
         internal HostsFileEntries(string[] hostEntries) : this(hostEntries, false)
         {

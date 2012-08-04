@@ -206,7 +206,6 @@ namespace MSBuild.ExtensionPack.Framework
                 if (proc.ExitCode != 0)
                 {
                     this.Log.LogError("Non-zero exit code from sn.exe: " + proc.ExitCode);
-                    return;
                 }
             }
         }

@@ -190,7 +190,7 @@ namespace MSBuild.ExtensionPack.Web
             request.Timeout = this.Timeout;
             if (this.SkipSslCertificateValidation)
             {
-                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((sender, certificate, chain, sslPolicyErrors) => true);
+                ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             }
 
             return request;

@@ -385,7 +385,6 @@ namespace MSBuild.ExtensionPack.BizTalk
             if (result != 0)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
-                return;
             }
         }
 
@@ -438,7 +437,6 @@ namespace MSBuild.ExtensionPack.BizTalk
                     else
                     {
                         this.Log.LogError("Remote Create returned null");
-                        return;
                     }
                 }
             }

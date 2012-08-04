@@ -262,7 +262,6 @@ namespace MSBuild.ExtensionPack.Communication
             else
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Queue not found: {0}", this.Path));
-                return;
             }
         }
 
@@ -359,7 +358,6 @@ namespace MSBuild.ExtensionPack.Communication
             else
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Queue not found: {0}", this.Path));
-                return;
             }
         }
 

@@ -269,13 +269,11 @@ namespace MSBuild.ExtensionPack.Compression
                     if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.CurrentCulture) != 0)
                     {
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
-                        return;
                     }
                 }
                 else
                 {
                     this.Log.LogError("The ManagementObject call to invoke Delete returned null.");
-                    return;
                 }
             }
         }

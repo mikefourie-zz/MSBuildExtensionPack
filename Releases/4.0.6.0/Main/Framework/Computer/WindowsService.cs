@@ -672,7 +672,7 @@ namespace MSBuild.ExtensionPack.Computer
                 int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
                 if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SetStartupType [{2}] failed with return code '[{0}] {1}'", returnCode, ((ServiceReturnCode)returnCode), startup));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "SetStartupType [{2}] failed with return code '[{0}] {1}'", returnCode, (ServiceReturnCode)returnCode, startup));
                 }
             }
             catch (Exception ex)
@@ -777,7 +777,7 @@ namespace MSBuild.ExtensionPack.Computer
                 int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
                 if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Start Service failed with return code '[{0}] {1}'", returnCode, ((ServiceReturnCode)returnCode)));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Start Service failed with return code '[{0}] {1}'", returnCode, (ServiceReturnCode)returnCode));
                 }
             }
             catch (Exception ex)
@@ -852,7 +852,7 @@ namespace MSBuild.ExtensionPack.Computer
                 int returnCode = Convert.ToInt32(result, CultureInfo.InvariantCulture);
                 if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Stop Service failed with return code '[{0}] {1}'", returnCode, ((ServiceReturnCode)returnCode)));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Stop Service failed with return code '[{0}] {1}'", returnCode, (ServiceReturnCode)returnCode));
                     noErrors = false;
                 }
             }
@@ -1041,7 +1041,7 @@ namespace MSBuild.ExtensionPack.Computer
                 int returnCode = Convert.ToInt32(result["ReturnValue"], CultureInfo.InvariantCulture);
                 if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Delete Service failed with return code '[{0}] {1}'", returnCode, ((ServiceReturnCode)returnCode)));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Delete Service failed with return code '[{0}] {1}'", returnCode, (ServiceReturnCode)returnCode));
                     noErrors = false;
                 }
             }

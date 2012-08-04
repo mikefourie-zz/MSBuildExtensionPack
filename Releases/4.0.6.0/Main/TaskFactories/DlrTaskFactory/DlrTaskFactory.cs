@@ -83,14 +83,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
             get { return typeof(DlrTask); }
         }
 
-        /// <summary>
-        /// Initializes the factory for creating a task with the given script.
-        /// </summary>
-        /// <param name="taskName">Name of the task.</param>
-        /// <param name="parameterGroup">The parameter group.</param>
-        /// <param name="taskBody">The task body.</param>
-        /// <param name="taskFactoryLoggingHost">The task factory logging host.</param>
-        /// <returns>bool</returns>
         public bool Initialize(string taskName, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
         {
             Contract.Requires(!string.IsNullOrEmpty(taskName));

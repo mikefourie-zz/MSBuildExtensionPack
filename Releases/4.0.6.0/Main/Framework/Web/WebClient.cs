@@ -139,7 +139,7 @@ namespace MSBuild.ExtensionPack.Web
                     this.Data = sr.ReadToEnd();
                     if (this.DisplayToConsole)
                     {
-                        LogTaskMessage(MessageImportance.Normal, this.Data);
+                        this.LogTaskMessage(MessageImportance.Normal, this.Data);
                     }
                 }
             }
