@@ -156,7 +156,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             get { return this.tokenExtractionPattern; }
             set { this.tokenExtractionPattern = value; }
         }
-        
+
         /// <summary>
         /// Sets the replacement values.
         /// </summary>
@@ -203,7 +203,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         [TaskAction(DetokeniseTaskAction, false)]
         public bool SearchAllStores { get; set; }
-        
+
         /// <summary>
         /// Specifies whether to ignore tokens which are not matched. Default is false.
         /// </summary>
@@ -340,7 +340,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                     else
                     {
-                        foreach (ProjectProperty pp in this.project.AllEvaluatedProperties)
+                        foreach (ProjectProperty pp in this.project.Properties)
                         {
                             if (!this.tokenDictionary.ContainsKey(pp.Name) && !this.unusedTokens.ContainsKey(pp.Name))
                             {
@@ -348,7 +348,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                             }
                         }
                     }
-                    
+
                     this.UnusedTokens = new TaskItem[this.unusedTokens.Count];
                     i = 0;
                     foreach (var s in this.unusedTokens)
@@ -383,7 +383,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     return !string.IsNullOrEmpty(enc) ? Encoding.GetEncoding(enc) : null;
             }
         }
-        
+
         private void DoDetokenise()
         {
             try
@@ -661,7 +661,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                 }
             }
-            
+
             // we need to look in the calling project's properties collection
             if (this.project.GetProperty(extractedProperty) == null)
             {
@@ -670,7 +670,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                     throw new ArgumentException("Review error log");
                 }
-                
+
                 if (this.IgnoreUnknownTokens)
                 {
                     return string.Format(CultureInfo.InvariantCulture, "$({0})", extractedProperty);
@@ -684,7 +684,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 this.UpdateTokenDictionary(extractedProperty);
             }
 
-            return this.report ? string.Empty : (from p in this.project.AllEvaluatedProperties where string.Equals(p.Name, extractedProperty, StringComparison.OrdinalIgnoreCase) select p.EvaluatedValue).FirstOrDefault();
+            return this.report ? string.Empty : (from p in this.project.Properties where string.Equals(p.Name, extractedProperty, StringComparison.OrdinalIgnoreCase) select p.EvaluatedValue).FirstOrDefault();
         }
 
         private void UpdateTokenDictionary(string extractedProperty)
