@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/a8806f52-767f-44b1-6416-98f44cb0234c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/a8806f52-767f-44b1-6416-98f44cb0234c.htm")]
     public class SmartExec : BaseAppDomainIsolatedTask
     {
         private Process process;
