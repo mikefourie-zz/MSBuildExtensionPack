@@ -202,7 +202,7 @@ namespace MSBuild.ExtensionPack.Sql2012
 
                     foreach (XmlaWarning xmlaWarning in warnings)
                     {
-                        LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "XMLA warning code: {0}\nDescription: {1}\nSource: {2}\nHelpFile: {3}", xmlaWarning.WarningCode, xmlaWarning.Description, xmlaWarning.Source, xmlaWarning.HelpFile));
+                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "XMLA warning code: {0}\nDescription: {1}\nSource: {2}\nHelpFile: {3}", xmlaWarning.WarningCode, xmlaWarning.Description, xmlaWarning.Source, xmlaWarning.HelpFile));
                     }
 
                     if (errors.FirstOrDefault() != default(XmlaError))

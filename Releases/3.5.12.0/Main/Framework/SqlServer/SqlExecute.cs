@@ -66,7 +66,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         private const string ExecuteScalarTaskAction = "ExecuteScalar";
         private const string ExecuteReaderTaskAction = "ExecuteReader";
         private const string ExecuteRawReaderTaskAction = "ExecuteRawReader";
-        private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static readonly Regex Splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private int commandTimeout = 30;
         private DateTime timer;
         private bool stripMultiLineComments = true;
@@ -274,7 +274,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                         {
                             this.LogTaskMessage(MessageImportance.Low, "Loading {0}.", new[] { fileInfo.ItemSpec });
                             string sqlCommandText = this.SubstituteParameters(this.LoadScript(fileInfo.ItemSpec)) + Environment.NewLine;
-                            string[] batches = splitter.Split(sqlCommandText);
+                            string[] batches = Splitter.Split(sqlCommandText);
                             this.LogTaskMessage(MessageImportance.Low, "Split {0} into {1} batches.", new object[] { fileInfo.ItemSpec, batches.Length });
                             SqlTransaction sqlTransaction = null;
                             SqlCommand command = sqlConnection.CreateCommand();

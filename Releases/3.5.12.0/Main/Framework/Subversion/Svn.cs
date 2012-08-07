@@ -690,7 +690,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendFixedParameter(this.PropertyName);
             cmd.AppendFixedParameter(this.PropertyValue);
             cmd.AppendFileNameIfNotNull(this.Item);
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecCheckout()
@@ -708,7 +708,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecUpdate()
@@ -725,7 +725,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("update");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecAdd()
@@ -742,7 +742,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("add");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecCopy()
@@ -760,7 +760,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecDelete()
@@ -777,7 +777,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("delete");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecMove()
@@ -795,7 +795,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecCommit()
@@ -814,7 +814,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("-m");
             cmd.AppendFixedParameter("MSBuild");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
 
         private void ExecExport()
@@ -832,7 +832,7 @@ namespace MSBuild.ExtensionPack.Subversion
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNameIfNotNull(this.Item);
             cmd.AppendFileNameIfNotNull(this.Destination);
-            Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
+            Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
         #endregion
     }

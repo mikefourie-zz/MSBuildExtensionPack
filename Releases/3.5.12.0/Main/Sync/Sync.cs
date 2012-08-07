@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Synchronization;
     using Microsoft.Synchronization.Files;
@@ -134,12 +135,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // Set the sync options
             if (this.SyncOptions != null)
             {
-                FileSyncOptions fso = new FileSyncOptions();
-                foreach (ITaskItem opt in this.SyncOptions)
-                {
-                    fso |= (FileSyncOptions)Enum.Parse(typeof(FileSyncOptions), opt.ItemSpec);
-                }
-
+                FileSyncOptions fso = this.SyncOptions.Aggregate(new FileSyncOptions(), (current, opt) => current | (FileSyncOptions)Enum.Parse(typeof(FileSyncOptions), opt.ItemSpec));
                 this.syncOptions = fso;
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SyncOptions set: {0}", this.syncOptions));
             }
@@ -157,8 +153,6 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private static Guid GetSyncId(string idFilePath)
         {
-            Guid replicaId;
-
             if (File.Exists(idFilePath))
             {
                 using (StreamReader sr = File.OpenText(idFilePath))
@@ -174,6 +168,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             using (FileStream idFile = File.Open(idFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 StreamWriter sw = null;
+                Guid replicaId;
                 try
                 {
                     sw = new StreamWriter(idFile);
@@ -277,7 +272,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void OnSkippedChange(object sender, SkippedChangeEventArgs args)
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SKIPPED {0} for {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), (!string.IsNullOrEmpty(args.CurrentFilePath) ? args.CurrentFilePath : args.NewFilePath)));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SKIPPED {0} for {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), !string.IsNullOrEmpty(args.CurrentFilePath) ? args.CurrentFilePath : args.NewFilePath));
             if (args.Exception != null)
             {
                 this.Log.LogErrorFromException(args.Exception, this.LogExceptionStack, true, null);

@@ -139,14 +139,14 @@ namespace MSBuild.ExtensionPack
             /// <param name="value">the string to append</param>
             public void AppendFixedParameter(string value)
             {
-                AppendSpaceIfNotEmpty();
+                this.AppendSpaceIfNotEmpty();
                 if (string.IsNullOrEmpty(value))
                 {
-                    AppendTextUnquoted("\"\"");
+                    this.AppendTextUnquoted("\"\"");
                 }
                 else
                 {
-                    AppendTextWithQuoting(value);
+                    this.AppendTextWithQuoting(value);
                 }
             }
         }
