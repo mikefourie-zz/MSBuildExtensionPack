@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/4ad82db2-621c-7172-87ab-86a587ef7856.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/4ad82db2-621c-7172-87ab-86a587ef7856.htm")]
     public class VC6 : BaseTask
     {
         private const string DefaultMSDEVPath = @"\Microsoft Visual Studio\Common\MSDev98\Bin\MSDEV.EXE";

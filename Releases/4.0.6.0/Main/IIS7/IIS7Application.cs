@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/34e9bc00-e148-a6ba-4d3f-ef7af4bf0887.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/34e9bc00-e148-a6ba-4d3f-ef7af4bf0887.htm")]
     public class Iis7Application : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
