@@ -12,6 +12,11 @@
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.BizTalk.BizTalkSendHandler>
         <Message Text="BizTalkSendHandler  Exists: $(DoesExist) "/>
+        <!-- Get all Send Handlers -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkSendHandler TaskAction="Get" HostName="Biz">
+            <Output TaskParameter="SendHandlers" ItemName="SH"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkSendHandler>
+        <Message Text="%(SH.Identity) - %(SH.AdapterName) - %(SH.CustomCfg)"/>
         <!-- Delete a SendHandler -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkSendHandler TaskAction="Delete" HostName="MSBEPTESTHOST" AdapterName="MQSeries"/>
         <!-- Check a SendHandler exists (it shouldn't) -->
