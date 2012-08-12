@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, Major, Minor, VersionFormat <b>Optional:</b>PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter, Build, Revision, VersionTemplateFormat, CombineBuildAndRevision, UseUtcDate<b>Output: </b>Version, Major, Minor, Build, Revision)</para>
+    /// <para><i>GetVersion</i> (<b>Required: </b> TfsBuildNumber, VersionFormat <b>Optional:</b>Major, Minor, BuildNumberRegex, PaddingCount, PaddingDigit, StartDate, DateFormat, BuildName, Delimiter, Build, Revision, VersionTemplateFormat, CombineBuildAndRevision, UseUtcDate<b>Output: </b>Version, Major, Minor, Build, Revision)</para>
     /// <para><b>Please Note:</b> The output of GetVersion should not be used to change the $(BuildNumber). For guidance, see: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!404.entry</para>
     /// <para><i>SetVersion</i> (<b>Required: </b> Version, Files <b>Optional:</b> TextEncoding, SetAssemblyVersion, AssemblyVersion, SetAssemblyFileVersion, ForceSetVersion</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -67,6 +67,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private Regex regexAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
         private string delimiter = ".";
+        private string buildnumberRegex = @"\d+\.\d+\.\d+\.\d+";
+
+        /// <summary>
+        /// Sets the BuildNumberRegex to determine the verison number from the BuildNumber when using in Synced mode. Default is \d+\.\d+\.\d+\.\d+
+        /// </summary>
+        public string BuildNumberRegex
+        {
+            get { return this.buildnumberRegex; }
+            set { this.buildnumberRegex = value; }
+        }
 
         [DropdownValue(GetVersionTaskAction)]
         [DropdownValue(SetVersionTaskAction)]
@@ -168,7 +178,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string BuildName { get; set; }
 
         /// <summary>
-        /// Sets the Version Format. Valid VersionFormats are Elapsed, DateTime
+        /// Sets the Version Format. Valid VersionFormats are Elapsed, DateTime, Synced
         /// </summary>
         [TaskAction(GetVersionTaskAction, true)]
         public string VersionFormat { get; set; }
@@ -252,12 +262,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.BuildName))
-            {
-                Log.LogError("BuildName is required");
-                return;
-            }
-
             if (string.IsNullOrEmpty(this.VersionFormat))
             {
                 Log.LogError("VersionFormat is required");
@@ -265,59 +269,74 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.LogTaskMessage("Getting Version");
-            string buildstring = this.TfsBuildNumber.Replace(this.BuildName + "_", string.Empty);
-            string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
-
-            DateTime baseTimeToUse = DateTime.Now;
-            if (this.UseUtcDate)
+            if (this.VersionFormat == "Synced")
             {
-                baseTimeToUse = DateTime.UtcNow;
+                Regex r = new Regex(this.BuildNumberRegex, RegexOptions.Compiled);
+                var s = r.Match(this.TfsBuildNumber).Value;
+                this.Version = s;
             }
-
-            if (string.IsNullOrEmpty(this.Revision))
+            else
             {
-                if (this.CombineBuildAndRevision)
+                if (string.IsNullOrEmpty(this.BuildName))
                 {
-                    switch (this.VersionFormat.ToUpperInvariant())
-                    {
-                        case "ELAPSED":
-                            TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.StartDate);
-                            this.Revision = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
-                            break;
-                        case "DATETIME":
-                            this.Revision = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
-                            break;
-                    }
-                }
-                else
-                {
-                    this.Revision = buildParts[1];
-                }
-            }
-
-            switch (this.VersionFormat.ToUpperInvariant())
-            {
-                case "ELAPSED":
-                    TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.StartDate);
-                    if (string.IsNullOrEmpty(this.Build))
-                    {
-                        this.Build = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
-                    }
-
-                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
-                    break;
-                case "DATETIME":
-                    if (string.IsNullOrEmpty(this.Build))
-                    {
-                        this.Build = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
-                    }
-
-                    this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
-                    break;
-                default:
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
+                    Log.LogError("BuildName is required");
                     return;
+                }
+
+                string buildstring = this.TfsBuildNumber.Replace(this.BuildName + "_", string.Empty);
+                string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
+
+                DateTime baseTimeToUse = DateTime.Now;
+                if (this.UseUtcDate)
+                {
+                    baseTimeToUse = DateTime.UtcNow;
+                }
+
+                if (string.IsNullOrEmpty(this.Revision))
+                {
+                    if (this.CombineBuildAndRevision)
+                    {
+                        switch (this.VersionFormat.ToUpperInvariant())
+                        {
+                            case "ELAPSED":
+                                TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.StartDate);
+                                this.Revision = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
+                                break;
+                            case "DATETIME":
+                                this.Revision = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1];
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        this.Revision = buildParts[1];
+                    }
+                }
+
+                switch (this.VersionFormat.ToUpperInvariant())
+                {
+                    case "ELAPSED":
+                        TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.StartDate);
+                        if (string.IsNullOrEmpty(this.Build))
+                        {
+                            this.Build = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
+                        }
+
+                        this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
+                        break;
+                    case "DATETIME":
+                        if (string.IsNullOrEmpty(this.Build))
+                        {
+                            this.Build = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
+                        }
+
+                        this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
+                        break;
+                    default:
+                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
+                        return;
+                }
             }
 
             // Check if format is provided
