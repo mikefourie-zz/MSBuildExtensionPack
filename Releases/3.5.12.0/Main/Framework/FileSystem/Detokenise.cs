@@ -399,12 +399,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                 if (this.ReplacementValues == null && string.IsNullOrEmpty(this.CommandLineValues))
                 {
                     this.collectionMode = false;
-
-                    // Read the project file to get the tokens
-                    this.project = new Project();
-                    string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Loading Project: {0}", projectFile));
-                    this.project.Load(projectFile);
                 }
                 else if (!string.IsNullOrEmpty(this.CommandLineValues))
                 {
@@ -417,7 +411,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                 }
 
-                if (this.project == null)
+                if (this.project == null && (!this.collectionMode || this.SearchAllStores))
                 {
                     // Read the project file to get the tokens
                     this.project = new Project();
@@ -669,7 +663,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // we need to look in the calling project's properties collection
-            if (this.project.EvaluatedProperties[extractedProperty] == null)
+            if (this.project == null || this.project.EvaluatedProperties[extractedProperty] == null)
             {
                 if (!this.report && !this.IgnoreUnknownTokens)
                 {

@@ -407,7 +407,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                 }
 
-                if (this.project == null)
+                if (this.project == null && (!this.collectionMode || this.SearchAllStores))
                 {
                     // Read the project file to get the tokens
                     string projectFile = this.ProjectFile == null ? this.BuildEngine.ProjectFileOfTaskNode : this.ProjectFile.ItemSpec;
@@ -663,7 +663,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // we need to look in the calling project's properties collection
-            if (this.project.GetProperty(extractedProperty) == null)
+            if (this.project == null || this.project.GetProperty(extractedProperty) == null)
             {
                 if (!this.report && !this.IgnoreUnknownTokens)
                 {
