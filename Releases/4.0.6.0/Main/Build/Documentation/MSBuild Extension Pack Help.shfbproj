@@ -15,7 +15,7 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <OutputPath>D:\MSBEP\4\</OutputPath>
+    <OutputPath>C:\MSBEP\4\</OutputPath>
     <HtmlHelpName>MSBuild Extension Pack Help</HtmlHelpName>
     <ApiFilter>
       <Filter entryType="Namespace" fullName="Microsoft.Sdc.Tasks" isExposed="True" xmlns="">
@@ -50,36 +50,36 @@
     <PresentationStyle>vs2005</PresentationStyle>
     <SyntaxFilters>None</SyntaxFilters>
     <DocumentationSources>
-      <DocumentationSource sourceFile="D:\MSBEP\4\Interop.COMAdmin.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Iis7.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Iis7.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Loggers.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Loggers.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Sync.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Sync.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.Dlr.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.Dlr.XML" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.PowerShell.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Tfs.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Tfs.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\MSBuild.ExtensionPack.xml" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\StyleCop.CSharp.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\StyleCop.CSharp.Rules.dll" />
-      <DocumentationSource sourceFile="D:\MSBEP\4\StyleCop.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\Interop.COMAdmin.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Iis7.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Iis7.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Loggers.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Loggers.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sync.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sync.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.Dlr.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.Dlr.XML" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.PowerShell.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\StyleCop.CSharp.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\StyleCop.CSharp.Rules.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\StyleCop.dll" />
     </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
