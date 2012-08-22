@@ -6,11 +6,14 @@ namespace MSBuild.ExtensionPack.Computer
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.Build.Framework;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b> CategoryName, CounterList, CategoryHelp <b>Optional: </b> MultiInstance)</para>
+    /// <para><i>CheckCategoryExists</i> (<b>Required: </b> CategoryName <b>Optional: </b> MachineName)</para>
+    /// <para><i>CheckCounterExists</i> (<b>Required: </b> CategoryName, CounterName <b>Optional: </b> MachineName)</para>
     /// <para><i>GetValue</i> (<b>Required: </b> CategoryName, CounterName <b>Output: </b> Value, MachineName)</para>
     /// <para><i>Remove</i> (<b>Required: </b> CategoryName)</para>
     /// <para><b>Remote Execution Support:</b> Partial</para>
@@ -25,6 +28,7 @@ namespace MSBuild.ExtensionPack.Computer
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <ItemGroup>
+    ///             <!-- Configure some perf counters -->
     ///             <CounterList Include="foobar.A">
     ///                 <CounterName>ACounter</CounterName>
     ///                 <CounterHelp>A Custom Counter</CounterHelp>
@@ -36,8 +40,21 @@ namespace MSBuild.ExtensionPack.Computer
     ///                 <CounterType>CounterTimer</CounterType>
     ///             </CounterList>
     ///         </ItemGroup>
+    ///         <!-- Add a Performance Counter -->
     ///         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="Add" CategoryName="YourCustomCategory" CategoryHelp="This is a custom performance counter category" CounterList="@(CounterList)" MultiInstance="true" />
+    ///         <!-- Check whether a Category Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="CheckCategoryExists" CategoryName="aYourCustomCategory">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.PerformanceCounters>
+    ///         <Message Text="aYourCustomCategory - $(DoesExist)"/>
+    ///         <!-- Check whether a Counter Exists -->
+    ///         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="CheckCounterExists" CategoryName="aYourCustomCategory" CounterName="AnotherCounter">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.PerformanceCounters>
+    ///         <Message Text="AnotherCounter - $(DoesExist)"/>
+    ///         <!-- Remove a Performance Counter -->
     ///         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="Remove" CategoryName="YourCustomCategory"/>
+    ///         <!-- Get a Performance Counter value-->
     ///         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="GetValue" CategoryName="Memory" CounterName="Available MBytes">
     ///             <Output PropertyName="TheValue" TaskParameter="Value"/>
     ///         </MSBuild.ExtensionPack.Computer.PerformanceCounters>
@@ -46,68 +63,51 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/7badb83c-0162-f8c7-afd0-969f571268fe.htm")]
     public class PerformanceCounters : BaseTask
     {
         private const string AddTaskAction = "Add";
-        private const string GetValueAction = "GetValue";
+        private const string CheckCategoryExistsTaskAction = "CheckCategoryExists";
+        private const string CheckCounterExistsTaskAction = "CheckCounterExists";
+        private const string GetValueTaskAction = "GetValue";
         private const string RemoveTaskAction = "Remove";
-
-        [DropdownValue(AddTaskAction)]
-        [DropdownValue(GetValueAction)]
-        [DropdownValue(RemoveTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the CategoryName
         /// </summary>
         [Required]
-        [TaskAction(AddTaskAction, true)]
-        [TaskAction(GetValueAction, true)]
-        [TaskAction(RemoveTaskAction, true)]
         public string CategoryName { get; set; }
 
         /// <summary>
         /// Sets the description of the custom category.
         /// </summary>
-        [TaskAction(AddTaskAction, true)]
         public string CategoryHelp { get; set; }
 
         /// <summary>
         /// Gets the value of the counter
         /// </summary>
         [Output]
-        [TaskAction(GetValueAction, false)]
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the name of the counter.
         /// </summary>
-        [TaskAction(GetValueAction, true)]
         public string CounterName { get; set; }       
 
         /// <summary>
         /// Sets a value indicating whether to create a multiple instance performance counter. Default is false
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public bool MultiInstance { get; set; }
+
+        /// <summary>
+        /// Gets whether the item exists
+        /// </summary>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
         /// Sets the TaskItem[] that specifies the counters to create as part of the new category.
         /// </summary>
-        [TaskAction(AddTaskAction, true)]
         public ITaskItem[] CounterList { get; set; }
-
-        [TaskAction(GetValueAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
 
         /// <summary>
         /// Performs the action of this task.
@@ -116,14 +116,21 @@ namespace MSBuild.ExtensionPack.Computer
         {
             switch (this.TaskAction)
             {
-                case "Add":
+                case AddTaskAction:
                     this.Add();
                     break;
-                case "Remove":
+                case RemoveTaskAction:
                     this.Remove();
                     break;
-                case "GetValue":
+                case GetValueTaskAction:
                     this.GetValue();
+                    break;
+                case CheckCategoryExistsTaskAction:
+                    this.LogTaskMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking whether Performance Counter Category: {0} exists on : {1}", this.CategoryName, this.MachineName));
+                    this.Exists = PerformanceCounterCategory.Exists(this.CategoryName, this.MachineName);
+                    break;
+                case CheckCounterExistsTaskAction:
+                    this.Exists = this.CheckCounterExists();
                     break;
                 default:
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -131,11 +138,30 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
+        private bool CheckCounterExists()
+        {
+            if (string.IsNullOrEmpty(this.CounterName))
+            {
+                Log.LogError("CounterName is required");
+                return false;
+            }
+
+            if (!PerformanceCounterCategory.Exists(this.CategoryName, this.MachineName))
+            {
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Performance Counter Category not found: {0}", this.CategoryName));
+                return false;
+            }
+
+            PerformanceCounterCategory cat = new PerformanceCounterCategory(this.CategoryName, this.MachineName);
+            PerformanceCounter[] counters = cat.GetCounters();
+            return counters.Any(c => c.CounterName == this.CounterName);
+        }
+
         private void GetValue()
         {
-            if (PerformanceCounterCategory.Exists(this.CategoryName))
+            if (PerformanceCounterCategory.Exists(this.CategoryName, this.MachineName))
             {
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting CounterName: {0}", this.CounterName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Getting Performance Counter: {0} from: {1} on: {2}", this.CounterName, this.CategoryName, this.MachineName));
                 using (PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName))
                 {
                     this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
@@ -143,18 +169,18 @@ namespace MSBuild.ExtensionPack.Computer
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Category not found: {0}", this.CategoryName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Performance Counter Category not found: {0}", this.CategoryName));
             }
         }
 
         private void Add()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter: {0}", this.CategoryName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter Category: {0}", this.CategoryName));
             CounterCreationDataCollection colCounterCreationData = new CounterCreationDataCollection();
             colCounterCreationData.Clear();
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing Category: {0}", this.CategoryName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing Performance Counter Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
             
@@ -163,7 +189,7 @@ namespace MSBuild.ExtensionPack.Computer
                 string counterName = counter.GetMetadata("CounterName");
                 string counterHelp = counter.GetMetadata("CounterHelp");
                 PerformanceCounterType counterType = (PerformanceCounterType)Enum.Parse(typeof(PerformanceCounterType), counter.GetMetadata("CounterType"));
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding PerformanceCounter: {0}", counterName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter: {0}", counterName));
                 CounterCreationData objCreateCounter = new CounterCreationData(counterName, counterHelp, counterType);
                 colCounterCreationData.Add(objCreateCounter);
             }
@@ -177,7 +203,7 @@ namespace MSBuild.ExtensionPack.Computer
                     categoryType = PerformanceCounterCategoryType.MultiInstance;
                 }
 
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Category: {0}", this.CategoryName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Creating Performance Counter Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Create(this.CategoryName, this.CategoryHelp, categoryType, colCounterCreationData);
             }
         }
@@ -186,12 +212,12 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Performance Counter: {0}", this.CategoryName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing Performance Counter Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Category not found: {0}", this.CategoryName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Performance Counter Category not found: {0}", this.CategoryName));
             }
         }
     }
