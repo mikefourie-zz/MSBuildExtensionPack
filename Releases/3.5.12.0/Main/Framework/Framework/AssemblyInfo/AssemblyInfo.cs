@@ -1017,7 +1017,18 @@ namespace MSBuild.ExtensionPack.Framework
                 this.Log.LogMessage(MessageImportance.Low, "Updating assembly info for {0}", item.ItemSpec);
                 if (!this.SkipVersioning)
                 {
-                    Version versionToUpdate = new Version(assemblyInfo["AssemblyVersion"]);
+                    Version versionToUpdate = null;
+
+                    try
+                    {
+                        versionToUpdate = new Version(assemblyInfo["AssemblyVersion"], true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to read current AssemblyVersion from file {0}: {1}", item.ItemSpec, ex.Message));
+                        return false;
+                    }
+
                     this.UpdateAssemblyVersion(versionToUpdate, this.assemblyVersionSettings);
                     assemblyInfo["AssemblyVersion"] = versionToUpdate.ToString();
                     if (this.UpdateAssemblyInformationalVersion)
@@ -1036,10 +1047,17 @@ namespace MSBuild.ExtensionPack.Framework
                     }
                     
                     UpdateMaxVersion(ref this.maxAssemblyVersion, assemblyInfo["AssemblyVersion"]);
+                    try
+                    {
                     versionToUpdate = new Version(assemblyInfo["AssemblyFileVersion"]);
                     this.UpdateAssemblyVersion(versionToUpdate, this.assemblyFileVersionSettings);
                     assemblyInfo["AssemblyFileVersion"] = versionToUpdate.ToString();
                     UpdateMaxVersion(ref this.maxAssemblyFileVersion, assemblyInfo["AssemblyFileVersion"]);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Log.LogWarning(string.Format(CultureInfo.CurrentUICulture, "File {0} contains a verbatim AssemblyFileVersion - skipping", item.ItemSpec));
+                    }
                 }
 
                 this.UpdateProperty(assemblyInfo, "AssemblyTitle");
