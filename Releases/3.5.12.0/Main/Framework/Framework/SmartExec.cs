@@ -142,7 +142,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <returns>The batch program file path</returns>
         private static string CreateBatchProgram(string command)
         {
-            string tmpFilePath = Path.GetTempFileName();
+            string tmpFilePath = System.IO.Path.GetTempFileName();
             string batFilePath = string.Format(CultureInfo.InvariantCulture, "{0}.bat", tmpFilePath);
             File.Move(tmpFilePath, batFilePath);
             File.WriteAllText(batFilePath, command);

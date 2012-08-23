@@ -1273,7 +1273,7 @@ namespace MSBuild.ExtensionPack.Framework
             FileInfo myFileInfo;
             try
             {
-                string tempFileName = Path.GetTempFileName();
+                string tempFileName = System.IO.Path.GetTempFileName();
                 myFileInfo = new FileInfo(tempFileName) { Attributes = FileAttributes.Temporary };
             }
             catch (Exception e)

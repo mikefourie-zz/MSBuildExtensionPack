@@ -209,6 +209,7 @@
     <Compile Include="Framework\DynamicExecute.cs" />
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Framework\ILMerge.cs" />
+    <Compile Include="Framework\Path.cs" />
     <Compile Include="Framework\SmartExec.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -399,6 +400,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\MSMQ.proj" />
+    <None Include="XmlSamples\Path.proj" />
     <None Include="XmlSamples\Process.proj" />
     <None Include="XmlSamples\SmartExec.proj" />
     <None Include="XmlSamples\Zip.proj" />

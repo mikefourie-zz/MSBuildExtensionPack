@@ -174,7 +174,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Run(string args)
         {
-            string fileName = this.ToolPath != null ? Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName) : ToolName;
+            string fileName = this.ToolPath != null ? System.IO.Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName) : ToolName;
             if (!System.IO.File.Exists(fileName))
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "sn.exe not found: {0}", fileName));

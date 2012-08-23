@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override string GenerateFullPathToTool()
         {
-            return string.IsNullOrEmpty(this.ToolPath) ? this.ToolName : Path.Combine(this.ToolPath, this.ToolName);
+            return string.IsNullOrEmpty(this.ToolPath) ? this.ToolName : System.IO.Path.Combine(this.ToolPath, this.ToolName);
         }
 
         protected override string GenerateCommandLineCommands()
