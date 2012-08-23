@@ -1265,3 +1265,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "CounterName", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.PerformanceCounters.#CheckCounterExists()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Filepath", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.Path.#Filepath2")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Filepath", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.Path.#Filepath")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "RegexPattern", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.File.#CheckContainsContent()")]

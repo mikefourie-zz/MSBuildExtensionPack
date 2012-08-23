@@ -20,6 +20,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>AddSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
+    /// <para><i>CheckContainsContent</i> (<b>Required: </b>Files, RegexPattern <b>Optional: </b>RegexOptionList <b>Output: </b>Result)</para>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
     /// <para><i>Create</i> (<b>Required: </b>Files <b>Optional: Size</b>). Creates file(s)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
@@ -71,8 +72,14 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///             <size>5000000</size>
     ///         </FilesToCreate>
     ///         <FilesToCreate Include="d:\a\File4-100.txt"/>
+    ///         <FilesToCheck Include="d:\a\*.*"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
+    ///         <!-- Check whether files contain matching content -->
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CheckContainsContent" Files="@(FilesToCheck)" RegexPattern="Hello">
+    ///             <Output TaskParameter="Result" PropertyName="TheResult"/>
+    ///         </MSBuild.ExtensionPack.FileSystem.File>
+    ///         <Message Text="$(TheResult)"/>
     ///         <!-- Create some files. Defaults the size to 1000 bytes, but one file overrides this using metadata -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Create" Files="@(FilesToCreate)" Size="1000"/>
     ///         <!-- Write lines to a file. Lines only added if file does not contain them -->
@@ -140,6 +147,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string CreateTaskAction = "Create";
         private const string GetChecksumTaskAction = "GetChecksum";
         private const string FilterByContentTaskAction = "FilterByContent";
+        private const string CheckContainsContentTaskAction = "CheckContainsContent";
         private const string ReplaceTaskAction = "Replace";
         private const string SetAttributesTaskAction = "SetAttributes";
         private const string AddAttributesTaskAction = "AddAttributes";
@@ -163,8 +171,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
-        [TaskAction(AddSecurityTaskAction, false)]
-        [TaskAction(RemoveSecurityTaskAction, false)]
         public string AccessType
         {
             get { return this.accessType.ToString(); }
@@ -175,27 +181,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// A comma-separated list of <a href="http://msdn.microsoft.com/en-us/library/942f991b.aspx">FileSystemRights</a>.
         /// </summary>
         /// <remarks>If Permission is not set, the task will look for Permission meta-data on each user item.</remarks>
-        [TaskAction(AddSecurityTaskAction, false)]
-        [TaskAction(RemoveSecurityTaskAction, false)]
         public string Permission { get; set; }
-
-        [DropdownValue(AddAttributesTaskAction)]
-        [DropdownValue(CountLinesTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(GetChecksumTaskAction)]
-        [DropdownValue(GetTempFileNameTaskAction)]
-        [DropdownValue(FilterByContentTaskAction)]
-        [DropdownValue(MoveTaskAction)]
-        [DropdownValue(RemoveAttributesTaskAction)]
-        [DropdownValue(ReplaceTaskAction)]
-        [DropdownValue(SetAttributesTaskAction)]
-        [DropdownValue(RemoveLinesTaskAction)]
-        [DropdownValue(WriteLinesTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the users collection. Use the Permission metadata tag to specify permissions. Separate pemissions with a comma.
@@ -208,28 +194,21 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// ]]></code>
         /// </remarks>
         /// </summary>
-        [TaskAction(AddSecurityTaskAction, true)]
-        [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
         /// Sets the Lines to use. For WriteLines this is interpreted as plain text. For RemoveLines this is interpreted as a regular expression
         /// </summary>
-        [TaskAction(RemoveLinesTaskAction, true)]
-        [TaskAction(WriteLinesTaskAction, true)]
         public ITaskItem[] Lines { get; set; }
 
         /// <summary>
         /// Sets the regex pattern.
         /// </summary>
-        [TaskAction(ReplaceTaskAction, true)]
-        [TaskAction(FilterByContentTaskAction, true)]
         public string RegexPattern { get; set; }
 
         /// <summary>
         /// The replacement text to use. Default is string.Empty
         /// </summary>
-        [TaskAction(ReplaceTaskAction, false)]
         public string Replacement
         {
             get { return this.replacement; }
@@ -239,9 +218,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets the Regular Expression options, e.g. None|IgnoreCase|Multiline|ExplicitCapture|Compiled|Singleline|IgnorePatternWhitespace|RightToLeft|RightToLeft|ECMAScript|CultureInvariant  Default is RegexOptions.Compiled
         /// </summary>
-        [TaskAction(FilterByContentTaskAction, false)]
-        [TaskAction(RemoveLinesTaskAction, false)]
-        [TaskAction(ReplaceTaskAction, false)]
         public string RegexOptionList
         {
             get
@@ -309,22 +285,17 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// A path to process or get. Use * for recursive folder processing. For the GetChecksum TaskAction, this indicates the path to the file to create a checksum for.
         /// </summary>
-        [TaskAction(GetChecksumTaskAction, true)]
-        [TaskAction(MoveTaskAction, true)]
-        [TaskAction(ReplaceTaskAction, false)]
         [Output]
         public ITaskItem Path { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding.
         /// </summary>
-        [TaskAction(ReplaceTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Sets characters to be interpreted as comment identifiers. Semi-colon delimited. Only single line comments are currently supported.
         /// </summary>
-        [TaskAction(CountLinesTaskAction, false)]
         public string CommentIdentifiers
         { 
             set { this.commentIdentifiers = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); }
@@ -333,115 +304,92 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// An ItemList of files to process. If calling SetAttributes, RemoveAttributes or AddAttributes, include the attributes in an Attributes metadata tag, separated by a semicolon.
         /// </summary>
-        [TaskAction(CountLinesTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(SetAttributesTaskAction, true)]
-        [TaskAction(AddAttributesTaskAction, true)]
-        [TaskAction(MoveTaskAction, true)]
-        [TaskAction(RemoveAttributesTaskAction, true)]
-        [TaskAction(ReplaceTaskAction, false)]
-        [TaskAction(FilterByContentTaskAction, true)]
-        [TaskAction(AddSecurityTaskAction, true)]
-        [TaskAction(RemoveSecurityTaskAction, true)]
-        [TaskAction(RemoveLinesTaskAction, true)]
-        [TaskAction(WriteLinesTaskAction, true)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// Sets the TargetPath for a renamed file
         /// </summary>
-        [TaskAction(MoveTaskAction, true)]
         public ITaskItem TargetPath { get; set; }
 
         /// <summary>
         /// Gets the total number of lines counted
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
         public int TotalLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of comment lines counted
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
         public int CommentLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of empty lines countered. Whitespace is ignored.
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
         public int EmptyLinecount { get; set; }
-
+      
         /// <summary>
         /// Gets the number of files counted
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
         public int TotalFilecount { get; set; }
 
         /// <summary>
         /// Gets the number of code lines countered. This is calculated as Total - Comment - Empty
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
         public int CodeLinecount { get; set; }
 
         /// <summary>
         /// Gets the number of excluded files
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
-        [TaskAction(FilterByContentTaskAction, false)]
         public int ExcludedFilecount { get; set; }
 
         /// <summary>
         /// Gets the number of included files
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
-        [TaskAction(FilterByContentTaskAction, false)]
         public int IncludedFilecount { get; set; }
 
         /// <summary>
         /// Sets the maximum size of files to count
         /// </summary>
-        [TaskAction(CountLinesTaskAction, false)]
         public int MaxSize { get; set; }
 
         /// <summary>
         /// Sets the minimum size of files to count
         /// </summary>
-        [TaskAction(CountLinesTaskAction, false)]
         public int MinSize { get; set; }
 
         /// <summary>
         /// Sets the size of the file in bytes for TaskAction="Create". This can be overridden by using a metadata tag called size on the Files items.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public int Size { get; set; }
 
         /// <summary>
         /// Gets the time taken to count the files. Value in seconds.
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
         public string ElapsedTime { get; set; }
+
+        /// <summary>
+        /// Gets the result
+        /// </summary>
+        [Output]
+        public bool Result { get; set; }
 
         /// <summary>
         /// Gets the file checksum
         /// </summary>
         [Output]
-        [TaskAction(GetChecksumTaskAction, false)]
         public string Checksum { get; set; }
 
         /// <summary>
         /// Item collection of files Excluded from the count.
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
-        [TaskAction(FilterByContentTaskAction, false)]
         public ITaskItem[] ExcludedFiles
         {
             get { return this.excludedFiles == null ? null : this.excludedFiles.ToArray(); }
@@ -452,8 +400,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Item collection of files included after filtering operations
         /// </summary>
         [Output]
-        [TaskAction(CountLinesTaskAction, false)]
-        [TaskAction(FilterByContentTaskAction, false)]
         public ITaskItem[] IncludedFiles
         {
             get { return this.includedFiles == null ? null : this.includedFiles.ToArray(); }
@@ -480,6 +426,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                     break;
                 case FilterByContentTaskAction:
                     this.FilterByContent();
+                    break;
+                case CheckContainsContentTaskAction:
+                    this.CheckContainsContent();
                     break;
                 case GetChecksumTaskAction:
                     this.GetChecksum();
@@ -554,6 +503,49 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             return flags;
+        }
+
+        private void CheckContainsContent()
+        {
+            if (this.Files == null)
+            {
+                Log.LogError("Files is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.RegexPattern))
+            {
+                Log.LogError("RegexPattern is required.");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking files contain content matching: {0}", this.RegexPattern));
+
+            foreach (ITaskItem f in this.Files)
+            {
+                string entireFile;
+
+                using (StreamReader streamReader = new StreamReader(f.ItemSpec))
+                {
+                    entireFile = streamReader.ReadToEnd();
+                }
+
+                // Load the regex to use
+                this.parseRegex = new Regex(this.RegexPattern, this.regexOptions);
+
+                // Match the regular expression pattern against a text string.
+                Match m = this.parseRegex.Match(entireFile);
+                if (m.Success)
+                {
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found in: {0}", f.ItemSpec));
+                    this.Result = true;
+                }
+                else
+                {
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Not found in: {0}", f.ItemSpec));
+                    return;
+                }
+            }
         }
 
         private void Create()

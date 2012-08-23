@@ -33,8 +33,14 @@
             <size>5000000</size>
         </FilesToCreate>
         <FilesToCreate Include="d:\a\File4-100.txt"/>
+        <FilesToCheck Include="d:\a\*.*"/>
     </ItemGroup>
     <Target Name="Default">
+        <!-- Check whether files contain matching content -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="CheckContainsContent" Files="@(FilesToCheck)" RegexPattern="Hello">
+            <Output TaskParameter="Result" PropertyName="TheResult"/>
+        </MSBuild.ExtensionPack.FileSystem.File>
+        <Message Text="$(TheResult)"/>
         <!-- Create some files. Defaults the size to 1000 bytes, but one file overrides this using metadata -->
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Create" Files="@(FilesToCreate)" Size="1000"/>
         <!-- Write lines to a file. Lines only added if file does not contain them -->
