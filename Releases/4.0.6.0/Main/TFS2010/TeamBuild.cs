@@ -28,10 +28,10 @@ namespace MSBuild.ExtensionPack.Tfs2010
     ///     </PropertyGroup>
     ///     <Import Project="$(TPath)"/>
     ///     <PropertyGroup>
-    ///         <TeamFoundationServerUrl>http://vstfeupg01:8080/tfs/ukmcs</TeamFoundationServerUrl>
-    ///         <TeamProject>Nationwide Payments Platform</TeamProject>
+    ///         <TeamFoundationServerUrl>http://YOURSERVER:8080/</TeamFoundationServerUrl>
+    ///         <TeamProject>YOURPROJECT</TeamProject>
     ///         <BuildUri></BuildUri>
-    ///         <BuildDefinitionName>DEV_PFV</BuildDefinitionName>
+    ///         <BuildDefinitionName>YOURDEF</BuildDefinitionName>
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <!-- Get information on the latest build -->

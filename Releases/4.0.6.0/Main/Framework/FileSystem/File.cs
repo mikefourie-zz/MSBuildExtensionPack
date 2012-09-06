@@ -21,6 +21,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>AddAttributes</i> (<b>Required: </b>Files)</para>
     /// <para><i>AddSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
     /// <para><i>CheckContainsContent</i> (<b>Required: </b>Files, RegexPattern <b>Optional: </b>RegexOptionList <b>Output: </b>Result)</para>
+    /// <para><i>Concatenate</i> (<b>Required: </b>Files,  TargetPath)</para>
     /// <para><i>CountLines</i> (<b>Required: </b>Files <b>Optional: </b>CommentIdentifiers, MazSize, MinSize <b>Output: </b>TotalLinecount, CommentLinecount, EmptyLinecount, CodeLinecount, TotalFilecount, IncludedFilecount, IncludedFiles, ExcludedFilecount, ExcludedFiles, ElapsedTime)</para>
     /// <para><i>Create</i> (<b>Required: </b>Files <b>Optional: Size</b>). Creates file(s)</para>
     /// <para><i>GetChecksum</i> (<b>Required: </b>Path <b>Output: </b>Checksum)</para>
@@ -73,8 +74,11 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         </FilesToCreate>
     ///         <FilesToCreate Include="d:\a\File4-100.txt"/>
     ///         <FilesToCheck Include="d:\a\*.*"/>
+    ///         <FilesToConcatenate Include="c:\a\*.proj"/>
     ///     </ItemGroup>
     ///     <Target Name="Default">
+    ///         <!-- Concatenate Files -->
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Concatenate" Files="@(FilesToConcatenate)" TargetPath="c:\concatenatedfile.txt"/>
     ///         <!-- Check whether files contain matching content -->
     ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CheckContainsContent" Files="@(FilesToCheck)" RegexPattern="Hello">
     ///             <Output TaskParameter="Result" PropertyName="TheResult"/>
@@ -140,9 +144,9 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/f8c545f9-d58f-640e-3fce-b10aa158ca95.htm")]
     public class File : BaseTask
     {
+        private const string ConcatenateTaskAction = "Concatenate";
         private const string CountLinesTaskAction = "CountLines";
         private const string CreateTaskAction = "Create";
         private const string GetChecksumTaskAction = "GetChecksum";
@@ -307,7 +311,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
-        /// Sets the TargetPath for a renamed file
+        /// Sets the TargetPath for a renamed file or to save concatenated files
         /// </summary>
         public ITaskItem TargetPath { get; set; }
 
@@ -455,6 +459,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                 case RemoveLinesTaskAction:
                     this.RemoveLinesFromFile();
                     break;
+                case ConcatenateTaskAction:
+                    this.Concatenate();
+                    break;
                 case WriteLinesTaskAction:
                     this.WriteLinesToFile();
                     break;
@@ -544,6 +551,38 @@ namespace MSBuild.ExtensionPack.FileSystem
                 {
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Not found in: {0}", f.ItemSpec));
                     return;
+                }
+            }
+        }
+        
+        private void Concatenate()
+        {
+            this.LogTaskMessage("Concatenating Files");
+
+            if (this.Files == null)
+            {
+                Log.LogError("Files is required");
+                return;
+            }
+
+            if (this.TargetPath == null)
+            {
+                Log.LogError("TargetPath is required");
+                return;
+            }
+
+            if (this.TargetPath != null)
+            {
+                using (Stream output = System.IO.File.OpenWrite(this.TargetPath.ItemSpec))
+                {
+                    foreach (ITaskItem file in this.Files)
+                    {
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Reading File: {0}", file.ItemSpec));
+                        using (Stream input = System.IO.File.OpenRead(file.ItemSpec))
+                        {
+                            input.CopyTo(output);
+                        }
+                    }
                 }
             }
         }

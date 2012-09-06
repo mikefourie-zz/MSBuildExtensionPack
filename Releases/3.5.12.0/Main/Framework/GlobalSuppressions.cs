@@ -1269,3 +1269,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.AssemblyInfo.#Execute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AssemblyFileVersion", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.AssemblyInfo.#Execute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AssemblyVersion", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.AssemblyInfo.#Execute()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "TargetPath", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.File.#Concatenate()")]

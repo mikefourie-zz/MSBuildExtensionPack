@@ -34,8 +34,11 @@
         </FilesToCreate>
         <FilesToCreate Include="d:\a\File4-100.txt"/>
         <FilesToCheck Include="d:\a\*.*"/>
+        <FilesToConcatenate Include="c:\a\*.proj"/>
     </ItemGroup>
     <Target Name="Default">
+        <!-- Concatenate Files -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Concatenate" Files="@(FilesToConcatenate)" TargetPath="c:\concatenatedfile.txt"/>
         <!-- Check whether files contain matching content -->
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="CheckContainsContent" Files="@(FilesToCheck)" RegexPattern="Hello">
             <Output TaskParameter="Result" PropertyName="TheResult"/>
