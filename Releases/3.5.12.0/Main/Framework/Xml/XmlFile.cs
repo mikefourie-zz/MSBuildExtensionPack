@@ -794,6 +794,11 @@ namespace MSBuild.ExtensionPack.Xml
         {
             try
             {
+                if (this.xmlFileDoc.DocumentType != null)
+                {
+                    this.xmlFileDoc.ReplaceChild(this.xmlFileDoc.CreateDocumentType(this.xmlFileDoc.DocumentType.Name, this.xmlFileDoc.DocumentType.PublicId, this.xmlFileDoc.DocumentType.SystemId, null), this.xmlFileDoc.DocumentType);
+                }
+
                 this.xmlFileDoc.Save(this.File.ItemSpec);
             }
             catch (Exception ex)
