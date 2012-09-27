@@ -2,7 +2,7 @@
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
         <ReleaseVersion>3.5.12.0</ReleaseVersion>
-        <DropFolder>D:\MSBEP\3.5</DropFolder>
+        <DropFolder>c:\MSBEP\3.5</DropFolder>
         <RootFolder>$(MSBuildProjectDirectory)..\..\..\</RootFolder>
         <SkipBuild>false</SkipBuild>
     </PropertyGroup>
@@ -79,7 +79,7 @@
         <ItemGroup>
             <SignFiles Include="$(DropFolder)\MSB*.dll;$(DropFolder)\Inter*.dll"/>
         </ItemGroup>
-        <Exec Command='"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\sn.exe" -R "%(SignFiles.Identity)" "d:\ExtensionPack.snk"'/>
+        <Exec Command='"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\sn.exe" -R "%(SignFiles.Identity)" "c:\ExtensionPack.snk"'/>
     </Target>
 
     <Target Name="BuildInstallers">
