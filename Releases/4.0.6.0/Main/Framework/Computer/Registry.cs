@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>DeleteKey</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView)</para>
     /// <para><i>DeleteKeyTree</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView )</para>
     /// <para><i>Get</i> (<b>Required: </b> RegistryHive, Key, Value  <b>Optional:</b> RegistryView <b>Output: </b>Data)</para>
-    /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value <b>Optional:</b> RegistryView)</para>
+    /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value <b>Optional:</b> DataType, RegistryView)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Sets the type of the data.
+        /// Sets the type of the data. RegistryValueKind Enumeration. Support for Binary, DWord, MultiString, QWord, Data
         /// </summary>
         public string DataType { get; set; }
 
