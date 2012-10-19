@@ -39,12 +39,12 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Execute SQL and return a scalar -->
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteScalar" Sql="Select GETDATE()" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteScalar" UseTransaction="true" Sql="Select GETDATE()" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
     ///             <Output PropertyName="ScResult" TaskParameter="ScalarResult"/>
     ///         </MSBuild.ExtensionPack.SqlServer.SqlExecute>
     ///         <Message Text="$(ScResult)"/>
     ///         <!-- Execute SQL and return the result in raw text form -->
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteRawReader" Sql="Select * from sys.tables" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteRawReader" UseTransaction="true" Sql="Select * from sys.tables" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
     ///             <Output PropertyName="RawResult" TaskParameter="RawReaderResult"/>
     ///         </MSBuild.ExtensionPack.SqlServer.SqlExecute>
     ///         <Message Text="$(RawResult)"/>
@@ -55,6 +55,15 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///         <Message Text="%(RResult.Identity) - %(RResult.object_id)"/>
     ///         <!-- Execute some sql files -->
     ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Retry="true" UseTransaction="true" Files="@(Files)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True"/>
+    ///         <!-- Use Parameter substitution -->
+    ///         <ItemGroup>
+    ///             <SqlFiles Include="createLinkedServer.sql"/>
+    ///             <SqlParameters Include="true">
+    ///                 <name>%24(LINKEDSERVER)</name>
+    ///                 <value>myserver\myinstance</value>
+    ///             </SqlParameters>
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Files="@(SqlFiles)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True" Parameters="@(SqlParameters)" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -114,7 +123,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         public string Sql { get; set; }
 
         /// <summary>
-        /// Sets the parameters to substitute at execution time
+        /// Sets the parameters to substitute at execution time. These are CASE SENSITIVE.
         /// </summary>
         [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] Parameters { get; set; }
