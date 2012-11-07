@@ -3,6 +3,7 @@
 
 # Ignore the following directories
 obj/
+packages/
 _[rR]e[sS]harper.*/
 Solutions/Main/BuildBinaries/
 
