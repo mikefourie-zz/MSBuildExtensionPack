@@ -13,7 +13,10 @@
     <Recognized>
       <Word>Cygwin</Word>
     </Recognized>
-    <!--<Compound>
+    <Recognized>
+        <Word>Git</Word>
+    </Recognized>
+      <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->
     <!--<DiscreteExceptions>
