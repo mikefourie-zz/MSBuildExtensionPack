@@ -12,6 +12,6 @@ namespace MSBuild.ExtensionPack.Git
     {
         void Clone(string repositoryToClone, string targetDirectory);
         void CheckoutBranch(string localRepository, string branch);
-        string GetLatestSha(string localRepository);
+        string GetLatestSHA(string localRepository);
     }
 }

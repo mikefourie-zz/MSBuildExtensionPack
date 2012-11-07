@@ -20,9 +20,9 @@
       <Term>...</Term>
     </DiscreteExceptions>-->
   </Words>
-  <!--<Acronyms>
+  <Acronyms>
     <CasingExceptions>
-      <Acronym>...</Acronym>
+      <Acronym>SHA</Acronym>
     </CasingExceptions>
-  </Acronyms>-->
+  </Acronyms>
 </Dictionary>
