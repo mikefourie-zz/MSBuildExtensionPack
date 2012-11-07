@@ -84,7 +84,7 @@ line comment */
         private void GivenSqlStream(string tsql)
         {
             byte[] sqlBytes = new UTF8Encoding().GetBytes(tsql);
-            this.loader = new SqlScriptLoader(new StreamReader(new MemoryStream(sqlBytes)));
+            this.loader = new SqlScriptLoader(new StreamReader(new MemoryStream(sqlBytes)), true);
         }
 
         private void ThenSqlReadIs(string expectedSql)
