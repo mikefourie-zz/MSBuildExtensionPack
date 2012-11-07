@@ -1,14 +1,16 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="Clone.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Git
 {
+    using System;
+    using System.Globalization;
+    using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
+
     public class Clone : Task
     {
-        private readonly IGitFacade _gitFacade;
+        private readonly IGitFacade gitFacade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Clone"/> class.
@@ -17,7 +19,7 @@ namespace MSBuild.ExtensionPack.Git
         /// <remarks>Added to be able to unit test this class using a mock</remarks>
         public Clone(IGitFacade facade)
         {
-            _gitFacade = facade;
+            this.gitFacade = facade;
         }
 
         /// <summary>
@@ -26,7 +28,7 @@ namespace MSBuild.ExtensionPack.Git
         /// <remarks>When no parameter is used in the constructor, instantiate the default</remarks>
         public Clone()
         {
-            _gitFacade = new NGitImplementation();
+            this.gitFacade = new NGitImplementation();
         }
 
         /// <summary>
@@ -61,38 +63,29 @@ namespace MSBuild.ExtensionPack.Git
         /// </value>
         public string BranchToSwitchTo { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>
-        /// true if the task successfully executed; otherwise, false.
-        /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", 
-            Justification = "MSBuild does not allow rethrowing exceptions")]
         public override bool Execute()
         {
             try
             {
-                _gitFacade.Clone(RepositoryToClone, TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
+                this.gitFacade.Clone(this.RepositoryToClone, this.TargetDirectory);
+                this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", this.RepositoryToClone, this.TargetDirectory));
 
-                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToUpperInvariant() != "MASTER")
+                if (!string.IsNullOrEmpty(this.BranchToSwitchTo) && this.BranchToSwitchTo.ToUpperInvariant() != "MASTER")
                 {
-                    _gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
-                    Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
+                    this.gitFacade.CheckoutBranch(this.TargetDirectory, this.BranchToSwitchTo);
+                    Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", this.BranchToSwitchTo));
                 }
 
-                SHA = _gitFacade.GetLatestSHA(TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", SHA));
+                this.SHA = this.gitFacade.GetLatestSHA(this.TargetDirectory);
+                this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", this.SHA));
             }
             catch (Exception ex)
             {
-                Log.LogErrorFromException(ex);
+                this.Log.LogErrorFromException(ex);
                 return false;
             }
 
             return true;
         }
-
     }
 }
