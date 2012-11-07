@@ -58,13 +58,7 @@
         "Entry"
         {
         "MsmKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
-        "OwnerKey" = "8:_83EFB454BB05F0508F8AFF28ED410E7B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
-        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
+        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -76,7 +70,13 @@
         "Entry"
         {
         "MsmKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
-        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
+        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
+        "OwnerKey" = "8:_83EFB454BB05F0508F8AFF28ED410E7B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -118,49 +118,7 @@
         "Entry"
         {
         "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_20D6B0D43F29A01DE38591703BAE2AF3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_331CAEEA63A49399BB216CC88789BCBF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_9786B306FDA02379AFFB82475DF93B14"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_A6403C609BCE0FAA89CC65DEF8302FCA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_00044D3E57FC95CD7583C09FC0BD053C"
+        "OwnerKey" = "8:_82B1B3451F5E564BE95FD4BB1CEF0EEF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -172,7 +130,49 @@
         "Entry"
         {
         "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "OwnerKey" = "8:_82B1B3451F5E564BE95FD4BB1CEF0EEF"
+        "OwnerKey" = "8:_00044D3E57FC95CD7583C09FC0BD053C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_A6403C609BCE0FAA89CC65DEF8302FCA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_9786B306FDA02379AFFB82475DF93B14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_331CAEEA63A49399BB216CC88789BCBF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_20D6B0D43F29A01DE38591703BAE2AF3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -268,7 +268,7 @@
         "Entry"
         {
         "MsmKey" = "8:_331CAEEA63A49399BB216CC88789BCBF"
-        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
+        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -280,7 +280,7 @@
         "Entry"
         {
         "MsmKey" = "8:_331CAEEA63A49399BB216CC88789BCBF"
-        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
+        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -424,13 +424,13 @@
         "Entry"
         {
         "MsmKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
-        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
+        "OwnerKey" = "8:_20D6B0D43F29A01DE38591703BAE2AF3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
-        "OwnerKey" = "8:_20D6B0D43F29A01DE38591703BAE2AF3"
+        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -484,19 +484,7 @@
         "Entry"
         {
         "MsmKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
-        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
-        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
-        "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
+        "OwnerKey" = "8:_AE30A726A96FD1F39113D1A09CE610D0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -508,7 +496,19 @@
         "Entry"
         {
         "MsmKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
-        "OwnerKey" = "8:_AE30A726A96FD1F39113D1A09CE610D0"
+        "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
+        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
+        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -538,13 +538,7 @@
         "Entry"
         {
         "MsmKey" = "8:_5AA35371FDB5C912899B8B24F03478C1"
-        "OwnerKey" = "8:_599D63D52F3F4188ADF674911F827837"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5AA35371FDB5C912899B8B24F03478C1"
-        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
+        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -556,7 +550,13 @@
         "Entry"
         {
         "MsmKey" = "8:_5AA35371FDB5C912899B8B24F03478C1"
-        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
+        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5AA35371FDB5C912899B8B24F03478C1"
+        "OwnerKey" = "8:_599D63D52F3F4188ADF674911F827837"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -682,31 +682,7 @@
         "Entry"
         {
         "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "OwnerKey" = "8:_33C0A07C04D95D99649B62FA90195351"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "OwnerKey" = "8:_AE30A726A96FD1F39113D1A09CE610D0"
+        "OwnerKey" = "8:_83EFB454BB05F0508F8AFF28ED410E7B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -718,7 +694,31 @@
         "Entry"
         {
         "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "OwnerKey" = "8:_83EFB454BB05F0508F8AFF28ED410E7B"
+        "OwnerKey" = "8:_AE30A726A96FD1F39113D1A09CE610D0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
+        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
+        "OwnerKey" = "8:_33C0A07C04D95D99649B62FA90195351"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
+        "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
+        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -772,13 +772,13 @@
         "Entry"
         {
         "MsmKey" = "8:_89A36F02F05823011955F01895007157"
-        "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
+        "OwnerKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_89A36F02F05823011955F01895007157"
-        "OwnerKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
+        "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -850,7 +850,7 @@
         "Entry"
         {
         "MsmKey" = "8:_A6403C609BCE0FAA89CC65DEF8302FCA"
-        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
+        "OwnerKey" = "8:_9786B306FDA02379AFFB82475DF93B14"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -862,7 +862,7 @@
         "Entry"
         {
         "MsmKey" = "8:_A6403C609BCE0FAA89CC65DEF8302FCA"
-        "OwnerKey" = "8:_9786B306FDA02379AFFB82475DF93B14"
+        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -982,7 +982,7 @@
         "Entry"
         {
         "MsmKey" = "8:_C07723257140F6CB14C4FCEEDA94FE6B"
-        "OwnerKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
+        "OwnerKey" = "8:_2A58F752B06A6076BFF5E9C08A1708B7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -994,7 +994,7 @@
         "Entry"
         {
         "MsmKey" = "8:_C07723257140F6CB14C4FCEEDA94FE6B"
-        "OwnerKey" = "8:_2A58F752B06A6076BFF5E9C08A1708B7"
+        "OwnerKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1036,13 +1036,13 @@
         "Entry"
         {
         "MsmKey" = "8:_C6BB78233A64A3E4FFB53D466E66E629"
-        "OwnerKey" = "8:_CA4D2E91D81249A4958E6CE96235415D"
+        "OwnerKey" = "8:_60DC883798CABBEEB5643EDBC09A744F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C6BB78233A64A3E4FFB53D466E66E629"
-        "OwnerKey" = "8:_60DC883798CABBEEB5643EDBC09A744F"
+        "OwnerKey" = "8:_CA4D2E91D81249A4958E6CE96235415D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1252,259 +1252,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F4C0F2893C1AFAA2AEF72394DB016F09"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E550D0663496465047324B826793C9A8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DEE60CA0249444A7A307EBA65AE6AD95"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7872931B7436110378FF98048A81FD14"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6B12B9BB38263A52A34A4705276C4700"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_62B7B7640416E7D4CAF306089AD8D51B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D3CF347F11144BA2AE32487369977059"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B436EBDCF8C3090536960D3BE3AF2EEE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CA4D2E91D81249A4958E6CE96235415D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C6BB78233A64A3E4FFB53D466E66E629"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C07723257140F6CB14C4FCEEDA94FE6B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C038340CE14129B50DF7B59A8BEC79C0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B758261548344B26B2C4C8CB444C2F0F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AE30A726A96FD1F39113D1A09CE610D0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A83B41FC517406E052DBD89118C061A7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A6403C609BCE0FAA89CC65DEF8302FCA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A5FB6F8C436F890BC2749FF3D3B02A6C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9786B306FDA02379AFFB82475DF93B14"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_892900EF6FB94628B9E1FEA4229DDEAF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_83EFB454BB05F0508F8AFF28ED410E7B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_82B1B3451F5E564BE95FD4BB1CEF0EEF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7B6F2DF652BFDADDC08206672D6FA8A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6E823C6E97564C3DAAF11B989E000CD6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_60DC883798CABBEEB5643EDBC09A744F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5AA35371FDB5C912899B8B24F03478C1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_599D63D52F3F4188ADF674911F827837"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4C95EE72DD5E4F77AF463242748806ED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4C5547BC5D3BCB8C40AE339A9D65685B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_33C0A07C04D95D99649B62FA90195351"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_331CAEEA63A49399BB216CC88789BCBF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2A58F752B06A6076BFF5E9C08A1708B7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_21935448CA6F80C67E85FD7A4C61557D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_20D6B0D43F29A01DE38591703BAE2AF3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1EE7049D2BA14857B830BF76B16DD23B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_169B418DA13148EE9D9383443BA91E18"
+        "OwnerKey" = "8:_00044D3E57FC95CD7583C09FC0BD053C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1516,7 +1264,259 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_00044D3E57FC95CD7583C09FC0BD053C"
+        "OwnerKey" = "8:_169B418DA13148EE9D9383443BA91E18"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_17DA11BB0DAE5FABB0C1E503FF47044D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1EE7049D2BA14857B830BF76B16DD23B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_20D6B0D43F29A01DE38591703BAE2AF3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_21935448CA6F80C67E85FD7A4C61557D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2A58F752B06A6076BFF5E9C08A1708B7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_331CAEEA63A49399BB216CC88789BCBF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_33C0A07C04D95D99649B62FA90195351"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_465754A2D0A69F828A406CE371CE6F55"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4C5547BC5D3BCB8C40AE339A9D65685B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4C95EE72DD5E4F77AF463242748806ED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4E3B83F5168643DC995D3B64BC2CF81F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_56FAC2DEC6D55D65AA5616F0570FD45E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_599D63D52F3F4188ADF674911F827837"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5AA35371FDB5C912899B8B24F03478C1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_60DC883798CABBEEB5643EDBC09A744F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_61A4DF3E1AC63D55244008F1B128CB75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6E823C6E97564C3DAAF11B989E000CD6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7B6F2DF652BFDADDC08206672D6FA8A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7BC4769E6310924EE4D98B84CB8BFBD6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_82B1B3451F5E564BE95FD4BB1CEF0EEF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_83EFB454BB05F0508F8AFF28ED410E7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_892900EF6FB94628B9E1FEA4229DDEAF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_9786B306FDA02379AFFB82475DF93B14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A5FB6F8C436F890BC2749FF3D3B02A6C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A6403C609BCE0FAA89CC65DEF8302FCA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A83B41FC517406E052DBD89118C061A7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AC50944B8284EAE3128291C98E6A4E71"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AE30A726A96FD1F39113D1A09CE610D0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B758261548344B26B2C4C8CB444C2F0F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C038340CE14129B50DF7B59A8BEC79C0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C07723257140F6CB14C4FCEEDA94FE6B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C6BB78233A64A3E4FFB53D466E66E629"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CA4D2E91D81249A4958E6CE96235415D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B436EBDCF8C3090536960D3BE3AF2EEE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D3CF347F11144BA2AE32487369977059"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D87964FFDA7682EC725077EF2772B339"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_62B7B7640416E7D4CAF306089AD8D51B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6B12B9BB38263A52A34A4705276C4700"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7872931B7436110378FF98048A81FD14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DEE60CA0249444A7A307EBA65AE6AD95"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_E550D0663496465047324B826793C9A8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F4C0F2893C1AFAA2AEF72394DB016F09"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -1564,7 +1564,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\..\\..\\..\\..\\..\\..\\MSBEP\\3.5\\MSBuild Extension Pack 3.5 (x64).msi"
+        "OutputFilename" = "8:..\\..\\..\\..\\..\\..\\..\\..\\MSBEP\\3.5\\MSBuild Extension Pack 3.5 (x64).msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -1616,7 +1616,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:3.5.30729        "
+                "FrameworkVersion" = "8:3.5.30729         "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
                 }
@@ -1657,7 +1657,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_031D3C4C52774CFAAAF067D641A41510"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\NUnit.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\NUnit.proj"
             "TargetName" = "8:NUnit.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1677,7 +1677,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0737307D9B454262B7A73085A0A4A4E7"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\RoboCopy.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\RoboCopy.proj"
             "TargetName" = "8:RoboCopy.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1697,7 +1697,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_07B8B9521A6D48EDB9ED51CF928BF9C7"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\SqlCmd.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\SqlCmd.proj"
             "TargetName" = "8:SqlCmd.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1717,7 +1717,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0A0135A053194C31A63EADD73FE52219"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Iis6VirtualDirectory.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Iis6VirtualDirectory.proj"
             "TargetName" = "8:Iis6VirtualDirectory.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1737,7 +1737,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0EBB31FBEF524953B76D9A010E0678F2"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.WindowsVirtualPC.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.WindowsVirtualPC.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.WindowsVirtualPC.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -1788,7 +1788,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0ED98A3D6F3B456293B8FC67913F903E"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\EventSource.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\EventSource.proj"
             "TargetName" = "8:EventSource.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1808,7 +1808,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0F5B2F2DDC054D8EBC21DD190123812D"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\HostsFile.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\HostsFile.proj"
             "TargetName" = "8:HostsFile.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1828,7 +1828,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12611421D8E140AC8368E5FFADB0BCA5"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\WebClient.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\WebClient.proj"
             "TargetName" = "8:WebClient.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1848,7 +1848,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_139EE1ABD41C47AEB7109FF57F5C3C57"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\ConfigManager.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\ConfigManager.proj"
             "TargetName" = "8:ConfigManager.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1879,7 +1879,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2008.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2008.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -1930,7 +1930,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_19B49E34C6094FCA8F37E9B53220EA2C"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2005.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2005.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.Sql2005.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -1950,7 +1950,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1EB02F89A2C44E8E8540D1706DEA5D01"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Thread.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Thread.proj"
             "TargetName" = "8:Thread.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -1970,7 +1970,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1ECA49B2659142C29CD8D8598CA782E8"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\MsBuildHelper.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\MsBuildHelper.proj"
             "TargetName" = "8:MsBuildHelper.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2001,7 +2001,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.WindowsVirtualPC.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.WindowsVirtualPC.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -2052,7 +2052,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_20FF382CBB4D4F179B51B28FD497D535"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTAdaptor.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTAdaptor.proj"
             "TargetName" = "8:BTAdaptor.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2103,7 +2103,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_228881A22D664C899EC70DB2888D117D"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Metadata.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Metadata.proj"
             "TargetName" = "8:Metadata.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2123,7 +2123,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_22B6DDBD7E01413C8353078F9EE1385F"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\SourceSafe.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\SourceSafe.proj"
             "TargetName" = "8:SourceSafe.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2143,7 +2143,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2350F4E5D0294651A0ADA041D403EFC8"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\SqlExecute.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\SqlExecute.proj"
             "TargetName" = "8:SqlExecute.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2163,7 +2163,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A52D4D929694E0195D6146FE9FCD2F1"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Folder.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Folder.proj"
             "TargetName" = "8:Folder.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2214,7 +2214,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2B7F3BA2B9F349158E3B3A8FC8D948C9"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Help.ico"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Help.ico"
             "TargetName" = "8:Help.ico"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -2234,7 +2234,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_302CDE3AF20546E994D6F7798AB5CF7B"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Registry.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Registry.proj"
             "TargetName" = "8:Registry.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2285,7 +2285,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_332C99A45F1D4F25A3FBBDB4F49DE97D"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\SystemDrive.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\SystemDrive.proj"
             "TargetName" = "8:SystemDrive.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2336,7 +2336,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3509367EB7FF47F0965CB18DE170F474"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\TFSSource.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\TFSSource.proj"
             "TargetName" = "8:TFSSource.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2356,7 +2356,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3A45B8226FC743B79C5D27AE5D679616"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Server2008.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Server2008.proj"
             "TargetName" = "8:Server2008.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2376,7 +2376,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3B2564873BCD497C946A27D766485D87"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\VB6.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\VB6.proj"
             "TargetName" = "8:VB6.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2396,7 +2396,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3D7928DD22F9486AA9B5C672358BF322"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Maths.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Maths.proj"
             "TargetName" = "8:Maths.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2416,7 +2416,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40C873B5AFC74258B7658167E8FB2896"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\CommandLine.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\CommandLine.proj"
             "TargetName" = "8:CommandLine.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2436,7 +2436,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40D37675A04249C2B5221A23D867000A"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Iis6AppPool.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Iis6AppPool.proj"
             "TargetName" = "8:Iis6AppPool.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2456,7 +2456,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_412781103AA64DD69620561B03C8BBE7"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\IIS7Website.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\IIS7Website.proj"
             "TargetName" = "8:IIS7Website.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2476,7 +2476,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_41AFA32E8FDD49CF864A070004E9B302"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\VSDevEnv.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\VSDevEnv.proj"
             "TargetName" = "8:VSDevEnv.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2496,7 +2496,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_41EC7C62656A4566AF449B1F5A77DEC3"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Database2005.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Database2005.proj"
             "TargetName" = "8:Database2005.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2516,7 +2516,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_42C4A54D557246EF80402375F57AB399"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2008.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2008.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.Sql2008.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -2536,7 +2536,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_42D6BF0E734743E2A79AFBE9F0138CDC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BuildDeploymentManifest.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BuildDeploymentManifest.proj"
             "TargetName" = "8:BuildDeploymentManifest.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2556,7 +2556,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_463C8ACCD72246E9A2BE75A73FCAF080"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sync.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sync.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.Sync.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -2607,7 +2607,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49039F5D318348BEB205126BDDB0FBA8"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\VirtualPc.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\VirtualPc.proj"
             "TargetName" = "8:VirtualPc.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2627,7 +2627,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49434F3935234785BBAA1C1D264FD86C"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Database2008.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Database2008.proj"
             "TargetName" = "8:Database2008.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2647,7 +2647,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49724A16BEF64061AB95E98BB6C74BB6"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\EnvironmentVariable.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\EnvironmentVariable.proj"
             "TargetName" = "8:EnvironmentVariable.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2667,7 +2667,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4A5B71C0F99044E1964CED07F0F32533"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTHostInstance.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTHostInstance.proj"
             "TargetName" = "8:BTHostInstance.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2729,7 +2729,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.BizTalk.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.BizTalk.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -2749,7 +2749,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4D506451549E4BB29AF7F2F0F8EDDFCC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\SqlVersion.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\SqlVersion.proj"
             "TargetName" = "8:SqlVersion.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2800,7 +2800,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4EAD291712564577B5A178850D2AAECB"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\GenericTool.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\GenericTool.proj"
             "TargetName" = "8:GenericTool.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2820,7 +2820,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_52B9DAE87E0A4182B41F170CD7A077A8"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\IIS7Application.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\IIS7Application.proj"
             "TargetName" = "8:IIS7Application.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2840,7 +2840,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_52FDE841E08E4C8FA7D89B88E6BDF22A"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Cab.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Cab.proj"
             "TargetName" = "8:Cab.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2880,7 +2880,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_54567D29546D47D888455843AC06CDAC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\ActiveDirectory.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\ActiveDirectory.proj"
             "TargetName" = "8:ActiveDirectory.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2900,7 +2900,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_54D678184C9A43BAB7103FB296FA0945"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTReceiveHandler.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTReceiveHandler.proj"
             "TargetName" = "8:BTReceiveHandler.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2920,7 +2920,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_558BB5DED97949FAAD6BC549B2D54AE4"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Iis6ServiceExtensionFile.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Iis6ServiceExtensionFile.proj"
             "TargetName" = "8:Iis6ServiceExtensionFile.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -2982,7 +2982,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs2010.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs2010.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3002,7 +3002,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A15AB71B9524178892F615768AD01CA"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Sync.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Sync.proj"
             "TargetName" = "8:Sync.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3022,7 +3022,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A1847CCB1E845ACBA12AEA07F37FDD1"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Wmi.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Wmi.proj"
             "TargetName" = "8:Wmi.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3073,7 +3073,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5CD42405A30741778A60788C44424E3D"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Share.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Share.proj"
             "TargetName" = "8:Share.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3093,7 +3093,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5E0ED33235BC48F0A8709714B6B2DBA0"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.dll.config"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.dll.config"
             "TargetName" = "8:MSBuild.ExtensionPack.dll.config"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3175,7 +3175,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_61C77FA1EDFA4CA5B2C754C9D543F063"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\AnalysisServices2008.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\AnalysisServices2008.proj"
             "TargetName" = "8:AnalysisServices2008.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3200,11 +3200,6 @@
             "AssemblyAsmDisplayName" = "8:Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_62B7B7640416E7D4CAF306089AD8D51B"
-                    {
-                    "Name" = "8:Interop.COMAdmin.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Interop.COMAdmin.DLL"
             "TargetName" = "8:"
@@ -3226,7 +3221,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69C012366A954D6981F1CE7C02E285CF"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\PerformanceCounters.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\PerformanceCounters.proj"
             "TargetName" = "8:PerformanceCounters.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3251,11 +3246,6 @@
             "AssemblyAsmDisplayName" = "8:Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_6B12B9BB38263A52A34A4705276C4700"
-                    {
-                    "Name" = "8:Interop.IWshRuntimeLibrary.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Interop.IWshRuntimeLibrary.DLL"
             "TargetName" = "8:"
@@ -3277,7 +3267,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6CFE1BAE012C4D0CA99F1A8C13FE95FF"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\StyleCop.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\StyleCop.proj"
             "TargetName" = "8:StyleCop.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3297,7 +3287,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6DB3207CC5064C09A6BED23D40F901BB"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Zip.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Zip.proj"
             "TargetName" = "8:Zip.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3317,7 +3307,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6DEEFE2AA8C44766AC0C251F65EB899F"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\VC6.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\VC6.proj"
             "TargetName" = "8:VC6.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3348,7 +3338,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2005.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2005.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3388,7 +3378,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7387F0D8BABE4814B980AC226C7DD838"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\FindUnder.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\FindUnder.proj"
             "TargetName" = "8:FindUnder.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3408,7 +3398,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_75AFE4FB93174BDB9280C8DC61A50DBF"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Xml.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Xml.proj"
             "TargetName" = "8:Xml.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3428,7 +3418,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_780F6D1832C243DD8C5FE8220247BB70"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3453,11 +3443,6 @@
             "AssemblyAsmDisplayName" = "8:Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_7872931B7436110378FF98048A81FD14"
-                    {
-                    "Name" = "8:Ionic.Zip.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Ionic.Zip.DLL"
             "TargetName" = "8:"
@@ -3479,7 +3464,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7B0E685EFE3F4B659C97553051AF5D41"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\FxCop.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\FxCop.proj"
             "TargetName" = "8:FxCop.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3561,7 +3546,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C30C794BCB44FBEB06852E75C71A76D"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.VersionNumber.targets"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.VersionNumber.targets"
             "TargetName" = "8:MSBuild.ExtensionPack.VersionNumber.targets"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3581,7 +3566,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_816D16C390FD4B26A8649EE951475575"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.BizTalk.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.BizTalk.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.BizTalk.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3663,7 +3648,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_841D94F94DA7482EBE54E42F4D2459EA"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Assembly.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Assembly.proj"
             "TargetName" = "8:Assembly.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3683,7 +3668,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_87D41C6B6F95418399894A804A41905D"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.Tfs.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3714,7 +3699,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -3765,7 +3750,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8A0BADABBBCB4B33951D394947F48458"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\File.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\File.proj"
             "TargetName" = "8:File.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3785,7 +3770,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8E3412E2A21A4AA2A1264376C2997D3A"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\IIS7AppPool.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\IIS7AppPool.proj"
             "TargetName" = "8:IIS7AppPool.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3805,7 +3790,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9393B2AD46534764890CB2EED74516AB"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Iis6Website.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Iis6Website.proj"
             "TargetName" = "8:Iis6Website.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3856,7 +3841,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_983B90DF33A54C2C8CEB56F216E03FBC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Twitter.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Twitter.proj"
             "TargetName" = "8:Twitter.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3876,7 +3861,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9A3967AEE5B140E3A09689A7BE4460BF"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\ILMerge.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\ILMerge.proj"
             "TargetName" = "8:ILMerge.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3896,7 +3881,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A130B20D6CC44B11BB5DF5F7798CD861"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Detokenise.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Detokenise.proj"
             "TargetName" = "8:Detokenise.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -3916,7 +3901,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A1A1E3AFB1B84627AC339776923B674B"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Web.ico"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Web.ico"
             "TargetName" = "8:Web.ico"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4004,7 +3989,7 @@
                 "ScatterAssemblies"
                 {
                 }
-            "SourcePath" = "8:D:\\MSBEP\\Release\\3.5.5.0\\Interop.COMAdmin.dll"
+            "SourcePath" = "8:C:\\MSBEP\\Release\\3.5.5.0\\Interop.COMAdmin.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4024,7 +4009,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A72ADF84C29E423EB9EE39AC1F439805"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Console.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Console.proj"
             "TargetName" = "8:Console.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4044,7 +4029,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A738C02ED2C744289392269B038301F3"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Guid.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Guid.proj"
             "TargetName" = "8:Guid.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4095,7 +4080,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A8B0D8CB1AA74F289D957AD9547554CC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\IIS7Binding.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\IIS7Binding.proj"
             "TargetName" = "8:IIS7Binding.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4115,7 +4100,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A9CE3BC7D8A543C9B749BF7BAACC70AD"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\XmlFile.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\XmlFile.proj"
             "TargetName" = "8:XmlFile.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4135,7 +4120,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AA95ADA78AEC4A928D7609D57DF21B22"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\WindowsService.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\WindowsService.proj"
             "TargetName" = "8:WindowsService.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4217,7 +4202,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B0BD1531391348C99D57FD0836728F94"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\DevEnv2010.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\DevEnv2010.proj"
             "TargetName" = "8:DevEnv2010.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4242,11 +4227,6 @@
             "AssemblyAsmDisplayName" = "8:StyleCop, Version=4.7.1000.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_B436EBDCF8C3090536960D3BE3AF2EEE"
-                    {
-                    "Name" = "8:StyleCop.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:StyleCop.DLL"
             "TargetName" = "8:"
@@ -4279,7 +4259,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Iis7.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Iis7.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4299,7 +4279,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BB57C92B1188440AAEFBAD123FDEC8C2"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\TeamBuild.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\TeamBuild.proj"
             "TargetName" = "8:TeamBuild.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4319,7 +4299,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BBB8DE730C5F404CA431EC1818BCA5DD"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\FileVersion.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\FileVersion.proj"
             "TargetName" = "8:FileVersion.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4339,7 +4319,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BED34E5C96BD4B30A685955A360AE397"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTApplication.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTApplication.proj"
             "TargetName" = "8:BTApplication.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4421,7 +4401,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C20F0435C9F94940AD12E1608F20A4A7"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Dialog.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Dialog.proj"
             "TargetName" = "8:Dialog.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4441,7 +4421,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C538216C91FB4CAD9C4847897CED4E7E"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\TFSVersion.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\TFSVersion.proj"
             "TargetName" = "8:TFSVersion.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4461,7 +4441,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C56E42C13B5F41ED9C4BE73550C1E60B"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTHost.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTHost.proj"
             "TargetName" = "8:BTHost.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4481,7 +4461,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5E2D1DC49E8444ABC1D71666F2BBB6A"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\EventLog.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\EventLog.proj"
             "TargetName" = "8:EventLog.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4501,7 +4481,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C6672182F5944054A1B827E368FA36CD"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\HttpWebRequest.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\HttpWebRequest.proj"
             "TargetName" = "8:HttpWebRequest.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4572,7 +4552,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C93D7A1978E842C49BAED4BC35FFE116"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Help\\MSBuild Extension Pack Help.chm"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Help\\MSBuild Extension Pack Help.chm"
             "TargetName" = "8:MSBuild Extension Pack Help.chm"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4603,7 +4583,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sync.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sync.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4623,7 +4603,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D26F66D794C646A3A558E807B3AD61C3"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.StyleCop.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.StyleCop.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.StyleCop.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4654,7 +4634,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.StyleCop.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.StyleCop.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4674,7 +4654,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4C773D9667547F9AAD986A43BF4EAFA"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Gac.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Gac.proj"
             "TargetName" = "8:Gac.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4694,7 +4674,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D5C43EAA10C24AA9A81D6660F39478B5"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Email.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Email.proj"
             "TargetName" = "8:Email.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4714,7 +4694,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D60600CFD8AE408C8475BD1E083B3159"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\DNZip.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\DNZip.proj"
             "TargetName" = "8:DNZip.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4765,7 +4745,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D9FE822FDC9D4421AE810282CAE302B6"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Signing.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Signing.proj"
             "TargetName" = "8:Signing.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4785,7 +4765,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DAC33133C6D542B79A6E077DBB04C245"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Server2005.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Server2005.proj"
             "TargetName" = "8:Server2005.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4805,7 +4785,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DAEA1509EB5741AD9945AE806855E564"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Ftp.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Ftp.proj"
             "TargetName" = "8:Ftp.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4825,7 +4805,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DCEECB4B375B48DDA2CD9759628D2F0F"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild Extension Pack.url"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild Extension Pack.url"
             "TargetName" = "8:MSBuild Extension Pack.url"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4845,7 +4825,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE7BAC19516D40429460F911285C9A7E"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.tasks"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.tasks"
             "TargetName" = "8:MSBuild.ExtensionPack.tasks"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4876,7 +4856,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.dll"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4896,7 +4876,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E069A2829A0246069BCBC0B5F49200F3"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs2010.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Tfs2010.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.Tfs2010.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -4916,7 +4896,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E23877A072CF4C629B10398D9EA6F628"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\TextString.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\TextString.proj"
             "TargetName" = "8:TextString.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4936,7 +4916,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E2EF768A85E742D7A54E4A5D3CD2ABAC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\TFSSourceAdmin.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\TFSSourceAdmin.proj"
             "TargetName" = "8:TFSSourceAdmin.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -4987,7 +4967,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E9A8E861F50D4CAB81C9286A8B85FE02"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Network.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Network.proj"
             "TargetName" = "8:Network.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5007,7 +4987,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E9CDC9FA48694539AF5A62E1F3135B8C"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\DevEnv.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\DevEnv.proj"
             "TargetName" = "8:DevEnv.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5047,7 +5027,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EE081E09EE434C6E83715F4958818233"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\WshShell.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\WshShell.proj"
             "TargetName" = "8:WshShell.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5067,7 +5047,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0A7CC8B7C5D4B9CA18FE5A8D662EEA8"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTSendHandler.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTSendHandler.proj"
             "TargetName" = "8:BTSendHandler.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5087,7 +5067,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F26070AFAC8C47C5AAEBDB193516DB34"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\AssemblyInfo.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\AssemblyInfo.proj"
             "TargetName" = "8:AssemblyInfo.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5107,7 +5087,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2C56D1B5EA74747BFE955839A5D29DC"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\AsyncExec.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\AsyncExec.proj"
             "TargetName" = "8:AsyncExec.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5127,7 +5107,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2D7734AA63E4140ADAB0A7D3A4259D8"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\BTAssembly.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\BTAssembly.proj"
             "TargetName" = "8:BTAssembly.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5147,7 +5127,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F43943412553440C9111C01323F3F1F7"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Sound.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Sound.proj"
             "TargetName" = "8:Sound.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5198,7 +5178,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F82817AAE7A54A7F9DA66B78CFD8BE42"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\Certificate.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\Certificate.proj"
             "TargetName" = "8:Certificate.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5218,7 +5198,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F956AD3C2BE243B4895EC0F5F522A456"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\DateAndTime.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\DateAndTime.proj"
             "TargetName" = "8:DateAndTime.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5238,7 +5218,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FB5DCFB93323415EAD681F1B5A146307"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Iis7.pdb"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Iis7.pdb"
             "TargetName" = "8:MSBuild.ExtensionPack.Iis7.pdb"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
@@ -5258,7 +5238,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FDFE2096EC6344509F5A95EF95A48144"
             {
-            "SourcePath" = "8:D:\\MSBEP\\3.5\\Samples\\ComponentServices.proj"
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\ComponentServices.proj"
             "TargetName" = "8:ComponentServices.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
@@ -5353,24 +5333,24 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:MSBuild Extension Pack v3.5.11.0 (x64)"
-        "ProductCode" = "8:{6813608E-AACC-46E1-820F-CFE15AB4083C}"
-        "PackageCode" = "8:{500E2002-AA52-4D38-9602-E676CC21BEE0}"
+        "ProductName" = "8:MSBuild Extension Pack v3.5.12.0 (x64)"
+        "ProductCode" = "8:{2968E476-99EB-44B6-B5C6-2F249D0D9D27}"
+        "PackageCode" = "8:{09CDF3A1-2082-4099-9923-659CCCE4CF01}"
         "UpgradeCode" = "8:{308A0FD5-7609-42ED-AD38-1ED41897AFD3}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:3.5.11"
+        "ProductVersion" = "8:3.5.12"
         "Manufacturer" = "8:Mike Fourie"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://www.MSBuildExtensionPack.com"
-        "Title" = "8:MSBuild Extension Pack v3.5.11.0 (x64)"
+        "Title" = "8:MSBuild Extension Pack v3.5.12.0 (x64)"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Mike Fourie"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:MSBuild Extension Pack v3.5.11.0 (x64)"
+        "ARPCOMMENTS" = "8:MSBuild Extension Pack v3.5.12.0 (x64)"
         "ARPURLINFOABOUT" = "8:http://www.MSBuildExtensionPack.com"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"

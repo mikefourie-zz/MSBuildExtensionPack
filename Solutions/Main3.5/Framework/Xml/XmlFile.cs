@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
     public class XmlFile : BaseTask
     {
         private const string AddAttributeTaskAction = "AddAttribute";
@@ -438,7 +438,7 @@ namespace MSBuild.ExtensionPack.Xml
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Read Element: {0}", this.XPath));
             XmlNode node = this.xmlFileDoc.SelectSingleNode(this.XPath, this.namespaceManager);
-            if (node != null && node.NodeType == XmlNodeType.Element)
+            if (node != null && (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Document))
             {
                 this.Value = this.TaskAction == ReadElementTextTaskAction ? node.InnerText : node.InnerXml;
             }
@@ -794,6 +794,11 @@ namespace MSBuild.ExtensionPack.Xml
         {
             try
             {
+                if (this.xmlFileDoc.DocumentType != null)
+                {
+                    this.xmlFileDoc.ReplaceChild(this.xmlFileDoc.CreateDocumentType(this.xmlFileDoc.DocumentType.Name, this.xmlFileDoc.DocumentType.PublicId, this.xmlFileDoc.DocumentType.SystemId, null), this.xmlFileDoc.DocumentType);
+                }
+
                 this.xmlFileDoc.Save(this.File.ItemSpec);
             }
             catch (Exception ex)

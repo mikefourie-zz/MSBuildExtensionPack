@@ -7,6 +7,7 @@ namespace MSBuild.ExtensionPack.Computer
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Management;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -48,7 +49,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/b223bca4-81ab-02df-11dc-2cea84238b91.htm")]
     public class SystemDrive : BaseTask
     {
         private const string CheckDriveSpaceTaskAction = "CheckDriveSpace";
@@ -144,15 +145,21 @@ namespace MSBuild.ExtensionPack.Computer
                     if (string.Compare(this.Drive, drive1, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         DriveInfo driveInfo = new DriveInfo(drive1);
-                        long freespace = driveInfo.AvailableFreeSpace;
-
-                        if ((freespace / unitSize) < this.MinSpace)
+                        if (driveInfo.IsReady)
                         {
-                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Insufficient free space. Drive {0} has {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            long freespace = driveInfo.AvailableFreeSpace;
+                            if ((freespace / unitSize) < this.MinSpace)
+                            {
+                                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Insufficient free space. Drive {0} has {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            }
+                            else
+                            {
+                                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            }
                         }
                         else
                         {
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Free drive space on {0} is {1}{2}", this.Drive, driveInfo.AvailableFreeSpace / unitSize, this.Unit));
+                            this.Log.LogWarning("Drive not ready to be read: {0}", drive1);
                         }
                     }
                 }
@@ -243,34 +250,34 @@ namespace MSBuild.ExtensionPack.Computer
                     bool skip = false;
                     if (this.skipDrives != null)
                     {
-                        foreach (ITaskItem driveToSkip in this.SkipDrives)
-                        {
-                            if (driveToSkip.ItemSpec == drive1)
-                            {
-                                skip = true;
-                                break;
-                            }
-                        }
+                        skip = this.SkipDrives.Any(driveToSkip => driveToSkip.ItemSpec == drive1);
                     }
 
                     if (skip == false)
                     {
-                        ITaskItem item = new TaskItem(drive1);
                         DriveInfo driveInfo = new DriveInfo(drive1);
-                        item.SetMetadata("DriveType", driveInfo.DriveType.ToString());
-                        if (driveInfo.DriveType == DriveType.Fixed || driveInfo.DriveType == DriveType.Removable)
+                        if (driveInfo.IsReady)
                         {
-                            item.SetMetadata("Name", driveInfo.Name);
-                            item.SetMetadata("VolumeLabel", driveInfo.VolumeLabel);
-                            item.SetMetadata("AvailableFreeSpace", (driveInfo.AvailableFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("DriveFormat", driveInfo.DriveFormat);
-                            item.SetMetadata("TotalSize", (driveInfo.TotalSize / unitSize).ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("TotalFreeSpace", (driveInfo.TotalFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
-                            item.SetMetadata("IsReady", driveInfo.IsReady.ToString());
-                            item.SetMetadata("RootDirectory", driveInfo.RootDirectory.ToString());
-                        }
+                            ITaskItem item = new TaskItem(drive1);
+                            item.SetMetadata("DriveType", driveInfo.DriveType.ToString());
+                            if (driveInfo.DriveType == DriveType.Fixed || driveInfo.DriveType == DriveType.Removable)
+                            {
+                                item.SetMetadata("Name", driveInfo.Name);
+                                item.SetMetadata("VolumeLabel", driveInfo.VolumeLabel);
+                                item.SetMetadata("AvailableFreeSpace", (driveInfo.AvailableFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
+                                item.SetMetadata("DriveFormat", driveInfo.DriveFormat);
+                                item.SetMetadata("TotalSize", (driveInfo.TotalSize / unitSize).ToString(CultureInfo.CurrentCulture));
+                                item.SetMetadata("TotalFreeSpace", (driveInfo.TotalFreeSpace / unitSize).ToString(CultureInfo.CurrentCulture));
+                                item.SetMetadata("IsReady", driveInfo.IsReady.ToString());
+                                item.SetMetadata("RootDirectory", driveInfo.RootDirectory.ToString());
+                            }
 
-                        this.drives.Add(item);
+                            this.drives.Add(item);
+                        }
+                        else
+                        {
+                            this.Log.LogWarning("Drive not ready to be read: {0}", drive1);
+                        }
                     }
                 }
             }
@@ -296,14 +303,7 @@ namespace MSBuild.ExtensionPack.Computer
                             string drive1 = mo["DriveLetter"].ToString();
                             if (this.skipDrives != null)
                             {
-                                foreach (ITaskItem driveToSkip in this.SkipDrives)
-                                {
-                                    if (driveToSkip.ItemSpec == drive1)
-                                    {
-                                        skip = true;
-                                        break;
-                                    }
-                                }
+                                skip = this.SkipDrives.Any(driveToSkip => driveToSkip.ItemSpec == drive1);
                             }
 
                             if (skip == false)

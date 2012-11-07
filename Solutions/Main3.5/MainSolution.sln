@@ -43,9 +43,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsVirtualPc", "Windows
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS2010", "TFS2010\TFS2010.csproj", "{2761548E-5ACA-4842-8E04-DACB6643FF2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2012", "Sql2012\Sql2012.csproj", "{5B834E31-10A9-4DE1-9462-72B74FDC8C0F}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 12
+		SccNumberOfProjects = 13
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -83,6 +85,9 @@ Global
 		SccProjectUniqueName11 = TFS2010\\TFS2010.csproj
 		SccProjectName11 = TFS2010
 		SccLocalPath11 = TFS2010
+		SccProjectUniqueName12 = Sql2012\\Sql2012.csproj
+		SccProjectName12 = Sql2012
+		SccLocalPath12 = Sql2012
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
@@ -134,6 +139,10 @@ Global
 		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2761548E-5ACA-4842-8E04-DACB6643FF2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B834E31-10A9-4DE1-9462-72B74FDC8C0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B834E31-10A9-4DE1-9462-72B74FDC8C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B834E31-10A9-4DE1-9462-72B74FDC8C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B834E31-10A9-4DE1-9462-72B74FDC8C0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

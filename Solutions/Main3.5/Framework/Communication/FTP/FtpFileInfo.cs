@@ -28,8 +28,8 @@ namespace MSBuild.ExtensionPack.Communication.Extended
                 throw new ArgumentNullException("filePath");
             }
 
-            OriginalPath = filePath;
-            FullPath = filePath;
+            this.OriginalPath = filePath;
+            this.FullPath = filePath;
             this.ftpConnection = ftp;
             this.fileName = Path.GetFileName(filePath);
         }

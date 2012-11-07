@@ -30,7 +30,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/c5420cf1-0107-8a74-1621-99fc367d9351.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/c5420cf1-0107-8a74-1621-99fc367d9351.htm")]
     public class ILMerge : ToolTask
     {
         private int fileAlignment = 512;
@@ -262,7 +262,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override string GenerateFullPathToTool()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\ILMerge\" + this.ToolName);
+            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\ILMerge\" + this.ToolName);
         }
 
         protected override string GenerateCommandLineCommands()

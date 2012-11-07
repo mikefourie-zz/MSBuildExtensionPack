@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/68cdc023-8926-4ac9-9e7c-0297592fec29.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/68cdc023-8926-4ac9-9e7c-0297592fec29.htm")]
     public class AsyncExec : Task
     {
         /// <summary>
@@ -101,7 +101,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <returns>The batch program file path</returns>
         private static string CreateBatchProgram(string command)
         {
-            string tmpFilePath = Path.GetTempFileName();
+            string tmpFilePath = System.IO.Path.GetTempFileName();
             string batFilePath = string.Format(CultureInfo.InvariantCulture, "{0}.bat", tmpFilePath);
             File.Move(tmpFilePath, batFilePath);
             File.WriteAllText(batFilePath, command);

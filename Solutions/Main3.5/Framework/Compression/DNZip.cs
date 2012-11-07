@@ -75,7 +75,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.11.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
     public class DNZip : BaseTask
     {
         private const string CreateTaskAction = "Create";
