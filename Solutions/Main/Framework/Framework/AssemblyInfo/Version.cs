@@ -20,9 +20,20 @@ namespace MSBuild.ExtensionPack.Framework
             this.Revision = "0";
         }
 
-        public Version(string version)
+        public Version(string version) : this(version, false)
         {
-            this.ParseVersion(version);
+        }
+
+        public Version(string version, bool isAssemblyVersion)
+        {
+            if (isAssemblyVersion)
+            {
+                this.ParseAssemblyVersion(version);
+            }
+            else
+            {
+                this.ParseVersion(version);
+            }
         }
 
         public string VersionString
@@ -44,14 +55,36 @@ namespace MSBuild.ExtensionPack.Framework
             return string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", this.MajorVersion, this.MinorVersion, this.BuildNumber, this.Revision);
         }
 
-        private void ParseVersion(string version)
+        private static string ValidateAssemblyVersionPart(string part)
         {
-            Regex versionPattern = new Regex(@"(?<majorVersion>(\d+|\*))\." + @"(?<minorVersion>(\d+|\*))\." + @"(?<buildNumber>(\d+|\*))\." + @"(?<revision>(\d+|\*))", RegexOptions.Compiled);
+            return string.IsNullOrEmpty(part) || part == "*" ? "0" : part;
+        }
+
+        private void ParseAssemblyVersion(string version)
+        {
+            Regex versionPattern = new Regex(@"(?<majorVersion>(\d+))(\.(?<minorVersion>(\d+)))(\.(?<buildNumber>(\d+|\*)))?(\.(?<revision>(\d+|\*)))?", RegexOptions.Compiled);
 
             MatchCollection matches = versionPattern.Matches(version);
             if (matches.Count != 1)
             {
-                throw new ArgumentException("The specified string is not a valid version number", "version");
+                throw new ArgumentException("The specified string \"" + version + "\" is not a valid AssemblyVersion number", "version");
+            }
+
+            this.MajorVersion = matches[0].Groups["majorVersion"].Value;
+            this.MinorVersion = matches[0].Groups["minorVersion"].Value;
+            this.BuildNumber = ValidateAssemblyVersionPart(matches[0].Groups["buildNumber"].Value);
+            this.Revision = ValidateAssemblyVersionPart(matches[0].Groups["revision"].Value);
+            this.versionString = version;
+        }
+
+        private void ParseVersion(string version)
+        {
+            Regex versionPattern = new Regex(@"(?<majorVersion>(\d+))(\.(?<minorVersion>(\d+)))(\.(?<buildNumber>(\d+)))(\.(?<revision>(\d+)))", RegexOptions.Compiled);
+
+            MatchCollection matches = versionPattern.Matches(version);
+            if (matches.Count != 1)
+            {
+                throw new ArgumentException("The specified string \"" + version + "\" is not a valid version number", "version");
             }
 
             this.MajorVersion = matches[0].Groups["majorVersion"].Value;

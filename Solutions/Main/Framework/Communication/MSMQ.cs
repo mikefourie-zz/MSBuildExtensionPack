@@ -62,7 +62,7 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/9bf7c511-7410-c9e9-e1bc-570d3dfdcc0e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/9bf7c511-7410-c9e9-e1bc-570d3dfdcc0e.htm")]
     public class MSMQ : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -262,7 +262,6 @@ namespace MSBuild.ExtensionPack.Communication
             else
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Queue not found: {0}", this.Path));
-                return;
             }
         }
 
@@ -359,7 +358,6 @@ namespace MSBuild.ExtensionPack.Communication
             else
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Queue not found: {0}", this.Path));
-                return;
             }
         }
 

@@ -26,8 +26,8 @@ namespace MSBuild.ExtensionPack.Loggers
     /// </summary>
     public class XmlFileLogger : Logger
     {
-        private static readonly char[] fileLoggerParameterDelimiters = new[] { ';' };
-        private static readonly char[] fileLoggerParameterValueSplitCharacter = new[] { '=' };
+        private static readonly char[] FileLoggerParameterDelimiters = new[] { ';' };
+        private static readonly char[] FileLoggerParameterValueSplitCharacter = new[] { '=' };
         private XmlTextWriter xmlWriter;
         private string logFileName;
         private Encoding encoding;
@@ -51,7 +51,7 @@ namespace MSBuild.ExtensionPack.Loggers
             eventSource.ErrorRaised += this.ErrorRaised;
             eventSource.WarningRaised += this.WarningRaised;
 
-            if (Verbosity != LoggerVerbosity.Quiet)
+            if (this.Verbosity != LoggerVerbosity.Quiet)
             {
                 eventSource.MessageRaised += this.MessageRaised;
                 eventSource.CustomEventRaised += this.CustomBuildEventRaised;
@@ -59,13 +59,13 @@ namespace MSBuild.ExtensionPack.Loggers
                 eventSource.ProjectFinished += this.ProjectFinished;
             }
 
-            if (IsVerbosityAtLeast(LoggerVerbosity.Normal))
+            if (this.IsVerbosityAtLeast(LoggerVerbosity.Normal))
             {
                 eventSource.TargetStarted += this.TargetStarted;
                 eventSource.TargetFinished += this.TargetFinished;
             }
 
-            if (IsVerbosityAtLeast(LoggerVerbosity.Detailed))
+            if (this.IsVerbosityAtLeast(LoggerVerbosity.Detailed))
             {
                 eventSource.TaskStarted += this.TaskStarted;
                 eventSource.TaskFinished += this.TaskFinished;
@@ -93,8 +93,8 @@ namespace MSBuild.ExtensionPack.Loggers
         {
             if (this.Parameters != null)
             {
-                string[] strArray = this.Parameters.Split(fileLoggerParameterDelimiters);
-                foreach (string[] strArray2 in from t in strArray where t.Length > 0 select t.Split(fileLoggerParameterValueSplitCharacter))
+                string[] strArray = this.Parameters.Split(FileLoggerParameterDelimiters);
+                foreach (string[] strArray2 in from t in strArray where t.Length > 0 select t.Split(FileLoggerParameterValueSplitCharacter))
                 {
                     this.ApplyFileLoggerParameter(strArray2[0], strArray2.Length > 1 ? strArray2[1] : null);
                 }
@@ -132,8 +132,7 @@ namespace MSBuild.ExtensionPack.Loggers
             this.ParseFileLoggerParameters();
             try
             {
-                this.xmlWriter = new XmlTextWriter(this.logFileName, this.encoding);
-                this.xmlWriter.Formatting = Formatting.Indented;
+                this.xmlWriter = new XmlTextWriter(this.logFileName, this.encoding) { Formatting = Formatting.Indented };
                 this.xmlWriter.WriteStartDocument();
                 this.xmlWriter.WriteStartElement("build");
                 this.xmlWriter.Flush();                
@@ -201,7 +200,7 @@ namespace MSBuild.ExtensionPack.Loggers
         private void ProjectStarted(object sender, ProjectStartedEventArgs e)
         {
             this.LogStarted("project", e.TargetNames, e.ProjectFile);
-            if (IsVerbosityAtLeast(LoggerVerbosity.Diagnostic))
+            if (this.IsVerbosityAtLeast(LoggerVerbosity.Diagnostic))
             {
                 this.xmlWriter.WriteStartElement("InitialProperties");
                 SortedDictionary<string, string> sortedProperties = new SortedDictionary<string, string>();
@@ -284,12 +283,12 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void LogMessage(string messageType, string message, MessageImportance importance)
         {
-            if (importance == MessageImportance.Low && Verbosity != LoggerVerbosity.Detailed && Verbosity != LoggerVerbosity.Diagnostic)
+            if (importance == MessageImportance.Low && this.Verbosity != LoggerVerbosity.Detailed && this.Verbosity != LoggerVerbosity.Diagnostic)
             {
                 return;
             }
 
-            if (importance == MessageImportance.Normal && (Verbosity == LoggerVerbosity.Minimal || Verbosity == LoggerVerbosity.Quiet))
+            if (importance == MessageImportance.Normal && (this.Verbosity == LoggerVerbosity.Minimal || this.Verbosity == LoggerVerbosity.Quiet))
             {
                 return;
             }

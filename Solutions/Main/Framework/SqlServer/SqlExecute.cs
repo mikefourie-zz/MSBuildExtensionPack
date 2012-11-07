@@ -17,10 +17,10 @@ namespace MSBuild.ExtensionPack.SqlServer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Execute</i> (<b>Required: </b> ConnectionString, Sql or Files <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors, StripMultiLineComments <b>Output: </b> FailedScripts)</para>
-    /// <para><i>ExecuteRawReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> RawReaderResult, FailedScripts)</para>
-    /// <para><i>ExecuteReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ReaderResult, FailedScripts)</para>
-    /// <para><i>ExecuteScalar</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ScalarResult, FailedScripts)</para>
+    /// <para><i>Execute</i> (<b>Required: </b> ConnectionString, Sql or Files <b>Optional:</b> CodePage, CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors, StripMultiLineComments <b>Output: </b> FailedScripts)</para>
+    /// <para><i>ExecuteRawReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CodePage, CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> RawReaderResult, FailedScripts)</para>
+    /// <para><i>ExecuteReader</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CodePage, CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ReaderResult, FailedScripts)</para>
+    /// <para><i>ExecuteScalar</i> (<b>Required: </b> ConnectionString, Sql <b>Optional:</b> CodePage, CommandTimeout, Parameters, Retry, UseTransaction, IgnoreScriptErrors <b>Output: </b> ScalarResult, FailedScripts)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -40,12 +40,12 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Execute SQL and return a scalar -->
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteScalar" Sql="Select GETDATE()" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteScalar" UseTransaction="true" Sql="Select GETDATE()" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
     ///             <Output PropertyName="ScResult" TaskParameter="ScalarResult"/>
     ///         </MSBuild.ExtensionPack.SqlServer.SqlExecute>
     ///         <Message Text="$(ScResult)"/>
     ///         <!-- Execute SQL and return the result in raw text form -->
-    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteRawReader" Sql="Select * from sys.tables" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="ExecuteRawReader" UseTransaction="true" Sql="Select * from sys.tables" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True">
     ///             <Output PropertyName="RawResult" TaskParameter="RawReaderResult"/>
     ///         </MSBuild.ExtensionPack.SqlServer.SqlExecute>
     ///         <Message Text="$(RawResult)"/>
@@ -56,18 +56,27 @@ namespace MSBuild.ExtensionPack.SqlServer
     ///         <Message Text="%(RResult.Identity) - %(RResult.object_id)"/>
     ///         <!-- Execute some sql files -->
     ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Retry="true" UseTransaction="true" Files="@(Files)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True"/>
+    ///         <!-- Use Parameter substitution -->
+    ///         <ItemGroup>
+    ///             <SqlFiles Include="createLinkedServer.sql"/>
+    ///             <SqlParameters Include="true">
+    ///                 <name>%24(LINKEDSERVER)</name>
+    ///                 <value>myserver\myinstance</value>
+    ///             </SqlParameters>
+    ///         </ItemGroup>
+    ///         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Files="@(SqlFiles)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True" Parameters="@(SqlParameters)" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
-        private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private const string ExecuteTaskAction = "Execute";
         private const string ExecuteScalarTaskAction = "ExecuteScalar";
         private const string ExecuteReaderTaskAction = "ExecuteReader";
         private const string ExecuteRawReaderTaskAction = "ExecuteRawReader";
+        private static readonly Regex Splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private int commandTimeout = 30;
         private DateTime timer;
         private bool stripMultiLineComments = true;
@@ -92,6 +101,17 @@ namespace MSBuild.ExtensionPack.SqlServer
         }
 
         /// <summary>
+        /// Allows setting encoding code page to be used. Default is System.Text.Encoding.Default
+        /// All code pages are listed here: http://msdn.microsoft.com/en-us/library/system.text.encoding
+        /// </summary>
+        [TaskAction(ExecuteTaskAction, false)]
+        public int CodePage
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Sets the files to execute
         /// </summary>
         [TaskAction(ExecuteTaskAction, false)]
@@ -104,7 +124,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         public string Sql { get; set; }
 
         /// <summary>
-        /// Sets the parameters to substitute at execution time
+        /// Sets the parameters to substitute at execution time. These are CASE SENSITIVE.
         /// </summary>
         [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] Parameters { get; set; }
@@ -178,12 +198,30 @@ namespace MSBuild.ExtensionPack.SqlServer
             }
         }
 
-        private static string LoadScript(string fileName, bool stripMultiLineComments)
+        private string LoadScript(string fileName)
         {
-            string retValue;
-            using (StreamReader textFileReader = new StreamReader(fileName, System.Text.Encoding.Default, true))
+            System.Text.Encoding readEncoding;
+            if (this.CodePage > 0)
             {
-                retValue = new SqlScriptLoader(textFileReader, stripMultiLineComments).ReadToEnd();
+                try
+                {
+                    readEncoding = System.Text.Encoding.GetEncoding(this.CodePage);
+                }
+                catch
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid CodePage passed: {0}", this.CodePage));
+                    throw;
+                }
+            }
+            else
+            {
+                readEncoding = System.Text.Encoding.Default;
+            }
+
+            string retValue;
+            using (StreamReader textFileReader = new StreamReader(fileName, readEncoding, true))
+            {
+                retValue = new SqlScriptLoader(textFileReader, this.StripMultiLineComments).ReadToEnd();
             }
 
             return retValue;
@@ -222,7 +260,6 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private void ExecuteFiles()
         {
-            string sqlCommandText;
             bool retry = true;
             int previousFailures = this.Files.Length;
             ApplicationException lastException = null;
@@ -241,8 +278,8 @@ namespace MSBuild.ExtensionPack.SqlServer
                         try
                         {
                             this.LogTaskMessage(MessageImportance.Low, "Loading {0}.", new[] { fileInfo.ItemSpec });
-                            sqlCommandText = this.SubstituteParameters(LoadScript(fileInfo.ItemSpec, this.StripMultiLineComments)) + Environment.NewLine;
-                            string[] batches = splitter.Split(sqlCommandText);
+                            string sqlCommandText = this.SubstituteParameters(this.LoadScript(fileInfo.ItemSpec)) + Environment.NewLine;
+                            string[] batches = Splitter.Split(sqlCommandText);
                             this.LogTaskMessage(MessageImportance.Low, "Split {0} into {1} batches.", new object[] { fileInfo.ItemSpec, batches.Length });
                             SqlTransaction sqlTransaction = null;
                             SqlCommand command = sqlConnection.CreateCommand();
@@ -364,18 +401,15 @@ namespace MSBuild.ExtensionPack.SqlServer
                             ArrayList rows = new ArrayList();
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
-                                if (reader != null)
+                                while (reader.Read())
                                 {
-                                    while (reader.Read())
+                                    ITaskItem rowItem = new TaskItem(reader[0].ToString());
+                                    for (int i = 0; i < reader.FieldCount; i++)
                                     {
-                                        ITaskItem rowItem = new TaskItem(reader[0].ToString());
-                                        for (int i = 0; i < reader.FieldCount; i++)
-                                        {
-                                            rowItem.SetMetadata(reader.GetName(i), reader[i].ToString());
-                                        }
-
-                                        rows.Add(rowItem);
+                                        rowItem.SetMetadata(reader.GetName(i), reader[i].ToString());
                                     }
+
+                                    rows.Add(rowItem);
                                 }
                             }
 
@@ -390,18 +424,15 @@ namespace MSBuild.ExtensionPack.SqlServer
                             using (SqlDataReader rawreader = command.ExecuteReader())
                             {
                                 this.RawReaderResult = string.Empty;
-                                if (rawreader != null)
+                                while (rawreader.Read())
                                 {
-                                    while (rawreader.Read())
+                                    string resultRow = string.Empty;
+                                    for (int i = 0; i < rawreader.FieldCount; i++)
                                     {
-                                        string resultRow = string.Empty;
-                                        for (int i = 0; i < rawreader.FieldCount; i++)
-                                        {
-                                            resultRow += rawreader[i] + " ";
-                                        }
-
-                                        this.RawReaderResult += resultRow + Environment.NewLine;
+                                        resultRow += rawreader[i] + " ";
                                     }
+
+                                    this.RawReaderResult += resultRow + Environment.NewLine;
                                 }
                             }
 
@@ -431,7 +462,7 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private SqlConnection CreateConnection(string connectionString)
         {
-            SqlConnection returnedConnection = null;
+            SqlConnection returnedConnection;
             SqlConnection connection = null;
             try
             {

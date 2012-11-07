@@ -5,16 +5,21 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
-        <!-- Create a SendHandler (note force is true)-->
+        <!-- Create a ReceiveHandler (note force is true)-->
         <MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler TaskAction="Create" HostName="MSBEPTESTHOST" AdapterName="MQSeries" Force="true"/>
         <!-- Check a SendHandler exists (it should) -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler TaskAction="CheckExists" HostName="MSBEPTESTHOST" AdapterName="MQSeries">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler>
         <Message Text="BizTalkReceiveHandler  Exists: $(DoesExist) "/>
-        <!-- Delete a SendHandler -->
+        <!-- Get all Receive Handlers -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler TaskAction="Get">
+            <Output TaskParameter="ReceiveHandlers" ItemName="RH"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler>
+        <Message Text="%(RH.Identity) - %(RH.AdapterName) - %(RH.CustomCfg)"/>
+        <!-- Delete a ReceiveHandler -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler TaskAction="Delete" HostName="MSBEPTESTHOST" AdapterName="MQSeries"/>
-        <!-- Check a SendHandler exists (it shouldn't) -->
+        <!-- Check a ReceiveHandler exists (it shouldn't) -->
         <MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler TaskAction="CheckExists" HostName="MSBEPTESTHOST" AdapterName="MQSeries">
             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
         </MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler>

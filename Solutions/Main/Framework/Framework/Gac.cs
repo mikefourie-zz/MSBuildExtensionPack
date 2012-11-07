@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/e1e7dbf1-68b9-11a1-2b69-10b920ff101e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/e1e7dbf1-68b9-11a1-2b69-10b920ff101e.htm")]
     public class Gac : BaseTask
     {
         private const string AddAssemblyTaskAction = "AddAssembly";
@@ -172,7 +172,6 @@ namespace MSBuild.ExtensionPack.Framework
             if (result != 0)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
-                return;
             }
         }
 
@@ -248,7 +247,6 @@ namespace MSBuild.ExtensionPack.Framework
                     else
                     {
                         this.Log.LogError("Remote Remove returned null");
-                        return;
                     }
                 }
             }
@@ -307,7 +305,6 @@ namespace MSBuild.ExtensionPack.Framework
                         else
                         {
                             Log.LogError("Remote Create returned null");
-                            return;
                         }
                     }
                 }

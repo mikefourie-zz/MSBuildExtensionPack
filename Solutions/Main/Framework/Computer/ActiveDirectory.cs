@@ -207,7 +207,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
     public class ActiveDirectory : BaseTask
     {
         private const string AddUserTaskAction = "AddUser";
@@ -322,7 +322,7 @@ namespace MSBuild.ExtensionPack.Computer
         [TaskAction(AddUserTaskAction, false)]
         public bool PasswordExpired
         {
-            get { return this.passwordExpired == 1 ? true : false; }
+            get { return this.passwordExpired == 1; }
             set { this.passwordExpired = value ? 1 : 0; }
         }
 
@@ -704,7 +704,6 @@ namespace MSBuild.ExtensionPack.Computer
                 if (result != 0)
                 {
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error running LsaAddAccountRights: {0}", returnValue));
-                    return;
                 }
             }
             finally
@@ -842,7 +841,6 @@ namespace MSBuild.ExtensionPack.Computer
 
             foreach (ITaskItem u in this.User)
             {
-                DirectoryEntry user;
                 var username = u.ItemSpec;
                 var userAdEntry = this.activeDirEntry;
                 var userDirPath = u.GetMetadata("DirectoryPath");
@@ -860,6 +858,7 @@ namespace MSBuild.ExtensionPack.Computer
 
                 foreach (ITaskItem g in this.Group)
                 {
+                    DirectoryEntry user;
                     try
                     {
                         user = userAdEntry.Children.Find(username, "User");
@@ -882,10 +881,10 @@ namespace MSBuild.ExtensionPack.Computer
                         }
                     }
 
-                    DirectoryEntry groupDir;
                     DirectoryEntry grp;
                     if (this.groupType == ADGroupType.Local)
                     {
+                        DirectoryEntry groupDir;
                         using (groupDir = new DirectoryEntry("WinNT://" + this.MachineName + ",computer"))
                         {
                             try

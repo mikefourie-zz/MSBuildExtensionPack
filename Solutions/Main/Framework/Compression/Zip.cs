@@ -73,7 +73,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/f2118b59-554e-d745-5859-126a82b1df81.htm")]
     public class Zip : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -264,7 +264,6 @@ namespace MSBuild.ExtensionPack.Compression
             else
             {
                 Log.LogError("CompressFiles or CompressPath must be specified");
-                return;
             }
         }
 
@@ -341,7 +340,6 @@ namespace MSBuild.ExtensionPack.Compression
             else
             {
                 Log.LogError("CompressFiles or CompressPath must be specified");
-                return;
             }
         }
 

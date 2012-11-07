@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Sql2008
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, Incremental, NotificationInterval, NoPooling, StatementTimeout, CopyOnly)</para>
+    /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, CompressionOption, Incremental, NotificationInterval, NoPooling, StatementTimeout, CopyOnly)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName, StatementTimeout)</para>
     /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
@@ -98,7 +98,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/599c249c-bc36-8b71-c6f4-935708b18eb8.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/599c249c-bc36-8b71-c6f4-935708b18eb8.htm")]
     public class Database : BaseTask
     {
         private const string BackupTaskAction = "Backup";
@@ -122,6 +122,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         private int notificationInterval = 10;
         private string fileGroupName = "PRIMARY";
         private int statementTimeout = -1;
+        private BackupCompressionOptions compressionOption = BackupCompressionOptions.Default;
 
         /// <summary>
         /// Sets the TaskAction.
@@ -198,6 +199,16 @@ namespace MSBuild.ExtensionPack.Sql2008
         [TaskAction(SetOnlineTaskAction, true)]
         [TaskAction(VerifyBackupTaskAction, true)]
         public ITaskItem DatabaseItem { get; set; }
+
+        /// <summary>
+        /// Sets the compression option for the backup. Supports On, Off and Default. Default is Default.
+        /// </summary>
+        [TaskAction(BackupTaskAction, false)]
+        public string CompressionOption
+        {
+            get { return this.compressionOption.ToString(); }
+            set { this.compressionOption = (BackupCompressionOptions)Enum.Parse(typeof(BackupCompressionOptions), value); }
+        }
 
         /// <summary>
         /// Sets the primary data file name.
@@ -750,6 +761,7 @@ namespace MSBuild.ExtensionPack.Sql2008
             sqlBackup.Database = this.DatabaseItem.ItemSpec;
             sqlBackup.Incremental = this.Incremental;
             sqlBackup.CopyOnly = this.CopyOnly;
+            sqlBackup.CompressionOption = this.compressionOption;
             sqlBackup.Action = this.backupAction;
             sqlBackup.Initialize = true;
             sqlBackup.PercentCompleteNotification = this.NotificationInterval;

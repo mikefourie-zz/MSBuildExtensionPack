@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>DeleteKey</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView)</para>
     /// <para><i>DeleteKeyTree</i> (<b>Required: </b> RegistryHive, Key <b>Optional:</b> RegistryView )</para>
     /// <para><i>Get</i> (<b>Required: </b> RegistryHive, Key, Value  <b>Optional:</b> RegistryView <b>Output: </b>Data)</para>
-    /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value <b>Optional:</b> RegistryView)</para>
+    /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value <b>Optional:</b> DataType, RegistryView)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -60,7 +60,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
@@ -86,7 +86,7 @@ namespace MSBuild.ExtensionPack.Computer
         }
 
         /// <summary>
-        /// Sets the type of the data.
+        /// Sets the type of the data. RegistryValueKind Enumeration. Support for Binary, DWord, MultiString, QWord, ExpandString
         /// </summary>
         public string DataType { get; set; }
 
@@ -307,8 +307,8 @@ namespace MSBuild.ExtensionPack.Computer
                                 registryValue = uint.Parse(this.Data, CultureInfo.CurrentCulture);
                                 break;
                             case RegistryValueKind.MultiString:
-                                parts = this.Data.Split(separator);
-                                registryValue = parts;
+                                string[] parts1 = this.Data.Split(separator);
+                                registryValue = parts1;
                                 break;
                             case RegistryValueKind.QWord:
                                 registryValue = ulong.Parse(this.Data, CultureInfo.CurrentCulture);

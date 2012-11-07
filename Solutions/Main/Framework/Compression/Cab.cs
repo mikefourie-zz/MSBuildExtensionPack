@@ -48,7 +48,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/f7724cf2-0498-92d8-ba0f-26ca4772d8ee.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/f7724cf2-0498-92d8-ba0f-26ca4772d8ee.htm")]
     public class Cab : BaseTask
     {
         private const string AddFileTaskAction = "AddFile";
@@ -269,13 +269,11 @@ namespace MSBuild.ExtensionPack.Compression
                     if (Convert.ToInt32(outParams.Properties["ReturnValue"].Value, CultureInfo.CurrentCulture) != 0)
                     {
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Directory deletion error: ReturnValue: {0}", outParams.Properties["ReturnValue"].Value));
-                        return;
                     }
                 }
                 else
                 {
                     this.Log.LogError("The ManagementObject call to invoke Delete returned null.");
-                    return;
                 }
             }
         }

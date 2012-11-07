@@ -80,7 +80,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/2610c1b7-348a-901e-3c90-84a3deb99c38.htm")]
     public class Assembly : BaseAppDomainIsolatedTask
     {
         private const string GetInfoTaskAction = "GetInfo";
@@ -283,7 +283,6 @@ namespace MSBuild.ExtensionPack.Framework
             if (!typeFound)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "Type not Found: {0}", this.NetClass));
-                return;
             }
         }
 

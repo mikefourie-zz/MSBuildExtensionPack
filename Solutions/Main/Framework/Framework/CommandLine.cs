@@ -80,7 +80,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/324b0e31-5ff0-baac-40ae-bf26297e5821.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/324b0e31-5ff0-baac-40ae-bf26297e5821.htm")]
     public class CommandLine : Task
     {
         /// <summary>
@@ -452,28 +452,28 @@ namespace MSBuild.ExtensionPack.Framework
                     // Record Fail
                     result = false;
                     this.Log.LogError(
-                        (subCategory.Success ? subCategory.Value : string.Empty), // Sub-category
-                        (errorCode.Success ? errorCode.Value : string.Empty),     // Error code
-                        (helpKeyword.Success ? helpKeyword.Value : string.Empty), // Help keyword
-                        (file.Success ? file.Value : string.Empty),               // File
+                        subCategory.Success ? subCategory.Value : string.Empty, // Sub-category
+                        errorCode.Success ? errorCode.Value : string.Empty,     // Error code
+                        helpKeyword.Success ? helpKeyword.Value : string.Empty, // Help keyword
+                        file.Success ? file.Value : string.Empty,               // File
                         lineInt,                                                  // Line number
                         columnInt,                                                // Column number
                         endLineInt,                                               // End line number
                         endColumnInt,                                             // End column number
-                        (message.Success ? message.Value : string.Empty));        // Message
+                        message.Success ? message.Value : string.Empty);        // Message
                 }
                 else
                 {
                     this.Log.LogWarning(
-                        (subCategory.Success ? subCategory.Value : string.Empty), // Sub-category
-                        (errorCode.Success ? errorCode.Value : string.Empty),     // Error code
-                        (helpKeyword.Success ? helpKeyword.Value : string.Empty), // Help keyword
-                        (file.Success ? file.Value : string.Empty),               // File
+                        subCategory.Success ? subCategory.Value : string.Empty, // Sub-category
+                        errorCode.Success ? errorCode.Value : string.Empty,     // Error code
+                        helpKeyword.Success ? helpKeyword.Value : string.Empty, // Help keyword
+                        file.Success ? file.Value : string.Empty,               // File
                         lineInt,                                                  // Line number
                         columnInt,                                                // Column number
                         endLineInt,                                               // End line number
                         endColumnInt,                                             // End column number
-                        (message.Success ? message.Value : string.Empty));        // Message
+                        message.Success ? message.Value : string.Empty);        // Message
                 }
 
                 match = match.NextMatch();

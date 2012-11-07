@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/c9f431c3-c240-26ab-32da-74fc81894a72.htm")]
     public class Share : BaseTask
     {
         private const string ModifyPermissionsTaskAction = "ModifyPermissions";
@@ -285,7 +285,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                 if (returnCode != ReturnCode.Success)
                 {
                     this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to delete the share. ReturnCode: {0}.", returnCode));
-                    return;
                 }
             }
         }
@@ -318,7 +317,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                 if (returnCode != ReturnCode.Success)
                 {
                     this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Failed to set the share permissions. ReturnCode: {0}.", returnCode));
-                    return;
                 }
             }
         }
@@ -327,7 +325,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Modify permissions on share: {0} on: {1}", this.ShareName, this.MachineName));
             this.GetManagementScope(@"\root\cimv2");
-            ManagementObject shareObject = null;
+            ManagementObject shareObject;
             ObjectQuery query = new ObjectQuery("Select * from Win32_LogicalShareSecuritySetting where Name = '" + this.ShareName + "'");
             using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(this.Scope, query))
             {

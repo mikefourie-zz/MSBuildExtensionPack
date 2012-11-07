@@ -40,7 +40,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
     public class Sync : BaseTask
     {
         private const string SyncFoldersTaskAction = "SyncFolders";
@@ -153,8 +153,6 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private static Guid GetSyncId(string idFilePath)
         {
-            Guid replicaId;
-
             if (File.Exists(idFilePath))
             {
                 using (StreamReader sr = File.OpenText(idFilePath))
@@ -170,6 +168,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             using (FileStream idFile = File.Open(idFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 StreamWriter sw = null;
+                Guid replicaId;
                 try
                 {
                     sw = new StreamWriter(idFile);
@@ -273,7 +272,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
         private void OnSkippedChange(object sender, SkippedChangeEventArgs args)
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SKIPPED {0} for {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), (!string.IsNullOrEmpty(args.CurrentFilePath) ? args.CurrentFilePath : args.NewFilePath)));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SKIPPED {0} for {1}", args.ChangeType.ToString().ToUpper(CultureInfo.CurrentUICulture), !string.IsNullOrEmpty(args.CurrentFilePath) ? args.CurrentFilePath : args.NewFilePath));
             if (args.Exception != null)
             {
                 this.Log.LogErrorFromException(args.Exception, this.LogExceptionStack, true, null);

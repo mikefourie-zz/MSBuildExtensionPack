@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
     public class BizTalkAssembly : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -385,7 +385,6 @@ namespace MSBuild.ExtensionPack.BizTalk
             if (result != 0)
             {
                 Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
-                return;
             }
         }
 
@@ -438,7 +437,6 @@ namespace MSBuild.ExtensionPack.BizTalk
                     else
                     {
                         this.Log.LogError("Remote Create returned null");
-                        return;
                     }
                 }
             }

@@ -31,8 +31,8 @@ namespace MSBuild.ExtensionPack.Loggers
     public class SecureFileLogger : Logger
     {
         private const char SecureChar = '#';
-        private static readonly char[] fileLoggerParameterDelimiters = new[] { ';' };
-        private static readonly char[] fileLoggerParameterValueSplitCharacter = new[] { '=' };
+        private static readonly char[] FileLoggerParameterDelimiters = new[] { ';' };
+        private static readonly char[] FileLoggerParameterValueSplitCharacter = new[] { '=' };
         private readonly ICollection<string> regExRules = new Collection<string>();
         private StreamWriter fileWriter;
         private string logFileName;
@@ -60,20 +60,20 @@ namespace MSBuild.ExtensionPack.Loggers
             eventSource.ErrorRaised += this.ErrorRaised;
             eventSource.WarningRaised += this.WarningRaised;
 
-            if (Verbosity != LoggerVerbosity.Quiet)
+            if (this.Verbosity != LoggerVerbosity.Quiet)
             {
                 eventSource.MessageRaised += this.MessageRaised;
                 eventSource.ProjectStarted += this.ProjectStarted;
                 eventSource.ProjectFinished += this.ProjectFinished;
             }
 
-            if (IsVerbosityAtLeast(LoggerVerbosity.Normal))
+            if (this.IsVerbosityAtLeast(LoggerVerbosity.Normal))
             {
                 eventSource.TargetStarted += this.TargetStarted;
                 eventSource.TargetFinished += this.TargetFinished;
             }
 
-            if (IsVerbosityAtLeast(LoggerVerbosity.Detailed))
+            if (this.IsVerbosityAtLeast(LoggerVerbosity.Detailed))
             {
                 eventSource.TaskStarted += this.TaskStarted;
                 eventSource.TaskFinished += this.TaskFinished;
@@ -101,8 +101,8 @@ namespace MSBuild.ExtensionPack.Loggers
         {
             if (this.Parameters != null)
             {
-                string[] strArray = this.Parameters.Split(fileLoggerParameterDelimiters);
-                foreach (string[] strArray2 in from t in strArray where t.Length > 0 select t.Split(fileLoggerParameterValueSplitCharacter))
+                string[] strArray = this.Parameters.Split(FileLoggerParameterDelimiters);
+                foreach (string[] strArray2 in from t in strArray where t.Length > 0 select t.Split(FileLoggerParameterValueSplitCharacter))
                 {
                     this.ApplyFileLoggerParameter(strArray2[0], strArray2.Length > 1 ? strArray2[1] : null);
                 }
@@ -180,8 +180,7 @@ namespace MSBuild.ExtensionPack.Loggers
                     }
                 }
 
-                this.fileWriter = new StreamWriter(this.logFileName, this.append, this.encoding);
-                this.fileWriter.AutoFlush = true;
+                this.fileWriter = new StreamWriter(this.logFileName, this.append, this.encoding) { AutoFlush = true };
             }
             catch (Exception exception)
             {
@@ -227,7 +226,7 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void MessageRaised(object sender, BuildMessageEventArgs e)
         {
-            if ((e.Importance == MessageImportance.High && IsVerbosityAtLeast(LoggerVerbosity.Minimal)) || (e.Importance == MessageImportance.Normal && IsVerbosityAtLeast(LoggerVerbosity.Normal)) || (e.Importance == MessageImportance.Low && IsVerbosityAtLeast(LoggerVerbosity.Detailed)))
+            if ((e.Importance == MessageImportance.High && this.IsVerbosityAtLeast(LoggerVerbosity.Minimal)) || (e.Importance == MessageImportance.Normal && this.IsVerbosityAtLeast(LoggerVerbosity.Normal)) || (e.Importance == MessageImportance.Low && this.IsVerbosityAtLeast(LoggerVerbosity.Detailed)))
             {
                 this.WriteLine(this.ProcessLine(e.Message));
             }
@@ -245,7 +244,7 @@ namespace MSBuild.ExtensionPack.Loggers
             string line = string.Format(CultureInfo.InvariantCulture, "Project \"{0}\" ({1} target(s)):", e.ProjectFile, targets);
             this.WriteLine(line + Environment.NewLine);
 
-            if (IsVerbosityAtLeast(LoggerVerbosity.Diagnostic))
+            if (this.IsVerbosityAtLeast(LoggerVerbosity.Diagnostic))
             {
                 this.WriteLine("Initial Properties:");
 

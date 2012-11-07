@@ -132,7 +132,6 @@ namespace MSBuild.ExtensionPack.Framework
                 if (matches.Count > 0)
                 {
                     this.rawFileLines[this.attributeIndex[attribute]] = this.attributeBooleanValuePattern.Replace(this.rawFileLines[this.attributeIndex[attribute]], "(" + value + ")");
-                    return;
                 }
             }
         }

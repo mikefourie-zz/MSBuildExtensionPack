@@ -41,7 +41,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
     public class GenericTool : ToolTask
     {
         /// <summary>
@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override string GenerateFullPathToTool()
         {
-            return string.IsNullOrEmpty(this.ToolPath) ? this.ToolName : Path.Combine(this.ToolPath, this.ToolName);
+            return string.IsNullOrEmpty(this.ToolPath) ? this.ToolName : System.IO.Path.Combine(this.ToolPath, this.ToolName);
         }
 
         protected override string GenerateCommandLineCommands()

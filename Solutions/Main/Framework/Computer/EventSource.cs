@@ -44,7 +44,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/072b0fa3-2739-f3aa-124c-71955299d206.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/072b0fa3-2739-f3aa-124c-71955299d206.htm")]
     public class EventSource : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";

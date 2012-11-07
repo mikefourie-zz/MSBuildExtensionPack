@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/220731f6-6b59-0cde-26ee-d47680f51c10.htm")]
     public class RoboCopy : ToolTask
     {
         /// <summary>
@@ -160,8 +160,6 @@ namespace MSBuild.ExtensionPack.FileSystem
                     break;
                 case 16:
                     Log.LogError("Return Code 16. Serious error. RoboCopy did not copy any files. This is either a usage error or an error due to insufficient access privileges on the source or destination directories.");
-                    break;
-                default:
                     break;
             }
 

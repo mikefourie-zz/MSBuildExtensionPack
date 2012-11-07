@@ -27,7 +27,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <code lang="xml"><![CDATA[
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/88b4a474-46da-7cac-130e-37ad139a5aa1.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/88b4a474-46da-7cac-130e-37ad139a5aa1.htm")]
     public class AnalysisServices : BaseTask
     {
         private const string ScriptCreateTaskAction = "ScriptCreate";
@@ -202,7 +202,7 @@ namespace MSBuild.ExtensionPack.Sql2008
 
                     foreach (XmlaWarning xmlaWarning in warnings)
                     {
-                        LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "XMLA warning code: {0}\nDescription: {1}\nSource: {2}\nHelpFile: {3}", xmlaWarning.WarningCode, xmlaWarning.Description, xmlaWarning.Source, xmlaWarning.HelpFile));
+                        this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "XMLA warning code: {0}\nDescription: {1}\nSource: {2}\nHelpFile: {3}", xmlaWarning.WarningCode, xmlaWarning.Description, xmlaWarning.Source, xmlaWarning.HelpFile));
                     }
 
                     if (errors.FirstOrDefault() != default(XmlaError))

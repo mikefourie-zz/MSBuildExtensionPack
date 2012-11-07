@@ -20,6 +20,16 @@
         </ItemGroup>
         <!-- Add a Performance Counter -->
         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="Add" CategoryName="YourCustomCategory" CategoryHelp="This is a custom performance counter category" CounterList="@(CounterList)" MultiInstance="true" />
+        <!-- Check whether a Category Exists -->
+        <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="CheckCategoryExists" CategoryName="aYourCustomCategory">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.PerformanceCounters>
+        <Message Text="aYourCustomCategory - $(DoesExist)"/>
+        <!-- Check whether a Counter Exists -->
+        <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="CheckCounterExists" CategoryName="aYourCustomCategory" CounterName="AnotherCounter">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.PerformanceCounters>
+        <Message Text="AnotherCounter - $(DoesExist)"/>
         <!-- Remove a Performance Counter -->
         <MSBuild.ExtensionPack.Computer.PerformanceCounters TaskAction="Remove" CategoryName="YourCustomCategory"/>
         <!-- Get a Performance Counter value-->

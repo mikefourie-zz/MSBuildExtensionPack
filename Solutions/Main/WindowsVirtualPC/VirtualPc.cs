@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Virtualisation
 {
-    using System;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Globalization;
@@ -84,7 +83,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
     public class VirtualPc : BaseTask
     {
         private const string AddHardDiskConnectionTaskAction = "AddHardDiskConnection";

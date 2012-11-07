@@ -43,7 +43,7 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example> 
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/7a6bc9b8-0852-8ade-d496-d3fbe3d3f94b.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/7a6bc9b8-0852-8ade-d496-d3fbe3d3f94b.htm")]
     public class Iis7Binding : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -228,7 +228,6 @@ namespace MSBuild.ExtensionPack.Web
             if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation)))
             {
                 this.Exists = true;
-                return;
             }
         }
 

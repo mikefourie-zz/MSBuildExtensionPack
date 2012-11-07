@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.5.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
+    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
     public class Signing : BaseTask
     {
         private const string CAddSkipVerificationTaskAction = "AddSkipVerification";
@@ -174,7 +174,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void Run(string args)
         {
-            string fileName = this.ToolPath != null ? Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName) : ToolName;
+            string fileName = this.ToolPath != null ? System.IO.Path.Combine(this.ToolPath.GetMetadata("FullPath"), ToolName) : ToolName;
             if (!System.IO.File.Exists(fileName))
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "sn.exe not found: {0}", fileName));
@@ -206,7 +206,6 @@ namespace MSBuild.ExtensionPack.Framework
                 if (proc.ExitCode != 0)
                 {
                     this.Log.LogError("Non-zero exit code from sn.exe: " + proc.ExitCode);
-                    return;
                 }
             }
         }

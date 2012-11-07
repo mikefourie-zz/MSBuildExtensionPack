@@ -29,5 +29,14 @@
         <Message Text="%(RResult.Identity) - %(RResult.object_id)"/>
         <!-- Execute some sql files -->
         <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Retry="true" UseTransaction="true" Files="@(Files)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True"/>
+        <!-- Use Parameter substitution -->
+        <ItemGroup>
+            <SqlFiles Include="createLinkedServer.sql"/>
+            <SqlParameters Include="true">
+                <name>%24(LINKEDSERVER)</name>
+                <value>myserver\myinstance</value>
+            </SqlParameters>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.SqlServer.SqlExecute TaskAction="Execute" Files="@(SqlFiles)" ConnectionString="Data Source=desktop\Sql2008;Initial Catalog=;Integrated Security=True" Parameters="@(SqlParameters)" />
     </Target>
 </Project>
