@@ -1065,3 +1065,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "TaskAction", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.Parallel.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "MSBuild.ExtensionPack.Framework.Parallel.#ExecuteTargetSet(Microsoft.Build.Framework.ITaskItem)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "SetAccessIisIntrinsicProperties", Scope = "member", Target = "MSBuild.ExtensionPack.Computer.ComponentServices.#SetAccessIisIntrinsicProperties()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "MSBuild.ExtensionPack.Git")]
