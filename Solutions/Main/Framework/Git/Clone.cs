@@ -77,7 +77,7 @@ namespace MSBuild.ExtensionPack.Git
                 _gitFacade.Clone(RepositoryToClone, TargetDirectory);
                 Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
 
-                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToLower(CultureInfo.InvariantCulture) != "master")
+                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToUpperInvariant() != "MASTER")
                 {
                     _gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
                     Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
