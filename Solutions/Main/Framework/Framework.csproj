@@ -105,6 +105,9 @@
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
     <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
@@ -115,6 +118,24 @@
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="NGit, Version=2.1.0.0, Culture=neutral, PublicKeyToken=29d2b5bdd3813bab, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\NGit.dll</HintPath>
+    </Reference>
+    <Reference Include="NSch, Version=1.0.0.0, Culture=neutral, PublicKeyToken=29d2b5bdd3813bab, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\NSch.dll</HintPath>
+    </Reference>
+    <Reference Include="Sharpen, Version=1.0.0.0, Culture=neutral, PublicKeyToken=29d2b5bdd3813bab, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Sharpen.dll</HintPath>
+    </Reference>
+    <Reference Include="Sharpen.Unix, Version=1.0.0.0, Culture=neutral, PublicKeyToken=29d2b5bdd3813bab, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Sharpen.Unix.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -212,6 +233,9 @@
     <Compile Include="Framework\GenericTool.cs" />
     <Compile Include="Framework\ILMerge.cs" />
     <Compile Include="Framework\SmartExec.cs" />
+    <Compile Include="Git\Clone.cs" />
+    <Compile Include="Git\IGitFacade.cs" />
+    <Compile Include="Git\NGitImplementation.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -379,6 +403,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="SqlServer\SqlVersionDataClass.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
