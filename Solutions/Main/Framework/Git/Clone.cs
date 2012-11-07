@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -74,16 +75,16 @@ namespace MSBuild.ExtensionPack.Git
             try
             {
                 _gitFacade.Clone(RepositoryToClone, TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format("Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
+                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
 
-                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToLower() != "master")
+                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToLower(CultureInfo.InvariantCulture) != "master")
                 {
                     _gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
-                    Log.LogMessage(MessageImportance.Normal, string.Format("Checking out branch/SHA '{0}'", BranchToSwitchTo));
+                    Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
                 }
 
                 _sha = _gitFacade.GetLatestSha(TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format("Latest commit is '{0}'", _sha));
+                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", _sha));
             }
             catch (Exception ex)
             {
