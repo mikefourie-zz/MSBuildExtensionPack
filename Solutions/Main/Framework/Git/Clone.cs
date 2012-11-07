@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -70,6 +71,8 @@ namespace MSBuild.ExtensionPack.Git
         /// <returns>
         /// true if the task successfully executed; otherwise, false.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", 
+            Justification = "MSBuild does not allow rethrowing exceptions")]
         public override bool Execute()
         {
             try
