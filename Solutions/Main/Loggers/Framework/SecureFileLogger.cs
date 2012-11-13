@@ -219,7 +219,7 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void ErrorRaised(object sender, BuildErrorEventArgs e)
         {
-            string line = string.Format(CultureInfo.InvariantCulture, "ERROR {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
+            string line = string.Format(CultureInfo.InvariantCulture, "ERROR {0}({1},{2}): {3}", e.File, e.LineNumber, e.ColumnNumber, e.Message);
             this.WriteLine(this.ProcessLine(line));
             this.errors++;
         }
@@ -298,7 +298,7 @@ namespace MSBuild.ExtensionPack.Loggers
 
         private void WarningRaised(object sender, BuildWarningEventArgs e)
         {
-            string line = string.Format(CultureInfo.InvariantCulture, "Warning {0}({1},{2}): ", e.File, e.LineNumber, e.ColumnNumber);
+            string line = string.Format(CultureInfo.InvariantCulture, "Warning {0}({1},{2}): {3}", e.File, e.LineNumber, e.ColumnNumber, e.Message);
             this.WriteLine(this.ProcessLine(line));
             this.warnings++;
         }
