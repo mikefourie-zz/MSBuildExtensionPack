@@ -41,6 +41,11 @@ namespace MSBuild.ExtensionPack.Computer
         /// Service that can no longer be started.
         /// </summary>
         Disabled,
+
+        /// <summary>
+        /// Service to be started automatically by the Service Control Manager after all the service designated as Automatic have been started.
+        /// </summary>
+        AutomaticDelayedStart,
     }
 
     /// <summary>
@@ -288,7 +293,7 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>CheckExists</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RemoteUser, RemoteUserPassword <b>Output: </b>Exists)</para>
     /// <para><i>Delete</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>Disable</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>Force, Description, ServiceDependencies, ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
+    /// <para><i>Install</i> (<b>Required: </b> ServiceName, ServicePath, User<b>Optional: </b>Force, StartupType, CommandLineArguments, Description, ServiceDependencies, ServiceDisplayName, MachineName, RemoteUser, RemoteUserPassword)</para>
     /// <para><i>Restart</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName). Any running directly dependent services will be restarted too.</para>
     /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
@@ -377,7 +382,11 @@ namespace MSBuild.ExtensionPack.Computer
         private const string StopTaskAction = "Stop";
         private const string UninstallTaskAction = "Uninstall";
         private const string UpdateIdentityTaskAction = "UpdateIdentity";
-
+        private const string StartupTypeAutomatic = "Automatic";
+        private const string StartupTypeAutomaticDelayed = "AutomaticDelayedStart";
+        private const string StartupTypeDisabled = "Disabled";
+        private const string StartupTypeManual  = "Manual";
+        
         private const bool RemoteExecutionAvailable = true;
         private int retryAttempts = 60;
 
@@ -525,6 +534,22 @@ namespace MSBuild.ExtensionPack.Computer
         public ITaskItem[] ServiceDependencies { get; set; }
 
         /// <summary>
+        /// Sets the command line arguments to be passed to the service.
+        /// </summary>
+        [TaskAction(InstallTaskAction, false)]
+        public string CommandLineArguments { get; set; }
+
+        /// <summary>
+        /// Sets the Startup Type of the service. 
+        /// </summary>
+        [TaskAction(InstallTaskAction, false)]
+        [DropdownValue(StartupTypeAutomatic)]
+        [DropdownValue(StartupTypeAutomaticDelayed)]
+        [DropdownValue(StartupTypeDisabled)]
+        [DropdownValue(StartupTypeManual)]
+        public string StartupType { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -566,13 +591,13 @@ namespace MSBuild.ExtensionPack.Computer
                     this.Restart();
                     break;
                 case DisableTaskAction:
-                    this.SetStartupType("Disabled");
+                    this.SetStartupType(StartupTypeDisabled);
                     break;
                 case SetManualTaskAction:
-                    this.SetStartupType("Manual");
+                    this.SetStartupType(StartupTypeManual);
                     break;
                 case SetAutomaticTaskAction:
-                    this.SetStartupType("Automatic");
+                    this.SetStartupType(StartupTypeAutomatic);
                     break;
                 case CheckExistsTaskAction:
                     this.CheckExists();
@@ -584,6 +609,16 @@ namespace MSBuild.ExtensionPack.Computer
                     this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private static string GetServiceStartupType(string startupType)
+        {
+            if (string.IsNullOrEmpty(startupType) || (string.Compare(startupType, StartupTypeAutomaticDelayed, StringComparison.CurrentCultureIgnoreCase) == 0))
+            {
+                return StartupTypeAutomatic;
+            }
+
+            return startupType;
         }
 
         private void Restart()
@@ -994,13 +1029,14 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            System.Collections.Generic.List<string> serviceDependencies = new System.Collections.Generic.List<string>();
+            var serviceDependencies = new List<string>();
             if (null != this.ServiceDependencies)
             {
                 serviceDependencies.AddRange(this.ServiceDependencies.Select(dep => dep.ItemSpec));
             }
 
-            ServiceReturnCode ret = this.Install(this.MachineName, this.ServiceName, this.ServiceDisplayName, this.ServicePath.ToString(), ServiceStartMode.Automatic, this.User, this.Password, serviceDependencies.ToArray(), false, this.RemoteUser, this.RemoteUserPassword);
+            string serviceStartupType = GetServiceStartupType(this.StartupType);
+            ServiceReturnCode ret = this.Install(this.MachineName, this.ServiceName, this.ServiceDisplayName, this.ServicePath.ToString(), serviceStartupType, this.User, this.Password, serviceDependencies.ToArray(), false, this.RemoteUser, this.RemoteUserPassword);
             if (ret != ServiceReturnCode.Success)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Install Service failed with code: '{0}'", ret));
@@ -1014,8 +1050,40 @@ namespace MSBuild.ExtensionPack.Computer
                     using (RegistryKey registryKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, this.MachineName, RegistryView.Registry32))
                     {
                         RegistryKey subKey = registryKey.OpenSubKey(@"System\CurrentControlSet\Services\" + this.ServiceName, true);
-                        subKey.SetValue("Description", this.Description);
-                        subKey.Close();
+                        if (subKey != null)
+                        {
+                            subKey.SetValue("Description", this.Description);
+                            subKey.Close();
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(this.CommandLineArguments))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Setting command line arguments for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
+                    using (RegistryKey registryKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, this.MachineName, RegistryView.Registry32))
+                    {
+                        RegistryKey subKey = registryKey.OpenSubKey(@"System\CurrentControlSet\Services\" + this.ServiceName, true);
+                        if (subKey != null)
+                        {
+                            object imagePathValue = subKey.GetValue("ImagePath");
+                            imagePathValue = imagePathValue + " " + this.CommandLineArguments;
+                            subKey.SetValue("ImagePath", imagePathValue, RegistryValueKind.ExpandString);
+                        }
+                    }
+                }
+
+                if (string.Compare(this.StartupType, StartupTypeAutomaticDelayed, StringComparison.CurrentCultureIgnoreCase) == 0)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "...Setting delayed start argument registry setting for '{0}' on '{1}'", this.ServiceDisplayName, this.MachineName));
+                    using (RegistryKey registryKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, this.MachineName, RegistryView.Registry32))
+                    {
+                        RegistryKey subKey = registryKey.OpenSubKey(@"System\CurrentControlSet\Services\" + this.ServiceName, true);
+                        if (subKey != null)
+                        {
+                            uint delayedAutoStart = 1;
+                            subKey.SetValue("DelayedAutostart", delayedAutoStart, RegistryValueKind.DWord);
+                        }
                     }
                 }
             }
@@ -1038,11 +1106,14 @@ namespace MSBuild.ExtensionPack.Computer
                 
                 // Execute the method and obtain the return values.
                 ManagementBaseObject result = wmi.InvokeMethod("delete", null, null);
-                int returnCode = Convert.ToInt32(result["ReturnValue"], CultureInfo.InvariantCulture);
-                if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
+                if (result != null)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Delete Service failed with return code '[{0}] {1}'", returnCode, (ServiceReturnCode)returnCode));
-                    noErrors = false;
+                    int returnCode = Convert.ToInt32(result["ReturnValue"], CultureInfo.InvariantCulture);
+                    if ((ServiceReturnCode)returnCode != ServiceReturnCode.Success)
+                    {
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Delete Service failed with return code '[{0}] {1}'", returnCode, (ServiceReturnCode)returnCode));
+                        noErrors = false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -1054,7 +1125,7 @@ namespace MSBuild.ExtensionPack.Computer
             return noErrors;
         }
 
-        private ServiceReturnCode Install(string machineName, string name, string displayName, string physicalLocation, ServiceStartMode startMode, string userName, string password, string[] dependencies, bool interactWithDesktop, string installingUser, string installingUserPassword)
+        private ServiceReturnCode Install(string machineName, string name, string displayName, string physicalLocation, string startupType, string userName, string password, string[] dependencies, bool interactWithDesktop, string installingUser, string installingUserPassword)
         {
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
 
@@ -1083,7 +1154,7 @@ namespace MSBuild.ExtensionPack.Computer
                                                  physicalLocation,
                                                  Convert.ToInt32(ServiceTypes.OwnProcess, CultureInfo.InvariantCulture),
                                                  Convert.ToInt32(ServiceErrorControl.UserNotified, CultureInfo.InvariantCulture),
-                                                 startMode.ToString(),
+                                                 startupType,
                                                  interactWithDesktop,
                                                  userName,
                                                  password,
