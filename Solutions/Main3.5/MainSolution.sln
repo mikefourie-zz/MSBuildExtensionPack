@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{269F9D77-D538-4980-BA64-61C914AE9D77}"
 	ProjectSection(SolutionItems) = preProject
 		Common\Attributes.cs = Common\Attributes.cs
