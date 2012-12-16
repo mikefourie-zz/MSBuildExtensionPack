@@ -34,7 +34,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
         public const int InternetFlagNeedFile = 0x00000010;
         public const int InternetFlagNoCacheWrite = 0x04000000;
         public const int InternetFlagOffline = 0x01000000;
-        public const int InternetFlagPassive = 8;
+        public const int InternetFlagPassive = 0x08000000;
         public const int InternetFlagReload = 8;
         public const int InternetFlagResynchronize = 0x00000800;
         public const int InternetFlagSync = 0x00000004;
