@@ -13,19 +13,16 @@
     <Recognized>
       <Word>Cygwin</Word>
     </Recognized>
-    <Recognized>
-        <Word>Git</Word>
-    </Recognized>
-      <!--<Compound>
+    <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->
     <!--<DiscreteExceptions>
       <Term>...</Term>
     </DiscreteExceptions>-->
   </Words>
-  <Acronyms>
+  <!--<Acronyms>
     <CasingExceptions>
-      <Acronym>SHA</Acronym>
+      <Acronym>...</Acronym>
     </CasingExceptions>
-  </Acronyms>
+  </Acronyms>-->
 </Dictionary>
