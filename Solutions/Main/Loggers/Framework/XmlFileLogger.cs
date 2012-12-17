@@ -184,7 +184,7 @@ namespace MSBuild.ExtensionPack.Loggers
         private void ErrorRaised(object sender, BuildErrorEventArgs e)
         {
             this.errors++;
-            this.LogErrorOrWarning("error", e.Message, e.Code, e.File, e.LineNumber, e.ColumnNumber);
+            this.LogErrorOrWarning("error", e.Message, e.Code, e.File, e.LineNumber, e.ColumnNumber, e.Subcategory);
         }
 
         private void MessageRaised(object sender, BuildMessageEventArgs e)
@@ -243,7 +243,7 @@ namespace MSBuild.ExtensionPack.Loggers
         private void WarningRaised(object sender, BuildWarningEventArgs e)
         {
             this.warnings++;
-            this.LogErrorOrWarning("warning", e.Message, e.Code, e.File, e.LineNumber, e.ColumnNumber);
+            this.LogErrorOrWarning("warning", e.Message, e.Code, e.File, e.LineNumber, e.ColumnNumber, e.Subcategory);
         }
 
         private void CustomBuildEventRaised(object sender, CustomBuildEventArgs e)
@@ -270,13 +270,14 @@ namespace MSBuild.ExtensionPack.Loggers
             this.xmlWriter.Flush();
         }
 
-        private void LogErrorOrWarning(string messageType, string message, string code, string file, int line, int column)
+        private void LogErrorOrWarning(string messageType, string message, string code, string file, int line, int column, string subcategory)
         {
             this.xmlWriter.WriteStartElement(messageType);
             this.SetAttribute("code", code);
             this.SetAttribute("file", file);
             this.SetAttribute("line", line);
             this.SetAttribute("column", column);
+            this.SetAttribute("subcategory", subcategory);
             this.WriteMessage(message, code != "Properties");
             this.xmlWriter.WriteEndElement();
         }
