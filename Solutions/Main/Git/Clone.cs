@@ -1,13 +1,14 @@
 ﻿namespace MSBuild.ExtensionPack.Git
 {
     using System;
+    using System.Globalization;
+
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
     public class Clone : Task
     {
         private readonly IGitFacade _gitFacade;
-        private string _sha;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Clone"/> class.
@@ -50,10 +51,7 @@
         /// Gets the SHA of the latest commit in the given repository.
         /// </summary>
         [Output]
-        public string Sha
-        {
-            get { return _sha; }
-        }
+        public string SHA { get; private set; }
 
         /// <summary>
         /// Gets or sets the branch to switch to.
@@ -74,16 +72,16 @@
             try
             {
                 _gitFacade.Clone(RepositoryToClone, TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format("Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
+                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
 
-                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToLower() != "master")
+                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToUpperInvariant() != "MASTER")
                 {
                     _gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
-                    Log.LogMessage(MessageImportance.Normal, string.Format("Checking out branch/SHA '{0}'", BranchToSwitchTo));
+                    Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
                 }
 
-                _sha = _gitFacade.GetLatestSha(TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format("Latest commit is '{0}'", _sha));
+                this.SHA = _gitFacade.GetLatestSHA(TargetDirectory);
+                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", this.SHA));
             }
             catch (Exception ex)
             {

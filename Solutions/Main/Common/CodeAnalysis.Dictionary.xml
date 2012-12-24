@@ -13,6 +13,9 @@
     <Recognized>
       <Word>Cygwin</Word>
     </Recognized>
+    <Recognized>
+      <Word>Git</Word>
+    </Recognized>
     <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->
@@ -20,9 +23,9 @@
       <Term>...</Term>
     </DiscreteExceptions>-->
   </Words>
-  <!--<Acronyms>
+  <Acronyms>
     <CasingExceptions>
-      <Acronym>...</Acronym>
+      <Acronym>SHA</Acronym>
     </CasingExceptions>
-  </Acronyms>-->
+  </Acronyms>
 </Dictionary>

@@ -35,7 +35,7 @@ namespace MSBuild.ExtensionPack.Git
         /// </summary>
         /// <param name="localRepository">The local Git repository.</param>
         /// <returns>The SHA of the latest commit</returns>
-        public string GetLatestSha(string localRepository)
+        public string GetLatestSHA(string localRepository)
         {
             ObjectId latestCommit = NGit.Api.Git.
                                          Open(localRepository).
