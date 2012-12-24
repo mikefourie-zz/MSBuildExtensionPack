@@ -7,8 +7,8 @@
     <ProjectGuid>{E0A15095-F4C7-4227-B4B3-0A0740E709F1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GitTests</RootNamespace>
-    <AssemblyName>GitTests</AssemblyName>
+    <RootNamespace>MSBuild.ExtensionPack.GitTests</RootNamespace>
+    <AssemblyName>MSBuild.ExtensionPack.GitTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="CloneTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
