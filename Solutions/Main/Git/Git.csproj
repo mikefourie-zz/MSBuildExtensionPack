@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="Clone.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IGitFacade.cs" />
     <Compile Include="NGitImplementation.cs" />
   </ItemGroup>
