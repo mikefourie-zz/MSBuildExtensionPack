@@ -1,4 +1,7 @@
-﻿namespace MSBuild.ExtensionPack.Git
+﻿﻿//-----------------------------------------------------------------------
+// <copyright file="Clone.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-----------------------------------------------------------------------
+namespace MSBuild.ExtensionPack.Git
 {
     using System;
     using System.Globalization;

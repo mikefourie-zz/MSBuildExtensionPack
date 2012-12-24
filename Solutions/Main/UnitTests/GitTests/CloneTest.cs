@@ -1,4 +1,7 @@
-﻿namespace MSBuild.ExtensionPack.GitTests
+﻿//-----------------------------------------------------------------------
+// <copyright file="CloneTest.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-----------------------------------------------------------------------
+namespace MSBuild.ExtensionPack.GitTests
 {
     using MSBuild.ExtensionPack.Git;
     using Microsoft.Build.Framework;
