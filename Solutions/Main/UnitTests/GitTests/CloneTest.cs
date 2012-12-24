@@ -3,24 +3,20 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.GitTests
 {
-    using MSBuild.ExtensionPack.Git;
     using Microsoft.Build.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using Moq;
-
+    using MSBuild.ExtensionPack.Git;
     using NUnit.Framework;
+    using System;
 
     [TestFixture]
-    public class CloneTest
+    public static class CloneTest
     {
         /// <summary>
         /// Happy path. Execute should return true when no errors occur.
         /// </summary>
         [Test]
-        public void ShouldReturnTrueWhenCalled()
+        public static void ShouldReturnTrueWhenCalled()
         {
             // Arrange
             var msbuildCloneTask = new Clone(new Mock<IGitFacade>().Object)
@@ -42,7 +38,7 @@ namespace MSBuild.ExtensionPack.GitTests
         /// Tests if Clone and GetLatestSHA are called.
         /// </summary>
         [Test]
-        public void CloneRepository()
+        public static void CloneRepository()
         {
             // Arrange
             var mock = new Mock<IGitFacade>();
@@ -59,14 +55,14 @@ namespace MSBuild.ExtensionPack.GitTests
 
             // Assert
             mock.Verify(git => git.Clone(msbuildCloneTask.RepositoryToClone, msbuildCloneTask.TargetDirectory), Times.Once());
-            mock.Verify(git => git.GetLatestSha(msbuildCloneTask.TargetDirectory), Times.Once());
+            mock.Verify(git => git.GetLatestSHA(msbuildCloneTask.TargetDirectory), Times.Once());
         }
 
         /// <summary>
         /// Tests if Clone, CheckoutBranch and GetLatestSHA is called.
         /// </summary>
         [Test]
-        public void CloneRepositoryCheckoutBranch()
+        public static void CloneRepositoryCheckoutBranch()
         {
             // Arrange
             var mock = new Mock<IGitFacade>();
@@ -85,14 +81,14 @@ namespace MSBuild.ExtensionPack.GitTests
             // Assert
             mock.Verify(git => git.Clone(msbuildCloneTask.RepositoryToClone, msbuildCloneTask.TargetDirectory), Times.Once());
             mock.Verify(git => git.CheckoutBranch(msbuildCloneTask.TargetDirectory, msbuildCloneTask.BranchToSwitchTo), Times.Once());
-            mock.Verify(git => git.GetLatestSha(msbuildCloneTask.TargetDirectory), Times.Once());
+            mock.Verify(git => git.GetLatestSHA(msbuildCloneTask.TargetDirectory), Times.Once());
         }
 
         /// <summary>
         /// Execute should return false when an exception occurs in the task.
         /// </summary>
         [Test]
-        public void ShouldReturnFalseWhenExceptionOccurs()
+        public static void ShouldReturnFalseWhenExceptionOccurs()
         {
             // Arrange
             var gitMock = new Mock<IGitFacade>();
@@ -116,7 +112,7 @@ namespace MSBuild.ExtensionPack.GitTests
         /// MSBuild should log an error when an exception occurs in the task.
         /// </summary>
         [Test]
-        public void ShouldLogErrorWhenExceptionErrors()
+        public static void ShouldLogErrorWhenExceptionErrors()
         {
             // Arrange
             var gitMock = new Mock<IGitFacade>();

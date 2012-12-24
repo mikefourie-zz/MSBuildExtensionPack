@@ -3,15 +3,14 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Git
 {
+    using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
     using System;
     using System.Globalization;
 
-    using Microsoft.Build.Framework;
-    using Microsoft.Build.Utilities;
-
     public class Clone : Task
     {
-        private readonly IGitFacade _gitFacade;
+        private readonly IGitFacade gitFacade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Clone"/> class.
@@ -20,7 +19,7 @@ namespace MSBuild.ExtensionPack.Git
         /// <remarks>Added to be able to unit test this class using a mock</remarks>
         public Clone(IGitFacade facade)
         {
-            _gitFacade = facade;
+            this.gitFacade = facade;
         }
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace MSBuild.ExtensionPack.Git
         /// <remarks>When no parameter is used in the constructor, instantiate the default</remarks>
         public Clone()
         {
-            _gitFacade = new NGitImplementation();
+            this.gitFacade = new NGitImplementation();
         }
 
         /// <summary>
@@ -74,21 +73,21 @@ namespace MSBuild.ExtensionPack.Git
         {
             try
             {
-                _gitFacade.Clone(RepositoryToClone, TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
+                this.gitFacade.Clone(RepositoryToClone, TargetDirectory);
+                this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
 
                 if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToUpperInvariant() != "MASTER")
                 {
-                    _gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
-                    Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
+                    this.gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
+                    this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
                 }
 
-                this.SHA = _gitFacade.GetLatestSHA(TargetDirectory);
-                Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", this.SHA));
+                this.SHA = this.gitFacade.GetLatestSHA(TargetDirectory);
+                this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", this.SHA));
             }
             catch (Exception ex)
             {
-                Log.LogErrorFromException(ex);
+                this.Log.LogErrorFromException(ex);
                 return false;
             }
 

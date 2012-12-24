@@ -15,12 +15,7 @@ namespace MSBuild.ExtensionPack.Git
         /// <param name="targetDirectory">The target directory where you want to place the clone.</param>
         public void Clone(string repositoryToClone, string targetDirectory)
         {            
-            NGit.Api.Git.
-                 CloneRepository().
-                 SetURI(repositoryToClone).SetDirectory(new FilePath(targetDirectory)).
-                 SetBare(false).
-                 SetCloneAllBranches(true).
-                 Call();
+            NGit.Api.Git.CloneRepository().SetURI(repositoryToClone).SetDirectory(new FilePath(targetDirectory)).SetBare(false).SetCloneAllBranches(true).Call();
         }
 
         /// <summary>
@@ -40,12 +35,7 @@ namespace MSBuild.ExtensionPack.Git
         /// <returns>The SHA of the latest commit</returns>
         public string GetLatestSHA(string localRepository)
         {
-            ObjectId latestCommit = NGit.Api.Git.
-                                         Open(localRepository).
-                                         Log().
-                                         GetRepository().
-                                         Resolve(Constants.HEAD);
-
+            ObjectId latestCommit = NGit.Api.Git.Open(localRepository).Log().GetRepository().Resolve(Constants.HEAD);
             return latestCommit.Name;
         }
     }
