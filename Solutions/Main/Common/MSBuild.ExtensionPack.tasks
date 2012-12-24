@@ -148,4 +148,8 @@
 
     <!-- ============== Windows Virtual PC ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.WindowsVirtualPC.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.VirtualPc"/>
+
+    <!-- ============== Git ============== -->
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Git.dll" TaskName="MSBuild.ExtensionPack.Git.Clone"/>
+
 </Project>
