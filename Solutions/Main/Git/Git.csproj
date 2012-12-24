@@ -78,9 +78,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Common\CodeAnalysis.Dictionary.xml">
+    <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
       <Link>CodeAnalysis.Dictionary.xml</Link>
-    </Content>
+    </CodeAnalysisDictionary>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
