@@ -1,0 +1,15 @@
+# This file tells Git what files to ignore for showing in the Git status command.
+# Entries in this file are made with regular expressions
+
+# Ignore the following directories
+obj/
+bin/
+_[rR]e[sS]harper.*/
+Solutions/Main/BuildBinaries/
+packages/
+
+# Ignore the following files
+*.suo
+*.user
+*.*~
+StyleCop.Cache
