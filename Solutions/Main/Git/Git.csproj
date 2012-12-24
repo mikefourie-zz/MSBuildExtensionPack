@@ -7,8 +7,8 @@
     <ProjectGuid>{AC756407-70FB-4C37-A2FE-9CCC4DE02ACA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Git</RootNamespace>
-    <AssemblyName>Git</AssemblyName>
+    <RootNamespace>MSBuild.ExtensionPack.Git</RootNamespace>
+    <AssemblyName>MSBuild.ExtensionPack.Git</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -35,6 +35,26 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Mono.Posix">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="NGit">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\NGit.dll</HintPath>
+    </Reference>
+    <Reference Include="NSch">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\NSch.dll</HintPath>
+    </Reference>
+    <Reference Include="Sharpen">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Sharpen.dll</HintPath>
+    </Reference>
+    <Reference Include="Sharpen.Unix">
+      <HintPath>..\packages\NGit.Signed.0.2\lib\Sharpen.Unix.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,7 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Clone.cs" />
+    <Compile Include="IGitFacade.cs" />
+    <Compile Include="NGitImplementation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
