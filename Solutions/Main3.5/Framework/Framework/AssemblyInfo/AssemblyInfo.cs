@@ -1273,7 +1273,7 @@ namespace MSBuild.ExtensionPack.Framework
                 case IncrementMethod.YearWeekDay:
                     DateTime now = this.UseUtc ? DateTime.UtcNow : DateTime.Now;
                     string newVersionNumber3 = now.ToString("yy", CultureInfo.InvariantCulture);
-                    newVersionNumber3 += CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstDay, (DayOfWeek)Enum.Parse(typeof(DayOfWeek), this.FirstDayOfWeek));
+                    newVersionNumber3 += CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstDay, (DayOfWeek)Enum.Parse(typeof(DayOfWeek), this.FirstDayOfWeek)).ToString("D2", CultureInfo.InvariantCulture);
                     newVersionNumber3 += ((int)now.DayOfWeek).ToString(CultureInfo.InvariantCulture);
                     Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber3);
                     return newVersionNumber3;
