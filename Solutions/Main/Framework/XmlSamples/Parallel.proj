@@ -6,6 +6,8 @@
     <Import Project="$(TPath)"/>
     <ItemGroup>
         <MyTargetSets Include="1">
+            <LogFilePath>C:\b</LogFilePath>
+            <LogFileName>Target1yahoo.txt</LogFileName>
             <Targets>Target1;Target2</Targets>
             <Properties>MyPropValue=MyPropValue1</Properties>
         </MyTargetSets>
@@ -15,14 +17,16 @@
         <MyTargets Include="Target1">
             <Properties>MyPropValue=MyPropValue1</Properties>
         </MyTargets>
-        <MyTargets Include="Target2;Target3"/>
+        <MyTargets Include="Target2;Target3">
+            <LogFilePath>C:\b</LogFilePath>
+        </MyTargets>
     </ItemGroup>
     <Target Name="Normal" DependsOnTargets="Target1;Target2;Target3"/>
     <Target Name="BuildTargetSetsInParallel">
-        <MSBuild.ExtensionPack.Framework.Parallel TaskAction="BuildTargetSetsInParallel" Targets="@(MyTargetSets)" AdditionalProperties="SkipInitial=true"/>
+        <MSBuild.ExtensionPack.Framework.Parallel MultiLog="$(MultiLog)" MultiLogAppend="$(MultiLogAppend)" MultiLogOpenOnFailure="$(MultiLogOpenOnFailure)" TaskAction="BuildTargetSetsInParallel" Targets="@(MyTargetSets)"  AdditionalProperties="SkipInitial=true"/>
     </Target>
     <Target Name="BuildTargetsInParallel">
-        <MSBuild.ExtensionPack.Framework.Parallel TaskAction="BuildTargetsInParallel" Targets="@(MyTargets)" AdditionalProperties="SkipInitial=true"/>
+        <MSBuild.ExtensionPack.Framework.Parallel MultiLog="$(MultiLog)" MultiLogAppend="$(MultiLogAppend)" MultiLogOpenOnFailure="$(MultiLogOpenOnFailure)" TaskAction="BuildTargetsInParallel" Targets="@(MyTargets)" AdditionalProperties="SkipInitial=true"/>
     </Target>
     <Target Name="Target1">
         <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="1000"/>
