@@ -11,8 +11,8 @@ namespace MSBuild.ExtensionPack.Framework
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>BuildTargetsInParallel</i> (<b>Required: </b> Targets <b>Optional:</b> AdditionalProperties, ProjectFile, WaitAll, WorkingDirectory, MultiLog, MultiLogOpenOnFailure, MultiLogVerbosity, MultiLogResponseVerbosity)</para>
-    /// <para><i>BuildTargetSetsInParallel</i> (<b>Required: </b> Targets <b>Optional:</b> AdditionalProperties, ProjectFile, WaitAll, WorkingDirectory, MultiLog, MultiLogOpenOnFailure, MultiLogVerbosity, MultiLogResponseVerbosity)</para>
+    /// <para><i>BuildTargetsInParallel</i> (<b>Required: </b> Targets <b>Optional:</b> AdditionalProperties, ProjectFile, WaitAll, WorkingDirectory, MultiLog, MultiLogOpenOnFailure, MultiLogVerbosity, MultiLogResponseVerbosity, MultiProc, MaxCpuCount, NodeReuse)</para>
+    /// <para><i>BuildTargetSetsInParallel</i> (<b>Required: </b> Targets <b>Optional:</b> AdditionalProperties, ProjectFile, WaitAll, WorkingDirectory, MultiLog, MultiLogOpenOnFailure, MultiLogVerbosity, MultiLogResponseVerbosity, MultiProc, MaxCpuCount, NodeReuse)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -63,7 +63,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("")]
     public class Parallel : BaseTask
     {
         private const string BuildTargetsInParallelTaskAction = "BuildTargetsInParallel";
@@ -72,6 +71,27 @@ namespace MSBuild.ExtensionPack.Framework
         private bool multiLogAppend;
         private LoggerVerbosity multiLogVerbosity = LoggerVerbosity.Diagnostic;
         private LoggerVerbosity multiLogResponseVerbosity = LoggerVerbosity.Minimal;
+        private bool nodereuse;
+        private string multiprocparameter = string.Empty;
+
+        /// <summary>
+        /// Specifies whether or not to use the /m multiproc parameter. If you include this switch without specifying a value for MaxCpuCount, MSBuild will use up to the number of processors in the computer. Default is false.
+        /// </summary>
+        public bool MultiProc { get; set; }
+
+        /// <summary>
+        /// Specifies the maximum number of concurrent processes to use when building. Use this with MultiProc parameter. Default is 0.
+        /// </summary>
+        public int MaxCpuCount { get; set; }
+
+        /// <summary>
+        /// Enable or disable the re-use of MSBuild nodes when using MultiProc. Default is false
+        /// </summary>
+        public bool NodeReuse
+        {
+            get { return this.nodereuse; }
+            set { this.nodereuse = value; }
+        }
 
         /// <summary>
         /// Specifies whether to wait for all Targets to complete execution before returning to MSBuild or whether to wait for all to complete. Default is true.
@@ -153,6 +173,16 @@ namespace MSBuild.ExtensionPack.Framework
             if (!this.MultiLog)
             {
                 this.multiLogResponseVerbosity = LoggerVerbosity.Normal;
+            }
+
+            if (this.MultiProc)
+            {
+                this.multiprocparameter = " /m";
+
+                if (this.MaxCpuCount > 0)
+                {
+                    this.multiprocparameter = " /m:" + this.MaxCpuCount;
+                }
             }
 
             switch (this.TaskAction)
@@ -245,7 +275,7 @@ namespace MSBuild.ExtensionPack.Framework
                 logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile={2}", append, this.MultiLogVerbosity, logfileName);
             }
 
-            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.ItemSpec + properties + " " + logginginfo);
+            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.ItemSpec + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 exec.WorkingDirectory = this.WorkingDirectory;
@@ -380,7 +410,7 @@ namespace MSBuild.ExtensionPack.Framework
                 logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile={2}", append, this.MultiLogVerbosity, logfileName);
             }
 
-            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.GetMetadata("Targets") + properties + " " + logginginfo);
+            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.GetMetadata("Targets") + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 exec.WorkingDirectory = this.WorkingDirectory;
