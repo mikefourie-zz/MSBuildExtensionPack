@@ -494,7 +494,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             foreach (ITaskItem app in this.Applications)
             {
-                string physicalPath = app.GetMetadata("PhysicalPath");
+                string physicalPath = System.IO.Path.GetFullPath(app.GetMetadata("PhysicalPath")); 
                 this.CreateDirectoryIfNecessary(physicalPath);
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", app.ItemSpec));
 
