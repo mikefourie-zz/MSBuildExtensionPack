@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     using Microsoft.Build.Utilities;
 
     /// <summary>
-    /// Executes Test Cases using NUnit (Tested using v2.5.7)
+    /// Executes Test Cases using NUnit (Tested using v2.6.2)
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -73,10 +73,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
     [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/9af9f708-425c-dc43-e44c-0d1d113e5d62.htm")]
     public class NUnit : ToolTask
     {
-        private string version = "2.5.7";
+        private string version = "2.6.2";
 
         /// <summary>
-        /// The version of NUnit to run. Default is 2.5.7
+        /// The version of NUnit to run. Default is 2.6.2
         /// </summary>
         public string Version
         {
@@ -274,9 +274,9 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
         {
-            this.Failures = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+            base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             this.ProcessXmlResultsFile();
-            return this.Failures;
+            return 0;
         }
         
         protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
@@ -324,7 +324,8 @@ namespace MSBuild.ExtensionPack.CodeQuality
                     this.Log.LogError("Failed to load the OutputXmlFile");
                     return;
                 }
-
+                
+                this.Failures = GetAttributeInt32Value("failures", root);
                 this.Total = GetAttributeInt32Value("total", root);
                 this.NotRun = GetAttributeInt32Value("not-run", root);
                 this.Errors = GetAttributeInt32Value("errors", root);
