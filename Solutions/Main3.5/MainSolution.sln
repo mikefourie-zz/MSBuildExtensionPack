@@ -16,11 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Common\StringExtension.cs = Common\StringExtension.cs
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{5909040A-8319-49A2-858B-BD3A1A9EE7B0}"
-	ProjectSection(SolutionItems) = preProject
-		UnitTests\MockBuildEngine.cs = UnitTests\MockBuildEngine.cs
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizTalk", "BizTalk\BizTalk.csproj", "{E6255821-7BC4-4617-AC16-A620A51C9962}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop", "StyleCop\StyleCop.csproj", "{D4DCD3D6-AE24-403E-AF10-07DF01CE436A}"
@@ -37,8 +32,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS", "TFS\TFS.csproj", "{5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync", "Sync\Sync.csproj", "{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkTests", "UnitTests\FrameworkTests\FrameworkTests.csproj", "{ABACCC22-B8B3-4B17-9464-789E093A3503}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsVirtualPc", "WindowsVirtualPC\WindowsVirtualPc.csproj", "{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS2010", "TFS2010\TFS2010.csproj", "{2761548E-5ACA-4842-8E04-DACB6643FF2E}"
@@ -47,7 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2012", "Sql2012\Sql2012.
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 13
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -75,19 +68,15 @@ Global
 		SccProjectUniqueName8 = Sync\\Sync.csproj
 		SccProjectName8 = Sync
 		SccLocalPath8 = Sync
-		SccProjectUniqueName9 = UnitTests\\FrameworkTests\\FrameworkTests.csproj
-		SccProjectTopLevelParentUniqueName9 = MainSolution.sln
-		SccProjectName9 = UnitTests/FrameworkTests
-		SccLocalPath9 = UnitTests\\FrameworkTests
-		SccProjectUniqueName10 = WindowsVirtualPC\\WindowsVirtualPc.csproj
-		SccProjectName10 = WindowsVirtualPC
-		SccLocalPath10 = WindowsVirtualPC
-		SccProjectUniqueName11 = TFS2010\\TFS2010.csproj
-		SccProjectName11 = TFS2010
-		SccLocalPath11 = TFS2010
-		SccProjectUniqueName12 = Sql2012\\Sql2012.csproj
-		SccProjectName12 = Sql2012
-		SccLocalPath12 = Sql2012
+		SccProjectUniqueName9 = WindowsVirtualPC\\WindowsVirtualPc.csproj
+		SccProjectName9 = WindowsVirtualPC
+		SccLocalPath9 = WindowsVirtualPC
+		SccProjectUniqueName10 = TFS2010\\TFS2010.csproj
+		SccProjectName10 = TFS2010
+		SccLocalPath10 = TFS2010
+		SccProjectUniqueName11 = Sql2012\\Sql2012.csproj
+		SccProjectName11 = Sql2012
+		SccLocalPath11 = Sql2012
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
@@ -129,8 +118,6 @@ Global
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD57C4B-12DC-4B27-A825-C58D91A06BE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABACCC22-B8B3-4B17-9464-789E093A3503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58881FCC-D34B-42B6-B9E9-997CBB09C8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -146,8 +133,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{ABACCC22-B8B3-4B17-9464-789E093A3503} = {5909040A-8319-49A2-858B-BD3A1A9EE7B0}
 	EndGlobalSection
 EndGlobal
