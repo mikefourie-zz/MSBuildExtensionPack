@@ -8,6 +8,9 @@ namespace MSBuild.ExtensionPack.Git
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
+    /// <summary>
+    /// Clone
+    /// </summary>
     public class Clone : Task
     {
         private readonly IGitFacade gitFacade;
@@ -63,6 +66,10 @@ namespace MSBuild.ExtensionPack.Git
         /// </value>
         public string BranchToSwitchTo { get; set; }
 
+        /// <summary>
+        /// Execute the task
+        /// </summary>
+        /// <returns>bool</returns>
         public override bool Execute()
         {
             try

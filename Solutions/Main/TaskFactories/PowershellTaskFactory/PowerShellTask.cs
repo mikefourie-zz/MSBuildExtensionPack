@@ -22,7 +22,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
 
         internal PowerShellTask(string script)
         {
-            Contract.Requires(script != null);
             this.pipeline = RunspaceFactory.CreateRunspace().CreatePipeline();
             this.pipeline.Commands.AddScript(script);
             this.pipeline.Runspace.Open();
@@ -31,15 +30,11 @@ namespace MSBuild.ExtensionPack.TaskFactory
 
         public object GetPropertyValue(TaskPropertyInfo property)
         {
-            Contract.Requires(property != null);
-
             return this.pipeline.Runspace.SessionStateProxy.GetVariable(property.Name);
         }
 
         public void SetPropertyValue(TaskPropertyInfo property, object value)
         {
-            Contract.Requires(property != null);
-            Contract.Requires(value != null);
             this.pipeline.Runspace.SessionStateProxy.SetVariable(property.Name, value);
         }
 

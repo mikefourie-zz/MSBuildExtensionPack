@@ -6,7 +6,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using Microsoft.Build.Framework;
 
@@ -106,11 +105,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <returns>bool</returns>
         public bool Initialize(string taskName, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
         {
-            Contract.Requires(!string.IsNullOrEmpty(taskName));
-            Contract.Requires(parameterGroup != null);
-            Contract.Requires(taskBody != null);
-            Contract.Requires(taskFactoryLoggingHost != null);
-
             this.paramGroup = parameterGroup;
             this.script = taskBody;
 
@@ -133,8 +127,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <param name="task">ITask</param>
         public void CleanupTask(ITask task)
         {
-            Contract.Requires(task != null);
-
             IDisposable disposableTask = task as IDisposable;
             if (disposableTask != null)
             {

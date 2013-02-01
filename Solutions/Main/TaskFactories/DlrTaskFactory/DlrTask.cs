@@ -5,7 +5,6 @@
 namespace MSBuild.ExtensionPack.TaskFactory
 {
     using System;
-    using System.Diagnostics.Contracts;
     using System.Xml.Linq;
     using IronRuby.Runtime;
     using Microsoft.Build.Framework;
@@ -34,10 +33,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <param name="taskFactoryLoggingHost">The taskFactoryLoggingHost</param>
         internal DlrTask(DlrTaskFactory factory, XElement xmlElement, IBuildEngine taskFactoryLoggingHost)
         {
-            Contract.Requires(factory != null);
-            Contract.Requires(xmlElement != null);
-            Contract.Requires(taskFactoryLoggingHost != null);
-
             this.xelement = xmlElement;
             this.language = GetLanguage(xmlElement);
 
@@ -77,8 +72,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <returns>The value of the property.</returns>
         public object GetPropertyValue(TaskPropertyInfo property)
         {
-            Contract.Requires(property != null);
-
             dynamic res;
             dynamic variable = this.scope.GetVariable(RubyUtils.HasMangledName(property.Name) ? RubyUtils.TryMangleName(property.Name) : property.Name);
             variable.TryGetValue(out res);
@@ -92,7 +85,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <param name="value">The value to set.</param>
         public void SetPropertyValue(TaskPropertyInfo property, object value)
         {
-            Contract.Requires(property != null);
             ((ScriptScope)this.scope).SetVariable(property.Name, value);
         }
 

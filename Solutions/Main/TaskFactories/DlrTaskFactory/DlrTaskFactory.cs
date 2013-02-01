@@ -83,16 +83,18 @@ namespace MSBuild.ExtensionPack.TaskFactory
             get { return typeof(DlrTask); }
         }
 
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="taskName">Name of task</param>
+        /// <param name="parameterGroup">IDictionary</param>
+        /// <param name="taskBody">Body of task</param>
+        /// <param name="taskFactoryLoggingHost">IBuildEngine</param>
+        /// <returns>bool</returns>
         public bool Initialize(string taskName, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
         {
-            Contract.Requires(!string.IsNullOrEmpty(taskName));
-            Contract.Requires(this.parameterGroup != null);
-            Contract.Requires(taskBody != null);
-            Contract.Requires(taskFactoryLoggingHost != null);
-
             this.parameterGroup = parameterGroup;
             this.taskXml = XElement.Parse(taskBody);
-
             return true;
         }
 
@@ -112,8 +114,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <param name="task">The task.</param>
         public void CleanupTask(ITask task)
         {
-            Contract.Requires(task != null);
-
             IDisposable disposableTask = task as IDisposable;
             if (disposableTask != null)
             {
