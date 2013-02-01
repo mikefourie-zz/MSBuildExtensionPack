@@ -1,9 +1,8 @@
 //-----------------------------------------------------------------------
 // <copyright file="MockBuildEngine.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace MSBuild.ExtensionPack.FrameworkTests
+namespace MSBuild.ExtensionPack.Framework.Tests
 {
-    using System;
     using Microsoft.Build.Framework;
     
     public class MockBuildEngine : IBuildEngine
