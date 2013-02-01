@@ -1,12 +1,12 @@
-﻿﻿//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="Clone.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Git
 {
-    using Microsoft.Build.Framework;
-    using Microsoft.Build.Utilities;
     using System;
     using System.Globalization;
+    using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     public class Clone : Task
     {
@@ -63,26 +63,20 @@ namespace MSBuild.ExtensionPack.Git
         /// </value>
         public string BranchToSwitchTo { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>
-        /// true if the task successfully executed; otherwise, false.
-        /// </returns>
         public override bool Execute()
         {
             try
             {
-                this.gitFacade.Clone(RepositoryToClone, TargetDirectory);
-                this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", RepositoryToClone, TargetDirectory));
+                this.gitFacade.Clone(this.RepositoryToClone, this.TargetDirectory);
+                this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Cloning {0} to {1}", this.RepositoryToClone, this.TargetDirectory));
 
-                if (!string.IsNullOrEmpty(BranchToSwitchTo) && BranchToSwitchTo.ToUpperInvariant() != "MASTER")
+                if (!string.IsNullOrEmpty(this.BranchToSwitchTo) && this.BranchToSwitchTo.ToUpperInvariant() != "MASTER")
                 {
-                    this.gitFacade.CheckoutBranch(TargetDirectory, BranchToSwitchTo);
-                    this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", BranchToSwitchTo));
+                    this.gitFacade.CheckoutBranch(this.TargetDirectory, this.BranchToSwitchTo);
+                    this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Checking out branch/SHA '{0}'", this.BranchToSwitchTo));
                 }
 
-                this.SHA = this.gitFacade.GetLatestSHA(TargetDirectory);
+                this.SHA = this.gitFacade.GetLatestSHA(this.TargetDirectory);
                 this.Log.LogMessage(MessageImportance.Normal, string.Format(CultureInfo.CurrentCulture, "Latest commit is '{0}'", this.SHA));
             }
             catch (Exception ex)
@@ -93,6 +87,5 @@ namespace MSBuild.ExtensionPack.Git
 
             return true;
         }
-
     }
 }

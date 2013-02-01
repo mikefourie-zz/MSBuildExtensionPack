@@ -66,11 +66,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\MockBuildEngine.cs">
       <Link>MockBuildEngine.cs</Link>
     </Compile>
     <Compile Include="PathTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\ExtraAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Framework.csproj">

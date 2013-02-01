@@ -1,13 +1,13 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="CloneTest.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace MSBuild.ExtensionPack.GitTests
+namespace MSBuild.ExtensionPack.Git.Tests
 {
+    using System;
     using Microsoft.Build.Framework;
     using Moq;
     using MSBuild.ExtensionPack.Git;
     using NUnit.Framework;
-    using System;
 
     [TestFixture]
     public static class CloneTest
