@@ -72,8 +72,12 @@
     <Compile Include="..\MockBuildEngine.cs">
       <Link>MockBuildEngine.cs</Link>
     </Compile>
+    <Compile Include="ConfigMangerTests.cs" />
+    <Compile Include="FileTest.cs" />
     <Compile Include="PathTest.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
+    <Compile Include="SqlScriptLoaderTests.cs" />
+    <Compile Include="TextStringTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Framework.csproj">

@@ -1,7 +1,7 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="FileTest.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace MSBuild.ExtensionPack.FrameworkTests
+namespace MSBuild.ExtensionPack.Framework.Tests
 {
     using System.IO;
     using System.Security.AccessControl;
