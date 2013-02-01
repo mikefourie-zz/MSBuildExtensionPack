@@ -379,7 +379,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
