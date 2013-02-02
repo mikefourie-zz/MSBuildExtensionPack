@@ -6,10 +6,10 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("3.5.0.0")]
-[assembly: AssemblyFileVersion("3.5.12.0")]
+[assembly: AssemblyFileVersion("3.5.13.0")]
 [assembly: AssemblyInformationalVersion("3.5.0.0")]
 [assembly: AssemblyCompany("http://www.MSBuildExtensionPack.com")]
-[assembly: AssemblyCopyright("Copyright © 2012 http://www.MSBuildExtensionPack.com")]
+[assembly: AssemblyCopyright("Copyright © 2008 - 2013 http://www.MSBuildExtensionPack.com")]
 [assembly: AssemblyTrademark("Mike Fourie")]
 [assembly: NeutralResourcesLanguage("")]
 [assembly: AssemblyCulture("")]
