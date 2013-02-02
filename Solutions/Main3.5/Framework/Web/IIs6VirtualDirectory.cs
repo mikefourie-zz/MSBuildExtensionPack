@@ -431,7 +431,7 @@ namespace MSBuild.ExtensionPack.Web
 
                         // handle the special character sequence to insert '=' if property requires it
                         propValue = propValue.Replace("#~#", "=");
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Adding Property: {0}({1})", propName, propValue));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "\tAdding Property: {0}({1})", propName, propValue));
                         UpdateMetaBaseProperty(vdirEntry, propName, propValue);
                     }
                 }

@@ -190,7 +190,7 @@ namespace MSBuild.ExtensionPack.Web
         [SecurityCritical]
         private void UpdateMetaBaseProperty(DirectoryEntry entry, string metaBasePropertyName, string metaBaseProperty)
         {
-            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Applying Property: {0}({1})", metaBasePropertyName, metaBaseProperty));
+            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "\tApplying Property: {0}({1})", metaBasePropertyName, metaBaseProperty));
 
             if (metaBaseProperty.IndexOf('|') == -1)
             {
@@ -321,7 +321,7 @@ namespace MSBuild.ExtensionPack.Web
         [SecurityCritical]
         private void Create()
         {
-            this.LogTaskMessage(string.Format(CultureInfo.InvariantCulture, "Creating AppPool: {0}", this.Name));
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.InvariantCulture, "Creating AppPool: {0}", this.Name));
 
             // We'll try and find the app pool first.
             using (DirectoryEntry appPoolEntry = this.LoadAppPool(this.Name))

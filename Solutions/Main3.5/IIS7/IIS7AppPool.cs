@@ -304,7 +304,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -328,7 +328,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -342,7 +342,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -379,7 +379,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -392,7 +392,13 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                if (this.TaskAction == StopTaskAction)
+                {
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
+                    return;
+                }
+
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
@@ -423,7 +429,7 @@ namespace MSBuild.ExtensionPack.Web
             {
                 if (!this.Force)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} already exists on: {1}", this.Name, this.MachineName));
+                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} already exists on: {1}", this.Name, this.MachineName));
                     return;
                 }
 
@@ -464,7 +470,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             if (!this.AppPoolExists())
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "The ApplicationPool: {0} was not found on: {1}", this.Name, this.MachineName));
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "ApplicationPool: {0} not found on: {1}", this.Name, this.MachineName));
                 return;
             }
 
