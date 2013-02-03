@@ -91,6 +91,116 @@ namespace MSBuild.ExtensionPack.Framework.Tests
         }
 
         [TestMethod]
+        public void Path_GetPathRoot()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.Filepath = @"C:\mypath\mypath2\myfile.myex";
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "GetPathRoot";
+
+            // act
+            target.Execute();
+
+            // assert
+            Assert.IsTrue(target.Value == @"C:\");
+        }
+
+        [TestMethod]
+        public void Path_HasExtensionTrue()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.Filepath = @"C:\mypath\mypath2\myfile.myex";
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "HasExtension";
+
+            // act
+            target.Execute();
+
+            // assert
+            Assert.AreEqual(target.Value, "True");
+        }
+
+        [TestMethod]
+        public void Path_HasExtensionFalse()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.Filepath = @"C:\mypath\mypath2\myfile";
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "HasExtension";
+
+            // act
+            target.Execute();
+
+            // assert
+            Assert.AreEqual(target.Value, "False");
+        }
+
+        [TestMethod]
+        public void Path_IsPathRootedFalse()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.Filepath = @"..\myfile.txt";
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "IsPathRooted";
+
+            // act
+            target.Execute();
+
+            // assert
+            Assert.AreEqual(target.Value, "False");
+        }
+
+        [TestMethod]
+        public void Path_IsPathRootedTrue()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.Filepath = @"c:\myfile.txt";
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "IsPathRooted";
+
+            // act
+            target.Execute();
+
+            // assert
+            Assert.AreEqual(target.Value, "True");
+        }
+
+        [TestMethod]
+        public void Path_InvalidTaskAction()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "NotValid";
+
+            // act
+            bool result = target.Execute();
+
+            // assert
+            Assert.AreEqual(result, false);
+        }
+
+        [TestMethod]
+        public void Path_GetTempPath()
+        {
+            // arrange
+            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
+            target.BuildEngine = new MockBuildEngine();
+            target.TaskAction = "GetTempPath";
+
+            // act
+            target.Execute();
+
+            // assert
+            Assert.IsTrue(target.Value == System.IO.Path.GetTempPath());
+        }
+
+        [TestMethod]
         public void Path_GetRandomFileName()
         {
             // arrange
