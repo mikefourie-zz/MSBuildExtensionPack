@@ -297,8 +297,8 @@ namespace MSBuild.ExtensionPack.Computer
     /// <para><i>Restart</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName). Any running directly dependent services will be restarted too.</para>
     /// <para><i>SetAutomatic</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
     /// <para><i>SetManual</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Start</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RetryAttempts)</para>
-    /// <para><i>Stop</i> (<b>Required: </b> ServiceName <b>Optional: </b>MachineName, RetryAttempts)</para>
+    /// <para><i>Start</i> (<b>Required: </b> ServiceName or Services <b>Optional: </b>MachineName, RetryAttempts)</para>
+    /// <para><i>Stop</i> (<b>Required: </b> ServiceName or Services <b>Optional: </b>MachineName, RetryAttempts)</para>
     /// <para><i>Uninstall</i> (<b>Required: </b> ServicePath <b>Optional: </b>MachineName, RemoteUser, RemoteUserPassword)</para>
     /// <para><i>UpdateIdentity</i> (<b>Required: </b> ServiceName, User, Password <b>Optional: </b>MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -368,7 +368,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/258a18b7-2cf7-330b-e6fe-8bc45db381b9.htm")]
     public class WindowsService : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -386,188 +385,111 @@ namespace MSBuild.ExtensionPack.Computer
         private const string StartupTypeAutomaticDelayed = "AutomaticDelayedStart";
         private const string StartupTypeDisabled = "Disabled";
         private const string StartupTypeManual  = "Manual";
-        
         private const bool RemoteExecutionAvailable = true;
         private int retryAttempts = 60;
-
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(DisableTaskAction)]
-        [DropdownValue(InstallTaskAction)]
-        [DropdownValue(SetAutomaticTaskAction)]
-        [DropdownValue(SetManualTaskAction)]
-        [DropdownValue(StartTaskAction)]
-        [DropdownValue(StopTaskAction)]
-        [DropdownValue(UninstallTaskAction)]
-        [DropdownValue(UpdateIdentityTaskAction)]
-        [DropdownValue(RestartTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the number of times to attempt Starting / Stopping a service. Default is 60.
         /// </summary>
-        [TaskAction(StartTaskAction, false)]
-        [TaskAction(StopTaskAction, false)]
         public int RetryAttempts
         {
             get { return this.retryAttempts; }
             set { this.retryAttempts = value; }
         }
 
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(DisableTaskAction, true)]
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(SetAutomaticTaskAction, true)]
-        [TaskAction(SetManualTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
-        [TaskAction(UpdateIdentityTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
-        [TaskAction(RestartTaskAction, true)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
         /// <summary>
         /// Gets whether the service exists
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Sets the user.
         /// </summary>
-        [TaskAction(UpdateIdentityTaskAction, true)]
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
         public string User { get; set; }
 
         /// <summary>
         /// The Name of the service. Note, this is the 'Service Name' as displayed in services.msc, NOT the 'Display Name'
         /// </summary>
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(DisableTaskAction, true)]
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(SetAutomaticTaskAction, true)]
-        [TaskAction(SetManualTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
-        [TaskAction(UpdateIdentityTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
-        [TaskAction(RestartTaskAction, true)]
         public string ServiceName { get; set; }
 
         /// <summary>
         /// The Display Name of the service. Defaults to ServiceName.
         /// </summary>
-        [TaskAction(InstallTaskAction, true)]
         public string ServiceDisplayName { get; set; }
 
         /// <summary>
         /// Sets the path of the service executable
         /// </summary>
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
         public ITaskItem ServicePath { get; set; }
 
         /// <summary>
         /// Sets user password
         /// </summary>
-        [TaskAction(UpdateIdentityTaskAction, true)]
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
         public string Password { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to delete a service if it already exists when calling Install
         /// </summary>
-        [TaskAction(InstallTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Sets the service description
         /// </summary>
-        [TaskAction(InstallTaskAction, true)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the user to impersonate on remote server.
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(DisableTaskAction, true)]
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(SetAutomaticTaskAction, true)]
-        [TaskAction(SetManualTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
-        [TaskAction(UpdateIdentityTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
         public string RemoteUser { get; set; }
 
         /// <summary>
         /// Sets the password for the user to impersonate on remote server.
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(DisableTaskAction, true)]
-        [TaskAction(InstallTaskAction, true)]
-        [TaskAction(SetAutomaticTaskAction, true)]
-        [TaskAction(SetManualTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
-        [TaskAction(UpdateIdentityTaskAction, true)]
-        [TaskAction(UninstallTaskAction, true)]
         public string RemoteUserPassword { get; set; }
 
         /// <summary>
         /// Sets the services upon which the installed service depends.
         /// </summary>
-        [TaskAction(InstallTaskAction, false)]
         public ITaskItem[] ServiceDependencies { get; set; }
 
         /// <summary>
         /// Sets the command line arguments to be passed to the service.
         /// </summary>
-        [TaskAction(InstallTaskAction, false)]
         public string CommandLineArguments { get; set; }
 
         /// <summary>
         /// Sets the Startup Type of the service. 
         /// </summary>
-        [TaskAction(InstallTaskAction, false)]
-        [DropdownValue(StartupTypeAutomatic)]
-        [DropdownValue(StartupTypeAutomaticDelayed)]
-        [DropdownValue(StartupTypeDisabled)]
-        [DropdownValue(StartupTypeManual)]
         public string StartupType { get; set; }
+
+        /// <summary>
+        /// Sets the collection of Services to target in parallel. See TaskAction parameters for which TaskActions support this.
+        /// </summary>
+        public ITaskItem[] Services { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
         {
-            if (string.IsNullOrEmpty(this.ServiceDisplayName))
-            {
-                this.ServiceDisplayName = this.ServiceName;
-            }
-
             if (!this.TargetingLocalMachine(RemoteExecutionAvailable) && (string.IsNullOrEmpty(this.RemoteUser) || string.IsNullOrEmpty(this.RemoteUserPassword)))
             {
                 this.LogTaskMessage(MessageImportance.Low, "No RemoteUser or RemoteUserPassword supplied. Attempting Integrated Security.");
             }
 
-            if (this.ServiceDoesExist() == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction && this.TaskAction != DeleteTaskAction)
+            if (this.Services == null)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceDisplayName));
-                return;
+                if (string.IsNullOrEmpty(this.ServiceDisplayName))
+                {
+                    this.ServiceDisplayName = this.ServiceName;
+                }
+
+                if (this.ServiceDoesExist(this.ServiceName) == false && this.TaskAction != InstallTaskAction && this.TaskAction != CheckExistsTaskAction && this.TaskAction != UninstallTaskAction && this.TaskAction != DeleteTaskAction)
+                {
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0}", this.ServiceDisplayName));
+                    return;
+                }
             }
 
             switch (this.TaskAction)
@@ -600,7 +522,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.SetStartupType(StartupTypeAutomatic);
                     break;
                 case CheckExistsTaskAction:
-                    this.CheckExists();
+                    this.CheckExists(this.ServiceName, false);
                     break;
                 case UpdateIdentityTaskAction:
                     this.UpdateIdentity();
@@ -660,11 +582,11 @@ namespace MSBuild.ExtensionPack.Computer
                 userName = ".\\" + userName;
             }
 
-            if (this.ServiceDoesExist())
+            if (this.ServiceDoesExist(this.ServiceName))
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating Identity: {0} on '{1}' to '{2}'", this.ServiceDisplayName, this.MachineName, userName));
 
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(this.ServiceName, targetLocal);
 
                 object[] paramList = new object[] { null, null, null, null, null, null, userName, this.Password };
                 object result = wmi.InvokeMethod("Change", paramList);
@@ -680,17 +602,24 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
-        private void CheckExists()
+        private void CheckExists(string serviceName, bool overrideSDN)
         {
-            if (this.ServiceDoesExist())
+            string displayName = this.ServiceDisplayName;
+
+            if (overrideSDN)
+            {
+                displayName = serviceName;
+            } 
+            
+            if (this.ServiceDoesExist(serviceName))
             {
                 this.Exists = true;
-                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service: {0} exists on: {1}.", this.ServiceDisplayName, this.MachineName));
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service: {0} exists on: {1}.", displayName, this.MachineName));
             }
             else
             {
                 this.Exists = false;
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Service: {0} does not exist on: {1}.", this.ServiceDisplayName, this.MachineName));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Service: {0} does not exist on: {1}.", displayName, this.MachineName));
             }
         }
 
@@ -700,7 +629,7 @@ namespace MSBuild.ExtensionPack.Computer
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting StartUp Type to {0} for {1} on '{2}'.", startup, this.ServiceDisplayName, this.MachineName));
             try
             {
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(this.ServiceName, targetLocal);
 
                 object[] paramList = new object[] { startup };
                 object result = wmi.InvokeMethod("ChangeStartMode", paramList);
@@ -717,13 +646,13 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
-        private ServiceStartMode GetServiceStartMode()
+        private ServiceStartMode GetServiceStartMode(string serviceName)
         {
             ServiceStartMode toReturn = ServiceStartMode.Manual;
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
             try
             {
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(serviceName, targetLocal);
 
                 string startMode = wmi.Properties["StartMode"].Value.ToString().Trim();
                 switch (startMode)
@@ -756,19 +685,37 @@ namespace MSBuild.ExtensionPack.Computer
 
         private void Start()
         {
+            if (this.Services == null)
+            {
+                this.StartLogic(this.ServiceName, false);
+                return;
+            }
+
+            System.Threading.Tasks.Parallel.ForEach(this.Services, service => this.StartLogic(service.ItemSpec, true));
+        }
+
+        private void StartLogic(string serviceName, bool overrideSDN)
+        {
+            string displayName = this.ServiceDisplayName;
+
+            if (overrideSDN)
+            {
+                displayName = serviceName;
+            }
+
             // If the Service is disabled then we will just error out 60 times inside StartService() so we will
             // short-circuit the errors and let the user know.
             // Possible enhancement [SStJean]:  Add ForceStart property to Task and change StartMode to Manual instead of throwing error.
-            if (this.GetServiceStartMode() == ServiceStartMode.Disabled)
+            if (this.GetServiceStartMode(serviceName) == ServiceStartMode.Disabled)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Cannot start service '{0}' on '{1}': Service is Disabled", this.ServiceDisplayName, this.MachineName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Cannot start service '{0}' on '{1}': Service is Disabled", displayName, this.MachineName));
                 return;
             }
 
             int i = 1;
             while (i <= this.RetryAttempts)
             {
-                ServiceState state = this.GetServiceState();
+                ServiceState state = this.GetServiceState(serviceName, overrideSDN);
                 switch (state)
                 {
                         // We can't do anything when Service is in these states, so we log, count, pause and loop.
@@ -776,23 +723,23 @@ namespace MSBuild.ExtensionPack.Computer
                     case ServiceState.PausePending:
                     case ServiceState.StartPending:
                     case ServiceState.StopPending:
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} on '{1}' - {2}...", this.ServiceDisplayName, this.MachineName, state));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} on '{1}' - {2}...", displayName, this.MachineName, state));
                         ++i;
                         break;
                     case ServiceState.Paused:
                     case ServiceState.Stopped:
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting: {0} on '{1}' - {2}...", this.ServiceDisplayName, this.MachineName, state));
-                        this.StartService();
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting: {0} on '{1}' - {2}...", displayName, this.MachineName, state));
+                        this.StartService(serviceName, overrideSDN);
                         ++i;
                         break;
                     case ServiceState.Running:
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Started: {0}", this.ServiceDisplayName));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Started: {0}", displayName));
                         return;
                 }
 
                 if (i == this.RetryAttempts)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not start: {0}", this.ServiceDisplayName));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not start: {0}", displayName));
                     return;
                 }
 
@@ -800,12 +747,19 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
-        private void StartService()
+        private void StartService(string serviceName, bool overrideSDN)
         {
+            string displayName = this.ServiceDisplayName;
+
+            if (overrideSDN)
+            {
+                displayName = serviceName;
+            } 
+            
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
             try
             {
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(serviceName, targetLocal);
 
                 object[] paramList = new object[] { };
                 object result = wmi.InvokeMethod("StartService", paramList);
@@ -817,19 +771,38 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception ex)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Start Service [{0} on {1}] failed with error '{2}'", this.ServiceDisplayName, this.MachineName, ex.Message));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Start Service [{0} on {1}] failed with error '{2}'", displayName, this.MachineName, ex.Message));
                 throw;
             }
         }
-
+        
         private bool Stop()
         {
+            if (this.Services == null)
+            {
+                return this.StopLogic(this.ServiceName, false);
+            }
+            
+            System.Threading.Tasks.Parallel.ForEach(this.Services, service => this.StopLogic(service.ItemSpec, true));
+
+            return true;
+        }
+
+        private bool StopLogic(string serviceName, bool overrideSDN)
+        {
+            string displayName = this.ServiceDisplayName;
+
+            if (overrideSDN)
+            {
+                displayName = serviceName;
+            }
+            
             try
             {
                 int i = 1;
                 while (i <= this.RetryAttempts)
                 {
-                    ServiceState state = this.GetServiceState();
+                    ServiceState state = this.GetServiceState(serviceName, overrideSDN);
                     switch (state)
                     {
                             // We can't do anything when Service is in these states, so we log, count, pause and loop.
@@ -837,13 +810,13 @@ namespace MSBuild.ExtensionPack.Computer
                         case ServiceState.PausePending:
                         case ServiceState.StartPending:
                         case ServiceState.StopPending:
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} on '{1}' - {2}...", this.ServiceDisplayName, this.MachineName, state));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Please wait, Service state: {0} on '{1}' - {2}...", displayName, this.MachineName, state));
                             ++i;
                             break;
                         case ServiceState.Paused:
                         case ServiceState.Running:
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping: {0} on '{1}' - {2}...", this.ServiceDisplayName, this.MachineName, state));
-                            if (!this.StopService())
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping: {0} on '{1}' - {2}...", displayName, this.MachineName, state));
+                            if (!this.StopService(serviceName, overrideSDN))
                             {
                                 return false;
                             }
@@ -851,13 +824,13 @@ namespace MSBuild.ExtensionPack.Computer
                             ++i;
                             break;
                         case ServiceState.Stopped:
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopped: {0} on '{1}'", this.ServiceDisplayName, this.MachineName));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopped: {0} on '{1}'", displayName, this.MachineName));
                             return true;
                     }
 
                     if (i == this.RetryAttempts)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not stop: {0} on '{1}'", this.ServiceDisplayName, this.MachineName));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Could not stop: {0} on '{1}'", displayName, this.MachineName));
                         return false;
                     }
 
@@ -872,13 +845,20 @@ namespace MSBuild.ExtensionPack.Computer
             return true;
         }
 
-        private bool StopService()
+        private bool StopService(string serviceName, bool overrideSDN)
         {
+            string displayName = this.ServiceDisplayName;
+
+            if (overrideSDN)
+            {
+                displayName = serviceName;
+            }
+            
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
             bool noErrors = true;
             try
             {
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(serviceName, targetLocal);
 
                 object[] paramList = new object[] { };
 
@@ -893,18 +873,18 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception ex)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Stop Service [{0}on {1}] failed with error '{2}'", this.ServiceDisplayName, this.MachineName, ex.Message));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Stop Service [{0}on {1}] failed with error '{2}'", displayName, this.MachineName, ex.Message));
                 throw;
             }
 
             return noErrors;
         }
 
-        private ManagementObject RetrieveManagementObject(bool targetLocal)
+        private ManagementObject RetrieveManagementObject(string service, bool targetLocal)
         {
             string path = targetLocal ? "\\root\\CIMV2" : string.Format(CultureInfo.InvariantCulture, "\\\\{0}\\root\\CIMV2", this.MachineName);
 
-            string servicePath = string.Format(CultureInfo.InvariantCulture, "Win32_Service.Name='{0}'", this.ServiceName);
+            string servicePath = string.Format(CultureInfo.InvariantCulture, "Win32_Service.Name='{0}'", service);
             ManagementObject wmiReturnObject;
             using (ManagementObject wmi = new ManagementObject(path, servicePath, null))
             {
@@ -920,13 +900,20 @@ namespace MSBuild.ExtensionPack.Computer
             return wmiReturnObject;
         }
 
-        private ServiceState GetServiceState()
+        private ServiceState GetServiceState(string serviceName, bool overrideSDN)
         {
+            string displayName = this.ServiceDisplayName;
+
+            if (overrideSDN)
+            {
+                displayName = serviceName;
+            }
+
             ServiceState toReturn = ServiceState.Stopped;
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
             try
             {
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(serviceName, targetLocal);
 
                 string state = wmi.Properties["State"].Value.ToString().Trim();
                 switch (state)
@@ -956,18 +943,18 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception ex)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An error occurred in GetState of {0} on '{1}'.  Message: {2}", this.ServiceDisplayName, this.MachineName, ex.Message));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An error occurred in GetState of {0} on '{1}'.  Message: {2}", displayName, this.MachineName, ex.Message));
                 throw;
             }
 
             return toReturn;
         }
 
-        private bool ServiceDoesExist()
+        private bool ServiceDoesExist(string serviceName)
         {
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
 
-            ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+            ManagementObject wmi = this.RetrieveManagementObject(serviceName, targetLocal);
 
             try
             {
@@ -1008,13 +995,13 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            if (this.ServiceDoesExist() && !this.Force)
+            if (this.ServiceDoesExist(this.ServiceName) && !this.Force)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Install Service failed with code: '{0}'", ServiceReturnCode.StatusServiceExists));
                 return;
             }
             
-            if (this.ServiceDoesExist() && this.Force)
+            if (this.ServiceDoesExist(this.ServiceName) && this.Force)
             {
                 if (!this.DeleteService())
                 {
@@ -1081,8 +1068,8 @@ namespace MSBuild.ExtensionPack.Computer
                         RegistryKey subKey = registryKey.OpenSubKey(@"System\CurrentControlSet\Services\" + this.ServiceName, true);
                         if (subKey != null)
                         {
-                            uint delayedAutoStart = 1;
-                            subKey.SetValue("DelayedAutostart", delayedAutoStart, RegistryValueKind.DWord);
+                            const uint DelayedAutoStart = 1;
+                            subKey.SetValue("DelayedAutostart", DelayedAutoStart, RegistryValueKind.DWord);
                         }
                     }
                 }
@@ -1093,7 +1080,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Attempting to Delete the '{0}' service on '{1}' machine", this.ServiceName, this.MachineName));
-            if (!this.ServiceDoesExist())
+            if (!this.ServiceDoesExist(this.ServiceName))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0} on '{1}'", this.ServiceDisplayName, this.MachineName));
                 return true;
@@ -1102,7 +1089,7 @@ namespace MSBuild.ExtensionPack.Computer
             bool noErrors = true;
             try
             {
-                ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                ManagementObject wmi = this.RetrieveManagementObject(this.ServiceName, targetLocal);
                 
                 // Execute the method and obtain the return values.
                 ManagementBaseObject result = wmi.InvokeMethod("delete", null, null);
@@ -1180,7 +1167,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             bool targetLocal = this.TargetingLocalMachine(RemoteExecutionAvailable);
 
-            if (!this.ServiceDoesExist())
+            if (!this.ServiceDoesExist(this.ServiceName))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service does not exist: {0} on '{1}'", this.ServiceDisplayName, this.MachineName));
                 return;
@@ -1190,7 +1177,7 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 try
                 {
-                    ManagementObject wmi = this.RetrieveManagementObject(targetLocal);
+                    ManagementObject wmi = this.RetrieveManagementObject(this.ServiceName, targetLocal);
 
                     object[] paramList = new object[] { };
                     object result = wmi.InvokeMethod("Delete", paramList);
