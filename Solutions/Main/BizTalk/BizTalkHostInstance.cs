@@ -17,8 +17,8 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// <para><i>Delete</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName)</para>
     /// <para><i>Get</i> (<b>Optional: </b>MachineName <b>Output:</b> HostInstances)</para>
     /// <para><i>GetState</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName <b>Output:</b> State)</para>
-    /// <para><i>Start</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName)</para>
-    /// <para><i>Stop</i> (<b>Required: </b>HostName <b>Optional: </b>MachineName)</para>
+    /// <para><i>Start</i> (<b>Required: </b>HostName or HostInstances <b>Optional: </b>MachineName)</para>
+    /// <para><i>Stop</i> (<b>Required: </b>HostName or HostInstances <b>Optional: </b>MachineName)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
     /// <example>
@@ -159,7 +159,7 @@ namespace MSBuild.ExtensionPack.BizTalk
         public string AccountPassword { get; set; }
 
         /// <summary>
-        /// The Host Instances returned by Get. The name of the Host Instance is used as the Identity. Metadata includes: Caption, ConfigurationState, Description, HostType, InstallDate, IsDisabled, MgmtDbNameOverride, MgmtDbServerOverride, NTGroupName, RunningServer, ServiceState, Status, UniqueID
+        /// The Host Instances returned by Get. The name of the Host Instance is used as the Identity. Metadata includes: Caption, ConfigurationState, Description, HostType, InstallDate, IsDisabled, MgmtDbNameOverride, MgmtDbServerOverride, NTGroupName, RunningServer, ServiceState, Status, UniqueID. HostInstances may also be used to Stop or Start a group of HostInstances in parallel.
         /// </summary>
         [TaskAction(GetTaskAction, false)]
         [Output]
@@ -176,10 +176,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// </summary>
         protected override void InternalExecute()
         {
-            if (this.TaskAction != GetTaskAction && string.IsNullOrEmpty(this.HostName))
+            if (this.HostInstances == null)
             {
-                this.Log.LogError("HostName is required");
-                return;
+                if (this.TaskAction != GetTaskAction && string.IsNullOrEmpty(this.HostName))
+                {
+                    this.Log.LogError("HostName is required");
+                    return;
+                }
             }
 
             this.GetManagementScope(WmiBizTalkNamespace);
@@ -248,15 +251,28 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Start()
         {
-            if (!this.GetHostInstanceByHostName())
+            if (this.HostInstances == null)
             {
+                this.StartLogic(this.HostName);
                 return;
             }
 
-            if ((uint)this.hostInstance["HostType"] == (uint)BizTalkHostType.InProcess && (uint)this.hostInstance["ServiceState"] != (uint)HostState.Running)
+            System.Threading.Tasks.Parallel.ForEach(this.HostInstances, instance => this.StartLogic(instance.ItemSpec));
+        }
+
+        private void StartLogic(string hostName)
+        {
+            ManagementObject mo = this.GetHostInstanceObjectByHostName(hostName);
+            if (mo == null)
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting Host Instance: {0} on: {1}", this.HostName, this.MachineName));
-                this.hostInstance.InvokeMethod("Start", null);
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Host Instance: {0} not found on: {1}.", this.HostName, this.MachineName));
+                return;
+            }
+
+            if ((uint)mo["HostType"] == (uint)BizTalkHostType.InProcess && (uint)mo["ServiceState"] != (uint)HostState.Running)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Starting Host Instance: {0} on: {1}", hostName, this.MachineName));
+                mo.InvokeMethod("Start", null);
             }
         }
 
@@ -275,15 +291,28 @@ namespace MSBuild.ExtensionPack.BizTalk
 
         private void Stop()
         {
-            if (!this.GetHostInstanceByHostName())
+            if (this.HostInstances == null)
             {
+                this.StopLogic(this.HostName);
                 return;
             }
 
-            if ((uint)this.hostInstance["HostType"] == (uint)BizTalkHostType.InProcess && (uint)this.hostInstance["ServiceState"] != (uint)HostState.Stopped)
+            System.Threading.Tasks.Parallel.ForEach(this.HostInstances, instance => this.StopLogic(instance.ItemSpec));
+        }
+
+        private void StopLogic(string hostName)
+        {
+            ManagementObject mo = this.GetHostInstanceObjectByHostName(hostName);
+            if (mo == null)
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Host Instance: {0} on: {1}", this.HostName, this.MachineName));
-                this.hostInstance.InvokeMethod("Stop", null);
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Host Instance: {0} not found on: {1}.", this.HostName, this.MachineName));
+                return;
+            }
+
+            if ((uint)mo["HostType"] == (uint)BizTalkHostType.InProcess && (uint)mo["ServiceState"] != (uint)HostState.Stopped)
+            {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Stopping Host Instance: {0} on: {1}", hostName, this.MachineName));
+                mo.InvokeMethod("Stop", null);
             }
         }
 
@@ -384,6 +413,22 @@ namespace MSBuild.ExtensionPack.BizTalk
             }
 
             return false;
+        }
+
+        private ManagementObject GetHostInstanceObjectByHostName(string hostName)
+        {
+            EnumerationOptions wmiEnumerationOptions = new EnumerationOptions { ReturnImmediately = false };
+            ObjectQuery wmiQuery = new ObjectQuery(string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_HostInstance WHERE HostName = '{0}'", hostName));
+            using (ManagementObjectSearcher wmiSearcher = new ManagementObjectSearcher(this.Scope, wmiQuery, wmiEnumerationOptions))
+            {
+                ManagementObjectCollection hostInstanceCollection = wmiSearcher.Get();
+                foreach (ManagementObject instance in hostInstanceCollection.Cast<ManagementObject>().Where(instance => instance["Name"].ToString().IndexOf(this.MachineName, StringComparison.OrdinalIgnoreCase) > 0))
+                {
+                    return instance;
+                }
+            }
+
+            return null;
         }
 
         private ManagementObject CreateHost()
