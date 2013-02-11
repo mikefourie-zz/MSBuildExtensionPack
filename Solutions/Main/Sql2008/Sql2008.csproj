@@ -67,24 +67,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AnalysisServices, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-        <HintPath>AssemblyReferences\Microsoft.AnalysisServices.dll</HintPath>
+      <HintPath>AssemblyReferences\Microsoft.AnalysisServices.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-        <HintPath>AssemblyReferences\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.Dmf, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>AssemblyReferences\Microsoft.SqlServer.Dmf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-        <HintPath>AssemblyReferences\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.Smo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-        <HintPath>AssemblyReferences\Microsoft.SqlServer.Smo.dll</HintPath>
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.Smo.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.SmoExtended, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-        <HintPath>AssemblyReferences\Microsoft.SqlServer.SmoExtended.dll</HintPath>
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.SmoExtended.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.SqlEnum, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>AssemblyReferences\Microsoft.SqlServer.SqlEnum.dll</HintPath>
@@ -97,9 +97,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\Attributes.cs">
-      <Link>Attributes.cs</Link>
-    </Compile>
     <Compile Include="..\Common\BaseTask.cs">
       <Link>BaseTask.cs</Link>
     </Compile>
