@@ -40,29 +40,16 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ddceb2b2-f01b-6e3b-c0dd-28d0a1c8957e.htm")]
     public class Sync : BaseTask
     {
-        private const string SyncFoldersTaskAction = "SyncFolders";
         private FileSyncOptions syncOptions = FileSyncOptions.ExplicitDetectChanges | FileSyncOptions.RecycleDeletedFiles;
         private SyncDirectionOrder direction = SyncDirectionOrder.UploadAndDownload;
         private string idFileName = "File.ID";
         private bool showOutput = true;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(SyncFoldersTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
         /// Set the ID file name. Defaults to "File.ID"
         /// </summary>
-        [TaskAction(SyncFoldersTaskAction, false)]
         public string IdFileName
         {
             get { return this.idFileName; }
@@ -72,7 +59,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets a value indicating whether to ShowOutput. Default is true
         /// </summary>
-        [TaskAction(SyncFoldersTaskAction, false)]
         public bool ShowOutput
         {
             get { return this.showOutput; }
@@ -82,33 +68,28 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Set the ExclusionFilters collection
         /// </summary>
-        [TaskAction(SyncFoldersTaskAction, false)]
         public ITaskItem[] ExclusionFilters { get; set; }
 
         /// <summary>
         /// Set the Source to synchronise from
         /// </summary>
         [Required]
-        [TaskAction(SyncFoldersTaskAction, true)]
         public ITaskItem Source { get; set; }
 
         /// <summary>
         /// Set the Destination to synchronise to
         /// </summary>
         [Required]
-        [TaskAction(SyncFoldersTaskAction, true)]
         public ITaskItem Destination { get; set; }
 
         /// <summary>
         /// Set the SyncOptions collection. Default is ExplicitDetectChanges | RecycleDeletedFiles
         /// </summary>
-        [TaskAction(SyncFoldersTaskAction, false)]
         public ITaskItem[] SyncOptions { get; set; }
 
         /// <summary>
         /// Set the direction to sync. Default is UploadAndDownload
         /// </summary>
-        [TaskAction(SyncFoldersTaskAction, false)]
         public string Direction
         {
             get { return this.direction.ToString(); }
