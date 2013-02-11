@@ -195,7 +195,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Upload a file from the current local directory to the ftp directory currently selected
-        /// </summary>        
+        /// </summary>
         /// <param name="fileName">The name of the file to be uploaded.</param>
         public void PutFile(string fileName)
         {
@@ -209,7 +209,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Upload a file from the current local directory to the ftp directory currently selected
-        /// </summary>        
+        /// </summary>
         /// <param name="localFile">The name of the file to be uploaded.</param>
         /// <param name="remoteFile">The remote name of the file.</param>
         public void PutFile(string localFile, string remoteFile)
@@ -227,7 +227,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Rename a file on the remote FTP directory
-        /// </summary>        
+        /// </summary>
         /// <param name="fileName">The name of the file to be renamed.</param>
         /// <param name="newFileName">The name the file needs to be renamed to.</param>
         public void RenameFile(string fileName, string newFileName)
@@ -246,7 +246,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Deletes a file in the Ftp remote directory
-        /// </summary>        
+        /// </summary>
         /// <param name="fileName">The name of the file to be deleted.</param>        
         public void DeleteFile(string fileName)
         {
@@ -264,7 +264,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Deletes a file in the Ftp remote directory
-        /// </summary>        
+        /// </summary>
         /// <param name="directory">The name of the file to be deleted.</param>        
         public void DeleteDirectory(string directory)
         {
@@ -296,7 +296,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Retrieves the list of all files in the ftp directory currently selected whose name matches the fileName mask
-        /// </summary>                
+        /// </summary>
         /// <param name="mask">The search criteria to return files.</param>        
         /// <returns>Returns the list of files present in the current ftp directory.</returns>        
         public FtpFileInfo[] GetFiles(string mask)
@@ -361,7 +361,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Retrieves the list of all directories in the ftp directory currently selected.
-        /// </summary>                                
+        /// </summary>
         /// <returns>Returns the list of diretories present in the current ftp directory.</returns>
         public FtpDirectoryInfo[] GetDirectories()
         {
@@ -370,7 +370,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Retrieves the list of all directories in the given ftp directory 
-        /// </summary>                        
+        /// </summary>
         /// <param name="path">The remote ftp directory path.</param>        
         /// <returns>Returns the list of diretories present in the given ftp directory.</returns>
         public FtpDirectoryInfo[] GetDirectories(string path)
@@ -437,7 +437,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Creates a directory in the remote ftp directory
-        /// </summary>                        
+        /// </summary>
         /// <param name="path">The path of the ftp directory.</param>        
         public void CreateDirectory(string path)
         {
@@ -530,7 +530,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Close connection to FTP server and all relevant sessions.
-        /// </summary>                
+        /// </summary>
         public void Close()
         {
             NativeMethods.InternetCloseHandle(this.connectionHandle);

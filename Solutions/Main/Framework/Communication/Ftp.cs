@@ -79,7 +79,7 @@ namespace MSBuild.ExtensionPack.Communication
 
         /// <summary>
         /// The list of files that needs to be transfered over FTP
-        /// </summary>        
+        /// </summary>
         public ITaskItem[] FileNames { get; set; }
 
         /// <summary>

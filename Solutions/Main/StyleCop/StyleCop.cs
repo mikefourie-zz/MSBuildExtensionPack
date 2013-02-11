@@ -93,7 +93,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         /// <summary>
         /// Sets a value indicating whether StyleCop should ignore cached results and perform a clean analysis. 
-        /// </summary>        
+        /// </summary>
         public bool ForceFullAnalysis
         {
             get { return this.fullAnalysis; }

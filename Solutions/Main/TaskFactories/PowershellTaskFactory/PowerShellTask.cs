@@ -17,7 +17,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
     {
         /// <summary>
         /// The context that the Windows PowerShell script will run under.
-        /// </summary>        
+        /// </summary>
         private Pipeline pipeline;
 
         internal PowerShellTask(string script)

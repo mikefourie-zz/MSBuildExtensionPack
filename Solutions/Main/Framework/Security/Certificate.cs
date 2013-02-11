@@ -748,7 +748,7 @@ namespace MSBuild.ExtensionPack.Security
 
         /// <summary>
         /// Set the given user access rights on the given certificate to the given user
-        /// </summary>        
+        /// </summary>
         private void SetUserAccessRights()
         {
             StoreLocation locationFlag = this.MachineStore ? StoreLocation.LocalMachine : StoreLocation.CurrentUser;
