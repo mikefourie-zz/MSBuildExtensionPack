@@ -104,7 +104,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/773f774e-5791-9318-76e8-ba31ee077b2d.htm")]
     public class TfsSource : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -127,139 +126,65 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private string itemSpec = string.Empty;
         private string returnOutput;
 
-        [DropdownValue(AddTaskAction)]
-        [DropdownValue(CheckinTaskAction)]
-        [DropdownValue(CheckoutTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(MergeTaskAction)]
-        [DropdownValue(ResolveTaskAction)]
-        [DropdownValue(GetChangesetTaskAction)]
-        [DropdownValue(GetWorkingChangesetTaskAction)]
-        [DropdownValue(GetPendingChangesTaskAction)]
-        [DropdownValue(UndoCheckoutTaskAction)]
-        [DropdownValue(UndeleteTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the version spec for Get or changeset number for GetChangeset. If no VersionSpec is provided for GetChangeset, then /latest is used.
         /// </summary>
-        [TaskAction(GetChangesetTaskAction, false)]
-        [TaskAction(MergeTaskAction, false)]
         public string VersionSpec { get; set; }
 
         /// <summary>
         /// Resolves outstanding conflicts between different versions of specified items in the current workspace 
         /// AcceptMerge, AcceptTheirs, AcceptYours, OverwriteLocal, DeleteConflict, AcceptYoursRenameTheirs 
         /// </summary>
-        [TaskAction(ResolveTaskAction, false)]
         public string Auto { get; set; }
 
         /// <summary>
         /// Used to resolve a name collision conflict. Can only be used in conjunction with AcceptMerge and AcceptYoursRenameTheirs. With AcceptMerge, /newname is only valid with conflicts that involve rename and/or undelete. If used, you must supply a new path.
         /// </summary>
-        [TaskAction(ResolveTaskAction, false)]
         public string NewName { get; set; }
 
         /// <summary>
         /// Forces all files to be retrieved, not just those that are out-of-date.
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         public bool All { get; set; }
 
         /// <summary>
         /// Overwrites writable files that are not checked out.
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         public bool Overwrite { get; set; }
 
         /// <summary>
         /// Implies All and Overwrite.
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(MergeTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Set to true to perform a merge without a basis version
         /// </summary>
-        [TaskAction(MergeTaskAction, false)]
         public bool Baseless { get; set; }
 
         /// <summary>
         /// Sets the TFS Server
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(MergeTaskAction, false)]
-        [TaskAction(GetPendingChangesTaskAction, true)]
-        [TaskAction(UndoCheckoutTaskAction, false)]
-        [TaskAction(UndeleteTaskAction, false)]
         public string Server { get; set; }
 
         /// <summary>
         /// Sets the files or folders to use.
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(MergeTaskAction, false)]
-        [TaskAction(ResolveTaskAction, false)]
-        [TaskAction(GetWorkingChangesetTaskAction, false)]
-        [TaskAction(GetPendingChangesTaskAction, true)]
-        [TaskAction(UndoCheckoutTaskAction, false)]
-        [TaskAction(UndeleteTaskAction, false)]
         public string ItemPath { get; set; }
 
         /// <summary>
         /// Sets the Item Collection of files to use.
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(ResolveTaskAction, false)]
-        [TaskAction(UndoCheckoutTaskAction, false)]
-        [TaskAction(UndeleteTaskAction, false)]
-        [TaskAction(ResolveTaskAction, false)]
         public ITaskItem[] ItemCol { get; set; }
 
         /// <summary>
         /// Sets the working directory. If the directory is mapped in a workspace, then there is no need to specify the Server.
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(ResolveTaskAction, false)]
-        [TaskAction(GetWorkingChangesetTaskAction, false)]
-        [TaskAction(UndoCheckoutTaskAction, false)]
-        [TaskAction(UndeleteTaskAction, false)]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Sets the version of Tfs. Default is 2008
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(MergeTaskAction, false)]
-        [TaskAction(GetPendingChangesTaskAction, true)]
-        [TaskAction(UndoCheckoutTaskAction, false)]
-        [TaskAction(UndeleteTaskAction, false)]
         public string Version
         {
             get { return this.version; }
@@ -269,41 +194,26 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the comments.
         /// </summary>
-        [TaskAction(CheckinTaskAction, false)]
         public string Comments { get; set; }
 
         /// <summary>
         /// Sets the Destination for a Merge
         /// </summary>
-        [TaskAction(MergeTaskAction, false)]
         public string Destination { get; set; }
 
         /// <summary>
         /// Sets the notes.
         /// </summary>
-        [TaskAction(CheckinTaskAction, false)]
         public string Notes { get; set; }
 
         /// <summary>
         /// Sets the Login. TFS2010 and greater only.
         /// </summary>
-        [TaskAction(CheckinTaskAction, false)]
         public string Login { get; set; }
 
         /// <summary>
         /// Sets whether the Tfs operation should be recursive. Default is true.
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(MergeTaskAction, false)]
-        [TaskAction(ResolveTaskAction, false)]
-        [TaskAction(GetWorkingChangesetTaskAction, false)]
-        [TaskAction(GetPendingChangesTaskAction, true)]
-        [TaskAction(UndoCheckoutTaskAction, false)]
-        [TaskAction(UndeleteTaskAction, false)]
         public bool Recursive
         {
             get { return this.recursive; }
@@ -314,14 +224,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Gets the pending changes in the format '/Format:detailed'
         /// </summary>
         [Output]
-        [TaskAction(GetPendingChangesTaskAction, true)]
         public string PendingChanges { get; set; }
 
         /// <summary>
         /// Gets whether pending changes exist for a given ItemPath
         /// </summary>
         [Output]
-        [TaskAction(GetPendingChangesTaskAction, true)]
         public bool PendingChangesExist { get; set; }
 
         /// <summary>
@@ -345,7 +253,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Task Item stores whether changes exist for the given ItemPath. Identity stores the path, PendingChangesExist metadata stores boolean.
         /// </summary>
         [Output]
-        [TaskAction(GetPendingChangesTaskAction, false)]
         public ITaskItem[] PendingChangesExistItem { get; set; }
 
         protected override void InternalExecute()

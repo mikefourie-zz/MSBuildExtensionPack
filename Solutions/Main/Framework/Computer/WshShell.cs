@@ -28,58 +28,43 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/9a20ad72-05ea-dd67-7070-94d265a35b80.htm")]
     public class WshShell : BaseTask
     {
         private const string CreateShortcutTaskAction = "CreateShortcut";
 
-        [DropdownValue(CreateShortcutTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the FilePath
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string FilePath { get; set; }
 
         /// <summary>
         /// Sets the ShortcutPath. For CreateShortcut defaults defaults to Desktop of the current user
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string ShortcutPath { get; set; }
 
         /// <summary>
         /// Sets the Name
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Sets the IconLocation
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string IconLocation { get; set; }
 
         /// <summary>
         /// Sets the Description. For CreateShortcut defaults to 'Launch [Name]'
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the Arguments for the shortcut
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string Arguments { get; set; }
 
         /// <summary>
         /// Sets the WorkingDirectory
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
@@ -91,7 +76,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <para/>
         /// 7 - Minimizes the window and activates the next top-level window.
         /// </summary>
-        [TaskAction(CreateShortcutTaskAction, true)]
         public int WindowStyle { get; set; }
         
         /// <summary>

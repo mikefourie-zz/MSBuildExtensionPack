@@ -69,7 +69,6 @@ namespace MSBuild.ExtensionPack.SqlServer
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/0d864b98-649a-5454-76ea-bd3069fde8bd.htm")]
     public class SqlExecute : BaseTask
     {
         private const string ExecuteTaskAction = "Execute";
@@ -88,7 +87,6 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <summary>
         /// Sets the connection string to use for executing the Sql or Files
         /// </summary>
-        [DropdownValue(ExecuteTaskAction)]
         public string ConnectionString { get; set; }
 
         /// <summary>
@@ -104,41 +102,31 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// Allows setting encoding code page to be used. Default is System.Text.Encoding.Default
         /// All code pages are listed here: http://msdn.microsoft.com/en-us/library/system.text.encoding
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
-        public int CodePage
-        {
-            get;
-            set;
-        }
+        public int CodePage { get; set; }
 
         /// <summary>
         /// Sets the files to execute
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// Sets the Sql to execute
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public string Sql { get; set; }
 
         /// <summary>
         /// Sets the parameters to substitute at execution time. These are CASE SENSITIVE.
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] Parameters { get; set; }
 
         /// <summary>
         /// Specifies whether files should be re-executed if they initially fail
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public bool Retry { get; set; }
 
         /// <summary>
         /// Specifies whether to parse out multi-line comments before executing. This can be handy if your comments contain GO statements. Please note that if your sql contains code with /* in it, then you should set this to false. Default is true.
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public bool StripMultiLineComments
         {
             get { return this.stripMultiLineComments; }
@@ -148,14 +136,12 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <summary>
         /// Set to true to run the sql within a transaction
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public bool UseTransaction { get; set; }
 
         /// <summary>
         /// Ignore any script errors, i.e. continue executing any remaining scripts when an error is encountered.  Failed
         /// scripts will be returned in the FailedScripts output item.
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public bool IgnoreScriptErrors { get; set; }
 
         /// <summary>

@@ -62,7 +62,6 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/9bf7c511-7410-c9e9-e1bc-570d3dfdcc0e.htm")]
     public class MSMQ : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -76,84 +75,66 @@ namespace MSBuild.ExtensionPack.Communication
         /// Sets the path of the queue. Required.
         /// </summary>
         [Required]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(SendTaskAction, true)]
-        [TaskAction(SetPermissionsTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets the Label of the queue 
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(SendTaskAction, false)]
         public string Label { get; set; }
 
         /// <summary>
         /// Sets the Message to send to the queue
         /// </summary>
-        [TaskAction(SendTaskAction, true)]
         public string Message { get; set; }
 
         /// <summary>
         /// An access-allowed entry that causes the new rights to be added to any existing rights the trustee has. Permission metadata supports: DeleteMessage, PeekMessage, WriteMessage, DeleteJournalMessage, SetQueueProperties, GetQueueProperties, DeleteQueue, GetQueuePermissions, ChangeQueuePermissions, TakeQueueOwnership, ReceiveMessage, ReceiveJournalMessage, GenericRead, GenericWrite, FullControl
         /// </summary>
-        [TaskAction(SetPermissionsTaskAction, false)]
         public ITaskItem[] Allow { get; set; }
 
         /// <summary>
         /// An access-denied entry that denies the specified rights in addition to any currently denied rights of the trustee. Permission metadata supports: DeleteMessage, PeekMessage, WriteMessage, DeleteJournalMessage, SetQueueProperties, GetQueueProperties, DeleteQueue, GetQueuePermissions, ChangeQueuePermissions, TakeQueueOwnership, ReceiveMessage, ReceiveJournalMessage, GenericRead, GenericWrite, FullControl
         /// </summary>
-        [TaskAction(SetPermissionsTaskAction, false)]
         public ITaskItem[] Deny { get; set; }
         
         /// <summary>
         /// An entry that removes all existing allowed or denied rights for the specified trustee. Permission metadata supports: DeleteMessage, PeekMessage, WriteMessage, DeleteJournalMessage, SetQueueProperties, GetQueueProperties, DeleteQueue, GetQueuePermissions, ChangeQueuePermissions, TakeQueueOwnership, ReceiveMessage, ReceiveJournalMessage, GenericRead, GenericWrite, FullControl
         /// </summary>
-        [TaskAction(SetPermissionsTaskAction, false)]
         public ITaskItem[] Revoke { get; set; }
 
         /// <summary>
         /// An access-allowed entry that is similar to Allow, except that the new entry allows only the specified rights. Using it discards any existing rights, including all existing access-denied entries for the trustee. Permission metadata supports: DeleteMessage, PeekMessage, WriteMessage, DeleteJournalMessage, SetQueueProperties, GetQueueProperties, DeleteQueue, GetQueuePermissions, ChangeQueuePermissions, TakeQueueOwnership, ReceiveMessage, ReceiveJournalMessage, GenericRead, GenericWrite, FullControl
         /// </summary>
-        [TaskAction(SetPermissionsTaskAction, false)]
         public ITaskItem[] Set { get; set; }
 
         /// <summary>
         /// Set true to create a transactional queue; false to create a non-transactional queue. Default is false;
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Transactional { get; set; }
 
         /// <summary>
         /// Set to try to create an Authenticated queueu. Default is false
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Authenticated { get; set; }
 
         /// <summary>
         /// Set to true to recreate a queue if it already exists
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Sets the maximum queue size in kb.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public int MaximumQueueSize { get; set; }
 
         /// <summary>
         /// Sets the maximum journal size in kb.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public int MaximumJournalSize { get; set; }
 
         /// <summary>
         /// Set to true to use the journal queue
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool UseJournalQueue { get; set; }
 
         /// <summary>
@@ -169,19 +150,7 @@ namespace MSBuild.ExtensionPack.Communication
         /// Gets whether the queue exists
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
-
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(SendTaskAction)]
-        [DropdownValue(SetPermissionsTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
         
         /// <summary>
         /// Performs the action of this task.

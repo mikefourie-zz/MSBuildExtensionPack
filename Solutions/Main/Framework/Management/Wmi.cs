@@ -87,35 +87,21 @@ namespace MSBuild.ExtensionPack.Management
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/0d312304-3632-19a1-a186-a264fedc3d97.htm")]
     public class Wmi : BaseTask
     {
-        private const string ExecuteTaskAction = "Execute";
-        private const string QueryTaskAction = "Query";
-        
         private List<ITaskItem> info;
         private List<ITaskItem> properties;
-
-        [DropdownValue(ExecuteTaskAction)]
-        [DropdownValue(QueryTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the namespace.
         /// </summary>
         [Required]
-        [TaskAction(ExecuteTaskAction, true)]
         public string Namespace { get; set; }
 
         /// <summary>
         /// Gets the WMI info.
         /// </summary>
         [Output]
-        [TaskAction(QueryTaskAction, false)]
         public ITaskItem[] Info
         {
             get { return this.info.ToArray(); }
@@ -126,39 +112,32 @@ namespace MSBuild.ExtensionPack.Management
         /// Sets the WMI class.
         /// </summary>
         [Required]
-        [TaskAction(ExecuteTaskAction, true)]
-        [TaskAction(QueryTaskAction, true)]
         public string Class { get; set; }
 
         /// <summary>
         /// Gets the ReturnValue for Execute
         /// </summary>
         [Output]
-        [TaskAction(ExecuteTaskAction, false)]
         public string ReturnValue { get; set; }
 
         /// <summary>
         /// Sets the Method used in Execute
         /// </summary>
-        [TaskAction(ExecuteTaskAction, true)]
         public string Method { get; set; }
 
         /// <summary>
         /// Sets the MethodParameters. Use #~# separate name and value.
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public ITaskItem[] MethodParameters { get; set; }
 
         /// <summary>
         /// Sets the Wmi Instance used in Execute
         /// </summary>
-        [TaskAction(ExecuteTaskAction, false)]
         public string Instance { get; set; }
 
         /// <summary>
         /// An Item Collection of Properties to get
         /// </summary>
-        [TaskAction(QueryTaskAction, true)]
         public ITaskItem[] Properties
         {
             get { return this.properties.ToArray(); }

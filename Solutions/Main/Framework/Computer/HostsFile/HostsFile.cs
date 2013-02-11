@@ -54,7 +54,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/8d85822b-beee-98e5-1ecb-7370ed8974f2.htm")]
     public sealed class HostsFile : BaseTask
     {
         internal const string SetHostEntryTaskAction = "SetHostEntry";

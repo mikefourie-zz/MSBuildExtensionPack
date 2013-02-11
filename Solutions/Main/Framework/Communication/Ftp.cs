@@ -48,7 +48,6 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/e38221c2-c686-2a47-489c-ea2ef10d915b.htm")]
     public class Ftp : BaseTask
     {
         private const string UploadFilesTaskAction = "UploadFiles";
@@ -57,66 +56,30 @@ namespace MSBuild.ExtensionPack.Communication
         private const string DeleteDirectoryTaskAction = "DeleteDirectory";
         private const string CreateDirectoryTaskAction = "CreateDirectory";
 
-        [DropdownValue(CreateDirectoryTaskAction)]
-        [DropdownValue(DeleteDirectoryTaskAction)]
-        [DropdownValue(DeleteFilesTaskAction)]
-        [DropdownValue(DownloadFilesTaskAction)]
-        [DropdownValue(UploadFilesTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-        
         /// <summary>
         /// Sets the Host of the FTP Site.
         /// </summary>
         [Required]
-        [TaskAction(CreateDirectoryTaskAction, true)]
-        [TaskAction(DeleteDirectoryTaskAction, true)]
-        [TaskAction(DeleteFilesTaskAction, true)]
-        [TaskAction(DownloadFilesTaskAction, true)]
-        [TaskAction(UploadFilesTaskAction, true)]
         public string Host { get; set; }
         
         /// <summary>
         /// Sets the Remote Path to connect to the FTP Site
-        /// </summary>        
-        [TaskAction(CreateDirectoryTaskAction, true)]
-        [TaskAction(DeleteDirectoryTaskAction, true)]
-        [TaskAction(DeleteFilesTaskAction, false)]
-        [TaskAction(DownloadFilesTaskAction, false)]
-        [TaskAction(UploadFilesTaskAction, false)]
+        /// </summary>
         public string RemoteDirectoryName { get; set; }
 
         /// <summary>
         /// Sets the working directory on the local machine
-        /// </summary>        
-        [TaskAction(CreateDirectoryTaskAction, false)]
-        [TaskAction(DeleteDirectoryTaskAction, false)]
-        [TaskAction(DeleteFilesTaskAction, false)]
-        [TaskAction(DownloadFilesTaskAction, false)]
-        [TaskAction(UploadFilesTaskAction, false)]
+        /// </summary>
         public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// The port used to connect to the ftp server.
-        /// </summary>        
-        [TaskAction(CreateDirectoryTaskAction, false)]
-        [TaskAction(DeleteDirectoryTaskAction, false)]
-        [TaskAction(DeleteFilesTaskAction, false)]
-        [TaskAction(DownloadFilesTaskAction, false)]
-        [TaskAction(UploadFilesTaskAction, false)]
+        /// </summary>
         public int Port { get; set; }
 
         /// <summary>
         /// The list of files that needs to be transfered over FTP
         /// </summary>        
-        [TaskAction(CreateDirectoryTaskAction, false)]
-        [TaskAction(DeleteDirectoryTaskAction, false)]
-        [TaskAction(DeleteFilesTaskAction, true)]
-        [TaskAction(DownloadFilesTaskAction, false)]
-        [TaskAction(UploadFilesTaskAction, true)]
         public ITaskItem[] FileNames { get; set; }
 
         /// <summary>

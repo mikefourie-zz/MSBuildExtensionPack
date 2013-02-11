@@ -38,48 +38,28 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/6371e887-86da-e49a-0c7f-4e3645663b6c.htm")]
     public class Signing : BaseTask
     {
-        private const string CAddSkipVerificationTaskAction = "AddSkipVerification";
-        private const string RemoveAllSkipVerificationTaskAction = "RemoveAllSkipVerification";
-        private const string SignTaskAction = "Sign";
-        
         private const string ToolName = "sn.exe";
 
-        [DropdownValue(CAddSkipVerificationTaskAction)]
-        [DropdownValue(RemoveAllSkipVerificationTaskAction)]
-        [DropdownValue(SignTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-        
         /// <summary>
         /// Sets the KeyFile to use when Signing the Assemblies
         /// </summary>
-        [TaskAction(SignTaskAction, true)]
         public ITaskItem KeyFile { get; set; }
 
         /// <summary>
         /// Sets the folder path to sn.exe
         /// </summary>
-        [TaskAction(CAddSkipVerificationTaskAction, false)]
-        [TaskAction(RemoveAllSkipVerificationTaskAction, false)]
-        [TaskAction(SignTaskAction, false)]
         public ITaskItem ToolPath { get; set; }
 
         /// <summary>
         /// Sets the PublicKeyToken for AddSkipVerification
         /// </summary>
-        [TaskAction(CAddSkipVerificationTaskAction, true)]
         public string PublicKeyToken { get; set; }
 
         /// <summary>
         /// Sets the Item Collection of Assemblies to sign
         /// </summary>
-        [TaskAction(SignTaskAction, true)]
         public ITaskItem[] Assemblies { get; set; }
 
         protected override void InternalExecute()

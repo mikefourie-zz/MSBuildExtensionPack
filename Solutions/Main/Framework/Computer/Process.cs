@@ -54,7 +54,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/5eddaaa1-5a75-e314-d96e-6e8ecc2b2997.htm")]
     public class Process : BaseTask
     {
         private const string GetTaskAction = "Get";
@@ -64,22 +63,9 @@ namespace MSBuild.ExtensionPack.Computer
         private string processName = ".*";
         private string user = ".*";
 
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(TerminateTaskAction)]
-        [DropdownValue(CheckRunningTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the regular expression to use for filtering processes. Default is .*
         /// </summary>
-        [TaskAction(CheckRunningTaskAction, true)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(TerminateTaskAction, true)]
         public string ProcessName
         {
             get { return this.processName; }
@@ -89,7 +75,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the regular expression to use for filtering processes. Default is .*
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         public string User
         {
             get { return this.user; }
@@ -100,40 +85,33 @@ namespace MSBuild.ExtensionPack.Computer
         /// Gets the ReturnValue for Create
         /// </summary>
         [Output]
-        [TaskAction(CreateTaskAction, false)]
         public string ReturnValue { get; set; }
 
         /// <summary>
         /// Gets or Sets the ProcessId
         /// </summary>
         [Output]
-        [TaskAction(TerminateTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
         public int ProcessId { get; set; }
 
         /// <summary>
         /// Sets the Parameters for Create. Use #~# separate name and value.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Parameters { get; set; }
 
         /// <summary>
         /// Sets whether to include user information for processes. Including this will slow the query. Default is false;
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         public bool IncludeUserInfo { get; set; }
 
         /// <summary>
         /// Gets whether the process is running
         /// </summary>
-        [TaskAction(CheckRunningTaskAction, false)]
         [Output]
         public bool IsRunning { get; set; }
 
         /// <summary>
         /// Gets the list of processes. The process name is used as the identity and the following metadata is set: Caption, Description, Handle, HandleCount, KernelModeTime, PageFaults, PageFileUsage, ParentProcessId, PeakPageFileUsage, PeakVirtualSize, PeakWorkingSetSize, Priority, PrivatePageCount, ProcessId, QuotaNonPagedPoolUsage, QuotaPagedPoolUsage, QuotaPeakNonPagedPoolUsage, QuotaPeakPagedPoolUsage, ReadOperationCount, ReadTransferCount, SessionId, ThreadCount, UserModeTime, VirtualSize, WindowsVersion, WorkingSetSize, WriteOperationCount, WriteTransferCount
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         [Output]
         public ITaskItem[] Processes { get; set; }
 

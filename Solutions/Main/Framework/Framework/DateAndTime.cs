@@ -201,7 +201,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/1c668832-24f2-d646-1f66-7ea1f3e76415.htm")]
     public class DateAndTime : BaseTask
     {
         private const string GetTaskAction = "Get";
@@ -217,95 +216,41 @@ namespace MSBuild.ExtensionPack.Framework
         private const string AddTicksTaskAction = "AddTicks";
         private const string AddYearsTaskAction = "AddYears";
 
-        [DropdownValue(CheckBetweenTaskAction)]
-        [DropdownValue(CheckLaterTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(GetElapsedTaskAction)]
-        [DropdownValue(AddDaysTaskAction)]
-        [DropdownValue(AddHoursTaskAction)]
-        [DropdownValue(AddMillisecondsTaskAction)]
-        [DropdownValue(AddMinutesTaskAction)]
-        [DropdownValue(AddMonthsTaskAction)]
-        [DropdownValue(AddSecondsTaskAction)]
-        [DropdownValue(AddTicksTaskAction)]
-        [DropdownValue(AddYearsTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// The start time to use
         /// </summary>
-        [TaskAction(CheckBetweenTaskAction, true)]
-        [TaskAction(CheckLaterTaskAction, true)]
-        [TaskAction(GetElapsedTaskAction, true)]
-        [TaskAction(AddDaysTaskAction, false)]
-        [TaskAction(AddHoursTaskAction, false)]
-        [TaskAction(AddMillisecondsTaskAction, false)]
-        [TaskAction(AddMinutesTaskAction, false)]
-        [TaskAction(AddMonthsTaskAction, false)]
-        [TaskAction(AddSecondsTaskAction, false)]
-        [TaskAction(AddTicksTaskAction, false)]
-        [TaskAction(AddYearsTaskAction, false)]
         public DateTime Start { get; set; }
 
         /// <summary>
         /// The end time to use for GetElapsed. Default is DateTime.Now
         /// </summary>
-        [TaskAction(GetElapsedTaskAction, false)]
-        [TaskAction(CheckBetweenTaskAction, true)]
         public DateTime End { get; set; }
 
         /// <summary>
         /// Format to apply to the Result. For GetTime, Format can be any valid DateTime format. For GetElapsed, Format can be Milliseconds, Seconds, Minutes, Hours, Days or Total. Total returns dd:hh:mm:ss
         /// </summary>
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(GetElapsedTaskAction, true)]
         public string Format { get; set; }
 
-        [TaskAction(AddDaysTaskAction, true)]
-        [TaskAction(AddHoursTaskAction, true)]
-        [TaskAction(AddMillisecondsTaskAction, true)]
-        [TaskAction(AddMinutesTaskAction, true)]
-        [TaskAction(AddMonthsTaskAction, true)]
-        [TaskAction(AddSecondsTaskAction, true)]
-        [TaskAction(AddTicksTaskAction, true)]
-        [TaskAction(AddYearsTaskAction, true)]
+        /// <summary>
+        /// Specifies the value to operate with
+        /// </summary>
         public double Value { get; set; }
 
         /// <summary>
         /// The output Result
         /// </summary>
         [Output]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(GetElapsedTaskAction, false)]
-        [TaskAction(AddDaysTaskAction, false)]
-        [TaskAction(AddHoursTaskAction, false)]
-        [TaskAction(AddMillisecondsTaskAction, false)]
-        [TaskAction(AddMinutesTaskAction, false)]
-        [TaskAction(AddMonthsTaskAction, false)]
-        [TaskAction(AddSecondsTaskAction, false)]
-        [TaskAction(AddTicksTaskAction, false)]
-        [TaskAction(AddYearsTaskAction, false)]
         public string Result { get; set; }
 
         /// <summary>
         /// The output boolean result.
         /// </summary>
         [Output]
-        [TaskAction(CheckBetweenTaskAction, false)]
-        [TaskAction(CheckLaterTaskAction, false)]
         public bool BoolResult { get; set; }
 
         /// <summary>
         /// Set to true to use UTC Date / Time for the TaskAction. Default is false.
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(CheckBetweenTaskAction, false)]
-        [TaskAction(CheckLaterTaskAction, false)]
-        [TaskAction(GetElapsedTaskAction, false)]
         public bool UseUtc { get; set; }
 
         protected override void InternalExecute()

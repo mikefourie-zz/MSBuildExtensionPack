@@ -57,41 +57,17 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/2849df01-25a8-6f99-5a0c-0fa7a6df5084.htm")]
     public class Iis6Website : BaseTask
     {
-        private const string CreateTaskAction = "Create";
-        private const string CheckExistsTaskAction = "CheckExists";
-        private const string ContinueTaskAction = "Continue";
-        private const string DeleteTaskAction = "Delete";
-        private const string GetMetabasePropertyValueTaskAction = "GetMetabasePropertyValue";
-        private const string StartTaskAction = "Start";
-        private const string StopTaskAction = "Stop";
-        private const string PauseTaskAction = "Pause";
-
         private DirectoryEntry websiteEntry;
         private string properties;
         private int sleep = 250;
-
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(ContinueTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(StartTaskAction)]
-        [DropdownValue(StopTaskAction)]
-        [DropdownValue(PauseTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
         /// Some properties may be split within the semi colon, e.g. to set multiple server bindings you could use Properties="ServerBindings=:80:first.host.header|:80:second.host.header"
         /// If a property contains =, enter #~# as a special sequence which will be replaced with = during processing
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -101,33 +77,23 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the Metabase Property Name to retrieve. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
         /// </summary>
-        [TaskAction(GetMetabasePropertyValueTaskAction, true)]
         public string MetabasePropertyName { get; set; }
 
         /// <summary>
         /// Gets the string value of the requested MetabasePropertyName
         /// </summary>
         [Output]
-        [TaskAction(GetMetabasePropertyValueTaskAction, false)]
         public string MetabasePropertyValue { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [Required]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(ContinueTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
-        [TaskAction(PauseTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Set force to true to delete an existing website when calling Create. Default is false.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -142,7 +108,6 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Gets or sets the Identifier for the website. If specified for Create and the Identifier already exists, an error is logged.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         [Output]
         public int Identifier { get; set; }
 
@@ -150,7 +115,6 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the website exists.
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
@@ -184,7 +148,7 @@ namespace MSBuild.ExtensionPack.Web
                 case "CheckExists":
                     this.CheckWebsiteExists();
                     break;
-                case GetMetabasePropertyValueTaskAction:
+                case "GetMetabasePropertyValue":
                     this.GetMetabasePropertyValue();
                     break;
                 default:

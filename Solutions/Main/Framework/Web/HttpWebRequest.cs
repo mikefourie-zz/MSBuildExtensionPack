@@ -7,7 +7,6 @@ namespace MSBuild.ExtensionPack.Web
     using System.Globalization;
     using System.IO;
     using System.Net;
-    using System.Net.Security;
     using System.Text;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -44,26 +43,15 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/7e2d4a1e-f79a-1b80-359a-445ffdea2ac5.htm")]
     public class HttpWebRequest : BaseTask
     {
         private const string GetResponseTaskAction = "GetResponse";
         private const string PostTaskAction = "Post";
         private int timeout = 100000;
 
-        [DropdownValue(GetResponseTaskAction)]
-        [DropdownValue(PostTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the number of milliseconds to wait before the request times out. The default value is 100,000 milliseconds (100 seconds).
         /// </summary>
-        [TaskAction(GetResponseTaskAction, false)]
-        [TaskAction(PostTaskAction, true)]
         public int Timeout
         {
             get { return this.timeout; }
@@ -74,15 +62,11 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the AppPool. Required.
         /// </summary>
         [Required]
-        [TaskAction(GetResponseTaskAction, true)]
-        [TaskAction(PostTaskAction, true)]
         public string Url { get; set; }
 
         /// <summary>
         /// Set to true to accept all SSL certificates.
         /// </summary>
-        [TaskAction(GetResponseTaskAction, true)]
-        [TaskAction(PostTaskAction, true)]
         public bool SkipSslCertificateValidation { get; set; }
 
         [Output]
@@ -91,22 +75,16 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// The number of times the request should be retried before failing.
         /// </summary>
-        [TaskAction(GetResponseTaskAction, false)]
-        [TaskAction(PostTaskAction, false)]
         public int Retries { get; set; }
 
         /// <summary>
         /// The number of milliseconds between retry attempts.  Default is 0.
         /// </summary>
-        [TaskAction(GetResponseTaskAction, false)]
-        [TaskAction(PostTaskAction, false)]
         public int RetryInterval { get; set; }
         
         /// <summary>
         /// The number of milliseconds between retry attempts.  Default is 0.
         /// </summary>
-        [TaskAction(GetResponseTaskAction, false)]
-        [TaskAction(PostTaskAction, false)]
         public bool UseIntegratedAuthentication { get; set; }
 
         /// <summary>
@@ -118,13 +96,11 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// The content type of the request. By default, it is "application/x-www-form-urlencoded" (used for classic HTTP POST)
         /// </summary>
-        [TaskAction(PostTaskAction, false)]
         public string ContentType { get; set; }
 
         /// <summary>
         /// The content of the request. For classic HTTP POST, format is several [key]=[value] separated by "&amp;". Could be SOAP for example if ContentType is SOAP.
         /// </summary>
-        [TaskAction(PostTaskAction, false)]
         public string RequestContent { get; set; }
 
         /// <summary>

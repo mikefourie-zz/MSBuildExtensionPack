@@ -5,7 +5,6 @@ namespace MSBuild.ExtensionPack.Framework
 {
     using System;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -41,7 +40,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ec73bb87-f4f7-db30-ba51-21cd21cd483b.htm")]
     public class GenericTool : ToolTask
     {
         /// <summary>

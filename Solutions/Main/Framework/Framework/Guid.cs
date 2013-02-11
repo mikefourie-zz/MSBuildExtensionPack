@@ -40,28 +40,14 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ceb07d01-751c-0c5a-09b3-fc712ace6f13.htm")]
     public class Guid : BaseTask
     {
-        private const string CreateTaskAction = "Create";
-        private const string CreateCryptoTaskAction = "CreateCrypto";
-        
         private System.Guid internalGuid;
-
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(CreateCryptoTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// 32 digits separated by hyphens: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         /// </summary>
         [Output]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(CreateCryptoTaskAction, false)]
         public string[] FormattedGuidString
         {
             get { return new[] { this.internalGuid.ToString("D", CultureInfo.CurrentCulture) }; }
@@ -71,8 +57,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// 32 digits: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         /// </summary>
         [Output]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(CreateCryptoTaskAction, false)]
         public string[] GuidString
         {
             get { return new[] { this.internalGuid.ToString("N", CultureInfo.CurrentCulture) }; }

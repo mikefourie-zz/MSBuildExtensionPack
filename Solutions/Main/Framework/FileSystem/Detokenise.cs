@@ -91,7 +91,6 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/348d3976-920f-9aca-da50-380d11ee7cf5.htm")]
     public class Detokenise : BaseTask
     {
         private const string AnalyseTaskAction = "Analyse";
@@ -118,28 +117,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         // this bool is used to track whether the file needs to be re-written.
         private bool tokenMatched;
 
-        [DropdownValue(AnalyseTaskAction)]
-        [DropdownValue(DetokeniseTaskAction)]
-        [DropdownValue(ReportTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Set to true for files being processed to be output to the console.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
-        [TaskAction(ReportTaskAction, false)]
         public bool DisplayFiles { get; set; }
 
         /// <summary>
         /// Specifies the regular expression format of the token to look for. The default pattern is \$\([0-9a-zA-Z-._]+\) which equates to $(token)
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public string TokenPattern
         {
             get { return this.tokenPattern; }
@@ -149,8 +134,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Specifies the regular expression to use to extract the token name from the TokenPattern provided. The default pattern is (?&lt;=\$\()[0-9a-zA-Z-._]+(?=\)), i.e it will extract token from $(token)
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public string TokenExtractionPattern
         {
             get { return this.tokenExtractionPattern; }
@@ -160,22 +143,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets the replacement values.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public ITaskItem[] ReplacementValues { get; set; }
 
         /// <summary>
         /// Sets the replacement values provided via the command line. The format is token1=value1#~#token2=value2 etc.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public string CommandLineValues { get; set; }
 
         /// <summary>
         /// Sets the separator to use to split the CommandLineValues. The default is #~#
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, true)]
         public string Separator
         {
             get { return this.separator; }
@@ -185,8 +162,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets the MSBuild file to load for token matching. Defaults to BuildEngine.ProjectFileOfTaskNode
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public ITaskItem ProjectFile { get; set; }
 
         /// <summary>
@@ -194,59 +169,43 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// this may be used in the case when the user wants to ensure all file are written
         /// with the same encoding.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public bool ForceWrite { get; set; }
 
         /// <summary>
         /// Specifies whether to search in the ReplacementValues, CommandLineValues and the ProjectFile for token values. Default is false.
         /// </summary>
-        [TaskAction(DetokeniseTaskAction, false)]
         public bool SearchAllStores { get; set; }
 
         /// <summary>
         /// Specifies whether to ignore tokens which are not matched. Default is false.
         /// </summary>
-        [TaskAction(DetokeniseTaskAction, false)]
         public bool IgnoreUnknownTokens { get; set; }
 
         /// <summary>
         /// Sets the TargetPath.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
-        [TaskAction(ReportTaskAction, false)]
         public string TargetPath { get; set; }
 
         /// <summary>
         /// Sets the TargetFiles.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
-        [TaskAction(ReportTaskAction, false)]
         public ITaskItem[] TargetFiles { get; set; }
 
         /// <summary>
         /// The file encoding to write the new file in. The task will attempt to default to the current file encoding. If TargetFiles is specified, individual encodings can be specified by providing an Encoding metadata value.
         /// </summary>
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public string TextEncoding { get; set; }
 
         /// <summary>
         /// Gets the files processed count. [Output]
         /// </summary>
         [Output]
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public int FilesProcessed { get; set; }
 
         /// <summary>
         /// Gets the files detokenised count. [Output]
         /// </summary>
         [Output]
-        [TaskAction(AnalyseTaskAction, false)]
-        [TaskAction(DetokeniseTaskAction, false)]
         public int FilesDetokenised { get; set; }
 
         /// <summary>
@@ -264,7 +223,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Set to true when running a Report to see which tokens are not used in any files scanned. Default is false.
         /// </summary>
-        [TaskAction(ReportTaskAction, false)]
         public bool ReportUnusedTokens { get; set; }
 
         /// <summary>
@@ -500,10 +458,11 @@ namespace MSBuild.ExtensionPack.FileSystem
             foreach (FileSystemInfo i in fileSysInfo)
             {
                 // Check to see if this is a DirectoryInfo object.
-                if (i is DirectoryInfo)
+                var info = i as DirectoryInfo;
+                if (info != null)
                 {
                     // Cast the object to a DirectoryInfo object.
-                    DirectoryInfo dirInfo = (DirectoryInfo)i;
+                    DirectoryInfo dirInfo = info;
 
                     // Iterate through all sub-directories.
                     this.ProcessFolder(dirInfo.GetFileSystemInfos("*"));

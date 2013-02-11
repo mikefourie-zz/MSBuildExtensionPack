@@ -75,7 +75,6 @@ namespace MSBuild.ExtensionPack.Compression
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/15d161fa-cd51-6f4e-e6ef-99c757b517c4.htm")]
     public class DNZip : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -85,61 +84,39 @@ namespace MSBuild.ExtensionPack.Compression
         private Zip64Option useZip64WhenSaving = Zip64Option.Default;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(ExtractTaskAction)]
-        [DropdownValue(AddFilesTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
         /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public ITaskItem RemoveRoot { get; set; }
 
         /// <summary>
         /// Sets the files to Compress
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] CompressFiles { get; set; }
 
         /// <summary>
         /// Sets the Path to Zip.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public ITaskItem CompressPath { get; set; }
 
         /// <summary>
         /// Sets the name of the Zip File
         /// </summary>
         [Required]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(ExtractTaskAction, true)]
-        [TaskAction(AddFilesTaskAction, true)]
         public ITaskItem ZipFileName { get; set; }
 
         /// <summary>
         /// Path to extract the zip file to
         /// </summary>
-        [TaskAction(ExtractTaskAction, true)]
         public ITaskItem ExtractPath { get; set; }
 
         /// <summary>
         /// Sets the Password to be used
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(ExtractTaskAction, true)]
         public string Password { get; set; }
 
         /// <summary>
         /// Sets the CompressionLevel to use. Default is Default, also supports BestSpeed and BestCompression
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
         public string CompressionLevel
         {
             get { return this.compressLevel.ToString(); }
@@ -151,16 +128,12 @@ namespace MSBuild.ExtensionPack.Compression
         /// This value is not required and if not set or set to 0 the resulting archive will not be split.
         /// For more details see the DotNetZip documentation.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(AddFilesTaskAction, false)]
         public int MaxOutputSegmentSize { get; set; }
         
         /// <summary>
         /// Sets the UseZip64WhenSaving output of the DotNetZip library.
         /// For more details see the DotNetZip documentation.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(AddFilesTaskAction, false)]
         public string UseZip64WhenSaving 
         {
             get { return this.useZip64WhenSaving.ToString(); }

@@ -455,7 +455,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/2e32aa32-13c7-6374-e53e-241ff534fe1c.htm")]
     public sealed class DynamicExecute : BaseTask
     {
         private const string DefineTaskAction = "Define";
@@ -478,23 +477,6 @@ namespace MSBuild.ExtensionPack.Framework
         private static readonly Dictionary<string, Closure> Closures = new Dictionary<string, Closure>();
 
         /// <summary>
-        /// Sets the task action. See <see cref="DynamicExecute"/> for a description of the valid task actions.
-        /// </summary>
-        [DropdownValue(RunTaskAction)]
-        [DropdownValue(CallTaskAction)]
-        [DropdownValue(DefineTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(SetInputTaskAction)]
-        [DropdownValue(InvokeTaskAction)]
-        [DropdownValue(GetOutputTaskAction)]
-        [DropdownValue(DestroyTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
         /// Specifies the inputs for <see cref="Code"/>. Each input has a type and a name.
         /// </summary>
         /// <remarks>
@@ -503,8 +485,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>Otherwise, each input is represented by a task item. The name of an input is taken from the metadata "Name", if it exists; otherwise, it is taken from the item's identity. The type of an input is taken from the metadata "Type".</para>
         /// </remarks>
         /// <seealso cref="NoDefaultParameters"/>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public ITaskItem[] Inputs { get; set; }
 
         /// <summary>
@@ -515,8 +495,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This may be set to a string containing a comma-delimited or semicolon-delimited sequence of (type, name) pairs.</para>
         /// <para>Otherwise, each output is represented by a task item. The name of an output is taken from the metadata "Name", if it exists; otherwise, it is the item's identity. The type of an output is taken from the metadata "Type".</para>
         /// </remarks>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public ITaskItem[] Outputs { get; set; }
 
         /// <summary>
@@ -529,8 +507,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>The default references are System (System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), System.Core (System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089), Microsoft.Build.Framework (Microsoft.Build.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a), and Microsoft.Build.Utilities.v4.0 (Microsoft.Build.Utilities.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a).</para>
         /// </remarks>
         /// <seealso cref="NoDefaultReferences"/>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public ITaskItem[] References { get; set; }
 
         /// <summary>
@@ -542,8 +518,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>The default namespaces are System, System.Collections.Generic, System.Linq, System.Text, Microsoft.Build.Framework, and Microsoft.Build.Utilities.</para>
         /// </remarks>
         /// <seealso cref="NoDefaultUsingNamespaces"/>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public ITaskItem[] UsingNamespaces { get; set; }
 
         /// <summary>
@@ -553,8 +527,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is a required parameter for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// <para>This code is treated as a method body when compiled. The method does not return a value; rather, outputs are passed as reference parameters to the method.</para>
         /// </remarks>
-        [TaskAction(DefineTaskAction, true)]
-        [TaskAction(RunTaskAction, true)]
         public string Code { get; set; }
 
         /// <summary>
@@ -564,8 +536,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an optional parameter for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// </remarks>
         /// <seealso cref="UsingNamespaces"/>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public bool NoDefaultUsingNamespaces { get; set; }
 
         /// <summary>
@@ -575,8 +545,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an optional parameter for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// </remarks>
         /// <seealso cref="References"/>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public bool NoDefaultReferences { get; set; }
 
         /// <summary>
@@ -586,8 +554,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an optional parameter for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// </remarks>
         /// <seealso cref="Inputs"/>
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public bool NoDefaultParameters { get; set; }
 
         /// <summary>
@@ -596,8 +562,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is a required parameter for the <b>Create</b> and <b>Call</b> task actions.</para>
         /// </remarks>
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(CallTaskAction, true)]
         public string MethodId { get; set; }
 
         /// <summary>
@@ -606,10 +570,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is a required parameter for the <b>SetInput</b>, <b>Invoke</b>, <b>GetOutput</b>, and <b>Destroy</b> task actions.</para>
         /// </remarks>
-        [TaskAction(SetInputTaskAction, true)]
-        [TaskAction(InvokeTaskAction, true)]
-        [TaskAction(GetOutputTaskAction, true)]
-        [TaskAction(DestroyTaskAction, true)]
         public string ClosureId { get; set; }
 
         /// <summary>
@@ -618,8 +578,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is a required parameter for the <b>SetInput</b> and <b>GetOutput</b> task actions.</para>
         /// </remarks>
-        [TaskAction(SetInputTaskAction, true)]
-        [TaskAction(GetOutputTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -628,7 +586,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is a required parameter for the <b>SetInput</b> task action.</para>
         /// </remarks>
-        [TaskAction(SetInputTaskAction, true)]
         public ITaskItem[] InputValue { get; set; }
 
         /// <summary>
@@ -637,8 +594,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is an optional parameter for the <b>Run</b> and <b>Call</b> task actions.</para>
         /// </remarks>
-        [TaskAction(RunTaskAction, false)]
-        [TaskAction(CallTaskAction, false)]
         public ITaskItem[] Input1 { get; set; }
 
         /// <summary>
@@ -647,8 +602,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is an optional parameter for the <b>Run</b> and <b>Call</b> task actions.</para>
         /// </remarks>
-        [TaskAction(RunTaskAction, false)]
-        [TaskAction(CallTaskAction, false)]
         public ITaskItem[] Input2 { get; set; }
 
         /// <summary>
@@ -657,8 +610,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <remarks>
         /// <para>This is an optional parameter for the <b>Run</b> and <b>Call</b> task actions.</para>
         /// </remarks>
-        [TaskAction(RunTaskAction, false)]
-        [TaskAction(CallTaskAction, false)]
         public ITaskItem[] Input3 { get; set; }
 
         /// <summary>
@@ -668,8 +619,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an output for the <b>Define</b> and <b>Run</b> task actions.</para>
         /// </remarks>
         [Output]
-        [TaskAction(DefineTaskAction, false)]
-        [TaskAction(RunTaskAction, false)]
         public string OutputMethodId { get; private set; }
 
         /// <summary>
@@ -679,7 +628,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an output for the <b>Create</b> task action.</para>
         /// </remarks>
         [Output]
-        [TaskAction(CreateTaskAction, false)]
         public string OutputClosureId { get; private set; }
 
         /// <summary>
@@ -689,7 +637,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an output for the <b>GetOutput</b> task action.</para>
         /// </remarks>
         [Output]
-        [TaskAction(GetOutputTaskAction, false)]
         public ITaskItem[] OutputValue { get; private set; }
 
         /// <summary>
@@ -699,8 +646,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an output for the <b>Run</b> and <b>Call</b> task actions.</para>
         /// </remarks>
         [Output]
-        [TaskAction(RunTaskAction, false)]
-        [TaskAction(CallTaskAction, false)]
         public ITaskItem[] Output1 { get; private set; }
 
         /// <summary>
@@ -710,8 +655,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an output for the <b>Run</b> and <b>Call</b> task actions.</para>
         /// </remarks>
         [Output]
-        [TaskAction(RunTaskAction, false)]
-        [TaskAction(CallTaskAction, false)]
         public ITaskItem[] Output2 { get; private set; }
 
         /// <summary>
@@ -721,8 +664,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para>This is an output for the <b>Run</b> and <b>Call</b> task actions.</para>
         /// </remarks>
         [Output]
-        [TaskAction(RunTaskAction, false)]
-        [TaskAction(CallTaskAction, false)]
         public ITaskItem[] Output3 { get; private set; }
 
         protected override void InternalExecute()
@@ -1573,7 +1514,7 @@ namespace MSBuild.ExtensionPack.Framework
                 int i = this.methodDefinition.GetInputArgumentIndex(inputName);
                 if (i == -1)
                 {
-                    throw new KeyNotFoundException("DynamicExecute closure input name not recognized: " + inputName ?? "<null>");
+                    throw new KeyNotFoundException("DynamicExecute closure input name not recognized: " + inputName);
                 }
 
                 this.arguments[i] = value;
@@ -1605,7 +1546,7 @@ namespace MSBuild.ExtensionPack.Framework
                 int i = this.methodDefinition.GetOutputArgumentIndex(outputName);
                 if (i == -1)
                 {
-                    throw new KeyNotFoundException("DynamicExecute closure output name not recognized: " + outputName ?? "<null>");
+                    throw new KeyNotFoundException("DynamicExecute closure output name not recognized: " + outputName);
                 }
 
                 return this.arguments[i];
@@ -1637,7 +1578,7 @@ namespace MSBuild.ExtensionPack.Framework
                 int i = this.methodDefinition.GetInputArgumentIndex(inputName);
                 if (i == -1)
                 {
-                    throw new KeyNotFoundException("DynamicExecute closure input name not recognized: " + inputName ?? "<null>");
+                    throw new KeyNotFoundException("DynamicExecute closure input name not recognized: " + inputName);
                 }
 
                 return this.methodDefinition.CompiledMethod.GetParameters()[i].ParameterType;

@@ -147,7 +147,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/d6c3b5e8-00d4-c826-1a73-3cfe637f3827.htm")]
     public class AssemblyInfo : Task
     {
         private AssemblyVersionSettings assemblyFileVersionSettings;
@@ -1017,8 +1016,7 @@ namespace MSBuild.ExtensionPack.Framework
                 this.Log.LogMessage(MessageImportance.Low, "Updating assembly info for {0}", item.ItemSpec);
                 if (!this.SkipVersioning)
                 {
-                    Version versionToUpdate = null;
-
+                    Version versionToUpdate;
                     try
                     {
                         versionToUpdate = new Version(assemblyInfo["AssemblyVersion"], true);

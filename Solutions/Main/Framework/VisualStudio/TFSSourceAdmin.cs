@@ -33,57 +33,35 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/3a47a393-8a00-ad50-a5e7-55b3f131a724.htm")]
     public class TfsSourceAdmin : BaseTask
     {
-        private const string BranchTaskAction = "Branch";
-        private const string RenameTaskAction = "Rename";
-        
         private string teamFoundationExe;
         private string version = "2008";
         private ShellWrapper shellWrapper;
 
-        [DropdownValue(BranchTaskAction)]
-        [DropdownValue(RenameTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the version spec for Branch
         /// </summary>
-        [TaskAction(BranchTaskAction, false)]
-        [TaskAction(RenameTaskAction, false)]
         public string VersionSpec { get; set; }
 
         /// <summary>
         /// ItemSpec to branch
         /// </summary>
-        [TaskAction(BranchTaskAction, true)]
-        [TaskAction(RenameTaskAction, true)]
         public string OldItem { get; set; }
 
         /// <summary>
         /// ItemSpec to branch too
         /// </summary>
-        [TaskAction(BranchTaskAction, true)]
-        [TaskAction(RenameTaskAction, true)]
         public string NewItem { get; set; }
 
         /// <summary>
         /// Sets the working directory.
         /// </summary>
-        [TaskAction(BranchTaskAction, false)]
-        [TaskAction(RenameTaskAction, false)]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Sets the version of Tfs. Default is 2008
         /// </summary>
-        [TaskAction(BranchTaskAction, false)]
-        [TaskAction(RenameTaskAction, false)]
         public string Version
         {
             get { return this.version; }

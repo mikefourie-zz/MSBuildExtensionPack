@@ -207,7 +207,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ad44953a-08cd-5898-fa63-efb8495d2a92.htm")]
     public class ActiveDirectory : BaseTask
     {
         private const string AddUserTaskAction = "AddUser";
@@ -234,80 +233,29 @@ namespace MSBuild.ExtensionPack.Computer
         private ContextType contextType = ContextType.Domain;
         private PrivilegeType privilege;
 
-        [DropdownValue(AddUserTaskAction)]
-        [DropdownValue(AddGroupTaskAction)]
-        [DropdownValue(AddUserToGroupTaskAction)]
-        [DropdownValue(CheckUserExistsTaskAction)]
-        [DropdownValue(CheckUserPasswordTaskAction)]
-        [DropdownValue(CheckGroupExistsTaskAction)]
-        [DropdownValue(GetUserPasswordTaskAction)]
-        [DropdownValue(DeleteUserTaskAction)]
-        [DropdownValue(DeleteGroupTaskAction)]
-        [DropdownValue(DeleteUserFromGroupTaskAction)]
-        [DropdownValue(GrantPrivilegeTaskAction)]
-        [DropdownValue(AddGroupToGroupTaskAction)]
-        [DropdownValue(RemoveGroupFromGroupTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        [TaskAction(AddUserTaskAction, false)]
-        [TaskAction(AddGroupTaskAction, false)]
-        [TaskAction(AddUserToGroupTaskAction, false)]
-        [TaskAction(CheckUserExistsTaskAction, false)]
-        [TaskAction(CheckGroupExistsTaskAction, false)]
-        [TaskAction(DeleteUserTaskAction, false)]
-        [TaskAction(DeleteGroupTaskAction, false)]
-        [TaskAction(DeleteUserFromGroupTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
         /// <summary>
         /// Sets the User name. Supports DirectoryPath metadata for AddUserToGroup. Use this to supply different domain users.
         /// </summary>
-        [TaskAction(AddUserTaskAction, true)]
-        [TaskAction(AddUserToGroupTaskAction, true)]
-        [TaskAction(CheckUserPasswordTaskAction, true)]
-        [TaskAction(DeleteUserTaskAction, true)]
-        [TaskAction(DeleteUserFromGroupTaskAction, true)]
-        [TaskAction(GetUserPasswordTaskAction, true)]
-        [TaskAction(GrantPrivilegeTaskAction, true)]
         public ITaskItem[] User { get; set; }
 
         /// <summary>
         /// Sets the Group name
         /// </summary>
-        [TaskAction(AddUserToGroupTaskAction, true)]
-        [TaskAction(DeleteGroupTaskAction, true)]
-        [TaskAction(DeleteUserFromGroupTaskAction, true)]
-        [TaskAction(AddGroupToGroupTaskAction, true)]
-        [TaskAction(RemoveGroupFromGroupTaskAction, true)]
         public ITaskItem[] Group { get; set; }
 
         /// <summary>
         /// Sets the User's full name
         /// </summary>
-        [TaskAction(AddUserTaskAction, false)]
-        [TaskAction(AddGroupTaskAction, false)]
         public string FullName { get; set; }
 
         /// <summary>
         /// Sets the User's or Group's description
         /// </summary>
-        [TaskAction(AddUserTaskAction, false)]
-        [TaskAction(AddGroupTaskAction, false)]
         public string Description { get; set; }
 
         /// <summary>
         /// Sets the User's password
         /// </summary>
-        [TaskAction(AddUserTaskAction, false)]
-        [TaskAction(CheckUserPasswordTaskAction, true)]
         [Output]
         public string Password { get; set; }
 
@@ -319,7 +267,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the User's password to expired. Default is false
         /// </summary>
-        [TaskAction(AddUserTaskAction, false)]
         public bool PasswordExpired
         {
             get { return this.passwordExpired == 1; }
@@ -329,15 +276,11 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the User's password to never expire. Default is false
         /// </summary>
-        [TaskAction(AddUserTaskAction, false)]
         public bool PasswordNeverExpires { get; set; }
 
         /// <summary>
         /// Sets the domain to operate against.
         /// </summary>
-        [TaskAction(AddUserTaskAction, false)]
-        [TaskAction(AddGroupTaskAction, false)]
-        [TaskAction(GetUserPasswordTaskAction, false)]
         public string Domain
         {
             get { return this.domain; }
@@ -347,7 +290,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the GroupType. For non domains the default is Local. For Domains the default is Global. Supports Global, Local, Universal
         /// </summary>
-        [TaskAction(AddGroupTaskAction, false)]
         public string GroupType
         {
             get { return this.groupType.ToString(); }
@@ -357,8 +299,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Specifies the store to use. Supports Machine and Domain. Default is Domain.
         /// </summary>
-        [TaskAction(CheckUserPasswordTaskAction, false)]
-        [TaskAction(GetUserPasswordTaskAction, false)]
         public string ContextTypeStore
         {
             get { return this.contextType.ToString(); }
@@ -368,14 +308,11 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Set to true to raise an error if the user clicks cancel on GetPassword form.
         /// </summary>
-        [TaskAction(GetUserPasswordTaskAction, false)]
         public bool ErrorOnCancel { get; set; }
         
         /// <summary>
         /// Specifies the options that are used for binding to the server. Default is Negotiate
         /// </summary>
-        [TaskAction(CheckUserPasswordTaskAction, false)]
-        [TaskAction(GetUserPasswordTaskAction, false)]
         public ITaskItem[] BindingContextOptions
         {
             set { this.bindingContextOptions = SetBindingOptions(value); }
@@ -410,8 +347,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the Parent group
         /// </summary>
-        [TaskAction(AddGroupToGroupTaskAction, true)]
-        [TaskAction(RemoveGroupFromGroupTaskAction, true)]
         public string ParentGroup { get; set; }
 
         /// <summary>
@@ -612,7 +547,7 @@ namespace MSBuild.ExtensionPack.Computer
                             break;
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     // do nothing
                 }

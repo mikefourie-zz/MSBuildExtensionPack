@@ -40,36 +40,24 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/c68d1d6c-b0bc-c944-e1a2-1ad4f0c28d3c.htm")]
     public class VB6 : BaseTask
     {
-        private const string BuildTaskAction = "Build";
         private const char Separator = ';';
-
-        [DropdownValue(BuildTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the VB6Path. Default is [Program Files]\Microsoft Visual Studio\VB98\VB6.exe
         /// </summary>
-        [TaskAction(BuildTaskAction, false)]
         public string VB6Path { get; set; }
 
         /// <summary>
         /// Set to true to stop processing when a project in the Projects collection fails to compile. Default is false.
         /// </summary>
-        [TaskAction(BuildTaskAction, false)]
         public bool StopOnError { get; set; }
 
         /// <summary>
         /// Sets the projects. Use an 'OutDir' metadata item to specify the output directory. The OutDir will be created if it does not exist.
         /// </summary>
         [Required]
-        [TaskAction(BuildTaskAction, true)]
         public ITaskItem[] Projects { get; set; }
 
         protected override void InternalExecute()

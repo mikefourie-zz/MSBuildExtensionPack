@@ -2,7 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{06FDB13A-E163-49EE-AC60-4EF4085DADC5}"
 	ProjectSection(SolutionItems) = preProject
-		Common\Attributes.cs = Common\Attributes.cs
 		Common\BaseAppDomainIsolatedTask.cs = Common\BaseAppDomainIsolatedTask.cs
 		Common\BaseTask.cs = Common\BaseTask.cs
 		Common\ExtensionPack.public.snk = Common\ExtensionPack.public.snk

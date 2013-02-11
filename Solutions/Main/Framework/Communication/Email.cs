@@ -35,65 +35,49 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/2439bba8-d062-a4b9-3ca6-2e348d031ec1.htm")]
     public class Email : BaseTask
     {
-        private const string SendTaskAction = "Send";
         private bool useDefaultCredentials = true;
         private string format = "HTML";
         private System.Net.Mail.MailPriority priority = System.Net.Mail.MailPriority.Normal;
-
-        [DropdownValue(SendTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// The SMTP server to use to send the email.
         /// </summary>
         [Required]
-        [TaskAction(SendTaskAction, true)]
         public string SmtpServer { get; set; }
 
         /// <summary>
         /// Sets the port to use. Ignored if not specified.
         /// </summary>
-        [TaskAction(SendTaskAction, true)]
         public int Port { get; set; }
 
         /// <summary>
         /// Sets whether to EnableSsl
         /// </summary>
-        [TaskAction(SendTaskAction, true)]
         public bool EnableSsl { get; set; }
 
         /// <summary>
         /// The email address to send the email from.
         /// </summary>
         [Required]
-        [TaskAction(SendTaskAction, true)]
         public string MailFrom { get; set; }
 
         /// <summary>
         /// Sets the Item Colleciton of email address to send the email to.
         /// </summary>
         [Required]
-        [TaskAction(SendTaskAction, true)]
         public ITaskItem[] MailTo { get; set; }
 
         /// <summary>
         /// The subject of the email.
         /// </summary>
         [Required]
-        [TaskAction(SendTaskAction, true)]
         public string Subject { get; set; }
 
         /// <summary>
         /// The priority of the email. Default is Normal (also available High and Low).
         /// </summary>
-        [TaskAction(SendTaskAction, false)]
         public string Priority
         {
             get { return this.priority.ToString(); }
@@ -103,13 +87,11 @@ namespace MSBuild.ExtensionPack.Communication
         /// <summary>
         /// The body of the email.
         /// </summary>
-        [TaskAction(SendTaskAction, false)]
         public string Body { get; set; }
 
         /// <summary>
         /// Sets the format of the email. Default is HTML
         /// </summary>
-        [TaskAction(SendTaskAction, false)]
         public string Format
         {
             get { return this.format; }
@@ -121,7 +103,6 @@ namespace MSBuild.ExtensionPack.Communication
         /// <para>If UserName and UserPassword is supplied, this is set to false. If UserName and UserPassword are not supplied and this is set to false then mail is sent to the server anonymously.</para>
         /// <para><b>If you provide credentials for basic authentication, they are sent to the server in clear text. This can present a security issue because your credentials can be seen, and then used by others.</b></para>
         /// </summary>
-        [TaskAction(SendTaskAction, false)]
         public bool UseDefaultCredentials
         {
             get { return this.useDefaultCredentials; }
@@ -131,7 +112,6 @@ namespace MSBuild.ExtensionPack.Communication
         /// <summary>
         /// An Item Collection of full paths of files to attach to the email.
         /// </summary>
-        [TaskAction(SendTaskAction, false)]
         public ITaskItem[] Attachments { get; set; }
 
         /// <summary>

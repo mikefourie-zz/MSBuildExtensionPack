@@ -53,43 +53,27 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/17390384-36ed-d9a9-b208-7e5207c778af.htm")]
     public class EnvironmentVariable : BaseTask
     {
         private const string GetTaskAction = "Get";
         private const string SetTaskAction = "Set";
-        
         private EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
-
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(SetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Gets or sets the value. May be a string array for Get. If Value is not passed or empty for Set, the environment variable is deleted.
         /// </summary>
         [Output]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(SetTaskAction, true)]
         public string[] Value { get; set; }
 
         /// <summary>
         /// The name of the Environment Variable to get or set.
         /// </summary>
         [Required]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string Variable { get; set; }
 
         /// <summary>
         /// Machine, Process or User. Defaults to Process
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(SetTaskAction, false)]
         public string Target
         {
             get

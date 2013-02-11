@@ -31,7 +31,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/c5420cf1-0107-8a74-1621-99fc367d9351.htm")]
     public class ILMerge : ToolTask
     {
         private int fileAlignment = 512;

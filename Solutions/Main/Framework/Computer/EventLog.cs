@@ -55,7 +55,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/13fd881e-bc34-d8a6-8f2c-9f086044c17a.htm")]
     public class EventLog : BaseTask
     {
         private const string BackupTaskAction = "Backup";
@@ -65,90 +64,51 @@ namespace MSBuild.ExtensionPack.Computer
         private const string DeleteTaskAction = "Delete";
         private const string ModifyTaskAction = "Modify";
 
-        [DropdownValue(BackupTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(ClearTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(ModifyTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the size of the max.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(ModifyTaskAction, false)]
         public int MaxSize { get; set; }
 
         /// <summary>
         /// Sets the retention. Any value > 0 is interpreted as days to retain. Use -1 for 'Overwrite as needed'. Use -2 for 'Never Overwrite'
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(ModifyTaskAction, false)]
         public int Retention { get; set; }
 
         /// <summary>
         /// Sets the name of the Event Log
         /// </summary>
         [Required]
-        [TaskAction(BackupTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(ClearTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(ModifyTaskAction, true)]
         public string LogName { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the event log exists.
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
-
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(ClearTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(ModifyTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
 
         /// <summary>
         /// Sets the number of categories in the category resource file
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public int CategoryCount { get; set; }
 
         /// <summary>
         /// Sets the path of the message resource file to configure an event log source to write localized event messages
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string MessageResourceFile { get; set; }
 
         /// <summary>
         /// Sets the path of the category resource file to write events with localized category strings
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string CategoryResourceFile { get; set; }
 
         /// <summary>
         /// Sets the path of the parameter resource file to configure an event log source to write localized event messages with inserted parameter strings
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string ParameterResourceFile { get; set; }
 
         /// <summary>
         /// Sets the Backup Path
         /// </summary>
-        [TaskAction(BackupTaskAction, true)]
         public string BackupPath { get; set; }
         
         /// <summary>

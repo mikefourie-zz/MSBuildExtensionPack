@@ -135,7 +135,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
 
         /// <summary>
         /// Returns the directory currently set on the Ftp site in current session.
-        /// </summary>        
+        /// </summary>
         /// <returns>The path of the current directory</returns>
         public string GetCurrentDirectory()
         {

@@ -95,7 +95,6 @@ namespace MSBuild.ExtensionPack.Subversion
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/49c5813e-de80-c2c4-9802-878e9cc37432.htm")]
     public class Svn : BaseTask
     {
         #region constants
@@ -120,18 +119,6 @@ namespace MSBuild.ExtensionPack.Subversion
 
         #region task properties
         [Required]
-        [DropdownValue(VersionTaskAction)]
-        [DropdownValue(InfoTaskAction)]
-        [DropdownValue(GetPropertyTaskAction)]
-        [DropdownValue(SetPropertyTaskAction)]
-        [DropdownValue(CheckoutTaskAction)]
-        [DropdownValue(UpdateTaskAction)]
-        [DropdownValue(AddTaskAction)]
-        [DropdownValue(CopyTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(MoveTaskAction)]
-        [DropdownValue(CommitTaskAction)]
-        [DropdownValue(ExportTaskAction)]
         public override string TaskAction
         {
             get { return base.TaskAction; }
@@ -141,54 +128,32 @@ namespace MSBuild.ExtensionPack.Subversion
         /// <summary>
         /// The item that the Version, Info, GetProperty, SetProperty and Export actions use.
         /// </summary>
-        [TaskAction(VersionTaskAction, true)]
-        [TaskAction(InfoTaskAction, true)]
-        [TaskAction(GetPropertyTaskAction, true)]
-        [TaskAction(SetPropertyTaskAction, true)]
-        [TaskAction(ExportTaskAction, true)]
         public ITaskItem Item { get; set; }
 
         /// <summary>
         /// The items that the Checkout, Update, Add, Copy, Delete, Move and Commit actions use.
         /// </summary>
-        [TaskAction(CheckoutTaskAction, true)]
-        [TaskAction(UpdateTaskAction, true)]
-        [TaskAction(AddTaskAction, true)]
-        [TaskAction(CopyTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(MoveTaskAction, true)]
-        [TaskAction(CommitTaskAction, true)]
         public ITaskItem[] Items { get; set; }
 
         /// <summary>
         /// The destination that the Checkout, Copy, Move and Export actions use.
         /// </summary>
-        [TaskAction(CheckoutTaskAction, true)]
-        [TaskAction(CopyTaskAction, true)]
-        [TaskAction(MoveTaskAction, true)]
-        [TaskAction(ExportTaskAction, true)]
         public ITaskItem Destination { get; set; }
 
         /// <summary>
         /// Filled up by the Version and Info actions.
         /// </summary>
         [Output]
-        [TaskAction(VersionTaskAction, false)]
-        [TaskAction(InfoTaskAction, false)]
         public ITaskItem Info { get; set; }
 
         /// <summary>
         /// The name of the property that the GetProperty and SetProperty actions use.
         /// </summary>
-        [TaskAction(GetPropertyTaskAction, true)]
-        [TaskAction(SetPropertyTaskAction, true)]
         public string PropertyName { get; set; }
 
         /// <summary>
         /// The value of the property that the GetProperty action returns and the SetProperty action sets.
         /// </summary>
-        [TaskAction(GetPropertyTaskAction, false)]
-        [TaskAction(SetPropertyTaskAction, true)]
         [Output]
         public string PropertyValue { get; set; }
         #endregion
@@ -314,7 +279,7 @@ namespace MSBuild.ExtensionPack.Subversion
             var paths = Environment.GetEnvironmentVariable("PATH");
             if (paths != null)
             {
-                return paths.Split(Path.PathSeparator).FirstOrDefault(path => IsSvnPath(path));
+                return paths.Split(Path.PathSeparator).FirstOrDefault(IsSvnPath);
             }
 
             return null;

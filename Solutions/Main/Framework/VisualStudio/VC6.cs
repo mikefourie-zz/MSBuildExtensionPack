@@ -44,7 +44,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/4ad82db2-621c-7172-87ab-86a587ef7856.htm")]
     public class VC6 : BaseTask
     {
         private const string DefaultMSDEVPath = @"\Microsoft Visual Studio\Common\MSDev98\Bin\MSDEV.EXE";
@@ -56,29 +55,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string ConfigurationMetadataName = "Configuration";
         private const char Separator = ';';
 
-        [DropdownValue(BuildTaskAction)]
-        [DropdownValue(CleanTaskAction)]
-        [DropdownValue(RebuildTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the MSDEV path. Default is [Program Files]\Microsoft Visual Studio\Common\MSDev98\Bin\MSDEV.EXE
         /// </summary>
-        [TaskAction(BuildTaskAction, false)]
-        [TaskAction(CleanTaskAction, false)]
-        [TaskAction(RebuildTaskAction, false)]
         public string MSDEVPath { get; set; }
 
         /// <summary>
         /// Set to true to stop processing when a project in the Projects collection fails to compile. Default is false.
         /// </summary>
-        [TaskAction(BuildTaskAction, false)]
-        [TaskAction(CleanTaskAction, false)]
-        [TaskAction(RebuildTaskAction, false)]
         public bool StopOnError { get; set; }
 
         /// <summary>
@@ -90,9 +74,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// projects contained within the workspace/project.
         /// </remarks>
         [Required]
-        [TaskAction(BuildTaskAction, true)]
-        [TaskAction(CleanTaskAction, true)]
-        [TaskAction(RebuildTaskAction, true)]
         public ITaskItem[] Projects { get; set; }
 
         protected override void InternalExecute()

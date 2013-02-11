@@ -60,7 +60,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
@@ -73,18 +72,6 @@ namespace MSBuild.ExtensionPack.Computer
         private RegistryHive hive;
         private RegistryView view = Microsoft.Win32.RegistryView.Default;
 
-        [DropdownValue(CheckEmptyTaskAction)]
-        [DropdownValue(CreateKeyTaskAction)]
-        [DropdownValue(DeleteKeyTaskAction)]
-        [DropdownValue(DeleteKeyTreeTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(SetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the type of the data. RegistryValueKind Enumeration. Support for Binary, DWord, MultiString, QWord, ExpandString
         /// </summary>
@@ -94,26 +81,17 @@ namespace MSBuild.ExtensionPack.Computer
         /// Gets the data.
         /// </summary>
         [Output]
-        [TaskAction(GetTaskAction, false)]
         public string Data { get; set; }
 
         /// <summary>
         /// Sets the value. If Value is not provided, an attempt will be made to read the Default Value.
         /// </summary>
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the Registry Hive. Supports ClassesRoot, CurrentUser, LocalMachine, Users, PerformanceData, CurrentConfig, DynData
         /// </summary>
         [Required]
-        [TaskAction(CheckEmptyTaskAction, true)]
-        [TaskAction(CreateKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTreeTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string RegistryHive
         {
             get
@@ -130,12 +108,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the Registry View. Supports Registry32, Registry64 and Default. Defaults to Default
         /// </summary>
-        [TaskAction(CheckEmptyTaskAction, true)]
-        [TaskAction(CreateKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTreeTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string RegistryView
         {
             get
@@ -153,19 +125,12 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the key.
         /// </summary>
         [Required]
-        [TaskAction(CheckEmptyTaskAction, true)]
-        [TaskAction(CreateKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTreeTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
         /// Indicates whether the Registry Key is empty or not
         /// </summary>
         [Output]
-        [TaskAction(CheckEmptyTaskAction, false)]
         public bool Empty { get; set; }
 
         /// <summary>

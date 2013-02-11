@@ -68,7 +68,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/0a950eab-38f1-306b-3851-50fc27ef8609.htm")]
     public sealed class ConfigManager : BaseTask
     {
         private const string RemoveAppSettingTaskAction = "RemoveAppSetting";
@@ -85,10 +84,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Which .NET framework configuration file to update. Supports WebConfig and MachineConfig. Default is MachineConfig
         /// </summary>
-        [TaskAction(SetAppSettingTaskAction, false)]
-        [TaskAction(SetConnectionStringTaskAction, false)]
-        [TaskAction(RemoveAppSettingTaskAction, false)]
-        [TaskAction(RemoveConnectionStringTaskAction, false)]
         public string ConfigurationFileType
         {
             get { return this.configurationFileType.ToString(); }
@@ -98,29 +93,17 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets the Site to work on. Leave blank to target the .net framework web.config
         /// </summary>
-        [TaskAction(SetAppSettingTaskAction, false)]
-        [TaskAction(SetConnectionStringTaskAction, false)]
-        [TaskAction(RemoveAppSettingTaskAction, false)]
-        [TaskAction(RemoveConnectionStringTaskAction, false)]
         public string Site { get; set; }
 
         /// <summary>
         /// Sets the Path to work on. Leave blank to target the .net framework web.config
         /// </summary>
-        [TaskAction(SetAppSettingTaskAction, false)]
-        [TaskAction(SetConnectionStringTaskAction, false)]
-        [TaskAction(RemoveAppSettingTaskAction, false)]
-        [TaskAction(RemoveConnectionStringTaskAction, false)]
         public string Path { get; set; }
 
         /// <summary>
         /// How should changes to the config file be saved? See 
         /// http://msdn.microsoft.com/en-us/library/system.configuration.configurationsavemode.aspx for the list of values. Default is Minimal
         /// </summary>
-        [TaskAction(SetAppSettingTaskAction, false)]
-        [TaskAction(SetConnectionStringTaskAction, false)]
-        [TaskAction(RemoveAppSettingTaskAction, false)]
-        [TaskAction(RemoveConnectionStringTaskAction, false)]
         public string SaveMode
         {
             get { return this.saveMode.ToString(); }
@@ -130,23 +113,16 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// The setting name to update.
         /// </summary>
-        [TaskAction(SetAppSettingTaskAction, false)]
-        [TaskAction(SetConnectionStringTaskAction, false)]
-        [TaskAction(RemoveAppSettingTaskAction, false)]
-        [TaskAction(RemoveConnectionStringTaskAction, false)]
         public string SettingName { get; set; }
 
         /// <summary>
         /// The config section to protect or unprotect
         /// </summary>
-        [TaskAction(ProtectConfigSectionAction, true)]
-        [TaskAction(UnprotectConfigSectionAction, true)]
         public string Section { get; set; }
 
         /// <summary>
         /// The encryption provider. Supports RSAProtectedConfigurationProvider and DataProtectionConfigurationProvider. Default is RSAProtectedConfigurationProvider
         /// </summary>
-        [TaskAction(ProtectConfigSectionAction, true)]
         public string ProtectionProvider
         {
             get { return this.protectionProvider; }
@@ -156,20 +132,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// The setting's value.
         /// </summary>
-        [TaskAction(SetAppSettingTaskAction, false)]
-        [TaskAction(SetConnectionStringTaskAction, false)]
         public string SettingValue { get; set; }
-
-        /// <summary>
-        /// The action this task should take.  Accepted values are SetAppSetting and SetConnectionString.
-        /// </summary>
-        [DropdownValue(SetAppSettingTaskAction)]
-        [DropdownValue(SetConnectionStringTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         private Configuration Config { get; set; }
 

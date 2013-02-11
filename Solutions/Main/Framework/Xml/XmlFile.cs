@@ -147,7 +147,6 @@ namespace MSBuild.ExtensionPack.Xml
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/4009fe8c-73c1-154f-ee8c-e9fda7f5fd96.htm")]
     public class XmlFile : BaseTask
     {
         private const string AddAttributeTaskAction = "AddAttribute";
@@ -165,79 +164,45 @@ namespace MSBuild.ExtensionPack.Xml
         private XmlNodeList elements;
         private int retryCount = 5;
 
-        [DropdownValue(AddAttributeTaskAction)]
-        [DropdownValue(AddElementTaskAction)]
-        [DropdownValue(ReadAttributeTaskAction)]
-        [DropdownValue(ReadElementTextTaskAction)]
-        [DropdownValue(ReadElementXmlTaskAction)]
-        [DropdownValue(RemoveAttributeTaskAction)]
-        [DropdownValue(RemoveElementTaskAction)]
-        [DropdownValue(UpdateAttributeTaskAction)]
-        [DropdownValue(UpdateElementTaskAction)]
-        [DropdownValue(ReadElementsTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the element. For AddElement, if the element exists, it's InnerText / InnerXml will be updated
         /// </summary>
-        [TaskAction(AddAttributeTaskAction, true)]
-        [TaskAction(AddElementTaskAction, true)]
-        [TaskAction(RemoveAttributeTaskAction, true)]
-        [TaskAction(RemoveElementTaskAction, true)]
         public string Element { get; set; }
 
         /// <summary>
         /// Sets the InnerText.
         /// </summary>
-        [TaskAction(AddElementTaskAction, false)]
-        [TaskAction(UpdateElementTaskAction, false)]
         public string InnerText { get; set; }
 
         /// <summary>
         /// Sets the InnerXml.
         /// </summary>
-        [TaskAction(AddElementTaskAction, false)]
-        [TaskAction(UpdateElementTaskAction, false)]
         public string InnerXml { get; set; }
 
         /// <summary>
         /// Sets the Prefix used for an added element/attribute, prefix must exists in Namespaces.
         /// </summary>
-        [TaskAction(AddElementTaskAction, false)]
-        [TaskAction(AddAttributeTaskAction, false)]
         public string Prefix { get; set; }
 
         /// <summary>
         /// Sets the parent element.
         /// </summary>
-        [TaskAction(AddElementTaskAction, true)]
-        [TaskAction(RemoveElementTaskAction, true)]
         public string ParentElement { get; set; }
 
         /// <summary>
         /// Sets the Attribute key.
         /// </summary>
-        [TaskAction(AddAttributeTaskAction, false)]
-        [TaskAction(RemoveAttributeTaskAction, true)]
-        [TaskAction(UpdateAttributeTaskAction, false)]
         public string Key { get; set; }
 
         /// <summary>
         /// Gets or Sets the Attribute key value. Also stores the result of any Read TaskActions
         /// </summary>
-        [TaskAction(AddAttributeTaskAction, true)]
-        [TaskAction(UpdateAttributeTaskAction, false)]
         [Output]
         public string Value { get; set; }
 
         /// <summary>
         /// Gets the elements selected using ReadElements
         /// </summary>
-        [TaskAction(ReadElementsTaskAction, true)]
         [Output]
         public ITaskItem[] Elements { get; set; }
 
@@ -245,66 +210,31 @@ namespace MSBuild.ExtensionPack.Xml
         /// Sets the file.
         /// </summary>
         [Required]
-        [TaskAction(AddAttributeTaskAction, true)]
-        [TaskAction(AddElementTaskAction, true)]
-        [TaskAction(ReadAttributeTaskAction, true)]
-        [TaskAction(ReadElementTextTaskAction, true)]
-        [TaskAction(ReadElementXmlTaskAction, true)]
-        [TaskAction(RemoveAttributeTaskAction, true)]
-        [TaskAction(RemoveElementTaskAction, true)]
-        [TaskAction(ReadElementsTaskAction, true)]
         public ITaskItem File { get; set; }
 
         /// <summary>
         /// Specifies the XPath to be used
         /// </summary>
-        [TaskAction(AddAttributeTaskAction, false)]
-        [TaskAction(AddElementTaskAction, false)]
-        [TaskAction(ReadAttributeTaskAction, true)]
-        [TaskAction(ReadElementTextTaskAction, true)]
-        [TaskAction(ReadElementXmlTaskAction, true)]
-        [TaskAction(RemoveAttributeTaskAction, false)]
-        [TaskAction(RemoveElementTaskAction, false)]
-        [TaskAction(UpdateElementTaskAction, false)]
-        [TaskAction(ReadElementsTaskAction, true)]
         public string XPath { get; set; }
 
         /// <summary>
         /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to single node.
         /// </summary>
-        [TaskAction(AddElementTaskAction, false)]
         public string InsertBeforeXPath { get; set; }
 
         /// <summary>
         /// Specifies the XPath to be used to control where a new element is added. The Xpath must resolve to single node.
         /// </summary>
-        [TaskAction(AddElementTaskAction, false)]
         public string InsertAfterXPath { get; set; }
 
         /// <summary>
         /// TaskItems specifiying "Prefix" and "Uri" attributes for use with the specified XPath
         /// </summary>
-        [TaskAction(AddAttributeTaskAction, false)]
-        [TaskAction(AddElementTaskAction, false)]
-        [TaskAction(ReadAttributeTaskAction, false)]
-        [TaskAction(ReadElementTextTaskAction, false)]
-        [TaskAction(ReadElementXmlTaskAction, false)]
-        [TaskAction(RemoveAttributeTaskAction, false)]
-        [TaskAction(RemoveElementTaskAction, false)]
-        [TaskAction(UpdateAttributeTaskAction, false)]
-        [TaskAction(UpdateElementTaskAction, false)]
-        [TaskAction(ReadElementsTaskAction, false)]
         public ITaskItem[] Namespaces { get; set; }
 
         /// <summary>
         /// Sets a value indicating how many times to retry saving the file, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
         /// </summary>
-        [TaskAction(AddAttributeTaskAction, false)]
-        [TaskAction(AddElementTaskAction, false)]
-        [TaskAction(RemoveAttributeTaskAction, false)]
-        [TaskAction(RemoveElementTaskAction, false)]
-        [TaskAction(UpdateAttributeTaskAction, false)]
-        [TaskAction(UpdateElementTaskAction, false)]
         public int RetryCount
         {
             get { return this.retryCount; }

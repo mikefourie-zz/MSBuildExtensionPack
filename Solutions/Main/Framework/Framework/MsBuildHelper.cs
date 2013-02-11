@@ -186,86 +186,41 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/d73eca07-8b36-919e-cbb6-ea1c17667dfe.htm")]
     public class MSBuildHelper : BaseTask
     {
-        private const string EscapeTaskAction = "Escape";
-        private const string FilterItemsTaskAction = "FilterItems";
-        private const string GetCommonItemsTaskAction = "GetCommonItems";
-        private const string GetCurrentDirectoryTaskAction = "GetCurrentDirectory";
-        private const string GetDistinctItemsTaskAction = "GetDistinctItems";
-        private const string GetItemTaskAction = "GetItem";
-        private const string GetItemCountTaskAction = "GetItemCount";
-        private const string GetLastItemTaskAction = "GetLastItem";
-        private const string RemoveDuplicateFilesTaskAction = "RemoveDuplicateFiles";
-        private const string SortTaskAction = "Sort";
-        private const string StringToItemColTaskAction = "StringToItemCol";
-        private const string ItemColToStringTaskAction = "ItemColToString";
-        private const string UpdateMetadataTaskAction = "UpdateMetadata";
-        private const string FilterItemsOnMetadataTaskAction = "FilterItemsOnMetadata";
-
         private List<ITaskItem> inputItems1;
         private List<ITaskItem> inputItems2;
         private List<ITaskItem> outputItems;
 
-        [DropdownValue(EscapeTaskAction)]
-        [DropdownValue(FilterItemsTaskAction)]
-        [DropdownValue(GetCommonItemsTaskAction)]
-        [DropdownValue(GetCurrentDirectoryTaskAction)]
-        [DropdownValue(GetDistinctItemsTaskAction)]
-        [DropdownValue(GetItemTaskAction)]
-        [DropdownValue(GetItemCountTaskAction)]
-        [DropdownValue(GetLastItemTaskAction)]
-        [DropdownValue(ItemColToStringTaskAction)]
-        [DropdownValue(RemoveDuplicateFilesTaskAction)]
-        [DropdownValue(SortTaskAction)]
-        [DropdownValue(StringToItemColTaskAction)]
-        [DropdownValue(UpdateMetadataTaskAction)]
-        [DropdownValue(FilterItemsOnMetadataTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-        
         /// <summary>
         /// Gets the current directory
         /// </summary>
         [Output]
-        [TaskAction(GetCurrentDirectoryTaskAction, false)]
         public string CurrentDirectory { get; set; }
 
         /// <summary>
         /// Sets the position of the Item to get
         /// </summary>
-        [TaskAction(GetItemTaskAction, true)]
         public int Position { get; set; }
 
         /// <summary>
         /// Sets the string to convert to a Task Item
         /// </summary>
-        [TaskAction(StringToItemColTaskAction, true)]
         public string ItemString { get; set; }
 
         /// <summary>
         /// Sets the separator to use for splitting the ItemString when calling StringToItemCol. Also used in FilterItemsOnMetadata
         /// </summary>
-        [TaskAction(ItemColToStringTaskAction, false)]
-        [TaskAction(StringToItemColTaskAction, true)]
-        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public string Separator { get; set; }
 
         /// <summary>
         /// Sets the input string
         /// </summary>
-        [TaskAction(EscapeTaskAction, true)]
         public string InString { get; set; }
 
         /// <summary>
         /// Sets the Metadata
         /// </summary>
-        [TaskAction(FilterItemsTaskAction, false)]
-        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public string Metadata { get; set; }
 
         /// <summary>
@@ -277,17 +232,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets InputItems1.
         /// </summary>
-        [TaskAction(FilterItemsTaskAction, true)]
-        [TaskAction(GetCommonItemsTaskAction, true)]
-        [TaskAction(GetDistinctItemsTaskAction, true)]
-        [TaskAction(GetItemTaskAction, true)]
-        [TaskAction(GetItemCountTaskAction, true)]
-        [TaskAction(GetLastItemTaskAction, true)]
-        [TaskAction(ItemColToStringTaskAction, true)]
-        [TaskAction(RemoveDuplicateFilesTaskAction, true)]
-        [TaskAction(SortTaskAction, true)]
-        [TaskAction(UpdateMetadataTaskAction, true)]
-        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public ITaskItem[] InputItems1
         {
             get { return this.inputItems1.ToArray(); }
@@ -297,10 +241,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets InputItems2.
         /// </summary>
-        [TaskAction(GetCommonItemsTaskAction, true)]
-        [TaskAction(GetDistinctItemsTaskAction, true)]
-        [TaskAction(UpdateMetadataTaskAction, true)]
-        [TaskAction(FilterItemsOnMetadataTaskAction, true)]
         public ITaskItem[] InputItems2
         {
             get { return this.inputItems2.ToArray(); }
@@ -311,15 +251,6 @@ namespace MSBuild.ExtensionPack.Framework
         /// Gets the OutputItems.
         /// </summary>
         [Output]
-        [TaskAction(GetCommonItemsTaskAction, false)]
-        [TaskAction(GetDistinctItemsTaskAction, false)]
-        [TaskAction(GetItemTaskAction, false)]
-        [TaskAction(GetLastItemTaskAction, false)]
-        [TaskAction(ItemColToStringTaskAction, false)]
-        [TaskAction(RemoveDuplicateFilesTaskAction, false)]
-        [TaskAction(SortTaskAction, true)]
-        [TaskAction(StringToItemColTaskAction, false)]
-        [TaskAction(FilterItemsOnMetadataTaskAction, false)]
         public ITaskItem[] OutputItems
         {
             get { return this.outputItems == null ? null : this.outputItems.ToArray(); }
@@ -330,17 +261,11 @@ namespace MSBuild.ExtensionPack.Framework
         /// Gets the ItemCount.
         /// </summary>
         [Output]
-        [TaskAction(GetCommonItemsTaskAction, false)]
-        [TaskAction(GetDistinctItemsTaskAction, false)]
-        [TaskAction(GetItemCountTaskAction, false)]
-        [TaskAction(RemoveDuplicateFilesTaskAction, false)]
-        [TaskAction(StringToItemColTaskAction, false)]
         public int ItemCount { get; set; }
 
         /// <summary>
         /// Sets the regex pattern.
         /// </summary>
-        [TaskAction(FilterItemsTaskAction, true)]
         public string RegexPattern { get; set; }
 
         protected override void InternalExecute()
@@ -352,13 +277,13 @@ namespace MSBuild.ExtensionPack.Framework
 
             switch (this.TaskAction)
             {
-                case FilterItemsOnMetadataTaskAction:
+                case "FilterItemsOnMetadata":
                     this.FilterItemsOnMetadata();
                     break;
                 case "Escape":
                     this.Escape();
                     break;
-                case FilterItemsTaskAction:
+                case "FilterItems":
                     this.FilterItems();
                     break;
                 case "RemoveDuplicateFiles":
@@ -388,10 +313,10 @@ namespace MSBuild.ExtensionPack.Framework
                 case "StringToItemCol":
                     this.StringToItemCol();
                     break;
-                case ItemColToStringTaskAction:
+                case "ItemColToString":
                     this.ItemColToString();
                     break;
-                case UpdateMetadataTaskAction:
+                case "UpdateMetadata":
                     this.UpdateMetadata();
                     break;
                 default:

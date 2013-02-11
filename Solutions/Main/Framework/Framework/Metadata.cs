@@ -37,23 +37,14 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/469bf63a-ec25-9248-f956-7bf87e364cbd.htm")]
     public class Metadata : BaseTask
     {
         private const string AddTaskAction = "Add";
 
-        [DropdownValue(AddTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-        
         /// <summary>
         /// Sets the source Items.
         /// </summary>
         [Required]
-        [TaskAction(AddTaskAction, true)]
         public ITaskItem[] Items { get; set; }
 
         /// <summary>
@@ -61,14 +52,12 @@ namespace MSBuild.ExtensionPack.Framework
         /// This should be in the format <i>n1=v1;n2=v2;...</i>
         /// </summary>
         [Required]
-        [TaskAction(AddTaskAction, true)]
         public string NewMetadata { get; set; }
         
         /// <summary>
         /// Gets the item which contains the result.
         /// </summary>
         [Output]
-        [TaskAction(AddTaskAction, false)]
         public ITaskItem[] ResultItems { get; protected set; }
 
         protected override void InternalExecute()

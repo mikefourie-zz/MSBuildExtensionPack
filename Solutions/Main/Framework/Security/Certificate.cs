@@ -225,7 +225,6 @@ namespace MSBuild.ExtensionPack.Security
     /// </Project>
     /// ]]></code>    
     /// </example>    
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/45763eac-8f14-417d-9b27-425161982ffe.htm")]
     public class Certificate : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -240,53 +239,31 @@ namespace MSBuild.ExtensionPack.Security
         private const string AccessRightsFullControl = "FullControl";
         private StoreName storeName = System.Security.Cryptography.X509Certificates.StoreName.My;
 
-        [DropdownValue(AddTaskAction)]
-        [DropdownValue(GetExpiryDateTaskAction)]
-        [DropdownValue(GetBase64EncodedCertificateTaskAction)]
-        [DropdownValue(SetUserRightsTaskAction)]
-        [DropdownValue(RemoveTaskAction)]
-        [DropdownValue(GetInfoTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets a value indicating whether to use the MachineStore. Default is false
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(GetExpiryDateTaskAction, false)]
-        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
-        [TaskAction(SetUserRightsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, false)]
-        [TaskAction(GetInfoTaskAction, false)]
         public bool MachineStore { get; set; }
 
         /// <summary>
         /// Sets the password for the pfx file from which the certificate is to be imported, defaults to blank
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public string CertPassword { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether the certificate is exportable.
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public bool Exportable { get; set; }
 
         /// <summary>
         /// The distinguished subject name of the certificate
         /// </summary>
         [Output]
-        [TaskAction(GetInfoTaskAction, false)]
         public string SubjectDName { get; set; }
 
         /// <summary>
         /// Gets or sets the Base 64 Encoded string of the certificate
         /// </summary>
         [Output]
-        [TaskAction(GetBase64EncodedCertificateTaskAction, true)]
         public string Base64EncodedCertificate { get; set; }
 
         /// <summary>
@@ -294,12 +271,6 @@ namespace MSBuild.ExtensionPack.Security
         /// The thumprint  can be used in place of distinguished name to identify a certificate
         /// </summary>
         [Output]
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(GetExpiryDateTaskAction, false)]
-        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
-        [TaskAction(SetUserRightsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, true)]
-        [TaskAction(GetInfoTaskAction, false)]
         public string Thumbprint { get; set; }
 
         /// <summary>
@@ -307,30 +278,22 @@ namespace MSBuild.ExtensionPack.Security
         /// The distinguished name can be used in place of thumbprint to identify a certificate
         /// </summary>
         [Output]
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(GetExpiryDateTaskAction, false)]
-        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
-        [TaskAction(SetUserRightsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, false)]
         public string DistinguishedName { get; set; }
 
         /// <summary>
         /// Gets the Certificate Exprity Date.
         /// </summary>
         [Output]
-        [TaskAction(GetExpiryDateTaskAction, true)]
         public string CertificateExpiryDate { get; set; }
 
         /// <summary>
         /// The name of user or group that needs to be given rights on the given certificate
         /// </summary>
-        [TaskAction(SetUserRightsTaskAction, true)]
         public string AccountName { get; set; }
 
         /// <summary>
         /// The access rights that need to be given.
         /// </summary>    
-        [TaskAction(SetUserRightsTaskAction, true)]
         public string AccessRights { get; set; }
 
         /// <summary>
@@ -345,12 +308,6 @@ namespace MSBuild.ExtensionPack.Security
         /// TrustedPeople:        The store for directly trusted people and resources<br />
         /// TrustedPublisher:     The store for directly trusted publishers<br />
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(GetExpiryDateTaskAction, false)]
-        [TaskAction(GetBase64EncodedCertificateTaskAction, false)]
-        [TaskAction(SetUserRightsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, false)]
-        [TaskAction(GetInfoTaskAction, false)]
         public string StoreName
         {
             get { return this.storeName.ToString(); }
@@ -360,7 +317,6 @@ namespace MSBuild.ExtensionPack.Security
         /// <summary>
         /// Sets the name of the file.
         /// </summary>
-        [TaskAction(AddTaskAction, true)]
         [Output]
         public ITaskItem FileName { get; set; }
 
@@ -368,7 +324,6 @@ namespace MSBuild.ExtensionPack.Security
         /// Gets the item which contains the Certificate information. The following Metadata is populated: SubjectName, SignatureAlgorithm, SubjectNameOidValue, SerialNumber, Archived, NotAfter, NotBefore, FriendlyName, HasPrivateKey, Thumbprint, Version, PrivateKeyFileName, IssuerName
         /// </summary>
         [Output]
-        [TaskAction(AddTaskAction, false)]
         public ITaskItem CertInfo { get; protected set; }
 
         /// <summary>

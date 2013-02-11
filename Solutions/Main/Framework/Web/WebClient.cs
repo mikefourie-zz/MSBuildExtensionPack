@@ -35,52 +35,35 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/fbcabc54-e80e-3176-dcd0-8be24fc60602.htm")]
     public class WebClient : BaseTask
     {
         private const string DownloadFileTaskAction = "DownloadFile";
         private const string OpenReadTaskAction = "OpenRead";
 
-        [DropdownValue(OpenReadTaskAction)]
-        [DropdownValue(DownloadFileTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the name of the Url. Required.
         /// </summary>
         [Required]
-        [TaskAction(OpenReadTaskAction, true)]
-        [TaskAction(DownloadFileTaskAction, true)]
         public string Url { get; set; }
 
         /// <summary>
         /// Sets the URI of a proxy
         /// </summary>
-        [TaskAction(OpenReadTaskAction, false)]
-        [TaskAction(DownloadFileTaskAction, false)]
         public string Proxy { get; set; }
         
         /// <summary>
         /// Sets the name of the file
         /// </summary>
-        [TaskAction(DownloadFileTaskAction, true)]
         public ITaskItem FileName { get; set; }
 
         /// <summary>
         /// Sets whether to show Data to the console. Default is false.
         /// </summary>
-        [TaskAction(OpenReadTaskAction, false)]
         public bool DisplayToConsole { get; set; }
 
         /// <summary>
         /// Sets whether to bypass the proxy for local addresses. Default is false.
         /// </summary>
-        [TaskAction(OpenReadTaskAction, false)]
-        [TaskAction(DownloadFileTaskAction, false)]
         public bool BypassOnLocal { get; set; }
 
         /// <summary>

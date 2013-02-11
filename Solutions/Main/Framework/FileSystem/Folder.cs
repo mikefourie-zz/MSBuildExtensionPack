@@ -89,7 +89,6 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/c0f7dd21-7229-b08d-469c-9e02e66e974b.htm")]
     public class Folder : BaseTask
     {
         private const string AddSecurityTaskAction = "AddSecurity";
@@ -102,47 +101,25 @@ namespace MSBuild.ExtensionPack.FileSystem
         private AccessControlType accessType = AccessControlType.Allow;
         private int retryCount = 5;
 
-        [DropdownValue(AddSecurityTaskAction)]
-        [DropdownValue(DeleteAllTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(MoveTaskAction)]
-        [DropdownValue(RemoveContentTaskAction)]
-        [DropdownValue(RemoveSecurityTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the path to remove content from, or the base path for Delete
         /// </summary>
         [Required]
-        [TaskAction(AddSecurityTaskAction, true)]
-        [TaskAction(DeleteAllTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(MoveTaskAction, true)]
-        [TaskAction(RemoveContentTaskAction, true)]
-        [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem Path { get; set; }
 
         /// <summary>
         /// Sets the regular expression to match in the name of a folder for Delete. Case is ignored.
         /// </summary>
-        [TaskAction(DeleteAllTaskAction, true)]
-        [TaskAction(GetTaskAction, false)]
         public string Match { get; set; }
 
         /// <summary>
         /// Sets the TargetPath for a renamed folder
         /// </summary>
-        [TaskAction(MoveTaskAction, true)]
         public ITaskItem TargetPath { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to delete readonly files when performing RemoveContent
         /// </summary>
-        [TaskAction(RemoveContentTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
@@ -151,22 +128,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <para/>     <Permission>Read,etc</Permission>
         /// <para/> </UsersCol>
         /// </summary>
-        [TaskAction(AddSecurityTaskAction, true)]
-        [TaskAction(RemoveSecurityTaskAction, true)]
         public ITaskItem[] Users { get; set; }
 
         /// <summary>
         /// A comma-separated list of <a href="http://msdn.microsoft.com/en-us/library/942f991b.aspx">FileSystemRights</a>.
         /// </summary>
-        [TaskAction(AddSecurityTaskAction, false)]
-        [TaskAction(RemoveSecurityTaskAction, false)]
         public string Permission { get; set; }
 
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
-        [TaskAction(AddSecurityTaskAction, false)]
-        [TaskAction(RemoveSecurityTaskAction, false)]
         public string AccessType
         {
             get { return this.accessType.ToString(); }
@@ -176,7 +147,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets a value indicating how many times to retry removing the content, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
         /// </summary>
-        [TaskAction(RemoveContentTaskAction, false)]
         public int RetryCount
         {
             get { return this.retryCount; }
@@ -491,14 +461,15 @@ namespace MSBuild.ExtensionPack.FileSystem
             foreach (FileSystemInfo i in infos)
             {
                 // Check to see if this is a DirectoryInfo object.
-                if (i is DirectoryInfo)
+                var info = i as DirectoryInfo;
+                if (info != null)
                 {
                     if (this.Force)
                     {
                         // if its a folder path we can use WMI for a quick delete
-                        if (i.FullName.Contains(@"\\") == false)
+                        if (info.FullName.Contains(@"\\") == false)
                         {
-                            string dirObject = string.Format(CultureInfo.CurrentCulture, "win32_Directory.Name='{0}'", i.FullName);
+                            string dirObject = string.Format(CultureInfo.CurrentCulture, "win32_Directory.Name='{0}'", info.FullName);
                             using (ManagementObject mdir = new ManagementObject(dirObject))
                             {
                                 mdir.Get();
@@ -523,10 +494,10 @@ namespace MSBuild.ExtensionPack.FileSystem
                         else
                         {
                             // it's a share, so we need to manually check all file attributes and delete
-                            this.DelTree((DirectoryInfo)i);
+                            this.DelTree(info);
                             try
                             {
-                                Directory.Delete(i.FullName, true);
+                                Directory.Delete(info.FullName, true);
                             }
                             catch (Exception ex)
                             {
@@ -540,9 +511,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                                     count++;
                                     try
                                     {
-                                        if (Directory.Exists(i.FullName))
+                                        if (Directory.Exists(info.FullName))
                                         {
-                                            Directory.Delete(i.FullName, true);
+                                            Directory.Delete(info.FullName, true);
                                         }
 
                                         deleted = true;
@@ -564,7 +535,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     {
                         try
                         {
-                            Directory.Delete(i.FullName, true);
+                            Directory.Delete(info.FullName, true);
                         }
                         catch (Exception ex)
                         {
@@ -578,9 +549,9 @@ namespace MSBuild.ExtensionPack.FileSystem
                                 count++;
                                 try
                                 {
-                                    if (Directory.Exists(i.FullName))
+                                    if (Directory.Exists(info.FullName))
                                     {
-                                        Directory.Delete(i.FullName, true);
+                                        Directory.Delete(info.FullName, true);
                                     }
 
                                     deleted = true;

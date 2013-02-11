@@ -41,64 +41,21 @@ namespace MSBuild.ExtensionPack.Framework
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/e1e7dbf1-68b9-11a1-2b69-10b920ff101e.htm")]
     public class Gac : BaseTask
     {
-        private const string AddAssemblyTaskAction = "AddAssembly";
-        private const string CheckExistsTaskAction = "CheckExists";
-        private const string RemoveAssemblyTaskAction = "RemoveAssembly";
-
-        [DropdownValue(AddAssemblyTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(RemoveAssemblyTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        [TaskAction(AddAssemblyTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(RemoveAssemblyTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        [TaskAction(AddAssemblyTaskAction, false)]
-        [TaskAction(RemoveAssemblyTaskAction, false)]
-        public override string UserName
-        {
-            get { return base.UserName; }
-            set { base.UserName = value; }
-        }
-
-        [TaskAction(AddAssemblyTaskAction, false)]
-        [TaskAction(RemoveAssemblyTaskAction, false)]
-        public override string UserPassword
-        {
-            get { return base.UserPassword; }
-            set { base.UserPassword = value; }
-        }
-        
         /// <summary>
         /// Sets the remote path of the assembly. Note that gacutil.exe must exist on the remote server and be in it's Path environment variable
         /// </summary>
-        [TaskAction(AddAssemblyTaskAction, false)]
         public string RemoteAssemblyPath { get; set; }
 
         /// <summary>
         /// Sets the path to the assembly to be added the GAC
         /// </summary>
-        [TaskAction(AddAssemblyTaskAction, true)]
         public ITaskItem AssemblyPath { get; set; }
 
         /// <summary>
         /// Sets the name of the assembly.
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(RemoveAssemblyTaskAction, true)]
         public string AssemblyName { get; set; }
 
         /// <summary>

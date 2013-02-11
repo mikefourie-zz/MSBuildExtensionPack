@@ -43,7 +43,6 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/7b39151a-52da-890b-dc46-21c84b886e02.htm")]
     public class FileVersion : BaseTask
     {
         private const string IncrementTaskAction = "Increment";
@@ -53,25 +52,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         private bool changedAttribute;
         private Encoding fileEncoding = Encoding.UTF8;
 
-        [DropdownValue(IncrementTaskAction)]
-        [DropdownValue(ResetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// The file to store the incrementing version in.
         /// </summary>
-        [TaskAction(IncrementTaskAction, true)]
-        [TaskAction(ResetTaskAction, true)]
         public ITaskItem File { get; set; }
 
         /// <summary>
         /// Value to increment by. Default is 1.
         /// </summary>
-        [TaskAction(IncrementTaskAction, true)]
         public int Increment
         {
             get { return this.increment; }
@@ -82,7 +70,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// Gets value returned from the file, or used to reset the value in the file. Default is 0.
         /// </summary>
         [Output]
-        [TaskAction(ResetTaskAction, true)]
         public int Value { get; set; }
       
         /// <summary>

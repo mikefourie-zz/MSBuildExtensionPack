@@ -52,7 +52,6 @@ namespace MSBuild.ExtensionPack.Computer
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/2719abfe-553d-226c-d75f-2964c24f1965.htm")]    
     public class Network : BaseTask
     {
         private const string GetDnsHostNameTaskAction = "GetDnsHostName";
@@ -63,33 +62,20 @@ namespace MSBuild.ExtensionPack.Computer
         private int pingCount = 5;
         private int timeout = 3000;
 
-        [DropdownValue(GetInternalIPTaskAction)]
-        [DropdownValue(GetRemoteIPTaskAction)]
-        [DropdownValue(PingTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the HostName / IP address
         /// </summary>
-        [TaskAction(GetDnsHostNameTaskAction, true)]
-        [TaskAction(PingTaskAction, true)]
         public string HostName { get; set; }
 
         /// <summary>
         /// Gets whether the Host Exists
         /// </summary>
         [Output]
-        [TaskAction(PingTaskAction, false)]
         public bool Exists { get; private set; }
 
         /// <summary>
         /// Sets the number of pings to attempt. Default is 5.
         /// </summary>
-        [TaskAction(PingTaskAction, false)]
         public int PingCount
         {
             get { return this.pingCount; }
@@ -99,7 +85,6 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the timeout in ms for a Ping. Default is 3000
         /// </summary>
-        [TaskAction(PingTaskAction, false)]
         public int Timeout
         {
             get { return this.timeout; }

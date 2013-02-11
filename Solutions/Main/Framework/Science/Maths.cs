@@ -128,7 +128,6 @@ namespace MSBuild.ExtensionPack.Science
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/34c698fb-7a58-e7fd-4263-83d150c7ef41.htm")]
     public class Maths : BaseTask
     {
         private const string AddTaskAction = "Add";
@@ -146,55 +145,30 @@ namespace MSBuild.ExtensionPack.Science
         private float[] numbers;
         private float total;
 
-        [DropdownValue(AddTaskAction)]
-        [DropdownValue(CompareTaskAction)]
-        [DropdownValue(DivideTaskAction)]
-        [DropdownValue(EvaluateTaskAction)]
-        [DropdownValue(MultiplyTaskAction)]
-        [DropdownValue(SubtractTaskAction)]
-        [DropdownValue(AndTaskAction)]
-        [DropdownValue(OrTaskAction)]
-        [DropdownValue(ModulusTaskAction)]
-        [DropdownValue(LeftShiftTaskAction)]
-        [DropdownValue(RightShiftTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets P1.
         /// </summary>
-        [TaskAction(CompareTaskAction, true)]
         public long P1 { get; set; }
 
         /// <summary>
         /// Gets the LogicalResult
         /// </summary>
         [Output]
-        [TaskAction(CompareTaskAction, false)]
         public bool LogicalResult { get; set; }
 
         /// <summary>
         /// Sets P2.
         /// </summary>
-        [TaskAction(CompareTaskAction, true)]
         public long P2 { get; set; }
 
         /// <summary>
         /// Sets the Comparison. Supports 'GreaterThan', 'LessThan', 'GreaterThanOrEquals', 'LessThanOrEquals'
         /// </summary>
-        [TaskAction(CompareTaskAction, true)]
         public string Comparison { get; set; }
 
         /// <summary>
         /// A semicolon separated collection of numbers
         /// </summary>
-        [TaskAction(AddTaskAction, true)]
-        [TaskAction(DivideTaskAction, true)]
-        [TaskAction(MultiplyTaskAction, true)]
-        [TaskAction(SubtractTaskAction, true)]
         public string[] Numbers
         {
             set { this.numbers = ToFloatArray(value); }
@@ -204,22 +178,11 @@ namespace MSBuild.ExtensionPack.Science
         /// Gets the result.
         /// </summary>
         [Output]
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(DivideTaskAction, false)]
-        [TaskAction(EvaluateTaskAction, false)]
-        [TaskAction(MultiplyTaskAction, false)]
-        [TaskAction(SubtractTaskAction, false)]
-        [TaskAction(AndTaskAction, false)]
-        [TaskAction(OrTaskAction, false)]
-        [TaskAction(ModulusTaskAction, false)]
-        [TaskAction(RightShiftTaskAction, false)]
-        [TaskAction(LeftShiftTaskAction, false)]
         public float Result { get; set; }
 
         /// <summary>
         /// Sets the expression.
         /// </summary>
-        [TaskAction(EvaluateTaskAction, true)]
         public string Expression { get; set; }
 
         protected static float[] ToFloatArray(string[] numberArray)

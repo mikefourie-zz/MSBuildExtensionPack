@@ -50,7 +50,6 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/7e174b6e-9b42-5fe3-728b-cf4049753fba.htm")]
     public class Iis6AppPool : BaseTask
     {
         private const string CreateTaskAction = "Create";
@@ -64,25 +63,10 @@ namespace MSBuild.ExtensionPack.Web
         
         private string properties;
 
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(ModifyTaskAction)]
-        [DropdownValue(RecycleTaskAction)]
-        [DropdownValue(StartTaskAction)]
-        [DropdownValue(StopTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-        
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
         /// If a property contains =, enter #~# as a special sequence which will be replaced with = during processing
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(ModifyTaskAction, false)]
         public string Properties
         {
             get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
@@ -93,33 +77,23 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the name of the AppPool. Required.
         /// </summary>
         [Required]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(ModifyTaskAction, true)]
-        [TaskAction(RecycleTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// Sets the Metabase Property Name to retrieve. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
         /// </summary>
-        [TaskAction(GetMetabasePropertyValueTaskAction, true)]
         public string MetabasePropertyName { get; set; }
 
         /// <summary>
         /// Gets the string value of the requested MetabasePropertyName
         /// </summary>
         [Output]
-        [TaskAction(GetMetabasePropertyValueTaskAction, false)]
         public string MetabasePropertyValue { get; set; }
 
         /// <summary>
         /// Gets whether the app pool exists. Output
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         internal string IisPath
@@ -151,7 +125,7 @@ namespace MSBuild.ExtensionPack.Web
                 case RecycleTaskAction:
                     this.ControlAppPool(this.TaskAction);
                     break;
-                case "CheckExists":
+                case CheckExistsTaskAction:
                     this.Exists = this.CheckExists();
                     break;
                 case GetMetabasePropertyValueTaskAction:

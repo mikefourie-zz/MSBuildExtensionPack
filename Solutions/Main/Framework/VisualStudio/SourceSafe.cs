@@ -49,87 +49,31 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/bed0ab5a-a18e-b41d-9809-75deacc056e3.htm")]
     public class SourceSafe : BaseTask
     {
-        private const string CheckoutTaskAction = "Checkout";
-        private const string CheckinTaskAction = "Checkin";
-        private const string CloakTaskAction = "Cloak";
-        private const string CreateTaskAction = "Create";
-        private const string DecloakTaskAction = "Decloak";
-        private const string DeleteTaskAction = "Delete";
-        private const string DestroyTaskAction = "Destroy";
-        private const string GetTaskAction = "Get";
-
         private ShellWrapper shellWrapper;
         private string sourceSafeVersion = "2005";
         private string fileName = "ss.exe";
-
-        [DropdownValue(CheckoutTaskAction)]
-        [DropdownValue(CheckinTaskAction)]
-        [DropdownValue(CloakTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DecloakTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(DestroyTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the FilePath
         /// </summary>
         [Required]
-        [TaskAction(CheckoutTaskAction, true)]
-        [TaskAction(CheckinTaskAction, true)]
-        [TaskAction(CloakTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DecloakTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(DestroyTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
         public string FilePath { get; set; }
 
         /// <summary>
         /// Set to true to prevent -I- being added to your custom Arguments. Default is False
         /// </summary>
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CloakTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DecloakTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DestroyTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
         public bool SuppressI { get; set; }
 
         /// <summary>
         /// Sets the Arguments. Defaults to -I- (Ignores all and tells the command not to ask for input under any circumstances) unless SuppressI is set to true. See http://msdn.microsoft.com/en-us/library/hsxzf2az(VS.80).aspx for full options.
         /// </summary>
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CloakTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DecloakTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DestroyTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
         public string Arguments { get; set; }
 
         /// <summary>
         /// Sets the SourceSafe version. Supports 2005 and 6d. Default is 2005
         /// </summary>
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CloakTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DecloakTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DestroyTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
         public string SSVersion
         {
             get { return this.sourceSafeVersion; }
@@ -139,13 +83,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the database.
         /// </summary>
-        [TaskAction(CheckoutTaskAction, false)]
-        [TaskAction(CheckinTaskAction, false)]
-        [TaskAction(CloakTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DecloakTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
         public ITaskItem Database { get; set; }
 
         /// <summary>

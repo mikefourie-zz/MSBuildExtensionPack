@@ -55,7 +55,6 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ff5a6027-dc80-e7ef-87cd-3c88d9df9492.htm")]
     public class FindUnder : BaseTask
     {
         private const string FindFilesTaskAction = "FindFiles";
@@ -65,21 +64,9 @@ namespace MSBuild.ExtensionPack.FileSystem
         private bool recursive = true;
         private List<ITaskItem> items = new List<ITaskItem>();
 
-        [Required]
-        [DropdownValue(FindFilesTaskAction)]
-        [DropdownValue(FindDirectoriesTaskAction)]
-        [DropdownValue(FindFilesAndDirectoriesTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets whether the File search is recursive. Default is true
         /// </summary>
-        [TaskAction(FindFilesTaskAction, false)]
-        [TaskAction(FindFilesAndDirectoriesTaskAction, false)]
         public bool Recursive
         {
             get { return this.recursive; }
@@ -89,15 +76,11 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Set this value to only return files or folders modified after the given value
         /// </summary>
-        [TaskAction(FindFilesTaskAction, false)]
-        [TaskAction(FindFilesAndDirectoriesTaskAction, false)]
         public DateTime ModifiedAfterDate { get; set; }
 
         /// <summary>
         /// Set this value to only return files or folders modified before the given value
         /// </summary>
-        [TaskAction(FindFilesTaskAction, false)]
-        [TaskAction(FindFilesAndDirectoriesTaskAction, false)]
         public DateTime ModifiedBeforeDate { get; set; }
 
         /// <summary>
@@ -105,9 +88,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// This is a <b>Required</b> value.
         /// </summary>
         [Required]
-        [TaskAction(FindFilesTaskAction, true)]
-        [TaskAction(FindDirectoriesTaskAction, true)]
-        [TaskAction(FindFilesAndDirectoriesTaskAction, true)]
         public ITaskItem Path { get; set; }
 
         /// <summary>
@@ -123,9 +103,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// This value is passed to either the System.IO.DirectoryInfo.GetDirectories method and/or the
         /// System.IO.FileInfo.GetFiles method. See that documentation for usage guidlines.
         /// </summary>
-        [TaskAction(FindFilesTaskAction, false)]
-        [TaskAction(FindDirectoriesTaskAction, false)]
-        [TaskAction(FindFilesAndDirectoriesTaskAction, false)]
         public string SearchPattern
         {
             get { return this.searchPattern; }

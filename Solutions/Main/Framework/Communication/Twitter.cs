@@ -38,23 +38,14 @@ namespace MSBuild.ExtensionPack.Communication
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/e462eba9-1ca9-d3cf-8e65-3467d5b3fc4e.htm")]
     public class Twitter : BaseTask
     {
         private const string TweetTaskAction = "Tweet";
         private string twitterUrl = "http://api.twitter.com/1/statuses/update.json";
 
-        [DropdownValue(TweetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
         /// <summary>
         /// Sets the Twitter URL to post to. Defaults to http://api.twitter.com/1/statuses/update.json
         /// </summary>
-        [TaskAction(TweetTaskAction, false)]
         public string TwitterUrl
         {
             get { return this.twitterUrl; }
@@ -65,35 +56,30 @@ namespace MSBuild.ExtensionPack.Communication
         /// Sets the message to send to Twitter
         /// </summary>
         [Required]
-        [TaskAction(TweetTaskAction, true)]
         public string Message { get; set; }
 
         /// <summary>
         /// Sets the ConsumerKey
         /// </summary>
         [Required]
-        [TaskAction(TweetTaskAction, true)]
         public string ConsumerKey { get; set; }
 
         /// <summary>
         /// Sets the AccessToken (oauth_token)
         /// </summary>
         [Required]
-        [TaskAction(TweetTaskAction, true)]
         public string AccessToken { get; set; }
 
         /// <summary>
         /// Sets the ConsumerSecret
         /// </summary>
         [Required]
-        [TaskAction(TweetTaskAction, true)]
         public string ConsumerSecret { get; set; }
 
         /// <summary>
         /// Sets the AccessTokenSecret
         /// </summary>
         [Required]
-        [TaskAction(TweetTaskAction, true)]
         public string AccessTokenSecret { get; set; }
 
         /// <summary>
@@ -114,8 +100,8 @@ namespace MSBuild.ExtensionPack.Communication
 
         private void Tweet()
         {
-            string oauth_version = "1.0";
-            string oauth_signature_method = "HMAC-SHA1";
+            const string Oauth_version = "1.0";
+            const string Oauth_signature_method = "HMAC-SHA1";
             if (this.Message.Length > 140)
             {
                 this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Message too long: {0}. Maximum length is 140 characters.", this.Message.Length));
@@ -130,7 +116,7 @@ namespace MSBuild.ExtensionPack.Communication
             string oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             string oauth_timestamp = Convert.ToInt64(ts.TotalSeconds).ToString();
-            SortedDictionary<string, string> sd = new SortedDictionary<string, string> { { "status", Uri.EscapeDataString(this.Message) }, { "oauth_version", oauth_version }, { "oauth_consumer_key", oauth_consumer_key }, { "oauth_nonce", oauth_nonce }, { "oauth_signature_method", oauth_signature_method }, { "oauth_timestamp", oauth_timestamp }, { "oauth_token", this.AccessToken } };
+            SortedDictionary<string, string> sd = new SortedDictionary<string, string> { { "status", Uri.EscapeDataString(this.Message) }, { "oauth_version", Oauth_version }, { "oauth_consumer_key", oauth_consumer_key }, { "oauth_nonce", oauth_nonce }, { "oauth_signature_method", Oauth_signature_method }, { "oauth_timestamp", oauth_timestamp }, { "oauth_token", this.AccessToken } };
 
             string baseString = string.Empty;
             baseString += "POST" + "&";
@@ -151,12 +137,12 @@ namespace MSBuild.ExtensionPack.Communication
             StringBuilder authorizationHeaderParams = new StringBuilder();
             authorizationHeaderParams.Append("OAuth ");
             authorizationHeaderParams.Append("oauth_nonce=" + "\"" + Uri.EscapeDataString(oauth_nonce) + "\",");
-            authorizationHeaderParams.Append("oauth_signature_method=" + "\"" + Uri.EscapeDataString(oauth_signature_method) + "\",");
+            authorizationHeaderParams.Append("oauth_signature_method=" + "\"" + Uri.EscapeDataString(Oauth_signature_method) + "\",");
             authorizationHeaderParams.Append("oauth_timestamp=" + "\"" + Uri.EscapeDataString(oauth_timestamp) + "\",");
             authorizationHeaderParams.Append("oauth_consumer_key=" + "\"" + Uri.EscapeDataString(oauth_consumer_key) + "\",");
             authorizationHeaderParams.Append("oauth_token=" + "\"" + Uri.EscapeDataString(this.AccessToken) + "\",");
             authorizationHeaderParams.Append("oauth_signature=" + "\"" + Uri.EscapeDataString(signatureString) + "\",");
-            authorizationHeaderParams.Append("oauth_version=" + "\"" + Uri.EscapeDataString(oauth_version) + "\"");
+            authorizationHeaderParams.Append("oauth_version=" + "\"" + Uri.EscapeDataString(Oauth_version) + "\"");
             webRequest.Headers.Add("Authorization", authorizationHeaderParams.ToString());
             webRequest.Method = "POST";
             webRequest.ContentType = "application/x-www-form-urlencoded";
