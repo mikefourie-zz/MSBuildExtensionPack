@@ -37,7 +37,6 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
     public class BizTalkHost : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -51,47 +50,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         private BizTalkHostType hostType = BizTalkHostType.InProcess;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(UpdateTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
-        /// Sets the MachineName.
-        /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        /// <summary>
         /// Sets the DatabaseServer to connect to. Default is MachineName
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public string DatabaseServer { get; set; }
  
         /// <summary>
         /// Sets the Management Database to connect to. Default is BizTalkMgmtDb
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -101,18 +66,12 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Sets the Host Name. The following characters are not permitted: `~!@#$%^&amp;*()+=[]{}|\/;:\""'&lt;&gt;,.?-&lt;space&gt;
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(UpdateTaskAction, true)]
         [Required]
         public string HostName { get; set; }
 
         /// <summary>
         /// Sets the Host Type. Supports: InProcess, Isolated. Default is InProcess.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public string HostType
         { 
             get { return this.hostType.ToString(); }
@@ -122,53 +81,37 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Sets the Host to 32BitOnly. Default is false.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public bool Use32BitHostOnly { get; set; }
 
         /// <summary>
         /// An optional semi-colon delimited list of name value pairs to set additional Host settings, e.g. MessagePublishSampleSpaceSize=1;MessagePublishOverdriveFactor=100. For available settings, see: http://msdn.microsoft.com/en-us/library/aa560307(BTS.10).aspx
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public string AdditionalHostSettings { get; set; }
 
         /// <summary>
         /// Gets whether the Host exists
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Sets the host as Trusted. Default is false.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public bool Trusted { get; set; }
 
         /// <summary>
         /// Sets the host as Tracking. Default is false.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public bool Tracking { get; set; }
 
         /// <summary>
         /// Sets the host as Default. Default is false.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public bool Default { get; set; }
         
         /// <summary>
         /// Set the windows group. This may be in the form domain\group
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(UpdateTaskAction, false)]
         public string WindowsGroup { get; set; }
 
         /// <summary>

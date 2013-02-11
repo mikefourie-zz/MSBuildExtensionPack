@@ -47,7 +47,6 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/fda37dc3-683d-7a9e-226c-4fad63709c02.htm")]
     public class BizTalkAssembly : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -83,64 +82,29 @@ namespace MSBuild.ExtensionPack.BizTalk
         }
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(AddTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(RemoveTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
-        /// Sets the MachineName.
-        /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        /// <summary>
         /// Sets the DatabaseServer to connect to. Default is MachineName
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, false)]
         public string DatabaseServer { get; set; }
 
         /// <summary>
         /// Sets the DestinationLocation
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public string DestinationLocation { get; set; }
 
         /// <summary>
         /// Sets the Application Name
         /// </summary>
         [Required]
-        [TaskAction(AddTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(RemoveTaskAction, true)]
         public string Application { get; set; }
 
         /// <summary>
         /// Sets the deployment path for assemblies
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public string DeploymentPath { get; set; }
 
         /// <summary>
         /// Sets the Management Database to connect to. Default is BizTalkMgmtDb
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(RemoveTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -151,9 +115,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// Sets the list of Assemblies
         /// </summary>
         [Required]
-        [TaskAction(AddTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(RemoveTaskAction, true)]
         public ITaskItem[] Assemblies { get; set; }
 
         /// <summary>
@@ -165,7 +126,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set to true to gac the biztalk assemblies. Default is true. Note that if you set GacOnMSIFileInstall to true, the assembly will also be added to the gac.
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public bool Gac
         {
             get { return this.gac; }
@@ -175,7 +135,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set to true to overwrite existing assemblies when deploy is called
         /// </summary>
-        [TaskAction(AddTaskAction, false)]
         public bool Force { get; set; }
 
         private List<BizTalkResource> Resources
@@ -278,7 +237,7 @@ namespace MSBuild.ExtensionPack.BizTalk
                     if (this.Gac)
                     {
                         // gac asssemblies
-                        this.Resources.ForEach(r => this.AddAssembly(r));
+                        this.Resources.ForEach(this.AddAssembly);
                     }
 
                     this.Resources.ForEach(r => btsApplication.AddResource(r.ResourceType, r.FullName, r.Properties, this.Force));

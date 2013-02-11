@@ -109,7 +109,6 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/b4a8b403-3659-cea7-e8c6-645d46814f98.htm")]
     public class BizTalkApplication : BaseTask
     {
         private const string AddReferenceTaskAction = "AddReference";
@@ -142,156 +141,34 @@ namespace MSBuild.ExtensionPack.BizTalk
         private OM.Application app;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(AddReferenceTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(DisableAllReceiveLocationsTaskAction)]
-        [DropdownValue(DisableReceiveLocationsTaskAction)]
-        [DropdownValue(EnableReceiveLocationsTaskAction)]
-        [DropdownValue(EnableAllReceiveLocationsTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(RemoveReferenceTaskAction)]
-        [DropdownValue(StartAllTaskAction)]
-        [DropdownValue(StartAllOrchestrationsTaskAction)]
-        [DropdownValue(StartAllSendPortGroupsTaskAction)]
-        [DropdownValue(StartAllSendPortsTaskAction)]
-        [DropdownValue(StartReferencedApplicationsTaskAction)]
-        [DropdownValue(StopAllTaskAction)]
-        [DropdownValue(StopReferencedApplicationsTaskAction)]
-        [DropdownValue(UndeployAllPoliciesTaskAction)]
-        [DropdownValue(UnenlistAllOrchestrationsTaskAction)]
-        [DropdownValue(UnenlistAllSendPortGroupsTaskAction)]
-        [DropdownValue(UnenlistAllSendPortsTaskAction)]
-        [DropdownValue(ImportFromMsiTaskAction)]
-        [DropdownValue(ExportToMsiTaskAction)]
-        [DropdownValue(ImportBindingsTaskAction)]
-        [DropdownValue(ExportBindingsTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
-        /// Sets the MachineName.
-        /// </summary>
-        [TaskAction(AddReferenceTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
-        [TaskAction(DisableReceiveLocationsTaskAction, false)]
-        [TaskAction(EnableReceiveLocationsTaskAction, false)]
-        [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(RemoveReferenceTaskAction, false)]
-        [TaskAction(StartAllTaskAction, false)]
-        [TaskAction(StartAllOrchestrationsTaskAction, false)]
-        [TaskAction(StartAllSendPortGroupsTaskAction, false)]
-        [TaskAction(StartAllSendPortsTaskAction, false)]
-        [TaskAction(StartReferencedApplicationsTaskAction, false)]
-        [TaskAction(StopAllTaskAction, false)]
-        [TaskAction(StopReferencedApplicationsTaskAction, false)]
-        [TaskAction(UndeployAllPoliciesTaskAction, false)]
-        [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
-        [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
-        [TaskAction(UnenlistAllSendPortsTaskAction, false)]
-        [TaskAction(ImportFromMsiTaskAction, false)]
-        [TaskAction(ExportToMsiTaskAction, false)]
-        [TaskAction(ImportBindingsTaskAction, false)]
-        [TaskAction(ExportBindingsTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        /// <summary>
         /// Sets the DatabaseServer to connect to. Default is MachineName
         /// </summary>
-        [TaskAction(AddReferenceTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
-        [TaskAction(DisableReceiveLocationsTaskAction, false)]
-        [TaskAction(EnableReceiveLocationsTaskAction, false)]
-        [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(RemoveReferenceTaskAction, false)]
-        [TaskAction(StartAllTaskAction, false)]
-        [TaskAction(StartAllOrchestrationsTaskAction, false)]
-        [TaskAction(StartAllSendPortGroupsTaskAction, false)]
-        [TaskAction(StartAllSendPortsTaskAction, false)]
-        [TaskAction(StartReferencedApplicationsTaskAction, false)]
-        [TaskAction(StopAllTaskAction, false)]
-        [TaskAction(StopReferencedApplicationsTaskAction, false)]
-        [TaskAction(UndeployAllPoliciesTaskAction, false)]
-        [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
-        [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
-        [TaskAction(UnenlistAllSendPortsTaskAction, false)]
-        [TaskAction(ImportFromMsiTaskAction, false)]
-        [TaskAction(ExportToMsiTaskAction, false)]
-        [TaskAction(ImportBindingsTaskAction, false)]
-        [TaskAction(ExportBindingsTaskAction, false)]
         public string DatabaseServer { get; set; }
 
         /// <summary>
         /// Get or sets the Application Item Collection
         /// </summary>
         [Output]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(DisableAllReceiveLocationsTaskAction, true)]
-        [TaskAction(DisableReceiveLocationsTaskAction, true)]
-        [TaskAction(EnableReceiveLocationsTaskAction, true)]
-        [TaskAction(EnableAllReceiveLocationsTaskAction, true)]
-        [TaskAction(StartAllTaskAction, true)]
-        [TaskAction(StartAllOrchestrationsTaskAction, true)]
-        [TaskAction(StartAllSendPortGroupsTaskAction, true)]
-        [TaskAction(StartAllSendPortsTaskAction, true)]
-        [TaskAction(StartReferencedApplicationsTaskAction, true)]
-        [TaskAction(StopAllTaskAction, true)]
-        [TaskAction(StopReferencedApplicationsTaskAction, true)]
-        [TaskAction(UndeployAllPoliciesTaskAction, true)]
-        [TaskAction(UnenlistAllOrchestrationsTaskAction, true)]
-        [TaskAction(UnenlistAllSendPortGroupsTaskAction, true)]
-        [TaskAction(UnenlistAllSendPortsTaskAction, true)]
         public ITaskItem[] Applications { get; set; }
 
         /// <summary>
         /// Sets the Referenced Applications
         /// </summary>
-        [TaskAction(AddReferenceTaskAction, true)]
-        [TaskAction(RemoveReferenceTaskAction, true)]
         public ITaskItem[] References { get; set; }
 
         /// <summary>
         /// sets the ReceiveLocations to operate on.
         /// </summary>
-        [TaskAction(DisableReceiveLocationsTaskAction, true)]
-        [TaskAction(EnableReceiveLocationsTaskAction, true)]
         public ITaskItem[] ReceiveLocations { get; set; }
 
         /// <summary>
         /// Sets the Application Name
         /// </summary>
-        [TaskAction(AddReferenceTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(RemoveReferenceTaskAction, true)]
-        [TaskAction(ImportFromMsiTaskAction, false)]
-        [TaskAction(ExportToMsiTaskAction, true)]
-        [TaskAction(ImportBindingsTaskAction, false)]
-        [TaskAction(ExportBindingsTaskAction, false)]
         public string Application { get; set; }
 
         /// <summary>
         /// Sets the Resources to export. If not supplied, all resources are exported.
         /// </summary>
-        [TaskAction(ExportToMsiTaskAction, false)]
         public ITaskItem[] Resources { get; set; }
 
         /// <summary>
@@ -307,31 +184,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Sets the Management Database to connect to. Default is BizTalkMgmtDb
         /// </summary>
-        [TaskAction(AddReferenceTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DisableAllReceiveLocationsTaskAction, false)]
-        [TaskAction(DisableReceiveLocationsTaskAction, false)]
-        [TaskAction(EnableAllReceiveLocationsTaskAction, false)]
-        [TaskAction(EnableReceiveLocationsTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        [TaskAction(RemoveReferenceTaskAction, false)]
-        [TaskAction(StartAllTaskAction, false)]
-        [TaskAction(StartAllOrchestrationsTaskAction, false)]
-        [TaskAction(StartAllSendPortGroupsTaskAction, false)]
-        [TaskAction(StartAllSendPortsTaskAction, false)]
-        [TaskAction(StartReferencedApplicationsTaskAction, false)]
-        [TaskAction(StopAllTaskAction, false)]
-        [TaskAction(StopReferencedApplicationsTaskAction, false)]
-        [TaskAction(UndeployAllPoliciesTaskAction, false)]
-        [TaskAction(UnenlistAllOrchestrationsTaskAction, false)]
-        [TaskAction(UnenlistAllSendPortGroupsTaskAction, false)]
-        [TaskAction(UnenlistAllSendPortsTaskAction, false)]
-        [TaskAction(ImportFromMsiTaskAction, false)]
-        [TaskAction(ExportToMsiTaskAction, false)]
-        [TaskAction(ImportBindingsTaskAction, false)]
-        [TaskAction(ExportBindingsTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -352,8 +204,6 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set the path to export the Application MSI to. The directory path must exist and have appropriate permissions to write to.
         /// </summary>
-        [TaskAction(ImportFromMsiTaskAction, true)]
-        [TaskAction(ExportToMsiTaskAction, true)]
         public ITaskItem MsiPath { get; set; }
 
         /// <summary>
@@ -364,20 +214,16 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Update existing resources. If not specified and resource exists, import will fail. Default is false.
         /// </summary>
-        [TaskAction(ImportFromMsiTaskAction, false)]
         public bool Overwrite { get; set; }
 
         /// <summary>
         /// The environment to deploy.
         /// </summary>
-        [TaskAction(ImportFromMsiTaskAction, false)]
         public string Environment { get; set; }
 
         /// <summary>
         /// The Binding File to Import / Export
         /// </summary>
-        [TaskAction(ImportBindingsTaskAction, true)]
-        [TaskAction(ExportBindingsTaskAction, true)]
         public ITaskItem BindingFile { get; set; }
 
         /// <summary>

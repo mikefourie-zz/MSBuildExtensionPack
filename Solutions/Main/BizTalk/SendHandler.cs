@@ -52,7 +52,6 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/39023295-c104-8b83-0904-d7b2485f6d63.htm")]
     public class BizTalkSendHandler : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -65,47 +64,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         private ManagementObject sendHandler;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
-        /// Sets the MachineName.
-        /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        /// <summary>
         /// Sets the DatabaseServer to connect to. Default is MachineName
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
         public string DatabaseServer { get; set; }
 
         /// <summary>
         /// Sets the Management Database to connect to. Default is BizTalkMgmtDb
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -115,16 +80,11 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set to true to delete an existing Send Handler when Create is called.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Sets the Host Name. For TaskAction="Get", a regular expression may be provided
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(GetTaskAction, false)]
         public string HostName { get; set; }
 
         /// <summary>
@@ -135,30 +95,23 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Gets whether the Application exists
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
         /// Sets the SendHanlder as Default. Default is false.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Default { get; set; }
 
         /// <summary>
         /// Gets the list of Send Handlers. Identity is HostName. Metadata includes AdapterName, MgmtDbNameOverride, MgmtDbServerOverride, CustomCfg, Description, Caption.
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         [Output]
         public ITaskItem[] SendHandlers { get; set; }
 
         /// <summary>
         /// Sets the AdapterName
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
         public string AdapterName { get; set; }
 
         /// <summary>

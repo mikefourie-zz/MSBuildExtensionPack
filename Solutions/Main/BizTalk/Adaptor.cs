@@ -50,7 +50,6 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/f475a984-7820-8a9a-2a35-d8c3d9aa3f40.htm")]
     public class BizTalkAdaptor : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -62,43 +61,13 @@ namespace MSBuild.ExtensionPack.BizTalk
         private ManagementObject adaptor;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
-        /// Sets the MachineName.
-        /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        /// <summary>
         /// Sets the DatabaseServer to connect to. Default is MachineName
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
         public string DatabaseServer { get; set; }
  
         /// <summary>
         /// Sets the Management Database to connect to. Default is BizTalkMgmtDb
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
         public string Database
         {
             get { return this.database; }
@@ -108,31 +77,23 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Sets the Adaptor Name.
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
         [Required]
         public string AdaptorName { get; set; }
 
         /// <summary>
         /// Sets the Adaptor comment.
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
         [Output]
         public string Comment { get; set; }
 
         /// <summary>
         /// Sets the MgmtCLSID guid
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string MgmtCLSID { get; set; }
 
         /// <summary>
         /// Gets whether the Adaptor exists
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
         [Output]
         public bool Exists { get; set; }
 

@@ -80,7 +80,6 @@ namespace MSBuild.ExtensionPack.BizTalk
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/97edac8b-db9c-f0e9-2c24-76f6b873b4cf.htm")]
     public class BizTalkHostInstance : BaseTask
     {
         private const string GetTaskAction = "Get";
@@ -94,44 +93,8 @@ namespace MSBuild.ExtensionPack.BizTalk
         private ManagementObject hostInstance;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(GetStateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(StartTaskAction)]
-        [DropdownValue(StopTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
-        /// Sets the MachineName.
-        /// </summary>
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(StartTaskAction, false)]
-        [TaskAction(StopTaskAction, false)]
-        [TaskAction(GetTaskAction, false)]
-        public override string MachineName
-        {
-            get { return base.MachineName; }
-            set { base.MachineName = value; }
-        }
-
-        /// <summary>
         /// The parent hostname for the host instance
         /// </summary>
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
         public string HostName { get; set; }
 
         /// <summary>
@@ -143,25 +106,21 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// <summary>
         /// Set to true to delete an existing host instance when Create is called.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// The logon account to use for the Host Instance
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string AccountName { get; set; }
 
         /// <summary>
         /// The logon password to use for the Host Instance 
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string AccountPassword { get; set; }
 
         /// <summary>
         /// The Host Instances returned by Get. The name of the Host Instance is used as the Identity. Metadata includes: Caption, ConfigurationState, Description, HostType, InstallDate, IsDisabled, MgmtDbNameOverride, MgmtDbServerOverride, NTGroupName, RunningServer, ServiceState, Status, UniqueID. HostInstances may also be used to Stop or Start a group of HostInstances in parallel.
         /// </summary>
-        [TaskAction(GetTaskAction, false)]
         [Output]
         public ITaskItem[] HostInstances { get; set; }
 
