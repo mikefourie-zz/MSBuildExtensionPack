@@ -300,14 +300,14 @@ namespace MSBuild.ExtensionPack.Tfs2010
                 ibuildDef.SetMetadata("CompilationStatus", this.buildDetails.CompilationStatus.ToString());
                 ibuildDef.SetMetadata("CompilationSuccess", this.buildDetails.CompilationStatus == BuildPhaseStatus.Succeeded ? "true" : "false");
                 ibuildDef.SetMetadata("DropLocation", this.buildDetails.DropLocation ?? string.Empty);
-                ibuildDef.SetMetadata("FinishTime", this.buildDetails.FinishTime.ToString() ?? string.Empty);
-                ibuildDef.SetMetadata("KeepForever", this.buildDetails.KeepForever.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("FinishTime", this.buildDetails.FinishTime.ToString());
+                ibuildDef.SetMetadata("KeepForever", this.buildDetails.KeepForever.ToString());
                 ibuildDef.SetMetadata("LabelName", this.buildDetails.LabelName ?? string.Empty);
                 ibuildDef.SetMetadata("LastChangedBy", this.buildDetails.LastChangedBy ?? string.Empty);
-                ibuildDef.SetMetadata("LastChangedOn", this.buildDetails.LastChangedOn.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("LastChangedOn", this.buildDetails.LastChangedOn.ToString());
                 ibuildDef.SetMetadata("LogLocation", this.buildDetails.LogLocation ?? string.Empty);
                 ibuildDef.SetMetadata("Quality", this.buildDetails.Quality ?? string.Empty);
-                ibuildDef.SetMetadata("Reason", this.buildDetails.Reason.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("Reason", this.buildDetails.Reason.ToString());
                 ibuildDef.SetMetadata("RequestedBy", this.buildDetails.RequestedBy ?? string.Empty);
                 ibuildDef.SetMetadata("RequestedFor", this.buildDetails.RequestedFor ?? string.Empty);
                 ibuildDef.SetMetadata("SourceGetVersion", this.buildDetails.SourceGetVersion ?? string.Empty);
