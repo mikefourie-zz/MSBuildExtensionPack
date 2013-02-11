@@ -98,23 +98,8 @@ namespace MSBuild.ExtensionPack.Sql2012
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("")]
     public class Database : BaseTask
     {
-        private const string BackupTaskAction = "Backup";
-        private const string CheckExistsTaskAction = "CheckExists";
-        private const string CreateTaskAction = "Create";
-        private const string DeleteTaskAction = "Delete";
-        private const string DeleteBackupHistoryTaskAction = "DeleteBackupHistory";
-        private const string GetConnectionCountTaskAction = "GetConnectionCount";
-        private const string GetInfoTaskAction = "GetInfo";
-        private const string RenameTaskAction = "Rename";
-        private const string RestoreTaskAction = "Restore";
-        private const string ScriptTaskAction = "Script";
-        private const string SetOfflineTaskAction = "SetOffline";
-        private const string SetOnlineTaskAction = "SetOnline";
-        private const string VerifyBackupTaskAction = "VerifyBackup";
-
         private bool trustedConnection;
         private SMO.Server sqlServer;
         private BackupActionType backupAction = BackupActionType.Database;
@@ -125,56 +110,18 @@ namespace MSBuild.ExtensionPack.Sql2012
         private BackupCompressionOptions compressionOption = BackupCompressionOptions.Default;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(BackupTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(DeleteBackupHistoryTaskAction)]
-        [DropdownValue(GetConnectionCountTaskAction)]
-        [DropdownValue(GetInfoTaskAction)]
-        [DropdownValue(RenameTaskAction)]
-        [DropdownValue(RestoreTaskAction)]
-        [DropdownValue(ScriptTaskAction)]
-        [DropdownValue(SetOfflineTaskAction)]
-        [DropdownValue(SetOnlineTaskAction)]
-        [DropdownValue(VerifyBackupTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
         /// Set to true to create a NonPooledConnection to the server. Default is false.
         /// </summary>
-        [TaskAction(BackupTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DeleteBackupHistoryTaskAction, false)]
-        [TaskAction(GetConnectionCountTaskAction, false)]
-        [TaskAction(GetInfoTaskAction, false)]
-        [TaskAction(RenameTaskAction, false)]
-        [TaskAction(RestoreTaskAction, false)]
-        [TaskAction(ScriptTaskAction, false)]
-        [TaskAction(SetOfflineTaskAction, false)]
-        [TaskAction(SetOnlineTaskAction, false)]
-        [TaskAction(VerifyBackupTaskAction, false)]
         public bool NoPooling { get; set; }
 
         /// <summary>
         /// A Boolean value that specifies whether a new image of the restored database will be created. If True, a new image of the database is created. The image is created regardless of the presence of an existing database with the same name. If False (default), a new image of the database is not created by the restore operation. The database targeted by the restore operation must exist on an instance of Microsoft SQL Server. 
         /// </summary>
-        [TaskAction(RestoreTaskAction, false)]
         public bool ReplaceDatabase { get; set; }
 
         /// <summary>
         /// Set to true to perform an Incremental backup. Default is false.
         /// </summary>
-        [TaskAction(BackupTaskAction, false)]
-        [TaskAction(RestoreTaskAction, false)]
         public bool Incremental { get; set; }
 
         /// <summary>
@@ -185,25 +132,11 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// <summary>
         /// Sets the database name
         /// </summary>
-        [TaskAction(BackupTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(DeleteBackupHistoryTaskAction, true)]
-        [TaskAction(GetConnectionCountTaskAction, true)]
-        [TaskAction(GetInfoTaskAction, true)]
-        [TaskAction(RenameTaskAction, true)]
-        [TaskAction(RestoreTaskAction, true)]
-        [TaskAction(ScriptTaskAction, true)]
-        [TaskAction(SetOfflineTaskAction, true)]
-        [TaskAction(SetOnlineTaskAction, true)]
-        [TaskAction(VerifyBackupTaskAction, true)]
         public ITaskItem DatabaseItem { get; set; }
 
         /// <summary>
         /// Sets the compression option for the backup. Supports On, Off and Default. Default is Default.
         /// </summary>
-        [TaskAction(BackupTaskAction, false)]
         public string CompressionOption
         {
             get { return this.compressionOption.ToString(); }
@@ -213,38 +146,31 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// <summary>
         /// Sets the primary data file name.
         /// </summary>
-        [TaskAction(RestoreTaskAction, false)]
         public string PrimaryDataFileName { get; set; }
 
         /// <summary>
         /// Sets the Log Name. Defaults DatabaseItem.ItemSpec + "_log"
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(RestoreTaskAction, false)]
         public string LogName { get; set; }
 
         /// <summary>
         /// Sets the secondary data file name. No default value.
         /// </summary>
-        [TaskAction(RestoreTaskAction, false)]
         public string SecondaryDataFileName { get; set; }
 
         /// <summary>
         /// Sets whether the backup is a copy-only backup. Default is false.
         /// </summary>
-        [TaskAction(RestoreTaskAction, false)]
         public bool CopyOnly { get; set; }
 
         /// <summary>
         /// Sets the collation of the database.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string Collation { get; set; }
         
         /// <summary>
         /// Sets the type of backup action to perform. Supports Database, Files and Log. Default is Database
         /// </summary>
-        [TaskAction(BackupTaskAction, false)]
         public string BackupAction
         {
             get { return this.backupAction.ToString(); }
@@ -254,7 +180,6 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// <summary>
         /// Sets the type of restore action to perform. Supports Database, Files, Log, OnlineFiles, OnlinePage. Default is Database
         /// </summary>
-        [TaskAction(RestoreTaskAction, false)]
         public string RestoreAction
         {
             get { return this.restoreAction.ToString(); }
@@ -264,8 +189,6 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// <summary>
         /// Sets the PercentCompleteNotification interval. Defaults to 10.
         /// </summary>
-        [TaskAction(BackupTaskAction, false)]
-        [TaskAction(RestoreTaskAction, false)]
         public int NotificationInterval
         {
             get { return this.notificationInterval; }
@@ -275,7 +198,6 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// <summary>
         /// Sets the FileGroupName. Defaults to PRIMARY
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string FileGroupName
         {
             get { return this.fileGroupName; }
@@ -285,52 +207,31 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// <summary>
         /// Sets the DataFilePath.
         /// </summary>
-        [TaskAction(BackupTaskAction, true)]
-        [TaskAction(RestoreTaskAction, true)]
-        [TaskAction(CreateTaskAction, false)]
         public ITaskItem DataFilePath { get; set; }
 
         /// <summary>
         /// Sets the NewDataFilePath.
         /// </summary>
-        [TaskAction(RestoreTaskAction, true)]
         public ITaskItem NewDataFilePath { get; set; }
         
         /// <summary>
         /// Sets the SecondaryDataFilePath.
         /// </summary>
-        [TaskAction(RestoreTaskAction, true)]
         public ITaskItem SecondaryDataFilePath { get; set; }
         
         /// <summary>
         /// Sets the LogFilePath.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(RestoreTaskAction, false)]
         public ITaskItem LogFilePath { get; set; }
 
         /// <summary>
         /// Sets the OutputFilePath.
         /// </summary>
-        [TaskAction(ScriptTaskAction, true)]
         public ITaskItem OutputFilePath { get; set; }
 
         /// <summary>
         /// Sets the number of seconds before an operation times out. The default is not to specify this property on the connection.
         /// </summary>
-        [TaskAction(BackupTaskAction, false)]
-        [TaskAction(CheckExistsTaskAction, false)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(DeleteTaskAction, false)]
-        [TaskAction(DeleteBackupHistoryTaskAction, false)]
-        [TaskAction(GetConnectionCountTaskAction, false)]
-        [TaskAction(GetInfoTaskAction, false)]
-        [TaskAction(RenameTaskAction, false)]
-        [TaskAction(RestoreTaskAction, false)]
-        [TaskAction(ScriptTaskAction, false)]
-        [TaskAction(SetOfflineTaskAction, false)]
-        [TaskAction(SetOnlineTaskAction, false)]
-        [TaskAction(VerifyBackupTaskAction, false)]
         public int StatementTimeout
         {
             get
@@ -348,7 +249,6 @@ namespace MSBuild.ExtensionPack.Sql2012
         /// Gets whether the database exists
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>
