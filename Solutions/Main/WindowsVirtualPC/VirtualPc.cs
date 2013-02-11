@@ -83,7 +83,6 @@ namespace MSBuild.ExtensionPack.Virtualisation
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/ebd4153c-2551-4a3b-e685-7447ecd35980.htm")]
     public class VirtualPc : BaseTask
     {
         private const string AddHardDiskConnectionTaskAction = "AddHardDiskConnection";
@@ -115,60 +114,8 @@ namespace MSBuild.ExtensionPack.Virtualisation
         private int maxCpuUsage = 10;
 
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(AddHardDiskConnectionTaskAction)]
-        [DropdownValue(ClickMouseTaskAction)]
-        [DropdownValue(DiscardSavedStateTaskAction)]
-        [DropdownValue(DiscardUndoDisksTaskAction)]
-        [DropdownValue(IsHeartBeatingTaskAction)]
-        [DropdownValue(IsScreenLockedTaskAction)]
-        [DropdownValue(ListTaskAction)]
-        [DropdownValue(LogoffTaskAction)]
-        [DropdownValue(MergeUndoDisksTaskAction)]
-        [DropdownValue(PauseTaskAction)]
-        [DropdownValue(RemoveHardDiskConnectionTaskAction)]
-        [DropdownValue(ResetTaskAction)]
-        [DropdownValue(RestartTaskAction)]
-        [DropdownValue(ResumeTaskAction)]
-        [DropdownValue(SaveTaskAction)]
-        [DropdownValue(ShutdownTaskAction)]
-        [DropdownValue(StartupTaskAction)]
-        [DropdownValue(TakeScreenshotTaskAction)]
-        [DropdownValue(TurnOffTaskAction)]
-        [DropdownValue(TypeAsciiTextTaskAction)]
-        [DropdownValue(TypeKeySequenceTaskAction)]
-        [DropdownValue(WaitForLowCpuUtilizationTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
         /// Sets the name of the VirtualPc
         /// </summary>
-        [TaskAction(AddHardDiskConnectionTaskAction, true)]
-        [TaskAction(ClickMouseTaskAction, true)]
-        [TaskAction(DiscardSavedStateTaskAction, true)]
-        [TaskAction(DiscardUndoDisksTaskAction, true)]
-        [TaskAction(IsHeartBeatingTaskAction, true)]
-        [TaskAction(IsScreenLockedTaskAction, true)]
-        [TaskAction(LogoffTaskAction, true)]
-        [TaskAction(MergeUndoDisksTaskAction, true)]
-        [TaskAction(PauseTaskAction, true)]
-        [TaskAction(RemoveHardDiskConnectionTaskAction, true)]
-        [TaskAction(ResetTaskAction, true)]
-        [TaskAction(RestartTaskAction, true)]
-        [TaskAction(ResumeTaskAction, true)]
-        [TaskAction(SaveTaskAction, true)]
-        [TaskAction(ShutdownTaskAction, true)]
-        [TaskAction(StartupTaskAction, true)]
-        [TaskAction(TakeScreenshotTaskAction, true)]
-        [TaskAction(TurnOffTaskAction, true)]
-        [TaskAction(TypeAsciiTextTaskAction, true)]
-        [TaskAction(TypeKeySequenceTaskAction, true)]
-        [TaskAction(WaitForLowCpuUtilizationTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -180,14 +127,11 @@ namespace MSBuild.ExtensionPack.Virtualisation
         /// <summary>
         /// Sets the Text collection
         /// </summary>
-        [TaskAction(TypeAsciiTextTaskAction, true)]
-        [TaskAction(TypeKeySequenceTaskAction, true)]
         public ITaskItem[] Text { get; set; }
 
         /// <summary>
         /// Sets the MaxCpuUsage in %. Default is 10
         /// </summary>
-        [TaskAction(WaitForLowCpuUtilizationTaskAction, true)]
         public int MaxCpuUsage
         {
             get { return this.maxCpuUsage; }
@@ -197,7 +141,6 @@ namespace MSBuild.ExtensionPack.Virtualisation
         /// <summary>
         /// Sets the MaxCpuThreshold in seconds. This is the period for which the virtual machine must be below the MaxCpuUsage. Default is 10.
         /// </summary>
-        [TaskAction(WaitForLowCpuUtilizationTaskAction, true)]
         public int MaxCpuThreshold
         {
             get { return this.maxCpuThreshold; }
@@ -219,34 +162,21 @@ namespace MSBuild.ExtensionPack.Virtualisation
         /// <summary>
         /// Sets the FileName
         /// </summary>
-        [TaskAction(AddHardDiskConnectionTaskAction, true)]
-        [TaskAction(RemoveHardDiskConnectionTaskAction, true)]
-        [TaskAction(TakeScreenshotTaskAction, true)]
         public ITaskItem FileName { get; set; }
 
         /// <summary>
         /// Sets the device to which the drive will be attached. 0 = The drive will be attached to the first device on the bus. 1 = The drive will be attached to the second device on the bus.
         /// </summary>
-        [TaskAction(AddHardDiskConnectionTaskAction, true)]
         public int DeviceNumber { get; set; }
 
         /// <summary>
         /// Sets the bus to which the drive will be attached. 0 = The drive will be attached to the first bus. 1 = The drive will be attached to the second bus.
         /// </summary>
-        [TaskAction(AddHardDiskConnectionTaskAction, true)]
         public int BusNumber { get; set; }
 
         /// <summary>
         /// The time, in milliseconds, that this method will wait for task completion before returning control to the caller. A value of -1 specifies that method will wait until the task completes without timing out. Other valid timeout values range from 0 to 4,000,000 milliseconds.
         /// </summary>
-        [TaskAction(LogoffTaskAction, false)]
-        [TaskAction(MergeUndoDisksTaskAction, false)]
-        [TaskAction(ResetTaskAction, false)]
-        [TaskAction(RestartTaskAction, false)]
-        [TaskAction(SaveTaskAction, false)]
-        [TaskAction(ShutdownTaskAction, false)]
-        [TaskAction(StartupTaskAction, false)]
-        [TaskAction(TurnOffTaskAction, false)]
         public int WaitForCompletion { get; set; }
 
         /// <summary>
@@ -519,7 +449,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
             switch (this.TaskAction)
             {
                 case LogoffTaskAction:
-                    if (this.virtualMachine.State != (VMVMState.vmVMState_TurnedOff | VMVMState.vmVMState_TurningOff))
+                    if (this.virtualMachine.State != VMVMState.vmVMState_MergingDrives)
                     {
                         var s = this.virtualMachine.GuestOS.Logoff();
                         if (this.WaitForCompletion > 0)
@@ -530,7 +460,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
 
                     break;
                 case RestartTaskAction:
-                    if (this.virtualMachine.State != (VMVMState.vmVMState_TurnedOff | VMVMState.vmVMState_TurningOff))
+                    if (this.virtualMachine.State != VMVMState.vmVMState_MergingDrives)
                     {
                         var s = this.virtualMachine.GuestOS.Restart(true);
                         if (this.WaitForCompletion > 0)
@@ -552,7 +482,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
 
                     break;
                 case TurnOffTaskAction:
-                    if (this.virtualMachine.State != (VMVMState.vmVMState_TurnedOff | VMVMState.vmVMState_TurningOff))
+                    if (this.virtualMachine.State != VMVMState.vmVMState_MergingDrives)
                     {
                         var s = this.virtualMachine.TurnOff();
                         if (this.WaitForCompletion > 0)
@@ -563,7 +493,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
 
                     break;
                 case ShutdownTaskAction:
-                    if (this.virtualMachine.State != (VMVMState.vmVMState_TurnedOff | VMVMState.vmVMState_TurningOff))
+                    if (this.virtualMachine.State != VMVMState.vmVMState_MergingDrives)
                     {
                         var s = this.virtualMachine.GuestOS.Shutdown(true);
                         if (this.WaitForCompletion > 0)
@@ -588,7 +518,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
 
                     break;
                 case MergeUndoDisksTaskAction:
-                    if (this.virtualMachine.State == (VMVMState.vmVMState_TurnedOff | VMVMState.vmVMState_Saved) && this.virtualMachine.Undoable)
+                    if (this.virtualMachine.State == VMVMState.vmVMState_TurningOn && this.virtualMachine.Undoable)
                     {
                         var s = this.virtualMachine.MergeUndoDisks();
                         if (this.WaitForCompletion > 0)
@@ -613,7 +543,7 @@ namespace MSBuild.ExtensionPack.Virtualisation
 
                     break;
                 case ResetTaskAction:
-                    if (this.virtualMachine.State != (VMVMState.vmVMState_TurnedOff | VMVMState.vmVMState_TurningOff))
+                    if (this.virtualMachine.State != VMVMState.vmVMState_MergingDrives)
                     {
                         var s = this.virtualMachine.Reset();
                         if (this.WaitForCompletion > 0)
