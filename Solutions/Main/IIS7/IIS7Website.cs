@@ -98,7 +98,6 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/243a8320-e40b-b525-07d6-76fc75629364.htm")]
     public class Iis7Website : BaseTask
     {
         private const string AddApplicationTaskAction = "AddApplication";
@@ -117,107 +116,58 @@ namespace MSBuild.ExtensionPack.Web
         private const string DeleteVirtualDirectoryTaskAction = "DeleteVirtualDirectory";
         private bool anonymousAuthentication = true;
         private bool serverAutoStart = true;
-
         private ServerManager iisServerManager;
         private Site website;
-
-        /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(AddApplicationTaskAction)]
-        [DropdownValue(AddMimeTypeTaskAction)]
-        [DropdownValue(AddVirtualDirectoryTaskAction)]
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(CreateTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        [DropdownValue(GetInfoTaskAction)]
-        [DropdownValue(ModifyPathTaskAction)]
-        [DropdownValue(ModifyLogDirectoryAction)]
-        [DropdownValue(StartTaskAction)]
-        [DropdownValue(StopTaskAction)]
-        [DropdownValue(CheckVirtualDirectoryExistsTaskAction)]
-        [DropdownValue(DeleteVirtualDirectoryTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the name of the Website
         /// </summary>
         [Required]
-        [TaskAction(AddApplicationTaskAction, true)]
-        [TaskAction(AddVirtualDirectoryTaskAction, true)]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(CreateTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
-        [TaskAction(GetInfoTaskAction, true)]
-        [TaskAction(ModifyPathTaskAction, true)]
-        [TaskAction(ModifyLogDirectoryAction, true)]
-        [TaskAction(StartTaskAction, true)]
-        [TaskAction(StopTaskAction, true)]
-        [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
-        [TaskAction(DeleteVirtualDirectoryTaskAction, true)]
         public string Name { get; set; }
 
         /// <summary>
         /// ITaskItem of Applications. Use AppPool, PhysicalPath and EnabledProtocols metadata to specify applicable values
         /// </summary>
-        [TaskAction(AddApplicationTaskAction, true)]
-        [TaskAction(CreateTaskAction, false)]
         public ITaskItem[] Applications { get; set; }
         
         /// <summary>
         /// ITaskItem of VirtualDirectories. Use PhysicalPath metadata to specify applicable values
         /// </summary>
-        [TaskAction(AddVirtualDirectoryTaskAction, true)]
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(CheckVirtualDirectoryExistsTaskAction, true)]
-        [TaskAction(DeleteVirtualDirectoryTaskAction, true)]
         public ITaskItem[] VirtualDirectories { get; set; }
 
         /// <summary>
         /// A collection of headers to add. Specify Identity as name and add Value metadata
         /// </summary>
-        [TaskAction(AddResponseHeadersTaskAction, true)]
         public ITaskItem[] HttpResponseHeaders { get; set; }
 
         /// <summary>
         /// A collection of MimeTypes. Specify Identity as name and add Value metadata
         /// </summary>
-        [TaskAction(AddMimeTypeTaskAction, true)]
         public ITaskItem[] MimeTypes { get; set; }
 
         /// <summary>
         /// Sets the path.
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
         public string Path { get; set; }
 
         /// <summary>
         /// Sets the directory the website writes logfiles to.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(ModifyLogDirectoryAction, true)]
         public ITaskItem LogDirectory { get; set; }
 
         /// <summary>
         /// Sets the app pool.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string AppPool { get; set; }
 
         /// <summary>
         /// Sets the Enabled Protocols for the website
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public string EnabledProtocols { get; set; }
         
         /// <summary>
         /// Sets AnonymousAuthentication for the website. Default is true
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool AnonymousAuthentication
         {
             get { return this.anonymousAuthentication; }
@@ -227,19 +177,16 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets DigestAuthentication for the website. Default is false;
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool DigestAuthentication { get; set; }
 
         /// <summary>
         /// Sets BasicAuthentication for the website. Default is false;
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool BasicAuthentication { get; set; }
 
         /// <summary>
         /// Sets ServerAutoStart for the website. Default is true.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool ServerAutoStart
         {
             get { return this.serverAutoStart; }
@@ -249,47 +196,38 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets WindowsAuthentication for the website. Default is false;
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
         public bool WindowsAuthentication { get; set; }
 
         /// <summary>
         /// Sets the port.
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
         public int Port { get; set; }
 
         /// <summary>
         /// Sets the LogExtFileFlags. Default is 1414 (logextfiletime | logextfileclientip |logextfilemethod | logextfileuristem | logextfilehttpstatus)
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
         public string LogExtFileFlags { get; set; }
 
         /// <summary>
         /// Sets the LogExtFileFlags. Default is W3c.
         /// </summary>
-        [TaskAction(CreateTaskAction, true)]
         public string LogFormat { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
         /// </summary>
-        [TaskAction(CreateTaskAction, false)]
-        [TaskAction(AddApplicationTaskAction, false)]
-        [TaskAction(AddVirtualDirectoryTaskAction, false)]
         public bool Force { get; set; }
 
         /// <summary>
         /// Gets the site id. [Output]
         /// </summary>
         [Output]
-        [TaskAction(GetInfoTaskAction, false)]
         public long SiteId { get; set; }
 
         /// <summary>
         /// Gets the SiteInfo Item. Identity = Name, MetaData = ApplicationPoolName, PhysicalPath, Id, State
         /// </summary>
         [Output]
-        [TaskAction(GetInfoTaskAction, false)]
         public ITaskItem SiteInfo { get; set; }
 
         /// <summary>
@@ -302,7 +240,6 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets whether the website exists
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>

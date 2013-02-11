@@ -41,45 +41,28 @@ namespace MSBuild.ExtensionPack.Web
     /// </Project>
     /// ]]></code>    
     /// </example>  
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/34e9bc00-e148-a6ba-4d3f-ef7af4bf0887.htm")]
     public class Iis7Application : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
         private const string DeleteTaskAction = "Delete";
-
         private ServerManager iisServerManager;
         private Site website;
-
-        /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(CheckExistsTaskAction)]
-        [DropdownValue(DeleteTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the name of the Website
         /// </summary>
         [Required]
-        [TaskAction(CheckExistsTaskAction, true)]
-        [TaskAction(DeleteTaskAction, true)]
         public string Website { get; set; }
 
         /// <summary>
         /// ITaskItem of Applications
         /// </summary>
-        [TaskAction(DeleteTaskAction, true)]
         public ITaskItem[] Applications { get; set; }
 
         /// <summary>
         /// Gets whether the application exists
         /// </summary>
         [Output]
-        [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
 
         /// <summary>

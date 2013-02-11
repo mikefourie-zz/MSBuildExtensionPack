@@ -76,9 +76,6 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\Attributes.cs">
-      <Link>Attributes.cs</Link>
-    </Compile>
     <Compile Include="..\Common\BaseTask.cs">
       <Link>BaseTask.cs</Link>
     </Compile>
