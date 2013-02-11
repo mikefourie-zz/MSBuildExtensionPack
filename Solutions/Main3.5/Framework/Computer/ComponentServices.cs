@@ -542,7 +542,7 @@ namespace MSBuild.ExtensionPack.Computer
 
             if (this.IsValidAssemblyFile(this.Path))
             {
-                this.shellWrapper = new ShellWrapper(System.IO.Path.Combine(System.IO.Path.Combine(this.pathToFramework, this.framework), "regsvcs.exe"), string.IsNullOrEmpty(this.ApplicationName) ? string.Format(CultureInfo.CurrentCulture, "/quiet {0}", this.Path) : string.Format(CultureInfo.CurrentCulture, @"/quiet {0} ""{1}""", this.Path, this.ApplicationName));
+                this.shellWrapper = new ShellWrapper(System.IO.Path.Combine(System.IO.Path.Combine(this.pathToFramework, this.framework), "regsvcs.exe"), string.IsNullOrEmpty(this.ApplicationName) ? string.Format(CultureInfo.CurrentCulture, @"/quiet ""{0}""", this.Path) : string.Format(CultureInfo.CurrentCulture, @"/quiet ""{0}"" ""{1}""", this.Path, this.ApplicationName));
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, this.shellWrapper.Arguments));
                 if (this.shellWrapper.Execute() != 0)
                 {
