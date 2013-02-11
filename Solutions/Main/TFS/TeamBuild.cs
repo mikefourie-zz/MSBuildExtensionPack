@@ -86,7 +86,6 @@ namespace MSBuild.ExtensionPack.Tfs
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/4.0.6.0/html/2464d978-d868-2978-e9a9-df4d4bdf04ab.htm")]
     public class TeamBuild : BaseTask
     {
         private const string GetLatestTaskAction = "GetLatest";
@@ -104,35 +103,14 @@ namespace MSBuild.ExtensionPack.Tfs
         private string commandLineArguments;
         
         /// <summary>
-        /// Sets the TaskAction.
-        /// </summary>
-        [DropdownValue(GetLatestTaskAction)]
-        [DropdownValue(RelatedChangesetsTaskAction)]
-        [DropdownValue(RelatedWorkItemsTaskAction)]
-        [DropdownValue(QueueTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
-
-        /// <summary>
         /// The Url of the Team Foundation Server.
         /// </summary>
-        [TaskAction(GetLatestTaskAction, true)]
-        [TaskAction(RelatedChangesetsTaskAction, true)]
-        [TaskAction(RelatedWorkItemsTaskAction, true)]
-        [TaskAction(QueueTaskAction, true)]
         [Required]
         public string TeamFoundationServerUrl { get; set; }
 
         /// <summary>
         /// The name of the Team Project containing the build
         /// </summary>
-        [TaskAction(GetLatestTaskAction, true)]
-        [TaskAction(RelatedChangesetsTaskAction, true)]
-        [TaskAction(RelatedWorkItemsTaskAction, true)]
-        [TaskAction(QueueTaskAction, true)]
         [Required]
         public string TeamProject
         {
@@ -143,8 +121,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// The name of the build definition.
         /// </summary>
-        [TaskAction(GetLatestTaskAction, false)]
-        [TaskAction(QueueTaskAction, true)]
         public string BuildDefinitionName
         {
             get { return this.buildDetails != null ? this.buildDetails.BuildDefinition.Name : this.buildDefinition; }
@@ -154,7 +130,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// The name of the Drop folder
         /// </summary>
-        [TaskAction(QueueTaskAction, false)]
         public string DropLocation
         {
             get { return this.buildDetails != null ? this.buildDetails.DropLocation : this.dropLocation; }
@@ -164,7 +139,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// The Command line arguments for the build
         /// </summary>
-        [TaskAction(QueueTaskAction, false)]
         public string CommandLineArguments
         {
             get { return this.buildDetails != null ? this.buildDetails.CommandLineArguments : this.commandLineArguments; }
@@ -174,8 +148,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// Build Uri. Defaults to latest build.
         /// </summary>
-        [TaskAction(RelatedChangesetsTaskAction, true)]
-        [TaskAction(RelatedWorkItemsTaskAction, true)]
         public string BuildUri
         {
             get; set;
@@ -184,7 +156,6 @@ namespace MSBuild.ExtensionPack.Tfs
         /// <summary>
         /// Set the Status property of the build to filter the search. Supports: Failed, InProgress, NotStarted, PartiallySucceeded, Stopped, Succeeded
         /// </summary>
-        [TaskAction(GetLatestTaskAction, false)]
         public string Status
         {
             get { return this.buildDetails != null ? this.buildDetails.Status.ToString() : this.buildStatus; }
