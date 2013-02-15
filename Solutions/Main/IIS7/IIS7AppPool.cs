@@ -5,6 +5,8 @@ namespace MSBuild.ExtensionPack.Web
 {
     using System;
     using System.Globalization;
+    using System.Runtime.InteropServices;
+    using System.Threading;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.Web.Administration;
@@ -344,7 +346,7 @@ namespace MSBuild.ExtensionPack.Web
             switch (this.TaskAction)
             {
                 case StartTaskAction:
-                    this.pool.Start();
+                    this.StartAppPoolWithRetry(0);
                     break;
                 case StopTaskAction:
                     if (this.pool.State != ObjectState.Stopped && this.pool.State != ObjectState.Stopping)
@@ -354,9 +356,31 @@ namespace MSBuild.ExtensionPack.Web
 
                     break;
                 case RecycleTaskAction:
-                    this.pool.Start();
+                    this.StartAppPoolWithRetry(0);
                     this.pool.Recycle();
                     break;
+            }
+        }
+
+        private void StartAppPoolWithRetry(int retryCount)
+        {
+            try
+            {
+                this.pool.Start();
+            }
+            catch (COMException e)
+            {
+                if (retryCount < 3)
+                {
+                    retryCount++;
+                    this.LogTaskMessage(MessageImportance.Low, e.Message);
+                    Thread.Sleep(1000);
+                    this.StartAppPoolWithRetry(retryCount);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
