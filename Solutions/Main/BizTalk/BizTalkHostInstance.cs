@@ -264,7 +264,6 @@ namespace MSBuild.ExtensionPack.BizTalk
             ManagementObject mo = this.GetHostInstanceObjectByHostName(hostName);
             if (mo == null)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Host Instance: {0} not found on: {1}.", this.HostName, this.MachineName));
                 return;
             }
 
