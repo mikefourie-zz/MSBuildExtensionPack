@@ -255,6 +255,12 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         public bool XmlDocs { get; set; }
 
+        /// <summary>
+        /// Sets the directories to be used to search for input assemblies. Each item should contain a directory name.
+        /// <para/>Command line option: /lib:directory
+        /// </summary>
+        public ITaskItem[] SearchDirectories { get; set; }
+
         protected override string ToolName
         {
             get { return "ILMerge.exe"; }
@@ -334,6 +340,14 @@ namespace MSBuild.ExtensionPack.Framework
             if (this.PublicKeyTokens)
             {
                 builder.AppendSwitch(@"/useFullPublicKeyForReferences");
+            }
+
+            if (this.SearchDirectories != null)
+            {
+                foreach (ITaskItem searchDirectory in this.SearchDirectories)
+                {
+                    builder.AppendSwitch(@"/lib:" + searchDirectory.ItemSpec);
+                }
             }
 
             if (this.TargetPlatformVersion != null)
