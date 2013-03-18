@@ -546,12 +546,10 @@ namespace MSBuild.ExtensionPack.FileSystem
                 {
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Found in: {0}", f.ItemSpec));
                     this.Result = true;
-                }
-                else
-                {
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Not found in: {0}", f.ItemSpec));
                     return;
                 }
+
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Not found in: {0}", f.ItemSpec));
             }
         }
         
