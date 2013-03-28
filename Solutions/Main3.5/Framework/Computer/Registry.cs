@@ -301,7 +301,7 @@ namespace MSBuild.ExtensionPack.Computer
             if (changed)
             {
                 // Broadcast config change
-                if (0 == NativeMethods.SendMessageTimeout(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SETTINGCHANGE, 0, "Environment", NativeMethods.SMTO_ABORTIFHUNG, 0, 0))
+                if (0 == NativeMethods.SendMessageTimeout(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SETTINGCHANGE, 0, "Environment", NativeMethods.SMTO_ABORTIFHUNG, NativeMethods.SENDMESSAGE_TIMEOUT, 0))
                 {
                     this.LogTaskWarning("NativeMethods.SendMessageTimeout returned 0");
                 }
