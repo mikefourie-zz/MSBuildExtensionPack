@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// Wraps the StyleCopConsole class to provide a mechanism for scanning files for StyleCop compliance.
     /// <para/>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Scan</i> (<b>Required: </b>SourceFiles, SettingsFile <b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile <b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
+    /// <para><i>Scan</i> (<b>Required: </b>SourceFiles, SettingsFile <b>Optional: </b>ShowOutput, ForceFullAnalysis, CacheResults, logFile, OutputFile<b>Output: </b>Succeeded, ViolationCount, FailedFiles)</para>
     /// <para><b>Remote Execution Support:</b> No</para>
     /// </summary>
     /// <example>
@@ -70,6 +70,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// Sets the log file.
         /// </summary>
         public ITaskItem LogFile { get; set; }
+
+        /// <summary>
+        /// Sets the path to the generated output file.
+        /// </summary>
+        public ITaskItem OutputFile { get; set; }
 
         /// <summary>
         /// Gets whether the scan succeeded.
@@ -154,8 +159,8 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "SourceFiles count is: {0}", this.SourceFiles.Length));
             List<string> addinPaths = new List<string>();
-            StyleCopConsole console = new StyleCopConsole(this.SettingsFile.GetMetadata("FullPath"), this.CacheResults, null, addinPaths, true);
-
+            StyleCopConsole console = new StyleCopConsole(this.SettingsFile.GetMetadata("FullPath"), this.CacheResults, this.OutputFile == null ? null : this.OutputFile.GetMetadata("FullPath"), addinPaths, true);
+            
             Configuration configuration = new Configuration(new string[0]);
             CodeProject project = new CodeProject(DateTime.Now.ToLongTimeString().GetHashCode(), null, configuration);
             foreach (ITaskItem item2 in this.SourceFiles)
