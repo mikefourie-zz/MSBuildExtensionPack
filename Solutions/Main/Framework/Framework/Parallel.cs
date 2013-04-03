@@ -364,7 +364,13 @@ namespace MSBuild.ExtensionPack.Framework
 
         private void ExecuteTargetSet(ITaskItem item)
         {
-            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Building Target Set: {0} - {1}", item.ItemSpec, item.GetMetadata("Targets")));
+            string resolvedtargets = item.GetMetadata("Targets");
+            if (resolvedtargets.EndsWith(";", StringComparison.OrdinalIgnoreCase))
+            {
+                resolvedtargets = resolvedtargets.Remove(resolvedtargets.Length - 1, 1);
+            }
+
+            this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Building Target Set: {0} - {1}", item.ItemSpec, resolvedtargets));
             string properties = item.GetMetadata("Properties");
             if (!string.IsNullOrEmpty(properties))
             {
@@ -410,7 +416,7 @@ namespace MSBuild.ExtensionPack.Framework
                 logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile={2}", append, this.MultiLogVerbosity, logfileName);
             }
 
-            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.GetMetadata("Targets") + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
+            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + resolvedtargets + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 exec.WorkingDirectory = this.WorkingDirectory;
