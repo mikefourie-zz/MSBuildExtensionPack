@@ -790,6 +790,12 @@ namespace MSBuild.ExtensionPack.Computer
 
         private bool StopLogic(string serviceName, bool overrideSDN)
         {
+            if (!this.ServiceDoesExist(serviceName))
+            {
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Service not found: {0} on '{1}'", serviceName, this.MachineName));
+                return true;
+            }
+
             string displayName = this.ServiceDisplayName;
 
             if (overrideSDN)
