@@ -14,10 +14,10 @@ namespace MSBuild.ExtensionPack.Web
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional: </b>Force, IdentityType, UseDefaultIdentity, PoolIdentity, IdentityPassword, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, PipelineMode, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional: </b>Force, IdentityType, UseDefaultIdentity, PoolIdentity, IdentityPassword, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, PipelineMode, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes, RapidFailProtection)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name)</para>
-    /// <para><i>Modify</i> (<b>Required: </b> Name <b>Optional: </b>Force, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes)</para>
+    /// <para><i>Modify</i> (<b>Required: </b> Name <b>Optional: </b>Force, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes, RapidFailProtection)</para>
     /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>SetIdentity</i> (<b>Optional: </b>UseDefaultIdentity, IdentityType, PoolIdentity, IdentityPassword)</para>
     /// <para><i>SetPipelineMode</i> (<b>Optional: </b>  PipelineMode)</para>
@@ -63,6 +63,7 @@ namespace MSBuild.ExtensionPack.Web
         private const string RecycleTaskAction = "Recycle";
         private ServerManager iisServerManager;
         private bool autoStart = true;
+        private bool rapidFailProtection = true;
         private ManagedPipelineMode managedPM = ManagedPipelineMode.Integrated;
         private ProcessModelIdentityType processModelType = ProcessModelIdentityType.LocalService;
         private ApplicationPool pool;
@@ -171,6 +172,15 @@ namespace MSBuild.ExtensionPack.Web
         public bool Force { get; set; }
 
         /// <summary>
+        /// Sets the RapidFailProtection. Default is true
+        /// </summary>
+        public bool RapidFailProtection
+        {
+            get { return this.rapidFailProtection; }
+            set { this.rapidFailProtection = value; }
+        }
+
+        /// <summary>
         /// Gets the AppPoolInfo Item. Identity = Name, MetaData = ApplicationPoolName, PhysicalPath, Id, State
         /// </summary>
         [Output]
@@ -259,6 +269,7 @@ namespace MSBuild.ExtensionPack.Web
             iappPool.SetMetadata("RecycleTimes", this.pool.Recycling.PeriodicRestart.Schedule.ToString());
             iappPool.SetMetadata("RecycleRequests", this.pool.Recycling.PeriodicRestart.Requests.ToString(CultureInfo.CurrentCulture));
             iappPool.SetMetadata("RecycleInterval", this.pool.Recycling.PeriodicRestart.Time.ToString());
+            iappPool.SetMetadata("RapidFailProtection", this.pool.Failure.RapidFailProtection.ToString());
 
             this.AppPoolInfo = iappPool;
         }
@@ -446,6 +457,8 @@ namespace MSBuild.ExtensionPack.Web
             this.pool.AutoStart = this.AutoStart;
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting Enable32BitAppOnWin64 to: {0}", this.Enable32BitAppOnWin64));
             this.pool.Enable32BitAppOnWin64 = this.Enable32BitAppOnWin64;
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting RapidFailProtection to: {0}", this.RapidFailProtection));
+            this.pool.Failure.RapidFailProtection = this.RapidFailProtection;
 
             if (!string.IsNullOrEmpty(this.ManagedRuntimeVersion))
             {
