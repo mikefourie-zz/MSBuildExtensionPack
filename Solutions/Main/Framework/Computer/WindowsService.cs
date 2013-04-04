@@ -676,7 +676,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (Exception ex)
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An error occurred in GetServiceStartMode of {0} on '{1}'.  Message: {2}", this.ServiceDisplayName, this.MachineName, ex.Message));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "An error occurred in GetServiceStartMode of {0} on '{1}'.  Message: {2}", serviceName, this.MachineName, ex.Message));
                 throw;
             }
 
