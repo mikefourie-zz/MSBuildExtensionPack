@@ -8,12 +8,14 @@ namespace MSBuild.ExtensionPack.Computer
     using System.Globalization;
     using System.Net;
     using System.Net.NetworkInformation;
+    using System.Net.Sockets;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>GetDnsHostName</i> (<b>Required: HostName</b> <b>Output:</b> DnsHostName)</para>
+    /// <para><i>GetFreePort</i> (<b>Output:</b> Port)</para>
     /// <para><i>GetInternalIP</i> (<b>Output:</b> Ip)</para>
     /// <para><i>GetRemoteIP</i> (<b>Required: </b>HostName <b>Output:</b> Ip)</para>
     /// <para><i>Ping</i> (<b>Required: </b> HostName <b>Optional: </b>Timeout, PingCount <b>Output:</b> Exists)</para>
@@ -22,39 +24,48 @@ namespace MSBuild.ExtensionPack.Computer
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ///   <PropertyGroup>
-    ///     <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
-    ///     <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
-    ///   </PropertyGroup>
-    ///   <Import Project="$(TPath)"/>
-    ///   <Target Name="Default">
-    ///     <!-- Get the Machine IP Addresses -->
-    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="GetInternalIP">
-    ///       <Output TaskParameter="IP" ItemName="TheIP"/>
-    ///     </MSBuild.ExtensionPack.Computer.Network>
-    ///     <Message Text="The IP: %(TheIP.Identity)"/>
-    ///     <!-- Get Remote IP Addresses -->
-    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="GetRemoteIP" HostName="www.freetodev.com">
-    ///       <Output TaskParameter="IP" ItemName="TheRemoteIP"/>
-    ///     </MSBuild.ExtensionPack.Computer.Network>
-    ///     <Message Text="The Remote IP: %(TheRemoteIP.Identity)"/>
-    ///     <!-- Ping a host -->
-    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="Ping" HostName="www.freetodev.com">
-    ///       <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///     </MSBuild.ExtensionPack.Computer.Network>
-    ///     <Message Text="Exists: $(DoesExist)"/>
-    ///     <!-- Gets the fully-qualified domain name for a hostname. -->
-    ///     <MSBuild.ExtensionPack.Computer.Network TaskAction="GetDnsHostName" HostName="192.168.0.15">
-    ///       <Output TaskParameter="DnsHostName" PropertyName="HostEntryName" />
-    ///     </MSBuild.ExtensionPack.Computer.Network>
-    ///     <Message Text="Host Entry name: $(HostEntryName)" />
-    ///   </Target>
+    ///     <PropertyGroup>
+    ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    ///     </PropertyGroup>
+    ///     <Import Project="$(TPath)"/>
+    ///     <Target Name="Default">
+    ///         <!-- Get the Machine IP Addresses -->
+    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="GetInternalIP">
+    ///             <Output TaskParameter="IP" ItemName="TheIP"/>
+    ///         </MSBuild.ExtensionPack.Computer.Network>
+    ///         <Message Text="The IP: %(TheIP.Identity)"/>
+    ///         <!-- Get Remote IP Addresses -->
+    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="GetRemoteIP" HostName="www.freetodev.com">
+    ///             <Output TaskParameter="IP" ItemName="TheRemoteIP"/>
+    ///         </MSBuild.ExtensionPack.Computer.Network>
+    ///         <Message Text="The Remote IP: %(TheRemoteIP.Identity)"/>
+    ///         <!-- Ping a host -->
+    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="Ping" HostName="www.freetodev.com">
+    ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+    ///         </MSBuild.ExtensionPack.Computer.Network>
+    ///         <Message Text="Exists: $(DoesExist)"/>
+    ///         <!-- Gets the fully-qualified domain name for a hostname. -->
+    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="GetDnsHostName" HostName="192.168.0.15">
+    ///             <Output TaskParameter="DnsHostName" PropertyName="HostEntryName" />
+    ///         </MSBuild.ExtensionPack.Computer.Network>
+    ///         <Message Text="Host Entry name: $(HostEntryName)" />
+    ///         <!-- Get free port details -->
+    ///         <MSBuild.ExtensionPack.Computer.Network TaskAction="GetFreePort">
+    ///             <Output TaskParameter="Port" ItemName="FreePort"/>
+    ///         </MSBuild.ExtensionPack.Computer.Network>
+    ///         <Message Text="Free Port Address: %(FreePort.Address)"/>
+    ///         <Message Text="Free Port AddressFamily: %(FreePort.AddressFamily)"/>
+    ///         <Message Text="Free Port Port: %(FreePort.Port)"/>
+    ///         <Message Text="Free Port ToString: %(FreePort.ToString)"/>
+    ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
     public class Network : BaseTask
     {
         private const string GetDnsHostNameTaskAction = "GetDnsHostName";
+        private const string GetFreePortTaskAction = "GetFreePort";
         private const string GetInternalIPTaskAction = "GetInternalIP";
         private const string GetRemoteIPTaskAction = "GetRemoteIP";
         private const string PingTaskAction = "Ping";
@@ -98,6 +109,12 @@ namespace MSBuild.ExtensionPack.Computer
         public ITaskItem[] IP { get; set; }
 
         /// <summary>
+        /// Gets the free port. ItemSpec is Port. Metadata includes Address, AddressFamily, Port and ToString
+        /// </summary>
+        [Output]
+        public ITaskItem Port { get; set; }
+
+        /// <summary>
         /// Gets the DnsHostName
         /// </summary>
         [Output]
@@ -118,6 +135,9 @@ namespace MSBuild.ExtensionPack.Computer
                 case PingTaskAction:
                     this.Ping();
                     break;
+                case GetFreePortTaskAction:
+                    this.GetFreePort();
+                    break;
                 case GetInternalIPTaskAction:
                     this.GetInternalIP();
                     break;
@@ -131,6 +151,22 @@ namespace MSBuild.ExtensionPack.Computer
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
+        }
+
+        private void GetFreePort()
+        {
+            this.LogTaskMessage("Getting Free Port");
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            var ipEndPoint = (IPEndPoint)listener.LocalEndpoint;
+            listener.Stop();
+
+            ITaskItem portItem = new TaskItem("Port");
+            portItem.SetMetadata("Address", ipEndPoint.Address.ToString());
+            portItem.SetMetadata("AddressFamily", ipEndPoint.AddressFamily.ToString());
+            portItem.SetMetadata("Port", ipEndPoint.Port.ToString(CultureInfo.InvariantCulture));
+            portItem.SetMetadata("ToString", ipEndPoint.ToString());
+            this.Port = portItem;
         }
 
         private void GetDnsHostName()
