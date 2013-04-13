@@ -179,7 +179,6 @@
     <Compile Include="Communication\FTP\FtpFileInfo.cs" />
     <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\MSMQ.cs" />
-    <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\DNZip.cs" />
     <Compile Include="Compression\Zip.cs" />
     <Compile Include="Computer\ActiveDirectory.cs" />
