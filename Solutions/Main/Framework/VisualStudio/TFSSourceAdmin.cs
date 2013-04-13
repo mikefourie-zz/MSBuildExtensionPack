@@ -158,6 +158,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string vstools = string.Empty;
             switch (this.Version)
             {
+                case "2012":
+                    vstools = Environment.GetEnvironmentVariable("VS110COMNTOOLS");
+                    break;
                 case "2010":
                     vstools = Environment.GetEnvironmentVariable("VS100COMNTOOLS");
                     break;

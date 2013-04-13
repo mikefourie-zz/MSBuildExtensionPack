@@ -49,7 +49,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
-    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Comments, Notes, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Comments, Notes, Version, WorkingDirectory, Recursive, Bypass <b>Output:</b> ExitCode)</para>
     /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
@@ -146,6 +146,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Forces all files to be retrieved, not just those that are out-of-date.
         /// </summary>
         public bool All { get; set; }
+
+        /// <summary>
+        /// Bypasses a gated check-in requirement. Default is false.
+        /// </summary>
+        public bool Bypass { get; set; }
 
         /// <summary>
         /// Overwrites writable files that are not checked out.
@@ -511,6 +516,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 arguments += " /override:\"" + this.OverrideText + "\"";
             }
 
+            if (this.Bypass)
+            {
+                arguments += " /bypass";
+            }
+
             if (string.IsNullOrEmpty(this.Server) == false)
             {
                 arguments += " /s:" + this.Server;
@@ -587,6 +597,9 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string vstools = string.Empty;
             switch (this.Version)
             {
+                case "2012":
+                    vstools = Environment.GetEnvironmentVariable("VS110COMNTOOLS");
+                    break;
                 case "2010":
                     vstools = Environment.GetEnvironmentVariable("VS100COMNTOOLS");
                     break;
