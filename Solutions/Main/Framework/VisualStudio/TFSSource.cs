@@ -49,9 +49,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>AddLabel</i> (<b>Required: </b>LabelName, ItemPath or ItemCol <b>Optional: </b>Login, Server, LabelScope, Recursive, VersionSpec, Comments<b>Output:</b> ExitCode)</para>
     /// <para><i>Checkin</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Comments, Notes, Version, WorkingDirectory, Recursive, Bypass <b>Output:</b> ExitCode)</para>
     /// <para><i>Checkout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Delete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
+    /// <para><i>DeleteLabel</i> (<b>Required: </b>LabelName<b>Optional: </b>Login, Server, LabelScope<b>Output:</b> ExitCode)</para>
     /// <para><i>Get</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive, Force, Overwrite, All <b>Output:</b> ExitCode)</para>
     /// <para><i>GetChangeset</i> (<b>Required: </b>VersionSpec <b>Optional: </b>Login, Server, WorkingDirectory <b>Output:</b> ExitCode, Changeset)</para>
     /// <para><i>GetWorkingChangeset</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, WorkingDirectory, Recursive <b>Output:</b> ExitCode, Changeset)</para>
@@ -107,9 +109,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
     public class TfsSource : BaseTask
     {
         private const string AddTaskAction = "Add";
+        private const string AddLabelTaskAction = "AddLabel";
         private const string CheckinTaskAction = "Checkin";
         private const string CheckoutTaskAction = "Checkout";
         private const string DeleteTaskAction = "Delete";
+        private const string DeleteLabelTaskAction = "DeleteLabel";
         private const string GetTaskAction = "Get";
         private const string MergeTaskAction = "Merge";
         private const string GetPendingChangesTaskAction = "GetPendingChanges";
@@ -118,7 +122,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string GetWorkingChangesetTaskAction = "GetWorkingChangeset";
         private const string UndoCheckoutTaskAction = "UndoCheckout";
         private const string UndeleteTaskAction = "Undelete";
-
         private string teamFoundationExe;
         private string version = "2008";
         private bool recursive = true;
@@ -205,6 +208,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// Sets the Destination for a Merge
         /// </summary>
         public string Destination { get; set; }
+
+        /// <summary>
+        /// Sets the Label Name.
+        /// </summary>
+        public string LabelName { get; set; }
+
+        /// <summary>
+        /// Sets the Label Scope
+        /// </summary>
+        public string LabelScope { get; set; }
 
         /// <summary>
         /// Sets the notes.
@@ -295,6 +308,12 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 case DeleteTaskAction:
                     this.Delete();
                     break;
+                case AddLabelTaskAction:
+                    this.AddLabel();
+                    break;
+                case DeleteLabelTaskAction:
+                    this.DeleteLabel();
+                    break;
                 case MergeTaskAction:
                     this.Merge();
                     break;
@@ -357,6 +376,57 @@ namespace MSBuild.ExtensionPack.VisualStudio
             }
 
             this.PendingChangesExistItem[0] = t;
+        }
+
+        private void AddLabel()
+        {
+            if (string.IsNullOrEmpty(this.LabelName))
+            {
+                this.Log.LogError("LabelName is required for AddLabel");
+                return;
+            }
+
+            string args = string.Empty;
+
+            if (!string.IsNullOrEmpty(this.LabelScope))
+            {
+                this.LabelName += "@" + this.LabelScope;
+            }
+
+            if (!string.IsNullOrEmpty(this.VersionSpec))
+            {
+                args += " /version:" + "\"" + this.VersionSpec + "\"";
+            }
+
+            if (!string.IsNullOrEmpty(this.Comments))
+            {
+                 args += string.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\"", this.Comments);
+            }
+
+            this.ExecuteCommand("label " + this.LabelName, args, "/noprompt /recursive");
+        }
+
+        private void DeleteLabel()
+        {
+            if (string.IsNullOrEmpty(this.LabelName))
+            {
+                this.Log.LogError("LabelName is required for DeleteLabel");
+                return;
+            }
+
+            string args = string.Empty;
+
+            if (!string.IsNullOrEmpty(this.LabelScope))
+            {
+                this.LabelName += "@" + this.LabelScope;
+            }
+
+            if (!string.IsNullOrEmpty(this.VersionSpec))
+            {
+                args += " /version:" + "\"" + this.VersionSpec + "\"";
+            }
+
+            this.ExecuteCommand("label /delete " + this.LabelName, args, "/noprompt");
         }
 
         private void GetFiles()
@@ -505,7 +575,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private void ExecuteCommand(string action, string options, string lastOptions)
         {
             this.itemSpec = string.Empty;
-            if ((this.TaskAction != GetChangesetTaskAction) && (this.TaskAction != GetWorkingChangesetTaskAction) && !this.DetermineItemSpec())
+            if ((this.TaskAction != GetChangesetTaskAction) && (this.TaskAction != GetWorkingChangesetTaskAction) && (this.TaskAction != DeleteLabelTaskAction) && !this.DetermineItemSpec())
             {
                 return;
             }
