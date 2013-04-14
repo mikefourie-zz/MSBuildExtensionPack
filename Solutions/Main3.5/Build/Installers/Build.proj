@@ -1,7 +1,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
-        <ReleaseVersion>3.5.12.0</ReleaseVersion>
+        <ReleaseVersion>3.5.13.0</ReleaseVersion>
         <DropFolder>c:\MSBEP\3.5</DropFolder>
         <RootFolder>$(MSBuildProjectDirectory)..\..\..\</RootFolder>
         <SkipBuild>false</SkipBuild>
