@@ -42,9 +42,9 @@
     </BuildLogFile>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
     <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
-    <HelpTitle>MSBuild Extension Pack Help %28v4.0.6.0%29</HelpTitle>
+    <HelpTitle>MSBuild Extension Pack Help 4.0.7.0</HelpTitle>
     <CopyrightHref>http://www.MSBuildExtensionPack.com</CopyrightHref>
-    <CopyrightText>Copyright &amp;#169%3b 2011 http://www.MSBuildExtensionPack.com. All rights reserved.</CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b 2013 http://www.MSBuildExtensionPack.com. All rights reserved.</CopyrightText>
     <FeedbackEMailAddress>feedback%40MSBuildExtensionPack.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText>MSBuild ExtensionPack Feedback</FeedbackEMailLinkText>
     <PresentationStyle>vs2005</PresentationStyle>
@@ -54,6 +54,8 @@
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.dll" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Git.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Git.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Iis7.dll" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Iis7.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Loggers.dll" />
@@ -62,6 +64,8 @@
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.dll" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2012.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2012.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.dll" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sync.dll" />
@@ -74,6 +78,8 @@
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.dll" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2012.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2012.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.dll" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.xml" />
       <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.xml" />
