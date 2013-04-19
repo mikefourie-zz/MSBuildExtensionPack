@@ -127,6 +127,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 this.shellWrapper.WorkingDirectory = this.WorkingDirectory;
+                this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "WorkingDirectory set to: {0}", this.WorkingDirectory));
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} with {1}", this.shellWrapper.Executable, arguments));
