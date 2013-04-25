@@ -18,6 +18,7 @@
         <AssemblyBuildNumberType>DateString</AssemblyBuildNumberType>
         <AssemblyBuildNumberFormat>MMdd</AssemblyBuildNumberFormat>
         <AssemblyRevisionType>AutoIncrement</AssemblyRevisionType>
+        <AssemblyRevisionReset>True</AssemblyRevisionReset>
         <AssemblyRevisionFormat>00</AssemblyRevisionFormat>
     </PropertyGroup>
 
@@ -30,6 +31,7 @@
         <AssemblyFileBuildNumberType>DateString</AssemblyFileBuildNumberType>
         <AssemblyFileBuildNumberFormat>MMdd</AssemblyFileBuildNumberFormat>
         <AssemblyFileRevisionType>AutoIncrement</AssemblyFileRevisionType>
+        <AssemblyFileRevisionReset>True</AssemblyFileRevisionReset>
         <AssemblyFileRevisionFormat>00</AssemblyFileRevisionFormat>
     </PropertyGroup>
 
@@ -98,6 +100,7 @@
                       AssemblyBuildNumberType="$(AssemblyBuildNumberType)"
                       AssemblyBuildNumberFormat="$(AssemblyBuildNumberFormat)"
                       AssemblyRevisionType="$(AssemblyRevisionType)"
+                      AssemblyRevisionReset="$(AssemblyRevisionReset)"
                       AssemblyRevisionFormat="$(AssemblyRevisionFormat)"
                       AssemblyFileMajorVersion="$(AssemblyFileMajorVersion)"
                       AssemblyFileMinorVersion="$(AssemblyFileMinorVersion)"
@@ -106,6 +109,7 @@
                       AssemblyFileBuildNumberType="$(AssemblyFileBuildNumberType)"
                       AssemblyFileBuildNumberFormat="$(AssemblyFileBuildNumberFormat)"
                       AssemblyFileRevisionType="$(AssemblyFileRevisionType)"
+                      AssemblyFileRevisionReset="$(AssemblyFileRevisionReset)"
                       AssemblyFileRevisionFormat="$(AssemblyFileRevisionFormat)"
                       ComVisible="$(AssemblyComVisible)"
                       Guid="$(AssemblyGuid)"

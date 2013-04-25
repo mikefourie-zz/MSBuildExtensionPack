@@ -349,6 +349,42 @@ namespace MSBuild.ExtensionPack.Framework
         public string AssemblyRevisionType { get; set; }
 
         /// <summary>
+        /// Whether the AssemblyRevisionNumber will be reset to 0 when a DateString or Julian BuildNumberType is used in conjunction with an AutoIncrement <see cref="AssemblyRevisionType">AssemblyRevisionType</see>.
+        /// </summary>
+        /// <remarks>
+        ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file, the default setting is
+        ///     True. To override this set the <em>AssemblyRevisionReset</em>
+        ///     property.</para>
+        /// </remarks>
+        /// <example>
+        ///     <code lang="xml">
+        /// &lt;AssemblyRevisionReset&gt;False&lt;/AssemblyRevisionReset&gt;
+        ///     </code>
+        /// </example>
+        /// <seealso cref="AssemblyRevisionFormat"/>
+        /// <seealso cref="AssemblyRevisionType"/>
+        /// <seealso cref="IncrementMethod"/>
+        public string AssemblyRevisionReset { get; set; }
+
+        /// <summary>
+        /// Whether the AssemblyFileRevisionNumber will be reset to 0 when a DateString or Julian BuildNumberType is used in conjunction with an AutoIncrement <see cref="AssemblyRevisionType">AssemblyRevisionType</see>.
+        /// </summary>
+        /// <remarks>
+        ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file, the default setting is
+        ///     True. To override this set the <em>AssemblyFileRevisionReset</em>
+        ///     property.</para>
+        /// </remarks>
+        /// <example>
+        ///     <code lang="xml">
+        /// &lt;AssemblyFileRevisionReset&gt;False&lt;/AssemblyFileRevisionReset&gt;
+        ///     </code>
+        /// </example>
+        /// <seealso cref="AssemblyRevisionFormat"/>
+        /// <seealso cref="AssemblyRevisionType"/>
+        /// <seealso cref="IncrementMethod"/>
+        public string AssemblyFileRevisionReset { get; set; }
+
+        /// <summary>
         /// Set to true to skip setting version information. Default is false.
         /// </summary>
         public bool SkipVersioning { get; set; }
@@ -1017,7 +1053,7 @@ namespace MSBuild.ExtensionPack.Framework
                 this.Log.LogMessage(MessageImportance.Low, "Updating assembly info for {0}", item.ItemSpec);
                 if (!this.SkipVersioning)
                 {
-                    Version versionToUpdate = null;
+                    Version versionToUpdate;
 
                     try
                     {
@@ -1204,6 +1240,7 @@ namespace MSBuild.ExtensionPack.Framework
             string originalBuildNumber = string.Empty;
             bool handleSpecialInteraction = ((requestedVersion.BuildNumberType == IncrementMethod.DateString) || (requestedVersion.BuildNumberType == IncrementMethod.Julian)) &&
                                             (requestedVersion.RevisionType == IncrementMethod.AutoIncrement);
+            handleSpecialInteraction = handleSpecialInteraction && requestedVersion.RevisionReset;
 
             if (handleSpecialInteraction)
             {
@@ -1343,6 +1380,21 @@ namespace MSBuild.ExtensionPack.Framework
                 this.assemblyVersionSettings.RevisionType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyRevisionType);
             }
 
+            // Handle AssemblyRevisionRevisionReset
+            if (this.AssemblyRevisionReset == null)
+            {
+                this.assemblyVersionSettings.RevisionReset = true;
+            }
+            else
+            {
+                if (!bool.TryParse(this.AssemblyRevisionReset, out this.assemblyVersionSettings.RevisionReset))
+                {
+                    this.Log.LogError("The value specified for AssemblyRevisionReset is invalid. It must be a string representation of a boolean value");
+
+                    return false;
+                }
+            }
+
             // Handle AssemblyFileBuildNumberType
             if (this.AssemblyFileBuildNumberType == null)
             {
@@ -1358,6 +1410,21 @@ namespace MSBuild.ExtensionPack.Framework
                 }
 
                 this.assemblyFileVersionSettings.BuildNumberType = (IncrementMethod)Enum.Parse(typeof(IncrementMethod), this.AssemblyFileBuildNumberType);
+            }
+
+            // Handle AssemblyFileRevisionReset
+            if (this.AssemblyFileRevisionReset == null)
+            {
+                this.assemblyFileVersionSettings.RevisionReset = true;
+            }
+            else
+            {
+                if (!bool.TryParse(this.AssemblyFileRevisionReset, out this.assemblyFileVersionSettings.RevisionReset))
+                {
+                    this.Log.LogError("The value specified for AssemblyFileRevisionReset is invalid. It must be a string representation of a boolean value");
+
+                    return false;
+                }
             }
 
             // Handle AssemblyFileRevisionType
@@ -1519,6 +1586,7 @@ namespace MSBuild.ExtensionPack.Framework
             public string Revision;
             public string RevisionFormat;
             public IncrementMethod RevisionType;
+            public bool RevisionReset;
             public string Version;
         }
     }
