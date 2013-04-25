@@ -1,0 +1,36 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<TPath>$(MSBuildExtensionsPath)\MSBuild.ExtensionPack.tasks</TPath>
+		<TPath Condition="Exists('$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks')">$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks</TPath>
+	</PropertyGroup>
+	<Import Project="$(TPath)"/>
+
+	<PropertyGroup>
+		<ProgramFiles Condition=" '$(ProgramW6432)' != '' ">C:\Program Files (x86)</ProgramFiles>
+		<MSDEVPath Condition=" '$(MSDEVPath)' == '' ">$(ProgramFiles)\Microsoft Visual Studio\Common\MSDev98\Bin\MSDEV.EXE</MSDEVPath>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">Win32</Platform>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<_ProjectsToBuild Include="@(ProjectsToBuild)">
+			<Projects Condition=" @(ProjectsToBuild->'%(Projects)') == '' ">ALL</Projects>
+			<Platform Condition=" @(ProjectsToBuild->'%(Platform)') == '' And '$(Platform)' == '' ">Win32</Platform>
+			<Platform Condition=" @(ProjectsToBuild->'%(Platform)') == '' And '$(Platform)' != '' ">$(Platform)</Platform>
+			<Configuration Condition=" @(ProjectsToBuild->'%(Configuration)') == '' And '$(Configuration)' == '' ">Debug</Configuration>
+			<Configuration Condition=" @(ProjectsToBuild->'%(Configuration)') == '' And '$(Configuration)' != '' ">$(Configuration)</Configuration>
+		</_ProjectsToBuild>
+	</ItemGroup>
+
+	<Target Name="Build">
+		<MSBuild.ExtensionPack.VisualStudio.VC6 MSDEVPath="$(MSDEVPath)" TaskAction="Build" Projects="@(_ProjectsToBuild)"/>
+	</Target>
+
+	<Target Name="Rebuild">
+		<MSBuild.ExtensionPack.VisualStudio.VC6 MSDEVPath="$(MSDEVPath)" TaskAction="Rebuild" Projects="@(_ProjectsToBuild)"/>
+	</Target>
+
+	<Target Name="Clean">
+		<MSBuild.ExtensionPack.VisualStudio.VC6 MSDEVPath="$(MSDEVPath)" TaskAction="Clean" Projects="@(_ProjectsToBuild)"/>
+	</Target>
+</Project>

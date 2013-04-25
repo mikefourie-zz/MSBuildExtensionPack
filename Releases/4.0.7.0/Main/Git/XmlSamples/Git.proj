@@ -1,0 +1,39 @@
+﻿<!--
+    MSBuild project example file that shows how to use the Git Clone task to clone a repository.
+    
+    Clone task uses the following parameters:
+    - RepositoryToClone (required)
+        This is the repository you wish to clone. This can be an URL 
+        (ie. https://WilbertOnGithub@github.com/WilbertOnGithub/MSBuildGitTasks.git) or a local Git repository 
+        (ie. c:\projects\repositorytoclone).
+    - TargetDirectory (required)
+        The directory where you want to put your local clone. 
+    - BranchToSwitchTo (optional)
+        A branch you want to switch to. If you do not use this parameter, git will always default to master.
+        Instead of a branch you can also switch to a specific SHA. 
+        
+    The Clone task returns the following output parameter:
+    - SHA
+        This returns the last SHA of the current branch of the cloned repository. This is useful because 
+        you would want to include the SHA into your build (for example in your assembly info files. It 
+        gives you the ability to pinpoint exactly what code was used to make the build.
+-->
+
+<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+	
+	<!-- Show a typical clone operation with all parameters involved -->
+    <Target Name="Default">
+        <Clone RepositoryToClone="https://WilbertOnGithub@github.com/WilbertOnGithub/MSBuildGitTasks.git"
+               TargetDirectory="c:\temp\sometemporarydirsomewhere"
+               BranchToSwitchTo="b6429392ed3ebf30098b07475a5b4fe089cb29eb" >
+            <Output PropertyName="PropFromTask" TaskParameter="SHA" />
+        </Clone>
+
+        <Message Text ="SHA retrieved: $(PropFromTask)" />
+    </Target>
+</Project>

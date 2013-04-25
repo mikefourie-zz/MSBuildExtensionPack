@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <!-- The configuration and platform will be used to determine which
+         assemblies to include from solution and project documentation
+         sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6f68e116-2259-493e-a37f-d59bbca9d021}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.5.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
+         Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <OutputPath>C:\MSBEP\4\</OutputPath>
+    <HtmlHelpName>MSBuild Extension Pack Help</HtmlHelpName>
+    <ApiFilter>
+      <Filter entryType="Namespace" fullName="Microsoft.Sdc.Tasks" isExposed="True" xmlns="">
+        <Filter entryType="Class" fullName="Microsoft.Sdc.Tasks.ATemplate" filterName="ATemplate" isExposed="False" />
+      </Filter>
+      <Filter entryType="Namespace" fullName="Microsoft.Sdc.Tasks.Configuration.ComponentServices" isExposed="False" xmlns="" />
+      <Filter entryType="Namespace" fullName="Microsoft.Sdc.Tasks.Configuration.Web" isExposed="False" xmlns="" />
+      <Filter entryType="Namespace" fullName="Microsoft.Sdc.Tasks.Configuration.Win32Security" isExposed="False" xmlns="" />
+    </ApiFilter>
+    <ProjectSummary>
+    </ProjectSummary>
+    <MissingTags>Parameter, Returns, Namespace, TypeParameter</MissingTags>
+    <VisibleItems>None</VisibleItems>
+    <HtmlHelp1xCompilerPath>
+    </HtmlHelp1xCompilerPath>
+    <HtmlHelp2xCompilerPath>
+    </HtmlHelp2xCompilerPath>
+    <SandcastlePath>
+    </SandcastlePath>
+    <WorkingPath>
+    </WorkingPath>
+    <KeepLogFile>True</KeepLogFile>
+    <BuildLogFile>
+    </BuildLogFile>
+    <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <HelpTitle>MSBuild Extension Pack Help 4.0.7.0</HelpTitle>
+    <CopyrightHref>http://www.MSBuildExtensionPack.com</CopyrightHref>
+    <CopyrightText>Copyright &amp;#169%3b 2013 http://www.MSBuildExtensionPack.com. All rights reserved.</CopyrightText>
+    <FeedbackEMailAddress>feedback%40MSBuildExtensionPack.com</FeedbackEMailAddress>
+    <FeedbackEMailLinkText>MSBuild ExtensionPack Feedback</FeedbackEMailLinkText>
+    <PresentationStyle>vs2005</PresentationStyle>
+    <SyntaxFilters>None</SyntaxFilters>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="C:\MSBEP\4\Interop.COMAdmin.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.BizTalk.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Git.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Git.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Iis7.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Iis7.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Loggers.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Loggers.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2005.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2008.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2012.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sql2012.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.StyleCop.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sync.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Sync.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.Dlr.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.Dlr.XML" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.TaskFactory.PowerShell.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2010.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2012.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.Tfs2012.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.WindowsVirtualPC.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\MSBuild.ExtensionPack.xml" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\StyleCop.CSharp.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\StyleCop.CSharp.Rules.dll" />
+      <DocumentationSource sourceFile="C:\MSBEP\4\StyleCop.dll" />
+    </DocumentationSources>
+    <NamespaceSummaries>
+      <NamespaceSummaryItem name="(global)" isDocumented="False" />
+      <NamespaceSummaryItem name="COMAdmin" isDocumented="False" />
+      <NamespaceSummaryItem name="Microsoft.StyleCop" isDocumented="False" />
+      <NamespaceSummaryItem name="Microsoft.StyleCop.CSharp" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts the base task used for all Extension Pack tasks</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.BizTalk" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts all BizTalk 2006 tasks. The BizTalkApplication task file provides TaskActions targeting BizTalk Applications.&lt;para/&gt;
+Additional functionality will be provided in the upcoming BizTalkOrchestration, BizTalkReceivePort and BizTalkSendPort task files.
+
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://www.microsoft.com/biztalk/en/us/default.aspx"&gt;BizTalk Server 2006&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.CodeQuality" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that are designed to scan your code and identify code quality / consistency issues.
+
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://blogs.msdn.com/fxcop/"&gt;FxCop Blog&lt;/a&gt;&lt;para/&gt;
+&lt;a href="http://blogs.msdn.com/sourceanalysis/"&gt;StyleCop Blog&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Communication" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that can be used for communication.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Compression" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that can be used to compress and work with compressed files.
+
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://support.microsoft.com/kb/310618"&gt;Microsoft Cabinet Software Development Kit&lt;/a&gt;&lt;para/&gt;
+&lt;a href="http://www.microsoft.com/downloadS/details.aspx?FamilyID=e9d87f37-2adc-4c32-95b3-b5e3a21bab2c&amp;amp;displaylang=en"&gt;Microsoft Visual J# 2.0 Redistributable Package – Second Edition&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Computer" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that can be used to interact with various computer elements.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.FileSystem" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that can be used to work with files and folders.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Framework" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that can be used to work with elements of the .net framework</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Management" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the WMI task. Users are advised to use the WMI Code Creator v1.0 to explore the full possibilities that this task exposes.
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=2cc30a64-ea15-4661-8da4-55bbc145c30e&amp;amp;displaylang=en"&gt;WMI Code Creator v1.0&lt;/a&gt;&lt;para/&gt;
+&lt;a href="http://msdn.microsoft.com/en-us/library/aa394582(VS.85).aspx"&gt;WMI&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Multimedia" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts a task that can play system and .wav sounds.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Science" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts a Maths task which can be used to perform various mathematics functions and expression evaluations.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Security" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts a Certificate task that can be used to add and remove certificates.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Sql2005" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the Sql2005 tasks which provided various SMO functions.
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://msdn.microsoft.com/en-us/library/ms162169(SQL.90).aspx"&gt;SQL Server Management Objects (SMO)&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Sql2008" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the Sql2008 tasks which provided various SMO functions.
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://msdn.microsoft.com/en-us/library/ms162169.aspx"&gt;SQL Server Management Objects (SMO)&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.SqlServer" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the various SqlServer tasks</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Tfs" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the popular DevEnv task.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Tfs2010" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the popular DevEnv task to use in TFS2010</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.UI" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts the Console and Dialog tasks which can be used to show and prompt users for input
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!670.entry"&gt;User Interaction in MSBuild&lt;/a&gt;&lt;para/&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.UI.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.VisualStudio" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts various tasks that interact with Visual Studio products
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://msdn.microsoft.com/en-us/library/003ssz4z(VS.80).aspx"&gt;SourceSafe Command Line Reference&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Web" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace hosts tasks that interact with IIS7
+&lt;h4&gt;Helpful Links&lt;/h4&gt;
+&lt;a href="http://www.iis.net/"&gt;IIS&lt;/a&gt;</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Xml" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
+This namespace currently hosts the XmlTask</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.VisualStudio.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Computer.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Loggers.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.SqlServer.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Communication.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="StyleCop" isDocumented="False" />
+      <NamespaceSummaryItem name="StyleCop.CSharp" isDocumented="False" />
+      <NamespaceSummaryItem name="System" isDocumented="False" />
+      <NamespaceSummaryItem name="MSBuild.ExtensionPack.Subversion.Schema" isDocumented="False" />
+      <NamespaceSummaryItem name="StyleCop.Diagnostics" isDocumented="False" />
+      <NamespaceSummaryItem name="System.Reflection" isDocumented="False" />
+    </NamespaceSummaries>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <!-- There are no properties for these two groups but they need to appear in
+       order for Visual Studio to perform the build. -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo">
+      <HintPath>..\..\Sql2012\AssemblyReferences\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo">
+      <HintPath>..\..\Sql2012\AssemblyReferences\Microsoft.SqlServer.Smo.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!-- Import the SHFB build targets -->
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+</Project>

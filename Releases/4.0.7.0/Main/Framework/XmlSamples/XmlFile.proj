@@ -1,0 +1,78 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <ConfigSettingsToDeploy Include="c:\machine.config">
+            <Action>RemoveElement</Action>
+            <Element>processModel</Element>
+            <ParentElement>/configuration/system.web</ParentElement>
+        </ConfigSettingsToDeploy>
+        <ConfigSettingsToDeploy Include="c:\machine.config">
+            <Action>AddElement</Action>
+            <Element>processModel</Element>
+            <ParentElement>/configuration/system.web</ParentElement>
+        </ConfigSettingsToDeploy>
+        <ConfigSettingsToDeploy Include="c:\machine.config">
+            <Action>AddAttribute</Action>
+            <Key>enable</Key>
+            <ValueToAdd>true</ValueToAdd>
+            <Element>/configuration/system.web/processModel</Element>
+        </ConfigSettingsToDeploy>
+        <ConfigSettingsToDeploy Include="c:\machine.config">
+            <Action>AddAttribute</Action>
+            <Key>timeout</Key>
+            <ValueToAdd>Infinite</ValueToAdd>
+            <Element>/configuration/system.web/processModel</Element>
+        </ConfigSettingsToDeploy>
+        <ConfigSettingsToDeploy Include="c:\machine.config">
+            <Action>RemoveAttribute</Action>
+            <Key>timeout</Key>
+            <Element>/configuration/system.web/processModel</Element>
+        </ConfigSettingsToDeploy>
+        <XMLConfigElementsToAdd Include="c:\machine.config">
+            <XPath>/configuration/configSections</XPath>
+            <Name>section</Name>
+            <KeyAttributeName>name</KeyAttributeName>
+            <KeyAttributeValue>enterpriseLibrary.ConfigurationSource</KeyAttributeValue>
+        </XMLConfigElementsToAdd>
+        <XMLConfigElementsToAdd Include="c:\machine.config">
+            <XPath>/configuration</XPath>
+            <Name>enterpriseLibrary.ConfigurationSource</Name>
+            <KeyAttributeName>selectedSource</KeyAttributeName>
+            <KeyAttributeValue>MyKeyAttribute</KeyAttributeValue>
+        </XMLConfigElementsToAdd>
+        <XMLConfigElementsToAdd Include="c:\machine.config">
+            <XPath>/configuration/enterpriseLibrary.ConfigurationSource</XPath>
+            <Name>sources</Name>
+        </XMLConfigElementsToAdd>
+        <XMLConfigElementsToAdd Include="c:\machine.config">
+            <XPath>/configuration/enterpriseLibrary.ConfigurationSource/sources</XPath>
+            <Name>add</Name>
+            <KeyAttributeName>name</KeyAttributeName>
+            <KeyAttributeValue>MyKeyAttribute</KeyAttributeValue>
+        </XMLConfigElementsToAdd>
+        <XMLConfigAttributesToAdd Include="c:\machine.config">
+            <XPath>/configuration/configSections/section[@name='enterpriseLibrary.ConfigurationSource']</XPath>
+            <Name>type</Name>
+            <Value>Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationSourceSection, Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Value>
+        </XMLConfigAttributesToAdd>
+        <XMLConfigAttributesToAdd Include="c:\machine.config">
+            <XPath>/configuration/enterpriseLibrary.ConfigurationSource/sources/add[@name='MyKeyAttribute']</XPath>
+            <Name>type</Name>
+            <Value>MyKeyAttribute.Common, MyKeyAttribute.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fb2f49125f05d89</Value>
+        </XMLConfigAttributesToAdd>
+        <XMLConfigElementsToDelete Include="c:\machine.config">
+            <XPath>/configuration/configSections/section[@name='enterpriseLibrary.ConfigurationSource']</XPath>
+        </XMLConfigElementsToDelete>
+        <XMLConfigElementsToDelete Include="c:\machine.config">
+            <XPath>/configuration/enterpriseLibrary.ConfigurationSource[@selectedSource='MyKeyAttribute']</XPath>
+        </XMLConfigElementsToDelete>
+    </ItemGroup>
+    <Target Name="Default">
+           <MSBuild.ExtensionPack.Xml.XmlFile TaskAction="UpdateElement" File="c:\machine.config" XPath="/configuration/configSections/section[@name='system.data']" InnerText="NewVafflue"/>
+    </Target>
+    
+</Project>
