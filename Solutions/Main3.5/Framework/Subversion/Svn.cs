@@ -16,18 +16,18 @@ namespace MSBuild.ExtensionPack.Subversion
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Version</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
-    /// <para><i>Info</i> (<b>Required: </b>Item <b>Output: </b>Info)</para>
-    /// <para><i>GetProperty</i> (<b>Required: </b>Item, PropertyName <b>Output: </b>PropertyValue)</para>
-    /// <para><i>SetProperty</i> (<b>Required: </b>Item, PropertyName, PropertyValue)</para>
-    /// <para><i>Checkout</i> (<b>Required: </b>Items, Destination)</para>
-    /// <para><i>Update</i> (<b>Required: </b>Items)</para>
-    /// <para><i>Add</i> (<b>Required: </b>Items)</para>
-    /// <para><i>Copy</i> (<b>Required: </b>Items, Destination)</para>
-    /// <para><i>Delete</i> (<b>Required: </b>Items)</para>
-    /// <para><i>Move</i> (<b>Required: </b>Items, Destination)</para>
-    /// <para><i>Commit</i> (<b>Required: </b>Items)</para>
-    /// <para><i>Export</i> (<b>Required: </b>Item, Destination)</para>
+    /// <para><i>Version</i> (<b>Required: </b>Item <b>Output: </b>Info <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Info</i> (<b>Required: </b>Item <b>Output: </b>Info <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>GetProperty</i> (<b>Required: </b>Item, PropertyName <b>Output: </b>PropertyValue <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>SetProperty</i> (<b>Required: </b>Item, PropertyName, PropertyValue <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Checkout</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Update</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Add</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Copy</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Delete</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Move</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Commit</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Export</i> (<b>Required: </b>Item, Destination <b>Optional:</b> UserName, UserPassword)</para>
     /// </summary>
     /// <remarks>
     /// <para>The task needs a command-line SVN client (svn.exe and svnversion.exe) to be available. The following are supported
@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.Subversion
     /// </remarks>
     /// <example>
     /// <code lang="xml"><![CDATA[
-    /// <Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    /// <Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     ///     <PropertyGroup>
     ///         <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
     ///         <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
@@ -98,10 +98,8 @@ namespace MSBuild.ExtensionPack.Subversion
     [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/49c5813e-de80-c2c4-9802-878e9cc37432.htm")]
     public class Svn : BaseTask
     {
-        #region constants
         protected const string SvnExecutableName = "svn.exe";
         protected const string SvnVersionExecutableName = "svnversion.exe";
-
         private const string VersionTaskAction = "Version";
         private const string InfoTaskAction = "Info";
         private const string GetPropertyTaskAction = "GetProperty";
@@ -114,11 +112,9 @@ namespace MSBuild.ExtensionPack.Subversion
         private const string MoveTaskAction = "Move";
         private const string CommitTaskAction = "Commit";
         private const string ExportTaskAction = "Export";
-        #endregion
 
         private static readonly string SvnPath = FindSvnPath();
 
-        #region task properties
         [Required]
         [DropdownValue(VersionTaskAction)]
         [DropdownValue(InfoTaskAction)]
@@ -191,7 +187,6 @@ namespace MSBuild.ExtensionPack.Subversion
         [TaskAction(SetPropertyTaskAction, true)]
         [Output]
         public string PropertyValue { get; set; }
-        #endregion
 
         protected override void InternalExecute()
         {
@@ -262,7 +257,6 @@ namespace MSBuild.ExtensionPack.Subversion
             }
         }
 
-        #region finding SVN command-line tools, all static
         /// <summary>
         /// Checks if a path is a valid SVN path where svn.exe and svnversion.exe can be found.
         /// </summary>
@@ -314,7 +308,7 @@ namespace MSBuild.ExtensionPack.Subversion
             var paths = Environment.GetEnvironmentVariable("PATH");
             if (paths != null)
             {
-                return paths.Split(Path.PathSeparator).FirstOrDefault(path => IsSvnPath(path));
+                return paths.Split(Path.PathSeparator).FirstOrDefault(IsSvnPath);
             }
 
             return null;
@@ -501,9 +495,7 @@ namespace MSBuild.ExtensionPack.Subversion
             // didn't find it, will report it as an error from where it's used
             return null;
         }
-        #endregion
 
-        #region task implementations
         private void ExecVersion()
         {
             // required params
@@ -514,7 +506,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("-q");
             cmd.AppendFileNameIfNotNull(this.Item);
             var output = Utilities.ExecuteWithLogging(Log, Path.Combine(SvnPath, SvnVersionExecutableName), cmd.ToString(), false);
@@ -555,7 +547,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("info");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("--xml");
@@ -628,7 +620,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("propget");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("--xml");
@@ -684,7 +676,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("propset");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFixedParameter(this.PropertyName);
@@ -703,7 +695,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("checkout");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
@@ -721,7 +713,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("update");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
@@ -738,7 +730,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("add");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
@@ -755,7 +747,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("copy");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
@@ -773,7 +765,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("delete");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
@@ -790,7 +782,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("move");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
@@ -808,7 +800,7 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("commit");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("-m");
@@ -827,13 +819,28 @@ namespace MSBuild.ExtensionPack.Subversion
             }
 
             // execute the tool
-            var cmd = new Utilities.CommandLineBuilder2();
+            var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("export");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendFileNameIfNotNull(this.Item);
             cmd.AppendFileNameIfNotNull(this.Destination);
             Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
-        #endregion
+
+        private Utilities.CommandLineBuilder2 CreateCommandLineBuilder()
+        {
+            var cmd = new Utilities.CommandLineBuilder2();
+            if (this.UserName != null)
+            {
+                cmd.AppendSwitch("--username " + this.UserName);
+            }
+
+            if (this.UserPassword != null)
+            {
+                cmd.AppendSwitch("--password " + this.UserPassword);
+            }
+
+            return cmd;
+        }
     }
 }

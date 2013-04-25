@@ -393,6 +393,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\Svn.proj" />
     <None Include="XmlSamples\XProduct.proj" />
     <None Include="XmlSamples\Parallel.proj">
       <SubType>Designer</SubType>

@@ -380,6 +380,7 @@
     <None Include="XmlSamples\AsyncExec.proj">
       <SubType>Designer</SubType>
     </None>
+    <None Include="XmlSamples\Svn.proj" />
     <None Include="XmlSamples\MSMQ.proj" />
     <None Include="XmlSamples\Path.proj" />
     <None Include="XmlSamples\Process.proj" />
