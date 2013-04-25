@@ -1,0 +1,32 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Backup an eventlog -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Backup" LogName="Security" BackupPath="C:\Securitybackup.evt"/>
+        <!-- Delete an eventlog -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Delete" LogName="DemoEventLog"/>
+        <!-- Check whether an eventlog exists -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="CheckExists" LogName="DemoEventLog">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.EventLog>
+        <Message Text="DemoEventLog Exists: $(DoesExist)"/>
+        <!-- Create whether an eventlog -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Create" LogName="DemoEventLog"  MaxSize="20" Retention="14"/>
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="CheckExists" LogName="DemoEventLog">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.EventLog>
+        <Message Text="DemoEventLog Exists: $(DoesExist)"/>
+        <!-- Various other quick tasks -->
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Clear" LogName="DemoEventLog"/>
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Modify" LogName="DemoEventLog"  MaxSize="55" Retention="25"/>
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="Delete" LogName="DemoEventLog"/>
+        <MSBuild.ExtensionPack.Computer.EventLog TaskAction="CheckExists" LogName="DemoEventLog">
+            <Output TaskParameter="Exists" PropertyName="DoesExist"/>
+        </MSBuild.ExtensionPack.Computer.EventLog>
+        <Message Text="Exists: $(DoesExist)"/>
+    </Target>
+</Project>

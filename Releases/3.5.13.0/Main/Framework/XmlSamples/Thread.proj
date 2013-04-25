@@ -1,0 +1,15 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Set a thread to sleep for a period -->
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="Sleep" Timeout="2000"/>
+        <!-- Set a thread to spinwait for a period -->
+        <MSBuild.ExtensionPack.Framework.Thread TaskAction="SpinWait" Iterations="1000000000"/>
+        <!-- Abort a thread. Only use in exceptional circumstances -->
+        <!--<MSBuild.ExtensionPack.Framework.Thread TaskAction="Abort"/>-->
+    </Target>
+</Project>
