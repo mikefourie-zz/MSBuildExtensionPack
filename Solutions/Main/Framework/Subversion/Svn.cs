@@ -483,7 +483,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 if (!m.Success)
                 {
                     // not versioned or really an error, we don't care
-                    Log.LogError("Invalid output from SVN tool");
+                    Log.LogError("Version: Invalid output from SVN tool: no regex  match. Svn tool output was: {0}", output);
                     return;
                 }
 
@@ -531,10 +531,10 @@ namespace MSBuild.ExtensionPack.Subversion
                         info = (Schema.infoType)xs.Deserialize(sr);
                     }
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException invalidOperationException)
                 {
                     // not versioned or really an error, we don't care
-                    Log.LogError("Invalid output from SVN tool");
+                    Log.LogError("Info: Invalid output from SVN tool: InvalidOperationException: {0}", invalidOperationException.Message);
                     return;
                 }
 
@@ -542,7 +542,7 @@ namespace MSBuild.ExtensionPack.Subversion
                 if (info.entry == null || info.entry.Length != 1)
                 {
                     // this really shouldn't happen
-                    Log.LogError("Invalid output from SVN tool");
+                    Log.LogError("Info: Invalid output from SVN tool: Svn info type entry was null or had a length different from 1");
                     return;
                 }
 
