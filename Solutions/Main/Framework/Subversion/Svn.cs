@@ -87,8 +87,10 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Delete" Items="c:\path\something"/>
     ///         <!-- Move -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Move" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
-    ///         <!-- Commit -->
+    ///         <!-- Commit with default committ message -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something"/>
+    ///         <!-- Commit with committ message -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something" CommittMessage="MsBuild committed from something directory" />
     ///         <!-- Export -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Export" Item="c:\path\workingcopy" Destination="c:\path\exported"/>
     ///     </Target>
@@ -111,6 +113,7 @@ namespace MSBuild.ExtensionPack.Subversion
         private const string MoveTaskAction = "Move";
         private const string CommitTaskAction = "Commit";
         private const string ExportTaskAction = "Export";
+        private const string DefaultCommitMessage = "MsBuild";
 
         private static readonly string SvnPath = FindSvnPath();
 
@@ -152,6 +155,11 @@ namespace MSBuild.ExtensionPack.Subversion
         /// </summary>
         [Output]
         public string PropertyValue { get; set; }
+
+        /// <summary>
+        /// The committ message that the Commit action sends with the committ to the repository
+        /// </summary>
+        public string CommitMessage { get; set; }
 
         protected override void InternalExecute()
         {
@@ -764,12 +772,23 @@ namespace MSBuild.ExtensionPack.Subversion
                 return;
             }
 
+            if (this.CommitMessage.Contains("\""))
+            {
+                Log.LogError("There appears to be quotes in the commit message. This is not supported yet.");
+                return;
+            }
+
+            if (this.CommitMessage.Length == 0)
+            {
+                this.CommitMessage = DefaultCommitMessage;
+            }
+
             // execute the tool
             var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("commit");
             cmd.AppendSwitch("--non-interactive");
             cmd.AppendSwitch("-m");
-            cmd.AppendFixedParameter("MSBuild");
+            cmd.AppendFixedParameter("\"" + this.CommitMessage + "\"");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
         }
