@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>Timeout, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication <b>Output:</b> Response, Status)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>ContentType, Timeout, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication <b>Output:</b> Response, Status)</para>
     /// <para><i>Post</i> (<b>Required: </b> Url <b>Optional: </b>ContentType, Timeout, RequestContent, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication <b>Output:</b> Response, Status)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
@@ -94,7 +94,7 @@ namespace MSBuild.ExtensionPack.Web
         public string Status { get; set; }
 
         /// <summary>
-        /// The content type of the request. By default, it is "application/x-www-form-urlencoded" (used for classic HTTP POST)
+        /// The content type of the request. By default, it is "application/x-www-form-urlencoded" (used for classic HTTP POST) for Post and null for GetResponse.
         /// </summary>
         public string ContentType { get; set; }
 
@@ -164,6 +164,11 @@ namespace MSBuild.ExtensionPack.Web
             }
 
             request.Timeout = this.Timeout;
+            if (!string.IsNullOrEmpty(this.ContentType))
+            {
+                request.ContentType = this.ContentType;
+            }
+
             if (this.SkipSslCertificateValidation)
             {
                 ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
