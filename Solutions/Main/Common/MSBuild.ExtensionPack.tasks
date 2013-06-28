@@ -144,7 +144,7 @@
 
     
     <!-- ============== Tfs2012 ============== -->
-
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2012.dll" TaskName="MSBuild.ExtensionPack.Tfs2012.TeamBuild"/>
 
     <!-- ============== Windows Virtual PC ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.WindowsVirtualPC.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.VirtualPc"/>
