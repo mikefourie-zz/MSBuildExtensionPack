@@ -19,7 +19,7 @@ namespace MSBuild.ExtensionPack.Framework
         private readonly Regex multilineCSharpCommentEndPattern = new Regex(@".*?\*/", RegexOptions.Compiled);
         private readonly Regex multilineCSharpCommentStartPattern = new Regex(@"\s*/\*^\*", RegexOptions.Compiled);
         private readonly List<string> rawFileLines = new List<string>();
-        private readonly Regex singleLineCSharpCommentPattern = new Regex(@"\s*//", RegexOptions.Compiled);
+        private readonly Regex singleLineCSharpCommentPattern = new Regex(@"(?m:^(\s*//.*)$)", RegexOptions.Compiled);
         private readonly Regex singleLineVbCommentPattern = new Regex(@"\s*'", RegexOptions.Compiled);
 
         //// The ^\* is so the regex works with J# files that use /** to indicate the actual attribute lines.
