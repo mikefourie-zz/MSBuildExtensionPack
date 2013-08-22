@@ -111,20 +111,16 @@ namespace MSBuild.ExtensionPack.Web
             switch (this.TaskAction)
             {
                 case GetResponseTaskAction:
-                    this.GetResponse();
+                    this.GetResponse(this.CreateRequest);
                     break;
                 case PostTaskAction:
-                    this.Post();
+                    this.GetResponse(this.CreatePostRequest);
                     break;
                 default:
-                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(
+                        string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
-        }
-
-        private void Post()
-        {
-            this.GetResponse(this.CreatePostRequest);
         }
 
         private System.Net.HttpWebRequest CreatePostRequest()
@@ -136,6 +132,11 @@ namespace MSBuild.ExtensionPack.Web
 
             // Read Content as byte array
             ASCIIEncoding asciiEncoding = new ASCIIEncoding();
+            if (string.IsNullOrEmpty(this.RequestContent))
+            {
+                this.RequestContent = string.Empty;
+            }
+
             byte[] data = asciiEncoding.GetBytes(this.RequestContent);
 
             // Create request and add content
@@ -177,14 +178,9 @@ namespace MSBuild.ExtensionPack.Web
             return request;
         }
 
-        private void GetResponse()
-        {
-            this.GetResponse(this.CreateRequest);
-        }
-
         private void GetResponse(Func<System.Net.HttpWebRequest> createRequestMethod)
         {
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing HttpRequest against: {0}", this.Url));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Executing {0} HttpRequest against: {1}", this.TaskAction.Replace("TaskAction", string.Empty), this.Url));
             var tries = 0;
             while (tries <= this.Retries)
             {
