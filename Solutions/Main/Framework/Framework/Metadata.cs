@@ -10,6 +10,7 @@ namespace MSBuild.ExtensionPack.Framework
     using Microsoft.Build.Utilities;
 
     /// <summary>
+    /// Please note that this can be accomplished using vanilla MSBuild. See <a href="https://msbuildextensionpack.codeplex.com/discussions/447856">MSBuild metadata discussion</a>.
     /// <b>Valid TaskActions are:</b>
     /// <para><i>Add</i> (<b>Required:</b> Items, NewMetadata <b>Output: </b> NewItems)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
