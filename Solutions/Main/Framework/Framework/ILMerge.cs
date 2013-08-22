@@ -268,7 +268,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override string GenerateFullPathToTool()
         {
-            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\ILMerge\" + this.ToolName);
+            return string.IsNullOrEmpty(this.ToolPath) ? System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\ILMerge\" + this.ToolName) : System.IO.Path.Combine(this.ToolPath, this.ToolName);
         }
 
         protected override string GenerateCommandLineCommands()
