@@ -1077,6 +1077,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D4F7541481C34930BB966EDD2DD2053C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D5C43EAA10C24AA9A81D6660F39478B5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1239,6 +1245,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_FC62B839B9D34E79873B46984A763FC5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FDFE2096EC6344509F5A95EF95A48144"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1253,6 +1265,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_89A36F02F05823011955F01895007157"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FC62B839B9D34E79873B46984A763FC5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1331,6 +1349,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C038340CE14129B50DF7B59A8BEC79C0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_BA26DD8569CC54B3CB8C50AABC2D4194"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1516,12 +1540,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BA26DD8569CC54B3CB8C50AABC2D4194"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0ED0E873C6A60BFE60B601203CBD2CCE"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1628,7 +1646,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:3.5.30729          "
+                "FrameworkVersion" = "8:3.5.30729            "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
                 }
@@ -4274,7 +4292,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -4659,6 +4677,26 @@
             "TargetName" = "8:Gac.proj"
             "Tag" = "8:"
             "Folder" = "8:_192A59AE59C648448A18470E7783FEE3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4F7541481C34930BB966EDD2DD2053C"
+            {
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2012.pdb"
+            "TargetName" = "8:MSBuild.ExtensionPack.Sql2012.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -5268,6 +5306,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FC62B839B9D34E79873B46984A763FC5"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:MSBuild.ExtensionPack.Sql2012, Version=3.5.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_FC62B839B9D34E79873B46984A763FC5"
+                    {
+                    "Name" = "8:MSBuild.ExtensionPack.Sql2012.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:C:\\MSBEP\\3.5\\MSBuild.ExtensionPack.Sql2012.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FDFE2096EC6344509F5A95EF95A48144"
             {
             "SourcePath" = "8:C:\\MSBEP\\3.5\\Samples\\ComponentServices.proj"
@@ -5396,24 +5465,24 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:MSBuild Extension Pack 3.5.13.0 (x64)"
-        "ProductCode" = "8:{F1BE8F08-8352-4EB9-83BC-E4DA784EC6AB}"
-        "PackageCode" = "8:{0CD0754E-8669-43BE-B3A1-C798BA05AF86}"
+        "ProductName" = "8:MSBuild Extension Pack 3.5.14.0 (x64)"
+        "ProductCode" = "8:{B4ECEB78-9FF0-4A35-B883-D4329590BDAC}"
+        "PackageCode" = "8:{66425B18-6AE6-476A-98B4-02F9CBF7F83C}"
         "UpgradeCode" = "8:{308A0FD5-7609-42ED-AD38-1ED41897AFD3}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:3.5.13"
+        "ProductVersion" = "8:3.5.14"
         "Manufacturer" = "8:Mike Fourie"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://www.MSBuildExtensionPack.com"
-        "Title" = "8:MSBuild Extension Pack 3.5.13.0 (x64)"
+        "Title" = "8:MSBuild Extension Pack 3.5.14.0 (x64)"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Mike Fourie"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:MSBuild Extension Pack 3.5.13.0 (x64)"
+        "ARPCOMMENTS" = "8:MSBuild Extension Pack 3.5.14.0 (x64)"
         "ARPURLINFOABOUT" = "8:http://www.MSBuildExtensionPack.com"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
