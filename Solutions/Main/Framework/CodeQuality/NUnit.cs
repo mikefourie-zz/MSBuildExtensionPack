@@ -96,6 +96,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public bool Use32Bit { get; set; }
 
         /// <summary>
+        /// Set to true to fail the task if this.Failures > 0. Helps for batching purposes. Default is false.
+        /// </summary>
+        public bool FailOnFailures { get; set; }
+
+        /// <summary>
         /// Comma separated list of categories to include.
         /// </summary>
         public string IncludeCategory { get; set; }
@@ -275,6 +280,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
         {
             base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             this.ProcessXmlResultsFile();
+            if (this.FailOnFailures && this.Failures > 0)
+            {
+                return 1;
+            }
+
             return 0;
         }
         

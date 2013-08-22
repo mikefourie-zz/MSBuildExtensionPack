@@ -70,7 +70,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </Project>
     /// ]]></code>
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/9af9f708-425c-dc43-e44c-0d1d113e5d62.htm")]
     public class NUnit : ToolTask
     {
         private string version = "2.6.2";
@@ -95,6 +94,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// Set to true to run nunit-console-x86.exe
         /// </summary>
         public bool Use32Bit { get; set; }
+
+        /// <summary>
+        /// Set to true to fail the task if this.Failures > 0. Helps for batching purposes. Default is false.
+        /// </summary>
+        public bool FailOnFailures { get; set; }
 
         /// <summary>
         /// Comma separated list of categories to include.
@@ -276,6 +280,11 @@ namespace MSBuild.ExtensionPack.CodeQuality
         {
             base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             this.ProcessXmlResultsFile();
+            if (this.FailOnFailures && this.Failures > 0)
+            {
+                return 1;
+            }
+
             return 0;
         }
 
