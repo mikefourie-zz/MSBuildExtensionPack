@@ -19,6 +19,8 @@
         </MSBuild.ExtensionPack.Sql2008.Database>
         <!-- All the database information properties are available as metadata on the Infomation item -->
         <Message Text="SpaceAvailable: %(AllInfo.SpaceAvailable)"/>
+        <!-- ScriptData for tables matching Acc* name -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="ScriptData" RegexPattern="Acc*" DatabaseItem="ADatabase" OutputFilePath="c:\ADatabase.sql"/>
         <!-- Backup a database -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Backup" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
         <!-- Verify a database backup -->

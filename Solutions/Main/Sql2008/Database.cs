@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Text.RegularExpressions;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.SqlServer.Management.Common;
@@ -24,6 +25,7 @@ namespace MSBuild.ExtensionPack.Sql2008
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><i>Restore</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>ReplaceDatabase, NewDataFilePath, RestoreAction, Incremental, NotificationInterval, NoPooling, LogName, LogFilePath, PrimaryDataFileName, SecondaryDataFileName, SecondaryDataFilePath, StatementTimeout)</para>
     /// <para><i>Script</i> (<b>Required: </b>DatabaseItem, OutputFilePath <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>ScriptData</i> (<b>Required: DatabaseItem, OutputFilePath </b> <b>Optional: </b>ScriptDrops, ScriptSchema, NoPooling, StatementTimeout)</para>
     /// <para><i>SetOffline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><i>SetOnline</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><i>VerifyBackup</i> (<b>Required: </b>DataFilePath <b>Optional: </b>NoPooling, StatementTimeout)</para>
@@ -52,6 +54,8 @@ namespace MSBuild.ExtensionPack.Sql2008
     ///         </MSBuild.ExtensionPack.Sql2008.Database>
     ///         <!-- All the database information properties are available as metadata on the Infomation item -->
     ///         <Message Text="SpaceAvailable: %(AllInfo.SpaceAvailable)"/>
+    ///         <!-- ScriptData for tables matching Acc* name -->
+    ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="ScriptData" RegexPattern="Acc*" DatabaseItem="ADatabase" OutputFilePath="c:\ADatabase.sql"/>
     ///         <!-- Backup a database -->
     ///         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Backup" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
     ///         <!-- Verify a database backup -->
@@ -108,6 +112,7 @@ namespace MSBuild.ExtensionPack.Sql2008
         private string fileGroupName = "PRIMARY";
         private int statementTimeout = -1;
         private BackupCompressionOptions compressionOption = BackupCompressionOptions.Default;
+        private string regexpattern = ".*";
 
         /// <summary>
         /// Set to true to create a NonPooledConnection to the server. Default is false.
@@ -154,6 +159,15 @@ namespace MSBuild.ExtensionPack.Sql2008
         public string LogName { get; set; }
 
         /// <summary>
+        /// Sets the regex pattern.
+        /// </summary>
+        public string RegexPattern
+        {
+            get { return this.regexpattern; }
+            set { this.regexpattern = value; }
+        }
+
+        /// <summary>
         /// Sets the secondary data file name. No default value.
         /// </summary>
         public string SecondaryDataFileName { get; set; }
@@ -162,6 +176,16 @@ namespace MSBuild.ExtensionPack.Sql2008
         /// Sets whether the backup is a copy-only backup. Default is false.
         /// </summary>
         public bool CopyOnly { get; set; }
+
+        /// <summary>
+        /// Sets ScriptingOptions for ScriptData TaskAction
+        /// </summary>
+        public bool ScriptDrops { get; set; }
+
+        /// <summary>
+        /// Sets ScriptingOptions for ScriptData TaskAction
+        /// </summary>
+        public bool ScriptSchema { get; set; }
 
         /// <summary>
         /// Sets the collation of the database.
@@ -318,6 +342,9 @@ namespace MSBuild.ExtensionPack.Sql2008
                 case "Script":
                     this.Script();
                     break;
+                case "ScriptData":
+                    this.ScriptData();
+                    break;
                 case "Rename":
                     this.Rename();
                     break;
@@ -419,6 +446,44 @@ namespace MSBuild.ExtensionPack.Sql2008
                     o.Script(opt);
                 }
             }
+        }
+
+        private void ScriptData()
+        {
+            if (!this.VerifyDatabase())
+            {
+                return;
+            }
+
+            if (this.OutputFilePath == null)
+            {
+                this.Log.LogError("OutputFilePath is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Scripting Data for Database: {0} to: {1}", this.DatabaseItem.ItemSpec, this.OutputFilePath.GetMetadata("FullPath")));
+            Microsoft.SqlServer.Management.Smo.Database db = this.sqlServer.Databases[this.DatabaseItem.ItemSpec];
+
+            var scrp = new Scripter(this.sqlServer) { Options = { ScriptSchema = this.ScriptSchema, ScriptData = true, ScriptDrops = this.ScriptDrops } };
+
+            Regex filter = new Regex(this.RegexPattern, RegexOptions.Compiled);
+            if (File.Exists(this.OutputFilePath.GetMetadata("FullPath")))
+            {
+                File.Delete(this.OutputFilePath.GetMetadata("FullPath"));
+                System.Threading.Thread.Sleep(2000);
+            }
+            
+            // Iterate through the tables in database and script each one. Display the script.   
+            foreach (Table tb in db.Tables)
+            {
+                // check if the table is not a system table
+                if (tb.IsSystemObject == false && filter.IsMatch(tb.Name) && tb.RowCount > 0)
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "\tScripting: {0}. {1} rows", tb.Name, tb.RowCount));
+                    var sc = scrp.EnumScript(new[] { tb.Urn });
+                    System.IO.File.AppendAllLines(this.OutputFilePath.GetMetadata("FullPath"), sc);
+                }
+            } 
         }
 
         private void Rename()
