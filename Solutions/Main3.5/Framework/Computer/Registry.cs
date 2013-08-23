@@ -12,9 +12,11 @@ namespace MSBuild.ExtensionPack.Computer
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckEmpty</i> (<b>Required: </b> RegistryHive, Key <b>Output: </b>Empty)</para>
+    /// <para><i>CheckValueExists</i> (<b>Required: </b> RegistryHive, Key, Value <b>Output: </b>Exists</para>
     /// <para><i>CreateKey</i> (<b>Required: </b> RegistryHive, Key)</para>
     /// <para><i>DeleteKey</i> (<b>Required: </b> RegistryHive, Key)</para>
     /// <para><i>DeleteKeyTree</i> (<b>Required: </b> RegistryHive, Key)</para>
+    /// <para><i>DeleteValue</i> (<b>Required: </b> RegistryHive, Key, Value)</para>
     /// <para><i>Get</i> (<b>Required: </b> RegistryHive, Key, Value <b>Output: </b>Data)</para>
     /// <para><i>Set</i> (<b>Required: </b> RegistryHive, Key, Value <b>Optional:</b> DataType)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -37,6 +39,11 @@ namespace MSBuild.ExtensionPack.Computer
     ///         <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
     ///         <!-- Set a value -->
     ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting" Data="21"/>
+    ///         <!-- Check if the value exists -->
+    ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="CheckValueExists" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting">
+    ///             <Output PropertyName="RExists" TaskParameter="Exists"/>
+    ///         </MSBuild.ExtensionPack.Computer.Registry>
+    ///         <Message Text="SOFTWARE\ANewTemp\@MySetting exists: $(RExists)"/>
     ///         <!-- Get the value out -->
     ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Get" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting">
     ///             <Output PropertyName="RData" TaskParameter="Data"/>
@@ -54,35 +61,26 @@ namespace MSBuild.ExtensionPack.Computer
     ///             <Output PropertyName="RData" TaskParameter="Data"/>
     ///         </MSBuild.ExtensionPack.Computer.Registry>
     ///         <Message Text="Registry Value: $(RData)"/>
+    ///         <!-- Delete a value -->
+    ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteValue" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting" />
     ///         <!-- Delete a key -->
     ///         <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
     /// </example>
-    [HelpUrl("http://www.msbuildextensionpack.com/help/3.5.12.0/html/9c8ecf24-3d8d-2b2d-e986-3e026dda95fe.htm")]
     public class Registry : BaseTask
     {
         private const string CheckEmptyTaskAction = "CheckEmpty";
+        private const string CheckValueExistsTaskAction = "CheckValueExists";
         private const string CreateKeyTaskAction = "CreateKey";
         private const string DeleteKeyTaskAction = "DeleteKey";
         private const string DeleteKeyTreeTaskAction = "DeleteKeyTree";
+        private const string DeleteValueTaskAction = "DeleteValue";
         private const string GetTaskAction = "Get";
         private const string SetTaskAction = "Set";
         private RegistryKey registryKey;
         private RegistryHive hive;
-
-        [DropdownValue(CheckEmptyTaskAction)]
-        [DropdownValue(CreateKeyTaskAction)]
-        [DropdownValue(DeleteKeyTaskAction)]
-        [DropdownValue(DeleteKeyTreeTaskAction)]
-        [DropdownValue(GetTaskAction)]
-        [DropdownValue(SetTaskAction)]
-        public override string TaskAction
-        {
-            get { return base.TaskAction; }
-            set { base.TaskAction = value; }
-        }
 
         /// <summary>
         /// Sets the type of the data. RegistryValueKind Enumeration. Support for Binary, DWord, MultiString, QWord, ExpandString 
@@ -93,46 +91,36 @@ namespace MSBuild.ExtensionPack.Computer
         /// Gets the data.
         /// </summary>
         [Output]
-        [TaskAction(GetTaskAction, false)]
         public string Data { get; set; }
 
         /// <summary>
         /// Sets the value. If Value is not provided, an attempt will be made to read the Default Value.
         /// </summary>
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string Value { get; set; }
 
         /// <summary>
         /// Sets the registry hive.
         /// </summary>
         [Required]
-        [TaskAction(CheckEmptyTaskAction, true)]
-        [TaskAction(CreateKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTreeTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string RegistryHive { get; set; }
 
         /// <summary>
         /// Sets the key.
         /// </summary>
         [Required]
-        [TaskAction(CheckEmptyTaskAction, true)]
-        [TaskAction(CreateKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTaskAction, true)]
-        [TaskAction(DeleteKeyTreeTaskAction, true)]
-        [TaskAction(GetTaskAction, true)]
-        [TaskAction(SetTaskAction, true)]
         public string Key { get; set; }
 
         /// <summary>
         /// Indicates whether the Registry Key is empty or not
         /// </summary>
         [Output]
-        [TaskAction(CheckEmptyTaskAction, false)]
         public bool Empty { get; set; }
+
+        /// <summary>
+        /// Indicates whether the Registry value exists
+        /// </summary>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -169,6 +157,12 @@ namespace MSBuild.ExtensionPack.Computer
                     break;
                 case CheckEmptyTaskAction:
                     this.CheckEmpty();
+                    break;
+                case DeleteValueTaskAction:
+                    this.DeleteValue();
+                    break;
+                case CheckValueExistsTaskAction:
+                    this.CheckValueExists();
                     break;
                 default:
                     Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
@@ -356,6 +350,27 @@ namespace MSBuild.ExtensionPack.Computer
             using (RegistryKey r2 = r.CreateSubKey(this.Key))
             {
             }
+        }
+
+        private void DeleteValue()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
+            if (subKey != null)
+            {
+                var val = subKey.GetValue(this.Value);
+                if (val != null)
+                {
+                    subKey.DeleteValue(this.Value);
+                }
+            }
+        }
+
+        private void CheckValueExists()
+        {
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Value: {0} for Key {1} exists in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
+            RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
+            this.Exists = !((subKey == null) || (subKey.GetValue(this.Value) == null));
         }
     }
 }

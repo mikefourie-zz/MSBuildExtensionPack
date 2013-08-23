@@ -14,6 +14,11 @@
         <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
         <!-- Set a value -->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting" Data="21"/>
+        <!-- Check if the value exists -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="CheckValueExists" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting">
+            <Output PropertyName="RExists" TaskParameter="Exists"/>
+        </MSBuild.ExtensionPack.Computer.Registry>
+        <Message Text="SOFTWARE\ANewTemp\@MySetting exists: $(RExists)"/>
         <!-- Get the value out -->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Get" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting">
             <Output PropertyName="RData" TaskParameter="Data"/>
@@ -26,11 +31,13 @@
         <Message Text="SOFTWARE\ANewTemp is empty: $(REmpty)"/>
         <!-- Set some Binary Data -->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Set" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" DataType="Binary" Value="binval" Data="10, 43, 44, 45, 14, 255" />
-        <!--Get some Binary Data--> 
+        <!--Get some Binary Data-->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="Get" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="binval">
             <Output PropertyName="RData" TaskParameter="Data"/>
         </MSBuild.ExtensionPack.Computer.Registry>
         <Message Text="Registry Value: $(RData)"/>
+        <!-- Delete a value -->
+        <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteValue" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp" Value="MySetting" />
         <!-- Delete a key -->
         <MSBuild.ExtensionPack.Computer.Registry TaskAction="DeleteKey" RegistryHive="LocalMachine" Key="SOFTWARE\ANewTemp"/>
     </Target>
