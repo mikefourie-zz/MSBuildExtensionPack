@@ -29,3 +29,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Scope = "type", Target = "MSBuild.ExtensionPack.Sql2008.AnalysisServices")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "TaskAction", Scope = "member", Target = "MSBuild.ExtensionPack.Sql2008.AnalysisServices.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "OutputFilePath", Scope = "member", Target = "MSBuild.ExtensionPack.Sql2008.Database.#ScriptData()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "regexpattern", Scope = "member", Target = "MSBuild.ExtensionPack.Sql2008.Database.#regexpattern")]
