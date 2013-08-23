@@ -613,9 +613,9 @@ namespace MSBuild.ExtensionPack.Subversion
                         props = (Schema.propertiesType)xs.Deserialize(sr);
                     }
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException ioe)
                 {
-                    Log.LogError("Invalid output from SVN tool");
+                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "InvalidOperationException: Invalid output from SVN tool - {0}", ioe));
                     return;
                 }
 
@@ -627,10 +627,24 @@ namespace MSBuild.ExtensionPack.Subversion
                     return;
                 }
 
-                if (props.target.Length != 1 || props.target[0].property.Length != 1 || props.target[0].property[0].name != this.PropertyName)
+                if (props.target.Length != 1)
                 {
                     // this really shouldn't happen
-                    Log.LogError("Invalid output from SVN tool");
+                    Log.LogError("Invalid output from SVN tool. Error Condition = props.target.Length != 1");
+                    return;
+                }
+
+                if (props.target[0].property.Length != 1)
+                {
+                    // this really shouldn't happen
+                    Log.LogError("Invalid output from SVN tool. Error Condition = props.target[0].property.Length != 1");
+                    return;
+                }
+
+                if (props.target[0].property[0].name != this.PropertyName)
+                {
+                    // this really shouldn't happen
+                    Log.LogError(string.Format(CultureInfo.InvariantCulture, "Invalid output from SVN tool. Error Condition = props.target[0].property[0].name != this.PropertyName. Where this.PropertyName = {0}", this.PropertyName));
                     return;
                 }
 
