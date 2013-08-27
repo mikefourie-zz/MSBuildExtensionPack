@@ -34,6 +34,7 @@
 
     <Target Name="CopyFiles">
         <MakeDir Directories="$(DropFolder)\Samples"/>
+    <MakeDir Directories="$(DropFolder)\64"/>
         <ItemGroup>
             <ReleaseFiles Include="$(RootFolder)\BuildBinaries\*.*;
                                    $(RootFolder)\Framework\Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets;
@@ -49,6 +50,7 @@
             <SampleFiles Include="$(RootFolder)\**\*.proj;"/>
         </ItemGroup>
         <Microsoft.Build.Tasks.Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(DropFolder)"/>
+    <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\64\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\64"/>
         <Microsoft.Build.Tasks.Copy SourceFiles="@(SampleFiles)" DestinationFolder="$(DropFolder)\Samples"/>
     </Target>
 

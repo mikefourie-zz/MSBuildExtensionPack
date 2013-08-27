@@ -3776,7 +3776,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE7BAC19516D40429460F911285C9A7E"
             {
-            "SourcePath" = "8:C:\\MSBEP\\4\\MSBuild.ExtensionPack.tasks"
+            "SourcePath" = "8:C:\\MSBEP\\4\\64\\MSBuild.ExtensionPack.tasks"
             "TargetName" = "8:MSBuild.ExtensionPack.tasks"
             "Tag" = "8:"
             "Folder" = "8:_A50BBF1B8B224603B341F7DE9E9A1A33"
