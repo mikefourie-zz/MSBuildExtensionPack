@@ -15,7 +15,7 @@ namespace MSBuild.ExtensionPack.Xml
     /// <para><i>AddAttribute</i> (<b>Required: </b>File, Element or XPath, Key, Value <b>Optional:</b>Prefix, Namespaces, RetryCount)</para>
     /// <para><i>AddElement</i> (<b>Required: </b>File, Element and ParentElement or Element and XPath, <b>Optional:</b> Prefix, Key, Value, Namespaces, RetryCount, InnerText, InnerXml, InsertBeforeXPath / InsertAfterXPath)</para>
     /// <para><i>ReadAttribute</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
-    /// <para><i>ReadElements</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output: </b> Elements). Attributes are added as metadata</para>
+    /// <para><i>ReadElements</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces, ReadChildrenToMetadata <b>Output: </b> Elements). Attributes are added as metadata. Use ReadChildrenToMetadata to add first level children as metadata</para>
     /// <para><i>ReadElementText</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>ReadElementXml</i> (<b>Required: </b>File, XPath <b>Optional:</b> Namespaces <b>Output:</b> Value)</para>
     /// <para><i>RemoveAttribute</i> (<b>Required: </b>File, Key, Element or XPath <b>Optional:</b> Namespaces, RetryCount)</para>
@@ -242,6 +242,11 @@ namespace MSBuild.ExtensionPack.Xml
         }
 
         /// <summary>
+        /// When using ReadElements, specifies whether the first level child elements should be added as metadata. Child elements will override any read attributes of the same name. Default is false.
+        /// </summary>
+        public bool ReadChildrenToMetadata { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -349,6 +354,14 @@ namespace MSBuild.ExtensionPack.Xml
                         foreach (XmlAttribute a in node.Attributes)
                         {
                             newItem.SetMetadata(a.Name, a.Value);
+                        }
+                    }
+
+                    if (this.ReadChildrenToMetadata)
+                    {
+                        foreach (XmlNode child in node.ChildNodes)
+                        {
+                            newItem.SetMetadata(child.Name, child.InnerText);
                         }
                     }
 
