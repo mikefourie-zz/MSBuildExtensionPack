@@ -35,9 +35,9 @@ namespace MSBuild.ExtensionPack.Tfs2012
     ///     </PropertyGroup>
     ///     <Target Name="Default">
     ///         <!-- Get information on the latest build -->
-    ///         <MSBuild.ExtensionPack.Tfs2010.TeamBuild TaskAction="GetLatest" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildDefinitionName="$(BuildDefinitionName)">
+    ///         <MSBuild.ExtensionPack.Tfs2012.TeamBuild TaskAction="GetLatest" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="BuildInfo" TaskParameter="Info"/>
-    ///         </MSBuild.ExtensionPack.Tfs2010.TeamBuild>
+    ///         </MSBuild.ExtensionPack.Tfs2012.TeamBuild>
     ///         <Message Text="BuildDefinitionUri: %(BuildInfo.BuildDefinitionUri)"/>
     ///         <Message Text="BuildFinished: %(BuildInfo.BuildFinished)"/>
     ///         <Message Text="BuildNumber: %(BuildInfo.BuildNumber)"/>
@@ -60,16 +60,16 @@ namespace MSBuild.ExtensionPack.Tfs2012
     ///         <Message Text="TestStatus: %(BuildInfo.TestStatus)"/>
     ///         <Message Text="TestSuccess: %(BuildInfo.TestSuccess)"/>
     ///         <!-- Queue a new build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="Queue" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildDefinitionName="$(BuildDefinitionName)"/>
+    ///         <MSBuild.ExtensionPack.Tfs2012.TeamBuild TaskAction="Queue" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildDefinitionName="$(BuildDefinitionName)"/>
     ///         <!-- Retrieve Changesets associated with a given build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
+    ///         <MSBuild.ExtensionPack.Tfs2012.TeamBuild TaskAction="RelatedChangesets" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="Changesets" TaskParameter="RelatedItems"/>
-    ///         </MSBuild.ExtensionPack.Tfs.TeamBuild>
+    ///         </MSBuild.ExtensionPack.Tfs2012.TeamBuild>
     ///         <Message Text="ID = %(Changesets.Identity), Checked In By = %(Changesets.CheckedInBy), URI = %(Changesets.ChangesetUri), Comment = %(Changesets.Comment)"/>
     ///         <!-- Retrieve Work Items associated with a given build -->
-    ///         <MSBuild.ExtensionPack.Tfs.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
+    ///         <MSBuild.ExtensionPack.Tfs2012.TeamBuild TaskAction="RelatedWorkItems" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(TeamProject)" BuildUri="$(BuildUri)" BuildDefinitionName="$(BuildDefinitionName)">
     ///             <Output ItemName="WorkItems" TaskParameter="RelatedItems"/>
-    ///         </MSBuild.ExtensionPack.Tfs.TeamBuild>
+    ///         </MSBuild.ExtensionPack.Tfs2012.TeamBuild>
     ///         <Message Text="ID = %(Workitems.Identity), Status = %(Workitems.Status), Title = %(Workitems.Title), Type  = %(Workitems.Type), URI = %(Workitems.WorkItemUri), AssignedTo = %(Workitems.AssignedTo)"/>
     ///     </Target>
     /// </Project>
