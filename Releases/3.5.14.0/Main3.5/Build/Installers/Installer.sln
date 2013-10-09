@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer.vdproj", "{16227A48-43D6-48B1-8AB9-BA5915826B31}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer64", "Installer (64).vdproj", "{4E47A861-351B-48AD-BF23-05F7EA9FE6A2}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Installer.vdproj
+		SccLocalPath1 = .
+		SccProjectUniqueName2 = Installer\u0020(64).vdproj
+		SccLocalPath2 = .
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16227A48-43D6-48B1-8AB9-BA5915826B31}.Debug|Default.ActiveCfg = Debug
+		{16227A48-43D6-48B1-8AB9-BA5915826B31}.Debug|Default.Build.0 = Debug
+		{16227A48-43D6-48B1-8AB9-BA5915826B31}.Release|Default.ActiveCfg = Release
+		{16227A48-43D6-48B1-8AB9-BA5915826B31}.Release|Default.Build.0 = Release
+		{4E47A861-351B-48AD-BF23-05F7EA9FE6A2}.Debug|Default.ActiveCfg = Debug
+		{4E47A861-351B-48AD-BF23-05F7EA9FE6A2}.Debug|Default.Build.0 = Debug
+		{4E47A861-351B-48AD-BF23-05F7EA9FE6A2}.Release|Default.ActiveCfg = Release
+		{4E47A861-351B-48AD-BF23-05F7EA9FE6A2}.Release|Default.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

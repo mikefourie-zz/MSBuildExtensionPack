@@ -1,0 +1,13 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Add an extension file -->
+        <MSBuild.ExtensionPack.Web.Iis6ServiceExtensionFile TaskAction="Add" Force="true" Path="C:\Demo1\MyExtensionFile.dll" Description="My Extension Service" Deletable="true" GroupID="myext01" Permission="Allowed"/>
+        <!-- Delete an extension file -->
+        <MSBuild.ExtensionPack.Web.Iis6ServiceExtensionFile TaskAction="Delete" Path="C:\Demo1\MyExtensionFile.dll"/>
+    </Target>
+</Project>
