@@ -20,7 +20,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories <b>Optional: </b>Force)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogDirectory, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Identifier, Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogDirectory, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
@@ -304,6 +304,12 @@ namespace MSBuild.ExtensionPack.Web
         [Output]
         [TaskAction(CheckExistsTaskAction, false)]
         public bool Exists { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Identifier for the website. If specified for Create and the Identifier already exists, an error is logged.
+        /// </summary>
+        [Output]
+        public int Identifier { get; set; }
 
         /// <summary>
         /// When overridden in a derived class, executes the task.
@@ -647,6 +653,11 @@ namespace MSBuild.ExtensionPack.Web
             this.CreateDirectoryIfNecessary(this.Path);
 
             this.website = this.iisServerManager.Sites.Add(this.Name, this.Path, this.Port);
+            if (this.Identifier > 0)
+            {    
+                this.website.Id = this.Identifier;
+            }
+
             if (!string.IsNullOrEmpty(this.AppPool))
             {
                 this.website.ApplicationDefaults.ApplicationPoolName = this.AppPool;
