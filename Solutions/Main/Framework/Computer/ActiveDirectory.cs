@@ -406,7 +406,7 @@ namespace MSBuild.ExtensionPack.Computer
                         this.DeleteUserFromGroup();
                         break;
                     case CheckUserExistsTaskAction:
-                        this.CheckExists("User", this.User[0].ItemSpec);
+                        this.CheckExistsForUser(this.User[0].ItemSpec);
                         break;
                     case CheckUserPasswordTaskAction:
                         this.CheckUserPassword();
@@ -496,6 +496,41 @@ namespace MSBuild.ExtensionPack.Computer
             {
                 // ignore exceptions on invoke
             }
+        }
+
+        /// <summary>
+        /// Returns the fully qualified Domain name of the current domain
+        /// </summary>
+        /// <returns>The fully qualified domain name</returns>
+        private static string GetFullyQualifiedDomainName()
+        {
+          string fullyQualifiedDomainName = string.Empty;
+          using (DirectoryEntry rootDSE = new DirectoryEntry("LDAP://RootDSE"))
+          {
+            string domainContext = rootDSE.Properties["defaultNamingContext"] != null ? rootDSE.Properties["defaultNamingContext"].Value.ToString() : string.Empty;
+            if (string.IsNullOrWhiteSpace(domainContext))
+            {
+              return string.Empty;
+            }
+
+            var domainParts = domainContext.Split(new char[] { ',' });
+            foreach (var domainPart in domainParts)
+            {
+              if (domainPart.Contains("DC="))
+              {
+                if (string.IsNullOrWhiteSpace(fullyQualifiedDomainName))
+                {
+                  fullyQualifiedDomainName = domainPart.Replace("DC=", string.Empty);
+                }
+                else
+                {
+                  fullyQualifiedDomainName += "." + domainPart.Replace("DC=", string.Empty);
+                }
+              }
+            }
+          }
+                    
+          return fullyQualifiedDomainName;
         }
 
         private void GroupGroup()
@@ -711,6 +746,28 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
+        private void CheckExistsForUser(string userName)
+        {
+          PrincipalContext principalContext = null;
+          try
+          {
+            bool isLocalMachineUser = string.IsNullOrEmpty(this.Domain) || string.Compare(this.Domain, this.MachineName, StringComparison.OrdinalIgnoreCase) == 0;
+            principalContext = isLocalMachineUser ? new PrincipalContext(ContextType.Machine) : new PrincipalContext(ContextType.Domain);
+            this.Exists = UserPrincipal.FindByIdentity(principalContext, userName) != null;
+          }
+          catch
+          {
+            this.Exists = false;
+          }
+          finally
+          {
+            if (principalContext != null)
+            {
+              principalContext.Dispose();
+            }
+          }
+        }
+
         private void DeleteUserFromGroup()
         {
             if (this.User == null)
@@ -913,44 +970,59 @@ namespace MSBuild.ExtensionPack.Computer
                 return;
             }
 
-            DirectoryEntry user;
+            PrincipalContext principalContext = null;
+            UserPrincipal userPrincipal  = null;
             try
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating User: {0} on {1}", this.User[0].ItemSpec, this.MachineName));
-                user = this.activeDirEntry.Children.Find(this.User[0].ItemSpec, "User");
+              bool isLocalMachineUser = string.IsNullOrEmpty(this.Domain) || string.Compare(this.Domain, this.MachineName, StringComparison.OrdinalIgnoreCase) == 0;
+              principalContext = isLocalMachineUser ? new PrincipalContext(ContextType.Machine) : new PrincipalContext(ContextType.Domain);
+              userPrincipal = UserPrincipal.FindByIdentity(principalContext, this.User[0].ItemSpec);
+
+              if (userPrincipal == null)
+              {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding User: {0}", this.User[0].ItemSpec));
+                userPrincipal = new UserPrincipal(principalContext);
+              }
+              else
+              {
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating User: {0}", this.User[0].ItemSpec));
+              }
+
+              userPrincipal.SamAccountName = this.User[0].ItemSpec;
+              userPrincipal.DisplayName = this.FullName;
+              userPrincipal.Description = this.Description;
+              userPrincipal.PasswordNeverExpires = this.PasswordNeverExpires;
+              userPrincipal.Enabled = true;
+              if (this.PasswordExpired)
+              {
+                userPrincipal.ExpirePasswordNow();
+              }
+
+              if (!string.IsNullOrEmpty(this.Password))
+              {
+                userPrincipal.SetPassword(this.Password);
+              }
+
+              if (!isLocalMachineUser)
+              {
+                string fullyQualifiedDomainName = GetFullyQualifiedDomainName();
+                userPrincipal.UserPrincipalName = !string.IsNullOrWhiteSpace(fullyQualifiedDomainName) ? this.User[0].ItemSpec + "@" + fullyQualifiedDomainName : this.User[0].ItemSpec;
+              }
+
+              userPrincipal.Save();
             }
-            catch
+            finally
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding User: {0} on {1}", this.User[0].ItemSpec, this.MachineName));
-                user = this.activeDirEntry.Children.Add(this.User[0].ItemSpec, "User");
+              if (userPrincipal != null)
+              {
+                userPrincipal.Dispose();
+              }
+              
+              if (principalContext != null)
+              {
+                principalContext.Dispose();
+              }
             }
-
-            if (!string.IsNullOrEmpty(this.Password))
-            {
-                user.Invoke("SetPassword", new object[] { this.Password });
-            }
-
-            InvokeObj(user, "FullName", this.FullName);
-            InvokeObj(user, "Description", this.Description);
-            InvokeObj(user, "PasswordExpired", this.passwordExpired);
-            InvokeObj(user, "FullName", this.FullName);
-
-            if (this.PasswordNeverExpires)
-            {
-                try
-                {
-                    int flags = Convert.ToInt16(user.InvokeGet("UserFlags"), CultureInfo.InvariantCulture);
-                    flags |= 0x10000;
-                    user.Invoke("Put", new object[] { "UserFlags", flags });
-                }
-                catch
-                {
-                    // ignore exceptions on invoke
-                }
-            }
-
-            user.CommitChanges();
-            user.Close();
         }
     }
 }
