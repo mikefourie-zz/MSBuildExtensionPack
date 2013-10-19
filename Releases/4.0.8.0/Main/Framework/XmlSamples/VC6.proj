@@ -1,0 +1,24 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+		<TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+	</PropertyGroup>
+	<Import Project="$(TPath)"/>
+	<ItemGroup>
+		<!-- This uses $(Platform) and $(Configuration) for all projects in the .dsp file -->
+		<ProjectsToBuild Include="C:\MyVC6Project.dsp"/>
+		<!-- Uses supplied platform and configuration for all projects in the .dsp file -->
+		<ProjectsToBuild Include="C:\MyVC6Project2.dsp">
+			<Platform>Win32</Platform>
+			<Configuration>Debug</Configuration>
+		</ProjectsToBuild>
+		<!-- Uses $(Platform) and $(Configuration) for just the specified projects in the .dsw file -->
+		<ProjectsToBuild Include="C:\MyVC6Project3.dsw">
+			<Projects>Project1;Project2</Projects>
+		</ProjectsToBuild>
+	</ItemGroup>
+	<Target Name="Default">
+		<!-- Build a collection of VC6 projects -->
+		<MSBuild.ExtensionPack.VisualStudio.VC6 TaskAction="Build" Projects="@(ProjectsToBuild)"/>
+	</Target>
+</Project>

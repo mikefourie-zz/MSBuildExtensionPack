@@ -1,0 +1,53 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+  <PropertyGroup>
+    <ToolPath>D:\Program Files (x86)\NUnit 2.5.7\bin\net-2.0</ToolPath>
+  </PropertyGroup>
+  <Target Name="Default">
+    <ItemGroup>
+      <Assemblies Include="d:\a\*.dll"/>
+    </ItemGroup>
+    <!-- Run an NUnit Project -->
+    <MSBuild.ExtensionPack.CodeQuality.NUnit Assemblies="d:\a\Project1.nunit" ToolPath="$(ToolPath)">
+      <Output TaskParameter="Total" PropertyName="ResultTotal"/>
+      <Output TaskParameter="NotRun" PropertyName="ResultNotRun"/>
+      <Output TaskParameter="Failures" PropertyName="ResultFailures"/>
+      <Output TaskParameter="Errors" PropertyName="ResultErrors"/>
+      <Output TaskParameter="Inconclusive" PropertyName="ResultInconclusive"/>
+      <Output TaskParameter="Ignored" PropertyName="ResultIgnored"/>
+      <Output TaskParameter="Skipped" PropertyName="ResultSkipped"/>
+      <Output TaskParameter="Invalid" PropertyName="ResultInvalid"/>
+    </MSBuild.ExtensionPack.CodeQuality.NUnit>
+    <Message Text="ResultTotal: $(ResultTotal)"/>
+    <Message Text="ResultNotRun: $(ResultNotRun)"/>
+    <Message Text="ResultFailures: $(ResultFailures)"/>
+    <Message Text="ResultErrors: $(ResultErrors)"/>
+    <Message Text="ResultInconclusive: $(ResultInconclusive)"/>
+    <Message Text="ResultIgnored: $(ResultIgnored)"/>
+    <Message Text="ResultSkipped: $(ResultSkipped)"/>
+    <Message Text="ResultInvalid: $(ResultInvalid)"/>
+    <!--- Run NUnit over a collection of assemblies -->
+    <MSBuild.ExtensionPack.CodeQuality.NUnit Assemblies="@(Assemblies)" ToolPath="$(ToolPath)" OutputXmlFile="D:\a\NunitResults2.xml">
+      <Output TaskParameter="Total" PropertyName="ResultTotal"/>
+      <Output TaskParameter="NotRun" PropertyName="ResultNotRun"/>
+      <Output TaskParameter="Failures" PropertyName="ResultFailures"/>
+      <Output TaskParameter="Errors" PropertyName="ResultErrors"/>
+      <Output TaskParameter="Inconclusive" PropertyName="ResultInconclusive"/>
+      <Output TaskParameter="Ignored" PropertyName="ResultIgnored"/>
+      <Output TaskParameter="Skipped" PropertyName="ResultSkipped"/>
+      <Output TaskParameter="Invalid" PropertyName="ResultInvalid"/>
+    </MSBuild.ExtensionPack.CodeQuality.NUnit>
+    <Message Text="ResultTotal: $(ResultTotal)"/>
+    <Message Text="ResultNotRun: $(ResultNotRun)"/>
+    <Message Text="ResultFailures: $(ResultFailures)"/>
+    <Message Text="ResultErrors: $(ResultErrors)"/>
+    <Message Text="ResultInconclusive: $(ResultInconclusive)"/>
+    <Message Text="ResultIgnored: $(ResultIgnored)"/>
+    <Message Text="ResultSkipped: $(ResultSkipped)"/>
+    <Message Text="ResultInvalid: $(ResultInvalid)"/>
+  </Target>
+</Project>

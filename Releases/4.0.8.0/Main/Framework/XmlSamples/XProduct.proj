@@ -1,0 +1,49 @@
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <AllConfigurations Include="Release">
+            <Name>Release</Name>
+            <Framework>net-3.5</Framework>
+            <OutputDirectory>net-3.5\bin\release\</OutputDirectory>
+        </AllConfigurations>
+        <AllConfigurations Include="Debug">
+            <Name>Debug</Name>
+            <Framework>net-3.5</Framework>
+            <OutputDirectory>net-3.5\bin\debug\</OutputDirectory>
+        </AllConfigurations>
+        <AllPlatforms Include="x86">
+            <Use32Bit>True</Use32Bit>
+        </AllPlatforms>
+        <AllPlatforms Include="x64">
+            <Use32Bit>False</Use32Bit>
+        </AllPlatforms>
+        <AllDatabaseSystems Include="SqlServerLocal"  Condition="'true' == 'true'">
+            <DataSource>localhost\.</DataSource>
+            <DatabaseDirectory>C:\Databases\.</DatabaseDirectory>
+        </AllDatabaseSystems>
+        <AllDatabaseSystems Include="SqlServer2005">
+            <DataSource>localhost\MSSQL2005</DataSource>
+            <DatabaseDirectory>C:\Databases\MsSql2005</DatabaseDirectory>
+        </AllDatabaseSystems>
+    </ItemGroup>
+
+    <Target Name="Default">
+        <MSBuild.ExtensionPack.Framework.XProduct IdentityFormat="{0}-{1}-{2}" Group1="@(AllConfigurations)" Group2="@(AllPlatforms)" Group3="@(AllDatabaseSystems)" >
+            <Output ItemName="NewList" TaskParameter="Result" />
+            <Output PropertyName="CountX" TaskParameter="Count" />
+        </MSBuild.ExtensionPack.Framework.XProduct>
+
+        <Message Text="Got $(CountX) configurations" />
+        <Message Text="%(NewList.Identity)
+                    %(NewList.Name)
+                    %(NewList.Framework)
+                    %(NewList.OutputDirectory)
+                    %(NewList.Use32Bit)
+                    %(NewList.DataSource)
+                    %(NewList.DataBaseDirectory)" />
+    </Target>
+</Project>

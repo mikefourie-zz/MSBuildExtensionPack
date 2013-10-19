@@ -1,0 +1,57 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="ChangeExtension" Filepath="c:\temp\filename.txt" Extension="log">
+            <Output TaskParameter="Value" PropertyName="NewFilename" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="NewFilename = $(NewFilename)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="Combine" Filepath="c:\temp" Filepath2="filename.txt">
+            <Output TaskParameter="Value" PropertyName="CombinedFilename" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="CombinedFilename = $(CombinedFilename)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetDirectoryName" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="JustTheDirectory" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="JustTheDirectory = $(JustTheDirectory)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetExtension" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="JustTheExtension" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="JustTheExtension = $(JustTheExtension)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetFileName" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="JustTheFilename" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="JustTheFilename = $(JustTheFilename)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetFileNameWithoutExtension" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="JustTheFilename" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="JustTheFilename = $(JustTheFilename)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetFullPath" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="FullPath" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="FullPath = $(FullPath)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetPathRoot" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="PathRoot" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="PathRoot = $(PathRoot)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetRandomFileName">
+            <Output TaskParameter="Value" PropertyName="RandomFilename" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="RandomFilename = $(RandomFilename)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="GetTempPath">
+            <Output TaskParameter="Value" PropertyName="TempPath" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="TempPath = $(TempPath)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="HasExtension" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="FileHasAnExtension" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="FileHasAnExtension = $(FileHasAnExtension)"/>
+        <MSBuild.ExtensionPack.Framework.Path TaskAction="IsPathRooted" Filepath="c:\temp\filename.txt">
+            <Output TaskParameter="Value" PropertyName="FileIsRooted" />
+        </MSBuild.ExtensionPack.Framework.Path>
+        <Message Text="FileIsRooted = $(FileIsRooted)"/>
+    </Target>
+</Project>

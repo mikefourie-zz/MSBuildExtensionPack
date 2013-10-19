@@ -1,0 +1,14 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Input Include="C:\b\MSBuild.ExtensionPack.dll"/>
+            <Input Include="C:\b\Ionic.Zip.dll"/>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.Framework.ILMerge InputAssemblies="@(Input)" OutputFile="C:\a\MyNewAssembly.dll"/>
+    </Target>
+</Project>

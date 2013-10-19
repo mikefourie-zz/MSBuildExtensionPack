@@ -1,0 +1,32 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <MachineConfigSettings Include="settingName" >
+                <Value>settingValue</Value>
+            </MachineConfigSettings>
+        </ItemGroup>
+        <!-- Update machine.config app settings -->
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="SetAppSetting" SettingName="%(MachineConfigSettings.Identity)" SettingValue="%(Value)" SaveMode="Full"/>
+        <ItemGroup>
+            <ConnectionStrings Include="myAppDB">
+                <Value>Server=MyServer;</Value>
+            </ConnectionStrings>
+        </ItemGroup>
+        <!-- Update a website's connection strings -->
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="SetConnectionString" SettingName="%(ConnectionStrings.Identity)" SettingValue="%(Value)" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
+        <!-- Encrypt a website's connection strings -->
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="ProtectConfigSection" Section="connectionStrings"  ProtectionProvider="DataProtectionConfigurationProvider" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
+        <!-- Un-encrypt a website's connection strings -->
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="UnprotectConfigSection" Section="connectionStrings" ConfigurationFileType="WebConfig" Site="NewSite" Path="/" />
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveConnectionString" SettingName="%(ConnectionStrings.Identity)" ConfigurationFileType="WebConfig"  Site="NewSite" Path="/" />
+        <!--- Remove a setting from a website -->
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveAppSetting" SettingName="removeMe" ConfigurationFileType="WebConfig"  Site="NewSite" Path="/" />
+        <!-- Remove connection string 'obsoleteConnection' from machine.config file -->
+        <MSBuild.ExtensionPack.Framework.ConfigManager TaskAction="RemoveConnectionString" SettingName="obsoleteConnection" />
+    </Target>
+</Project>

@@ -1,0 +1,31 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <ItemGroup>
+        <WmiExec3 Include="CommandLine#~#notepad.exe"/>
+    </ItemGroup>
+    <Target Name="Default">
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="Terminate" ProcessId="9564"/>
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="Create" Parameters="@(WmiExec3)">
+            <Output TaskParameter="ReturnValue" PropertyName="Rval2"/>
+            <Output TaskParameter="ProcessId" PropertyName="PID"/>
+        </MSBuild.ExtensionPack.Computer.Process>
+        <Message Text="ReturnValue: $(Rval2). ProcessId: $(PID)"/>
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="CheckRunning" ProcessName="notepad.exe">
+            <Output PropertyName="Running" TaskParameter="IsRunning"/>
+        </MSBuild.ExtensionPack.Computer.Process>
+        <Message Text="notepad.exe IsRunning: $(Running)"/>
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="Terminate" ProcessName="notepad.exe"/>
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="CheckRunning" ProcessName="notepad.exe">
+            <Output PropertyName="Running" TaskParameter="IsRunning"/>
+        </MSBuild.ExtensionPack.Computer.Process>
+        <Message Text="notepad.exe IsRunning: $(Running)"/>
+        <MSBuild.ExtensionPack.Computer.Process TaskAction="Get" IncludeUserInfo="true">
+            <Output ItemName="ProcessList" TaskParameter="Processes"/>
+        </MSBuild.ExtensionPack.Computer.Process>
+        <Message Text="%(ProcessList.Identity)  - %(ProcessList.User) - %(ProcessList.OwnerSID)"/>
+    </Target>
+</Project>
