@@ -8,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6f68e116-2259-493e-a37f-d59bbca9d021}</ProjectGuid>
-    <SHFBSchemaVersion>1.9.3.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>1.9.5.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
          Studio adds them anyway -->
     <AssemblyName>Documentation</AssemblyName>
@@ -41,13 +41,13 @@
     <BuildLogFile>
     </BuildLogFile>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
-    <FrameworkVersion>.NET 3.5</FrameworkVersion>
-    <HelpTitle>MSBuild Extension Pack Help %28v3.5.13.0%29</HelpTitle>
+    <FrameworkVersion>.NET Framework 3.5</FrameworkVersion>
+    <HelpTitle>MSBuild Extension Pack Help %28v3.5.14.0%29</HelpTitle>
     <CopyrightHref>http://www.MSBuildExtensionPack.com</CopyrightHref>
     <CopyrightText>Copyright &amp;#169%3b 2013 http://www.MSBuildExtensionPack.com. All rights reserved.</CopyrightText>
     <FeedbackEMailAddress>feedback%40MSBuildExtensionPack.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText>MSBuild ExtensionPack Feedback</FeedbackEMailLinkText>
-    <PresentationStyle>vs2005</PresentationStyle>
+    <PresentationStyle>VS2005</PresentationStyle>
     <SyntaxFilters>None</SyntaxFilters>
     <DocumentationSources>
       <DocumentationSource sourceFile="c:\MSBEP\3.5\Interop.COMAdmin.dll" />
@@ -164,6 +164,11 @@ This namespace currently hosts the XmlTask</NamespaceSummaryItem>
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <Preliminary>False</Preliminary>
+    <NamingMethod>Guid</NamingMethod>
+    <Language>en-US</Language>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in
        order for Visual Studio to perform the build. -->
