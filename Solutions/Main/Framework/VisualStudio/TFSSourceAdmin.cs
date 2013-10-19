@@ -154,11 +154,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void ResolveExePath()
         {
-            this.LogTaskMessage("Resolve TF.exe path");
+            this.LogTaskMessage(MessageImportance.Low, "Resolve TF.exe path");
 
             string vstools = string.Empty;
             switch (this.Version)
             {
+                case "2013":
+                    vstools = Environment.GetEnvironmentVariable("VS120COMNTOOLS");
+                    break;
                 case "2012":
                     vstools = Environment.GetEnvironmentVariable("VS110COMNTOOLS");
                     break;
