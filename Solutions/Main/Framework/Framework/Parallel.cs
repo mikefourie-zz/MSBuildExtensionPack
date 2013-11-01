@@ -130,7 +130,7 @@ namespace MSBuild.ExtensionPack.Framework
         }
 
         /// <summary>
-        /// Specifies the verbosity to log to the individual files with. Default is diagnostic
+        /// Specifies the verbosity to log to the individual files with. Default is Diagnostic. Note this is case sensitive.
         /// </summary>
         public string MultiLogVerbosity
         {
