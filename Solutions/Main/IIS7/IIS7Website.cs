@@ -63,6 +63,12 @@ namespace MSBuild.ExtensionPack.Web
     ///             <Output TaskParameter="SiteId" PropertyName="NewSiteId"/>
     ///         </MSBuild.ExtensionPack.Web.Iis7Website>
     ///         <Message Text="NewSite SiteId: $(NewSiteId)"/>
+    ///         <!-- GetInfo -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="GetInfo" Name="NewSite">
+    ///             <Output TaskParameter="SiteInfo" ItemName="SiteInfo"/>
+    ///         </MSBuild.ExtensionPack.Web.Iis7Website>
+    ///         <Message Text="Id: %(SiteInfo.Id)"/>
+    ///         <Message Text="ApplicationPoolName: %(SiteInfo.ApplicationPoolName)"/>
     ///         <!-- Add HTTP Response Headers -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddResponseHeaders" Name="NewSite" HttpResponseHeaders="@(HttpResponseHeaders)"/>
     ///         <!-- Add Mime Types -->
@@ -729,8 +735,11 @@ namespace MSBuild.ExtensionPack.Web
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Getting info for website: {0} on: {1}", this.Name, this.MachineName));
             ITaskItem isite = new TaskItem(this.Name);
+            if (this.website.Applications[0] != null)
+            {
+                isite.SetMetadata("ApplicationPoolName", this.website.Applications[0].ApplicationPoolName);
+            }
 
-            isite.SetMetadata("ApplicationPoolName", this.website.ApplicationDefaults.ApplicationPoolName);
             Application app = this.website.Applications["/"];
             if (app != null)
             {
