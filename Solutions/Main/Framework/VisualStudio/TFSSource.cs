@@ -123,7 +123,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string UndoCheckoutTaskAction = "UndoCheckout";
         private const string UndeleteTaskAction = "Undelete";
         private string teamFoundationExe;
-        private string version = "2008";
+        private string version = "2013";
         private bool recursive = true;
         private ShellWrapper shellWrapper;
         private string itemSpec = string.Empty;
@@ -191,7 +191,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string WorkingDirectory { get; set; }
 
         /// <summary>
-        /// Sets the version of Tfs. Default is 2008
+        /// Sets the version of Tfs. Default is 2013
         /// </summary>
         public string Version
         {
