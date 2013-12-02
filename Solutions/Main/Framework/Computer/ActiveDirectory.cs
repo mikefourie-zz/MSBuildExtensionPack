@@ -249,6 +249,16 @@ namespace MSBuild.ExtensionPack.Computer
         public string FullName { get; set; }
 
         /// <summary>
+        /// Set the User's First name
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// Sets the users Last name
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
         /// Sets the User's or Group's description
         /// </summary>
         public string Description { get; set; }
@@ -1010,6 +1020,20 @@ namespace MSBuild.ExtensionPack.Computer
               }
 
               userPrincipal.Save();
+
+              if (!(string.IsNullOrWhiteSpace(this.FirstName) && string.IsNullOrWhiteSpace(this.LastName)))
+              {
+                  if (!isLocalMachineUser)
+                  {
+                      userPrincipal.GivenName = this.FirstName;
+                      userPrincipal.Surname = this.LastName;                      
+                      userPrincipal.Save();
+                  }
+                  else
+                  {
+                      this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Cannot set First Name or Last Name for the user {0}. The operation is not supported for local users.", this.User[0].ItemSpec));
+                  }
+              }
             }
             finally
             {
