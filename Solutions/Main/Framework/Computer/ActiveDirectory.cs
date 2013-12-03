@@ -105,7 +105,7 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddUser</i> (<b>Required: </b> User <b>Optional: </b>Domain, FullName, Description, Password, PasswordExpired, PasswordNeverExpires)</para>
+    /// <para><i>AddUser</i> (<b>Required: </b> User <b>Optional: </b>Domain, FullName, Description, Password, PasswordExpired, PasswordNeverExpires, FirstName, LastName)</para>
     /// <para><i>AddGroup</i> (<b>Required: </b> Group <b>Optional: </b>Domain, Description, GroupType)</para>
     /// <para><i>AddGroupToGroup</i> (<b>Required: </b> Parent, Group). Windows Server 2008 only.</para>
     /// <para><i>AddUserToGroup</i> (<b>Required: </b> User, Group)</para>
@@ -1039,7 +1039,7 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 else
                 {
-                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Cannot set First Name or Last Name for the user {0}. The operation is not supported for local users.", this.User[0].ItemSpec));
+                    this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "Cannot set First Name or Last Name for the user {0}. The operation is not supported for local users.", this.User[0].ItemSpec));
                 }
               }
             }
