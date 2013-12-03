@@ -254,7 +254,7 @@ namespace MSBuild.ExtensionPack.Computer
         public string FirstName { get; set; }
 
         /// <summary>
-        /// Sets the users Last name
+        /// Sets the User's Last name
         /// </summary>
         public string LastName { get; set; }
 
@@ -523,7 +523,7 @@ namespace MSBuild.ExtensionPack.Computer
               return string.Empty;
             }
 
-            var domainParts = domainContext.Split(new char[] { ',' });
+            var domainParts = domainContext.Split(new[] { ',' });
             foreach (var domainPart in domainParts)
             {
               if (domainPart.Contains("DC="))
@@ -1023,16 +1023,24 @@ namespace MSBuild.ExtensionPack.Computer
 
               if (!(string.IsNullOrWhiteSpace(this.FirstName) && string.IsNullOrWhiteSpace(this.LastName)))
               {
-                  if (!isLocalMachineUser)
-                  {
-                      userPrincipal.GivenName = this.FirstName;
-                      userPrincipal.Surname = this.LastName;                      
-                      userPrincipal.Save();
-                  }
-                  else
-                  {
-                      this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Cannot set First Name or Last Name for the user {0}. The operation is not supported for local users.", this.User[0].ItemSpec));
-                  }
+                if (!isLocalMachineUser)
+                {
+                    if (!string.IsNullOrWhiteSpace(this.FirstName))
+                    {
+                        userPrincipal.GivenName = this.FirstName;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(this.LastName))
+                    {
+                        userPrincipal.Surname = this.LastName;
+                    }
+                    
+                    userPrincipal.Save();
+                }
+                else
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Cannot set First Name or Last Name for the user {0}. The operation is not supported for local users.", this.User[0].ItemSpec));
+                }
               }
             }
             finally
