@@ -25,7 +25,8 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
     /// <para><i>ModifyPath</i> (<b>Required: </b> Name, Path <b>Output: </b>SiteId)</para>
-    /// <para><i>ModifyLogDirectory</i> (<b>Required: </b> Name, LogDirectory)</para>
+    /// <para><i>ModifyLogDirectory</i> (<b>Required: </b> Name, LogDirectory)</para>    
+    /// <para><i>SetWindowsAuthenticationProviders</i> (<b>Required: </b> Name, Providers <b>Optional: </b>UseKernelMode)</para>
     /// <para><i>Start</i> (<b>Required: </b> Name)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
@@ -100,6 +101,8 @@ namespace MSBuild.ExtensionPack.Web
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="NewSite2"/>
     ///         <!-- Delete a site -->
     ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Delete" Name="NewSite2"/>
+    ///         <!-- Set Windows Authentication Providers -->
+    ///         <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="SetWindowsAuthenticationProviders" Name="NewSite" Providers="Negotiate" UseKernelMode="False"/>
     ///     </Target>
     /// </Project>
     /// ]]></code>    
@@ -120,8 +123,10 @@ namespace MSBuild.ExtensionPack.Web
         private const string StopTaskAction = "Stop";
         private const string CheckVirtualDirectoryExistsTaskAction = "CheckVirtualDirectoryExists";
         private const string DeleteVirtualDirectoryTaskAction = "DeleteVirtualDirectory";
+        private const string SetWindowsAuthenticationProvidersTaskAction = "SetWindowsAuthenticationProviders";
         private bool anonymousAuthentication = true;
         private bool serverAutoStart = true;
+        private bool useKernelMode = true;
         private ServerManager iisServerManager;
         private Site website;
 
@@ -198,6 +203,20 @@ namespace MSBuild.ExtensionPack.Web
             get { return this.serverAutoStart; }
             set { this.serverAutoStart = value; }
         }
+
+        /// <summary>
+        /// Sets whether Windows authentication is done in kernel mode. Default is true.
+        /// </summary>
+        public bool UseKernelMode
+        {
+            get { return this.useKernelMode; }
+            set { this.useKernelMode = value; }
+        }
+
+        /// <summary>
+        /// Sets the authentication providers. The authentication providers must be passed in a semicolon separated string.
+        /// </summary>
+        public string Providers { get; set; }
 
         /// <summary>
         /// Sets WindowsAuthentication for the website. Default is false;
@@ -305,6 +324,9 @@ namespace MSBuild.ExtensionPack.Web
                     case StopTaskAction:
                         this.ControlWebsite();
                         break;
+                    case SetWindowsAuthenticationProvidersTaskAction:
+                        this.SetWindowsAuthenticationProviders();
+                        break;
                     default:
                         this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                         return;
@@ -318,6 +340,43 @@ namespace MSBuild.ExtensionPack.Web
                 }
             }
         }
+
+        private void SetWindowsAuthenticationProviders()
+        {
+            if (!this.SiteExists())
+            {
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(this.Providers))
+            {
+                this.LogTaskWarning(string.Format(CultureInfo.CurrentCulture, "No authentication providers were specified for website {0} on {1}", this.Name, this.MachineName));
+                return;
+            }
+
+            string[] providers = this.Providers.Trim().Split(new[] { ';' });
+            Configuration config = this.iisServerManager.GetApplicationHostConfiguration();
+            ConfigurationSection windowsAuthenticationSection = config.GetSection("system.webServer/security/authentication/windowsAuthentication", this.Name);
+            ConfigurationElementCollection providersCollection = windowsAuthenticationSection.GetCollection("providers");
+
+            for (int index = providersCollection.Count - 1; index >= 0; index--)
+            {
+                var existingProvider = providersCollection[index];
+                if (!providers.Contains(existingProvider["value"]))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing provider {0}", existingProvider["value"]));
+                    providersCollection.Remove(existingProvider);
+                }
+                else
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Keeping provider {0}", existingProvider["value"]));
+                }
+            }
+
+            windowsAuthenticationSection["useKernelMode"] = this.UseKernelMode;            
+            this.iisServerManager.CommitChanges();
+        }        
 
         private void AddMimeType()
         {
@@ -595,7 +654,7 @@ namespace MSBuild.ExtensionPack.Web
 
             this.CreateDirectoryIfNecessary(this.Path);
 
-            this.website = this.iisServerManager.Sites.Add(this.Name, this.Path, this.Port);
+            this.website = this.iisServerManager.Sites.Add(this.Name, this.Path, this.Port);            
             if (this.Identifier > 0)
             {    
                 this.website.Id = this.Identifier;
