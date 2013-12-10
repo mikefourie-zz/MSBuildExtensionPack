@@ -4,6 +4,7 @@
 namespace MSBuild.ExtensionPack.Sql2012
 {
     using System;
+    using System.Collections.Specialized;
     using System.Globalization;
     using System.IO;
     using System.Text.RegularExpressions;
@@ -15,11 +16,13 @@ namespace MSBuild.ExtensionPack.Sql2012
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
+    /// <para><i>Attach</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>See notes on metadata for DatabaseItem)</para>
     /// <para><i>Backup</i> (<b>Required: </b>DatabaseItem, DataFilePath <b>Optional: </b>BackupAction, CompressionOption, Incremental, NotificationInterval, NoPooling, StatementTimeout, CopyOnly)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout <b>Output:</b> Exists)</para>
     /// <para><i>Create</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>Collation, NoPooling, DataFilePath, LogName, LogFilePath, FileGroupName, StatementTimeout)</para>
     /// <para><i>Delete</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><i>DeleteBackupHistory</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
+    /// <para><i>Detach</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>See notes on metadata for DatabaseItem)</para>
     /// <para><i>GetConnectionCount</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b>DatabaseItem <b>Optional: </b>NoPooling, StatementTimeout)</para>
     /// <para><i>Rename</i> (<b>Required: </b>DatabaseItem (NewName metadata) <b>Optional: </b>NoPooling, StatementTimeout)</para>
@@ -47,7 +50,22 @@ namespace MSBuild.ExtensionPack.Sql2012
     ///             <Database2 Include="ADatabase2">
     ///                 <NewName>ADatabase</NewName>
     ///             </Database2>
+    ///             <Database3 Include="ADatabase3">
+    ///                 <Owner></Owner>
+    ///                 <AttachOptions>1</AttachOptions>
+    ///                 <UpdateStatistics>true</UpdateStatistics>
+    ///                 <RemoveFulltextIndexFile>true</RemoveFulltextIndexFile>
+    ///                 <Files>C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\ADatabase3.mdf;C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\ADatabase3_log.LDF</Files>
+    ///             </Database3>
     ///         </ItemGroup>
+    ///         <!-- Create Database -->
+    ///         <MSBuild.ExtensionPack.Sql2012.Database TaskAction="Delete" DatabaseItem="@(Database3)" ContinueOnError="true"/>
+    ///         <!-- Create Database -->
+    ///         <MSBuild.ExtensionPack.Sql2012.Database TaskAction="Create" DatabaseItem="@(Database3)"/>
+    ///         <!-- Detach Database-->
+    ///         <MSBuild.ExtensionPack.Sql2012.Database TaskAction="Detach" DatabaseItem="@(Database3)"/>
+    ///         <!-- Attach Database-->
+    ///         <MSBuild.ExtensionPack.Sql2012.Database TaskAction="Attach" DatabaseItem="@(Database3)"/>
     ///         <!-- Get information on a database -->
     ///         <MSBuild.ExtensionPack.Sql2012.Database TaskAction="GetInfo" DatabaseItem="ADatabase">
     ///             <Output TaskParameter="Information" ItemName="AllInfo"/>
@@ -135,7 +153,7 @@ namespace MSBuild.ExtensionPack.Sql2012
         public bool Force { get; set; }
 
         /// <summary>
-        /// Sets the database name
+        /// Sets the database name. When using Attach, you can specify the following metadata: Owner, Files (semicolon delimited), AttachOptions (Default None). When using Detach, you can specify the following metadata: UpdateStatistics, RemoveFulltextIndexFile (both default to false). 
         /// </summary>
         public ITaskItem DatabaseItem { get; set; }
 
@@ -318,6 +336,12 @@ namespace MSBuild.ExtensionPack.Sql2012
 
             switch (this.TaskAction)
             {
+                case "Attach":
+                    this.Attach();
+                    break;
+                case "Detach":
+                    this.Detach();
+                    break;
                 case "GetInfo":
                     this.GetInfo();
                     break;
@@ -668,6 +692,64 @@ namespace MSBuild.ExtensionPack.Sql2012
             SMO.Database oldDatabase = new SMO.Database(this.sqlServer, this.DatabaseItem.ItemSpec);
             oldDatabase.Refresh();
             oldDatabase.Drop();
+        }
+
+        private void Attach()
+        {
+            if (this.DatabaseItem == null)
+            {
+                this.Log.LogError("DatabaseItem is required");
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Attaching Database: {0}", this.DatabaseItem.ItemSpec));
+            if (this.CheckDatabaseExists())
+            {
+                this.Log.LogError("Cannot attach a database with the same name as an existing database");
+                return;
+            }
+
+            string[] databasefiles = this.DatabaseItem.GetMetadata("Files").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            StringCollection filescollection = new StringCollection();
+            filescollection.AddRange(databasefiles);
+            AttachOptions dbattachOptions = AttachOptions.None;
+            string attachOptions = this.DatabaseItem.GetMetadata("AttachOptions");
+            if (!string.IsNullOrEmpty(attachOptions))
+            {
+                dbattachOptions = (AttachOptions)Enum.Parse(typeof(AttachOptions), attachOptions);
+            }
+            
+            if (!string.IsNullOrEmpty(this.DatabaseItem.GetMetadata("Owner")))
+            {
+                this.sqlServer.AttachDatabase(this.DatabaseItem.ItemSpec, filescollection, this.DatabaseItem.GetMetadata("Owner"), dbattachOptions);
+            }
+            else
+            {
+                this.sqlServer.AttachDatabase(this.DatabaseItem.ItemSpec, filescollection, dbattachOptions);
+            }
+        }
+
+        private void Detach()
+        {
+            if (!this.VerifyDatabase())
+            {
+                return;
+            }
+
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Detaching Database: {0}", this.DatabaseItem.ItemSpec));
+            bool updateStatistics = false;
+            bool removeFulltextIndexFile = false;
+            if (!string.IsNullOrEmpty(this.DatabaseItem.GetMetadata("UpdateStatistics")))
+            {
+                updateStatistics = Convert.ToBoolean(this.DatabaseItem.GetMetadata("UpdateStatistics"), CultureInfo.CurrentCulture);
+            }
+
+            if (!string.IsNullOrEmpty(this.DatabaseItem.GetMetadata("RemoveFulltextIndexFile")))
+            {
+                removeFulltextIndexFile = Convert.ToBoolean(this.DatabaseItem.GetMetadata("RemoveFulltextIndexFile"), CultureInfo.CurrentCulture);
+            }
+
+            this.sqlServer.DetachDatabase(this.DatabaseItem.ItemSpec, updateStatistics, removeFulltextIndexFile);
         }
 
         private void Restore()

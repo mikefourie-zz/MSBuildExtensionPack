@@ -12,7 +12,22 @@
             <Database2 Include="ADatabase2">
                 <NewName>ADatabase</NewName>
             </Database2>
+            <Database3 Include="ADatabase3">
+                <Owner></Owner>
+                <AttachOptions>1</AttachOptions>
+                <UpdateStatistics>true</UpdateStatistics>
+                <RemoveFulltextIndexFile>true</RemoveFulltextIndexFile>
+                <Files>C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\ADatabase3.mdf;C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\ADatabase3_log.LDF</Files>
+            </Database3>
         </ItemGroup>
+        <!-- Create Database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Delete" DatabaseItem="@(Database3)" ContinueOnError="true"/>
+        <!-- Create Database -->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Create" DatabaseItem="@(Database3)"/>
+        <!-- Detach Database-->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Detach" DatabaseItem="@(Database3)"/>
+        <!-- Attach Database-->
+        <MSBuild.ExtensionPack.Sql2008.Database TaskAction="Attach" DatabaseItem="@(Database3)"/>
         <!-- Get information on a database -->
         <MSBuild.ExtensionPack.Sql2008.Database TaskAction="GetInfo" DatabaseItem="ADatabase">
             <Output TaskParameter="Information" ItemName="AllInfo"/>
