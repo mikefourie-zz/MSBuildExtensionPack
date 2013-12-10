@@ -4,6 +4,7 @@
 namespace MSBuild.ExtensionPack.Framework
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using Microsoft.Build.Framework;
@@ -47,7 +48,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para/>Default: no duplicates of public types allowed.
         /// </summary>
         public ITaskItem[] AllowDuplicateTypes { get; set; }
-        
+
         /// <summary>
         /// If set, any assembly-level attributes names that have the same type are copied over into the target directory as long as the definition of the attribute type specifies that “AllowMultiple” is true.
         /// <para/>Command line option: /allowMultiple
@@ -186,7 +187,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         [Required]
         public ITaskItem OutputFile { get; set; }
-        
+
         /// <summary>
         /// This must be set before calling Merge. It indicates whether external assembly references in the manifest of the target assembly will use full public keys (false) or public key tokens (true).
         /// <para/>Command line option: /out:filename
@@ -295,7 +296,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.AttributeFile != null)
             {
-                builder.AppendSwitch(@"/attr:" + this.AttributeFile.ItemSpec);
+                builder.AppendSwitch(string.Format(CultureInfo.CurrentCulture, "/attr:\"{0}\"", this.AttributeFile.ItemSpec));
             }
 
             if (this.Closed)
@@ -320,7 +321,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.ExcludeFile != null)
             {
-                builder.AppendSwitch(@"/internalize:" + this.ExcludeFile.ItemSpec);
+                builder.AppendSwitch(string.Format(CultureInfo.CurrentCulture, "/internalize:\"{0}\"", this.ExcludeFile.ItemSpec));
             }
             else if (this.Internalize)
             {
@@ -329,12 +330,12 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (this.KeyFile != null)
             {
-                builder.AppendSwitch(@"/keyfile:" + this.KeyFile.ItemSpec);
+                builder.AppendSwitch(string.Format(CultureInfo.CurrentCulture, "/keyfile:\"{0}\"", this.KeyFile.ItemSpec));
             }
 
             if (this.LogFile != null)
             {
-                builder.AppendSwitch(@"/log" + ((this.LogFile.ItemSpec.Length == 0) ? string.Empty : @":" + this.LogFile.ItemSpec));
+                builder.AppendSwitch(string.Format(CultureInfo.CurrentCulture, "/log:\"{0}\"", this.LogFile.ItemSpec));
             }
 
             if (this.PublicKeyTokens)
@@ -364,7 +365,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 builder.AppendSwitch(@"/union");
             }
-            
+
             if (this.Version != null)
             {
                 builder.AppendSwitch(@"/ver:" + this.Version);
@@ -376,7 +377,7 @@ namespace MSBuild.ExtensionPack.Framework
             }
 
             builder.AppendSwitch(@"/align:" + this.FileAlignment);
-            builder.AppendSwitch(@"/out:" + this.OutputFile.ItemSpec);
+            builder.AppendSwitch(string.Format(CultureInfo.CurrentCulture, "/out:\"{0}\"", this.OutputFile.ItemSpec));
             builder.AppendFileNamesIfNotNull(this.InputAssemblies, @" ");
 
             return builder.ToString();
@@ -386,7 +387,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
-            
+
             if (this.DeleteInputAssemblies)
             {
                 foreach (ITaskItem file in this.InputAssemblies.Where(file => File.Exists(file.ItemSpec)))
