@@ -119,14 +119,6 @@
                 <File Id='fileMSBuild.ExtensionPack.pdb' Name='MSBuild.ExtensionPack.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.pdb'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.pdb' Name='MSBuild.ExtensionPack.pdb' On='uninstall'/>
             </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2005.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2005.dll' Name='MSBuild.ExtensionPack.Sql2005.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2005.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2005.dll' Name='MSBuild.ExtensionPack.Sql2005.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2005.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2005.pdb' Name='MSBuild.ExtensionPack.Sql2005.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2005.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2005.pdb' Name='MSBuild.ExtensionPack.Sql2005.pdb' On='uninstall'/>
-            </Component>
             <Component Id='MSBuild.ExtensionPack.Sql2008.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.Sql2008.dll' Name='MSBuild.ExtensionPack.Sql2008.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2008.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2008.dll' Name='MSBuild.ExtensionPack.Sql2008.dll' On='uninstall'/>
@@ -179,14 +171,6 @@
                 <File Id='fileMSBuild.ExtensionPack.tasks' Name='MSBuild.ExtensionPack.tasks' DiskId='1' Source='..\..\Common\MSBuild.ExtensionPack.tasks'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.tasks' Name='MSBuild.ExtensionPack.tasks' On='uninstall'/>
             </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs.dll' Name='MSBuild.ExtensionPack.Tfs.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs.dll' Name='MSBuild.ExtensionPack.Tfs.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs.pdb' Name='MSBuild.ExtensionPack.Tfs.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs.pdb' Name='MSBuild.ExtensionPack.Tfs.pdb' On='uninstall'/>
-            </Component>
             <Component Id='MSBuild.ExtensionPack.Tfs2010.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.Tfs2010.dll' Name='MSBuild.ExtensionPack.Tfs2010.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2010.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2010.dll' Name='MSBuild.ExtensionPack.Tfs2010.dll' On='uninstall'/>
@@ -206,14 +190,6 @@
             <Component Id='MSBuild.ExtensionPack.VersionNumber.targets' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' DiskId='1' Source='..\..\Framework\Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.WindowsVirtualPC.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.WindowsVirtualPC.dll' Name='MSBuild.ExtensionPack.WindowsVirtualPC.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.WindowsVirtualPC.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.WindowsVirtualPC.dll' Name='MSBuild.ExtensionPack.WindowsVirtualPC.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.WindowsVirtualPC.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.WindowsVirtualPC.pdb' Name='MSBuild.ExtensionPack.WindowsVirtualPC.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.WindowsVirtualPC.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.WindowsVirtualPC.pdb' Name='MSBuild.ExtensionPack.WindowsVirtualPC.pdb' On='uninstall'/>
             </Component>
             <Component Id='wshom.ocx' Guid='*'>
                 <File Id='filewshom.ocx' Name='wshom.ocx' DiskId='1' Source='Resources\wshom.ocx'/>

@@ -111,12 +111,7 @@
     <!-- ============== StyleCop ============== -->
     <UsingTask AssemblyFile="$(MSBuildProgramFiles32)\StyleCop 4.7\MSBuild.ExtensionPack.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
 
-
-    <!-- ============== Sql2005 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2005.dll" TaskName="MSBuild.ExtensionPack.Sql2005.Database"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2005.dll" TaskName="MSBuild.ExtensionPack.Sql2005.Server"/>
-
-
+    
     <!-- ============== Sql2008 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.AnalysisServices"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.Database"/>
@@ -139,11 +134,6 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sync.dll" TaskName="MSBuild.ExtensionPack.FileSystem.Sync"/>
 
 
-    <!-- ============== Tfs ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.DevEnv"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs.dll" TaskName="MSBuild.ExtensionPack.Tfs.TeamBuild"/>
-
-
     <!-- ============== Tfs2010 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2010.dll" TaskName="MSBuild.ExtensionPack.Tfs2010.DevEnv"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2010.dll" TaskName="MSBuild.ExtensionPack.Tfs2010.TeamBuild"/>
@@ -156,10 +146,6 @@
     <!-- ============== Tfs2013 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2013.dll" TaskName="MSBuild.ExtensionPack.Tfs2013.TeamBuild"/>
     
-    
-    <!-- ============== Windows Virtual PC ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.WindowsVirtualPC.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.VirtualPc"/>
-
     
     <!-- ============== Git ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Git.dll" TaskName="MSBuild.ExtensionPack.Git.Clone"/>
