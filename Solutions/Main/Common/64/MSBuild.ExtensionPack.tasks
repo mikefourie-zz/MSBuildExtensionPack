@@ -6,6 +6,13 @@
         <ExtensionTasksPath Condition="'$(ExtensionTasksPath)' == ''">$(MSBuildExtensionsPath64)\ExtensionPack\4.0\</ExtensionTasksPath>
     </PropertyGroup>
 
+    <!-- ============== Crm ============== -->
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.Data"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.DataMap"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.Organization"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.Solution"/>
+
+
     <!-- ============== Framework ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.FxCop"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.NUnit"/>
@@ -96,7 +103,11 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkReceivePort"/>
 
+    
+    <!-- ============== Git ============== -->
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Git.dll" TaskName="MSBuild.ExtensionPack.Git.Clone"/>
 
+    
     <!-- ============== HyperV ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.HyperV.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.HyperV"/>
 
@@ -111,7 +122,7 @@
     <!-- ============== StyleCop ============== -->
     <UsingTask AssemblyFile="$(MSBuildProgramFiles32)\StyleCop 4.7\MSBuild.ExtensionPack.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
 
-    
+
     <!-- ============== Sql2008 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.AnalysisServices"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.Database"/>
@@ -129,10 +140,6 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2014.dll" TaskName="MSBuild.ExtensionPack.Sql2014.Database"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2014.dll" TaskName="MSBuild.ExtensionPack.Sql2014.Server"/>
 
-    
-    <!-- ============== Sync ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sync.dll" TaskName="MSBuild.ExtensionPack.FileSystem.Sync"/>
-
 
     <!-- ============== Tfs2010 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2010.dll" TaskName="MSBuild.ExtensionPack.Tfs2010.DevEnv"/>
@@ -145,8 +152,4 @@
 
     <!-- ============== Tfs2013 ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2013.dll" TaskName="MSBuild.ExtensionPack.Tfs2013.TeamBuild"/>
-    
-    
-    <!-- ============== Git ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Git.dll" TaskName="MSBuild.ExtensionPack.Git.Clone"/>
 </Project>

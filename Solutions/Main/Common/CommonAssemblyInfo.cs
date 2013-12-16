@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("4.0.9.0")]
 [assembly: AssemblyInformationalVersion("4.0.0.0")]
 [assembly: AssemblyCompany("http://www.MSBuildExtensionPack.com")]
-[assembly: AssemblyCopyright("Copyright © 2008 - 2013 http://www.MSBuildExtensionPack.com")]
+[assembly: AssemblyCopyright("Copyright © 2008 - 2014 http://www.MSBuildExtensionPack.com")]
 [assembly: AssemblyTrademark("Mike Fourie")]
 [assembly: NeutralResourcesLanguage("")]
 [assembly: AssemblyCulture("")]

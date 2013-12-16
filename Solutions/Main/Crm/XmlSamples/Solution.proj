@@ -1,0 +1,21 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Import a Solution to the given Organization -->
+        <MSBuild.ExtensionPack.Crm.Solution TaskAction="Import" OrganizationUrl="http://crm/organization1" Name="CrmSolution" Path="C:\Solutions" Extension="zip" OverwriteCustomizations="true" EnableSDKProcessingSteps="True" />
+    </Target>
+    <Target Name="Export">
+        <!-- Export a Solution as an managed or unmanaged Solution to a solution file-->
+        <MSBuild.ExtensionPack.Crm.Solution TaskAction="Export" OrganizationUrl="http://crm/organization1" Name="CrmSolution" OverwriteCustomizations="true" EnableSDKProcessingSteps="True" />
+    </Target>
+    <Target Name="GetVersion">
+        <!-- GetVersion for a Solution -->
+        <MSBuild.ExtensionPack.Crm.Solution TaskAction="GetVersion" OrganizationUrl="http://crm/organization1" Name="CrmSolution">
+            <Output TaskParameter="Version" PropertyName="CrmSolutionVersionNumber" />
+        </MSBuild.ExtensionPack.Crm.Solution>
+    </Target>
+</Project>

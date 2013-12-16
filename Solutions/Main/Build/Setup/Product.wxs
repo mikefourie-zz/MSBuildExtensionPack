@@ -79,6 +79,14 @@
                 <File Id='fileMSBuild.ExtensionPack.BizTalk.pdb' Name='MSBuild.ExtensionPack.BizTalk.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.BizTalk.pdb'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.BizTalk.pdb' Name='MSBuild.ExtensionPack.BizTalk.pdb' On='uninstall'/>
             </Component>
+            <Component Id='MSBuild.ExtensionPack.Crm.dll' Guid='*'>
+                <File Id='fileMSBuild.ExtensionPack.Crm.dll' Name='MSBuild.ExtensionPack.Crm.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Crm.dll'/>
+                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Crm.dll' Name='MSBuild.ExtensionPack.Crm.dll' On='uninstall'/>
+            </Component>
+            <Component Id='MSBuild.ExtensionPack.Crm.pdb' Guid='*'>
+                <File Id='fileMSBuild.ExtensionPack.Crm.pdb' Name='MSBuild.ExtensionPack.Crm.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Crm.pdb'/>
+                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Crm.pdb' Name='MSBuild.ExtensionPack.Crm.pdb' On='uninstall'/>
+            </Component>
             <Component Id='MSBuild.ExtensionPack.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.dll' Name='MSBuild.ExtensionPack.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.dll' Name='MSBuild.ExtensionPack.dll' On='uninstall'/>

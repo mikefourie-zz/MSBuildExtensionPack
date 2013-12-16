@@ -16,6 +16,9 @@
     <Recognized>
       <Word>Git</Word>
     </Recognized>
+    <Recognized>
+      <Word>ssrs</Word>
+    </Recognized>
     <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->
