@@ -139,14 +139,6 @@
                 <File Id='fileMSBuild.ExtensionPack.StyleCop.pdb' Name='MSBuild.ExtensionPack.StyleCop.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.StyleCop.pdb'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.StyleCop.pdb' Name='MSBuild.ExtensionPack.StyleCop.pdb' On='uninstall'/>
             </Component>
-            <Component Id='MSBuild.ExtensionPack.Sync.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sync.dll' Name='MSBuild.ExtensionPack.Sync.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sync.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sync.dll' Name='MSBuild.ExtensionPack.Sync.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sync.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sync.pdb' Name='MSBuild.ExtensionPack.Sync.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sync.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sync.pdb' Name='MSBuild.ExtensionPack.Sync.pdb' On='uninstall'/>
-            </Component>
             <Component Id='MSBuild.ExtensionPack.TaskFactory.Dlr.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.TaskFactory.Dlr.dll' Name='MSBuild.ExtensionPack.TaskFactory.Dlr.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.Dlr.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.TaskFactory.Dlr.dll' Name='MSBuild.ExtensionPack.TaskFactory.Dlr.dll' On='uninstall'/>
