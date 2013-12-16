@@ -68,8 +68,6 @@
       <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2014.xml" />
       <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll" />
       <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.StyleCop.xml" />
-      <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.Sync.dll" />
-      <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.Sync.xml" />
       <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.Dlr.dll" />
       <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.Dlr.XML" />
       <DocumentationSource sourceFile="..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll" />
