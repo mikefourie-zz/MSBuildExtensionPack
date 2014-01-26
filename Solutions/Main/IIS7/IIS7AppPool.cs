@@ -14,10 +14,10 @@ namespace MSBuild.ExtensionPack.Web
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional: </b>Force, IdentityType, UseDefaultIdentity, PoolIdentity, IdentityPassword, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, PipelineMode, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes, RapidFailProtection)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name <b>Optional: </b>Force, IdentityType, UseDefaultIdentity, PoolIdentity, IdentityPassword, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, PipelineMode, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes, RapidFailProtection, LoadUserProfile)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name)</para>
-    /// <para><i>Modify</i> (<b>Required: </b> Name <b>Optional: </b>Force, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes, RapidFailProtection)</para>
+    /// <para><i>Modify</i> (<b>Required: </b> Name <b>Optional: </b>Force, ManagedRuntimeVersion, AutoStart, Enable32BitAppOnWin64, QueueLength, IdleTimeout, PeriodicRestartPrivateMemory, PeriodicRestartTime, MaxProcesses, RecycleRequests, RecycleInterval, RecycleTimes, RapidFailProtection, LoadUserProfile)</para>
     /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>SetIdentity</i> (<b>Optional: </b>UseDefaultIdentity, IdentityType, PoolIdentity, IdentityPassword)</para>
     /// <para><i>SetPipelineMode</i> (<b>Optional: </b>  PipelineMode)</para>
@@ -179,6 +179,11 @@ namespace MSBuild.ExtensionPack.Web
             get { return this.rapidFailProtection; }
             set { this.rapidFailProtection = value; }
         }
+
+        /// <summary>
+        /// Sets the LoadUserProfile property. Default is false.
+        /// </summary>
+        public bool LoadUserProfile { get; set; }
 
         /// <summary>
         /// Gets the AppPoolInfo Item. Identity = Name, MetaData = ApplicationPoolName, PhysicalPath, Id, State
@@ -459,6 +464,8 @@ namespace MSBuild.ExtensionPack.Web
             this.pool.Enable32BitAppOnWin64 = this.Enable32BitAppOnWin64;
             this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting RapidFailProtection to: {0}", this.RapidFailProtection));
             this.pool.Failure.RapidFailProtection = this.RapidFailProtection;
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Setting LoadUserProfile to: {0}", this.LoadUserProfile));
+            this.pool.ProcessModel.LoadUserProfile = this.LoadUserProfile;
 
             if (!string.IsNullOrEmpty(this.ManagedRuntimeVersion))
             {
