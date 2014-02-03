@@ -19,6 +19,9 @@
     <Recognized>
       <Word>ssrs</Word>
     </Recognized>
+    <Recognized>
+      <Word>NuGet</Word>
+    </Recognized>
     <!--<Compound>
       <Term CompoundAlternate="...">...</Term>
     </Compound>-->
@@ -29,6 +32,7 @@
   <Acronyms>
     <CasingExceptions>
       <Acronym>SHA</Acronym>
+      <Acronym>NUGET</Acronym>
     </CasingExceptions>
   </Acronyms>
 </Dictionary>

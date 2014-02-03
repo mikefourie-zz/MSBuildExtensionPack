@@ -8,6 +8,7 @@
 
         <Feature Id="ProductFeature" Title="Setup" Level="1">
             <ComponentGroupRef Id="ProductComponents"/>
+            <ComponentGroupRef Id="ProductResources"/>
         </Feature>
 
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
@@ -26,7 +27,9 @@
                 <?endif?>
                 <Directory Id="MSBuild" Name="MSBuild">
                     <Directory Id="ExtensionPackWix" Name="ExtensionPackWix">
-                        <Directory Id="INSTALLFOLDER" Name="4.0"/>
+                      <Directory Id="INSTALLFOLDER" Name="4.0">
+                        <Directory Id="INSTALLRESOURCES" Name="Resources"/>
+                      </Directory>
                     </Directory>
                 </Directory>
             </Directory>
@@ -191,6 +194,12 @@
                 <File Id='filewshom.ocx' Name='wshom.ocx' DiskId='1' Source='Resources\wshom.ocx'/>
                 <RemoveFile Id='Removewshom.ocx' Name='wshom.ocx' On='uninstall'/>
             </Component>
+        </ComponentGroup>
+        <ComponentGroup Id="ProductResources" Directory="INSTALLRESOURCES">
+          <Component Id='NuGet.exe' Guid='*'>
+            <File Id='NuGet.exe' Name='NuGet.exe' DiskId='1' Source='..\..\BuildBinaries\Resources\NuGet.exe'/>
+            <RemoveFile Id='NuGet.exe' Name='NuGet.exe' On='uninstall'/>
+          </Component>
         </ComponentGroup>
     </Fragment>
 </Wix>
