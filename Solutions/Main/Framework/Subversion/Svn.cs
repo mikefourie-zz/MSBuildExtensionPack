@@ -87,10 +87,10 @@ namespace MSBuild.ExtensionPack.Subversion
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Delete" Items="c:\path\something"/>
     ///         <!-- Move -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Move" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
-    ///         <!-- Commit with default committ message -->
+    ///         <!-- Commit with default commit message -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something"/>
-    ///         <!-- Commit with committ message -->
-    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something" CommittMessage="MsBuild committed from something directory" />
+    ///         <!-- Commit with commit message -->
+    ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something" CommitMessage="MsBuild committed from something directory" />
     ///         <!-- Export -->
     ///         <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Export" Item="c:\path\workingcopy" Destination="c:\path\exported"/>
     ///     </Target>
@@ -157,7 +157,7 @@ namespace MSBuild.ExtensionPack.Subversion
         public string PropertyValue { get; set; }
 
         /// <summary>
-        /// The committ message that the Commit action sends with the committ to the repository
+        /// The commit message that the Commit action sends with the commit to the repository
         /// </summary>
         public string CommitMessage { get; set; }
 
@@ -786,15 +786,15 @@ namespace MSBuild.ExtensionPack.Subversion
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(this.CommitMessage))
+            {
+                this.CommitMessage = DefaultCommitMessage;
+            }
+
             if (this.CommitMessage.Contains("\""))
             {
                 Log.LogError("There appears to be quotes in the commit message. This is not supported yet.");
                 return;
-            }
-
-            if (this.CommitMessage.Length == 0)
-            {
-                this.CommitMessage = DefaultCommitMessage;
             }
 
             // execute the tool
