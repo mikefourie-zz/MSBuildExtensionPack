@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.SqlServer.Extended
 {
-    using System;
     using System.Collections.Specialized;
     using System.Diagnostics;
 
@@ -98,22 +97,28 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
                     sqlCmdProcess.BeginOutputReadLine();
                     sqlCmdProcess.BeginErrorReadLine();
                     sqlCmdProcess.WaitForExit(int.MaxValue);
+                    this.ExitCode = sqlCmdProcess.ExitCode;
                 }
                 finally
                 {
-                    // get the exit code and release the process handle
-                    if (!sqlCmdProcess.HasExited)
+                    try
                     {
-                        // not exited yet within our timeout so kill the process
-                        sqlCmdProcess.Kill();
-
-                        while (!sqlCmdProcess.HasExited)
+                        // get the exit code and release the process handle
+                        if (!sqlCmdProcess.HasExited)
                         {
-                            System.Threading.Thread.Sleep(50);
+                            // not exited yet within our timeout so kill the process
+                            sqlCmdProcess.Kill();
+
+                            while (!sqlCmdProcess.HasExited)
+                            {
+                                System.Threading.Thread.Sleep(50);
+                            }
                         }
                     }
-
-                    this.ExitCode = sqlCmdProcess.ExitCode;
+                    catch (System.InvalidOperationException)
+                    {
+                        // lets assume the process terminated ok and swallow here.
+                    }
                 }
             }
 
