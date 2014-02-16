@@ -29,7 +29,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     /// <para><i>FilterByContent</i> (<b>Required: </b>Files, RegexPattern <b>Optional: </b>RegexOptionList <b>Output: </b>IncludedFiles, IncludedFilecount, ExcludedFilecount, ExcludedFiles)</para>
     /// <para><i>Move</i> (<b>Required: </b>Path, TargetPath)</para>
     /// <para><i>RemoveAttributes</i> (<b>Required: </b>Files)</para>
-    /// <para><i>RemoveLines</i> (<b>Required: </b>Files, Lines <b>Optional: </b>RegexOptionList). This will remove lines from a file. Lines is a regular expression</para>
+    /// <para><i>RemoveLines</i> (<b>Required: </b>Files, Lines <b>Optional: </b>RegexOptionList, AvoidRegex, MatchWholeLine). This will remove lines from a file. Lines is a regular expression unless AvoidRegex is specified</para>
     /// <para><i>RemoveSecurity</i> (<b>Required: Users, AccessType, Path or Files</b> Optional: Permission</para>
     /// <para><i>Replace</i> (<b>Required: </b>RegexPattern <b>Optional: </b>Replacement, Path, TextEncoding, Files, RegexOptionList)</para>
     /// <para><i>SetAttributes</i> (<b>Required: </b>Files)</para>
@@ -172,6 +172,16 @@ namespace MSBuild.ExtensionPack.FileSystem
         private List<ITaskItem> includedFiles;
         private AccessControlType accessType;
 
+        /// <summary>
+        /// Set to true to avoid using Regular Expressions. This may increase performance for certain operations against large files.
+        /// </summary>
+        public bool AvoidRegex { get; set; }
+
+        /// <summary>
+        /// Used with AvoidRegex. Set to true to match the whole line. The default is false i.e. a line.Contains operation is used.
+        /// </summary>
+        public bool MatchWholeLine { get; set; }
+    
         /// <summary>
         /// Set the AccessType. Can be Allow or Deny. Default is Allow.
         /// </summary>
@@ -754,31 +764,56 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             List<string> fileLineList = System.IO.File.ReadAllLines(parseFile).ToList();
             List<string> newlines = new List<string>();
-            foreach (string fileLine in fileLineList)
+            bool linesRemoved = false;
+
+            if (this.AvoidRegex)
             {
-                bool match = false;
-                foreach (ITaskItem line in this.Lines)
+                foreach (string fileLine in fileLineList)
                 {
-                    this.parseRegex = new Regex(line.ItemSpec, this.regexOptions);
-                    Match m = this.parseRegex.Match(fileLine);
-                    if (m.Success)
+                    bool match = this.MatchWholeLine ? this.Lines.Any(line => fileLine == line.ItemSpec) : this.Lines.Any(line => fileLine.Contains(line.ItemSpec));
+                    if (!match)
                     {
-                        match = true;
-                        break;
+                        newlines.Add(fileLine);
+                    }
+                    else
+                    {
+                        linesRemoved = true;
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing line {0}", this.parseRegex));
                     }
                 }
+            }
+            else
+            {
+                foreach (string fileLine in fileLineList)
+                {
+                    bool match = false;
+                    foreach (ITaskItem line in this.Lines)
+                    {
+                        this.parseRegex = new Regex(line.ItemSpec, this.regexOptions);
+                        Match m = this.parseRegex.Match(fileLine);
+                        if (m.Success)
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
 
-                if (!match)
-                {
-                    newlines.Add(fileLine);
-                }
-                else
-                {
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing line {0}", this.parseRegex));
+                    if (!match)
+                    {
+                        newlines.Add(fileLine);
+                    }
+                    else
+                    {
+                        linesRemoved = true;
+                        this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing line {0}", this.parseRegex));
+                    }
                 }
             }
 
-            System.IO.File.WriteAllLines(parseFile, newlines.ToArray(), this.fileEncoding);
+            if (linesRemoved)
+            {
+                System.IO.File.WriteAllLines(parseFile, newlines.ToArray(), this.fileEncoding);
+            }
 
             if (changedAttribute)
             {
