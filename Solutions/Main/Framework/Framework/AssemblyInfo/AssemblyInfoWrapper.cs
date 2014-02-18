@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Framework
     {
         private readonly Regex attributeBooleanValuePattern = new Regex(@"\((?<attributeValue>([tT]rue|[fF]alse))\)", RegexOptions.Compiled);
         private readonly Dictionary<string, int> attributeIndex = new Dictionary<string, int>();
-        private readonly Regex attributeNamePattern = new Regex(@"[aA]ssembly:?\s*(?<attributeName>\w+)\s*\(", RegexOptions.Compiled);
+        private readonly Regex attributeNamePattern = new Regex(@"[aA]ssembly?\s*:?\s*(?<attributeName>\w+)\s*\(", RegexOptions.Compiled);
         private readonly Regex attributeStringValuePattern = new Regex(@"""(?<attributeValue>.*?)""", RegexOptions.Compiled);
         private readonly Regex multilineCSharpCommentEndPattern = new Regex(@".*?\*/", RegexOptions.Compiled);
         private readonly Regex multilineCSharpCommentStartPattern = new Regex(@"\s*/\*^\*", RegexOptions.Compiled);
