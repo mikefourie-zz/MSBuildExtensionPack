@@ -20,7 +20,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories <b>Optional: </b>Force)</para>
     /// <para><i>CheckExists</i> (<b>Required: </b> Name <b>Output:</b> Exists)</para>
     /// <para><i>CheckVirtualDirectoryExists</i> (<b>Required: </b> Name, VirtualDirectories <b>Output:</b> Exists)</para>
-    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Identifier, Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogDirectory, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart)</para>
+    /// <para><i>Create</i> (<b>Required: </b> Name, Path, Port <b>Optional: </b>Identifier, Force, Applications, VirtualDirectories, AppPool, EnabledProtocols, LogExtFileFlags, LogDirectory, LogFormat, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, ServerAutoStart, ConnectAsUser, ConnectAsUserPassword)</para>
     /// <para><i>Delete</i> (<b>Required: </b> Name)</para>
     /// <para><i>DeleteVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories)</para>
     /// <para><i>GetInfo</i> (<b>Required: </b> Name <b>Output: </b>SiteInfo, SiteId)</para>
@@ -160,6 +160,16 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the path.
         /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// Sets the user of the application (instead of pass-throught authentication).
+        /// </summary>
+        public string ConnectAsUser { get; set; }
+
+        /// <summary>
+        /// Sets the password of the application user  (instead of pass-throught authentication).
+        /// </summary>
+        public string ConnectAsUserPassword { get; set; }
 
         /// <summary>
         /// Sets the directory the website writes logfiles to.
@@ -678,6 +688,16 @@ namespace MSBuild.ExtensionPack.Web
             if (!string.IsNullOrEmpty(this.EnabledProtocols))
             {
                this.website.ApplicationDefaults.EnabledProtocols = this.EnabledProtocols;
+            }
+
+            if (!string.IsNullOrEmpty(this.ConnectAsUser))
+            {
+                this.website.VirtualDirectoryDefaults.UserName = this.ConnectAsUser;
+            }
+
+            if (!string.IsNullOrEmpty(this.ConnectAsUserPassword))
+            {
+                this.website.VirtualDirectoryDefaults.Password = this.ConnectAsUserPassword;
             }
 
             if (!string.IsNullOrEmpty(this.LogExtFileFlags))
