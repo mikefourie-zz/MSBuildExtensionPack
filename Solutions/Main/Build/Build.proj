@@ -7,8 +7,8 @@
         <DropFolder>$(BuildDrive)\$(ProductName)\$(ReleaseVersion)</DropFolder>
         <RootFolder>$(MSBuildProjectDirectory)..\..</RootFolder>
         <BuildOutput>$(RootFolder)\BuildBinaries</BuildOutput>
-        <BuildHelpFile>false</BuildHelpFile>
-        <RTWRelease>false</RTWRelease>
+        <BuildHelpFile>true</BuildHelpFile>
+        <RTWRelease>true</RTWRelease>
     </PropertyGroup>
     
     <ItemGroup>
@@ -37,7 +37,9 @@
     </Target>
 
     <Target Name="BuildChm" Condition="$(BuildHelpFile) == 'true'">
-        <MSBuild Projects="..\Documentation\MSBuild Extension Pack Help.shfbproj" ContinueOnError="true" Properties="OutputPath=$(BuildOutput)"/>
+        <Microsoft.Build.Tasks.MakeDir Directories="$(BuildOutput)\Help"/>
+        <MSBuild Projects="Documentation\MSBuild Extension Pack Help.shfbproj" ContinueOnError="true" Properties="OutputPath=$(BuildOutput)\Help"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\Help\MSBuild Extension Pack Help.chm" DestinationFolder="$(BuildOutput)"/>
     </Target>
 
     <Target Name="CleanUp">
@@ -51,7 +53,9 @@
                                      $(BuildOutput)\vjslib.dll;
                                      $(BuildOutput)\MainSolution.Release Any CPU.txt;
                                      $(BuildOutput)\MSBuild.ExtensionPack.FrameworkTests.*"
-                            Exclude="$(BuildOutput)\MSBuild.ExtensionPack*.dll;"/>
+                            Exclude="$(BuildOutput)\MSBuild.ExtensionPack*.dll;
+                                     $(BuildOutput)\Inter*.dll;
+                                     $(BuildOutput)\MSBuild Extension Pack Help.chm"/>
             <ResourceFiles Include="Resources\*.*"/>
         </ItemGroup>
         <Microsoft.Build.Tasks.Delete Files="@(FilesToCleanUp)" />
@@ -81,23 +85,18 @@
     <Target Name="CopyFiles">
         <ItemGroup>
             <ReleaseFiles Include="$(BuildOutput)\*.*"
-                          Exclude="$(BuildOutput)\*.msi"/>
-            <SampleFiles Include="$(RootFolder)\**\*.proj;"/>
+                          Exclude="$(BuildOutput)\*.msi;$(BuildOutput)\*.chm;$(BuildOutput)\*.tasks"/>
         </ItemGroup>
-        <Microsoft.Build.Tasks.Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(DropFolder)\x86\Binaries"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(DropFolder)\x64\Binaries"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\x86\Binaries"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\64\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\x64\Binaries"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="@(SampleFiles)" DestinationFolder="$(DropFolder)\x86\Samples"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="@(SampleFiles)" DestinationFolder="$(DropFolder)\x64\Samples"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(DropFolder)\Binaries"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\x86"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\64\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\x64"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack Help.chm" DestinationFolder="$(DropFolder)"/>
         <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack 4 (x86).msi" DestinationFolder="$(DropFolder)\x86" Condition="$(RTWRelease) == 'true'"/>
         <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack 4 (x64).msi" DestinationFolder="$(DropFolder)\x64" Condition="$(RTWRelease) == 'true'"/>
     </Target>
 
     <Target Name="CreateZips" Condition="$(RTWRelease) == 'true'">
-        <!--<MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" RemoveRoot="$(BuildOutput)" CompressFiles="$(BuildOutput)\MSBuild Extension Pack Help.chm" ZipFileName="$(DropFolder)\$(ProductName) $(ReleaseVersion) Help.zip"/>
-        <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" RemoveRoot="$(DropFolder)" CompressFiles="@(BuildOutput)" ZipFileName="$(DropFolder)\CodePlex\MSBuild Extension Pack $(ReleaseVersion) Binaries.zip"/>
-        <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" RemoveRoot="$(DropFolder)" CompressFiles="@(Installers)" ZipFileName="$(DropFolder)\CodePlex\MSBuild Extension Pack $(ReleaseVersion) Installers.zip"/>-->
+        <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressPath="$(DropFolder)" ZipFileName="$(DropFolder)\MSBuild Extension Pack $(ReleaseVersion).zip"/>
     </Target>
 
     <Target Name="ErrorTarget">

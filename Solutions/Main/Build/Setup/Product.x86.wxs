@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="MSBuild Extension Pack 4.0.9.0" Language="1033" Version="4.0.9.0" Manufacturer="http://www.MSBuildExtensionPack.com" UpgradeCode="84755948-3655-4086-80ad-6aeb2842c4d6">
+    <Product Id="*" Name="MSBuild Extension Pack 4.0.9.0" Language="1033" Version="4.0.9.0" Manufacturer="Mike Fourie" UpgradeCode="CBBB56DB-4CAA-431D-9786-4D3471CCE222">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
@@ -10,8 +10,10 @@
             <ComponentGroupRef Id="ProductComponents"/>
             <ComponentGroupRef Id="ProductResources"/>
         </Feature>
-
+        <Icon Id="icon.ico" SourceFile="Resources\favicon.ico"/>
+        <Property Id="ARPPRODUCTICON" Value="icon.ico" />
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
+        <Property Id="ARPHELPLINK" Value="http://www.msbuildextensionpack.com" />
         <UIRef Id="WixUI_InstallDir"/>
         <WixVariable Id="WixUILicenseRtf" Value="Resources\License.rtf"/>
         <WixVariable Id="WixUIBannerBmp" Value="Resources\InstallerBanner.bmp"/>
@@ -26,7 +28,7 @@
             <Directory Id="ProgramFiles64Folder">
                 <?endif?>
                 <Directory Id="MSBuild" Name="MSBuild">
-                    <Directory Id="ExtensionPackWix" Name="ExtensionPackWix">
+                    <Directory Id="ExtensionPack" Name="ExtensionPack">
                       <Directory Id="INSTALLFOLDER" Name="4.0">
                         <Directory Id="INSTALLRESOURCES" Name="Resources"/>
                       </Directory>
@@ -38,11 +40,7 @@
 
     <Fragment>
         <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-            <Component Id='comadmin.dll' Guid='*'>
-                <File Id='filecomadmin.dll' Name='comadmin.dll' DiskId='1' Source='Resources\comadmin.dll'/>
-                <RemoveFile Id='Removecomadmin.dll' Name='comadmin.dll' On='uninstall'/>
-            </Component>
-            <Component Id='Interop.COMAdmin.DLL' Guid='*'>
+             <Component Id='Interop.COMAdmin.DLL' Guid='*'>
                 <File Id='fileInterop.COMAdmin.DLL' Name='Interop.COMAdmin.DLL' DiskId='1' Source='Resources\Interop.COMAdmin.DLL'/>
                 <RemoveFile Id='RemoveInterop.COMAdmin.DLL' Name='Interop.COMAdmin.DLL' On='uninstall'/>
             </Component>
@@ -73,6 +71,10 @@
             <Component Id='License.rtf' Guid='*'>
                 <File Id='fileLicense.rtf' Name='License.rtf' DiskId='1' Source='Resources\License.rtf'/>
                 <RemoveFile Id='RemoveLicense.rtf' Name='License.rtf' On='uninstall'/>
+            </Component>
+            <Component Id='Help.chm' Guid='*'>
+                <File Id='Help.chm' Name='MSBuild Extension Pack Help.chm' DiskId='1' Source='..\..\BuildBinaries\MSBuild Extension Pack Help.chm'/>
+                <RemoveFile Id='Help.chm' Name='MSBuild Extension Pack Help.chm' On='uninstall'/>
             </Component>
             <Component Id='MSBuild.ExtensionPack.BizTalk.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.BizTalk.dll' Name='MSBuild.ExtensionPack.BizTalk.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.BizTalk.dll'/>
@@ -142,6 +144,14 @@
                 <File Id='fileMSBuild.ExtensionPack.Sql2012.pdb' Name='MSBuild.ExtensionPack.Sql2012.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2012.pdb'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2012.pdb' Name='MSBuild.ExtensionPack.Sql2012.pdb' On='uninstall'/>
             </Component>
+            <Component Id='MSBuild.ExtensionPack.Sql2014.dll' Guid='*'>
+                <File Id='fileMSBuild.ExtensionPack.Sql2014.dll' Name='MSBuild.ExtensionPack.Sql2014.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2014.dll'/>
+                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2014.dll' Name='MSBuild.ExtensionPack.Sql2014.dll' On='uninstall'/>
+            </Component>
+            <Component Id='MSBuild.ExtensionPack.Sql2014.pdb' Guid='*'>
+                <File Id='fileMSBuild.ExtensionPack.Sql2014.pdb' Name='MSBuild.ExtensionPack.Sql2014.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2014.pdb'/>
+                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2014.pdb' Name='MSBuild.ExtensionPack.Sql2014.pdb' On='uninstall'/>
+            </Component>
             <Component Id='MSBuild.ExtensionPack.StyleCop.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.StyleCop.dll' Name='MSBuild.ExtensionPack.StyleCop.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.StyleCop.dll' Name='MSBuild.ExtensionPack.StyleCop.dll' On='uninstall'/>
@@ -186,13 +196,17 @@
                 <File Id='fileMSBuild.ExtensionPack.Tfs2012.pdb' Name='MSBuild.ExtensionPack.Tfs2012.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2012.pdb'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2012.pdb' Name='MSBuild.ExtensionPack.Tfs2012.pdb' On='uninstall'/>
             </Component>
+            <Component Id='MSBuild.ExtensionPack.Tfs2013.dll' Guid='*'>
+                <File Id='fileMSBuild.ExtensionPack.Tfs2013.dll' Name='MSBuild.ExtensionPack.Tfs2013.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2013.dll'/>
+                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2013.dll' Name='MSBuild.ExtensionPack.Tfs2013.dll' On='uninstall'/>
+            </Component>
+            <Component Id='MSBuild.ExtensionPack.Tfs2013.pdb' Guid='*'>
+                <File Id='fileMSBuild.ExtensionPack.Tfs2013.pdb' Name='MSBuild.ExtensionPack.Tfs2013.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2013.pdb'/>
+                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2013.pdb' Name='MSBuild.ExtensionPack.Tfs2013.pdb' On='uninstall'/>
+            </Component>
             <Component Id='MSBuild.ExtensionPack.VersionNumber.targets' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' DiskId='1' Source='..\..\Framework\Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' On='uninstall'/>
-            </Component>
-            <Component Id='wshom.ocx' Guid='*'>
-                <File Id='filewshom.ocx' Name='wshom.ocx' DiskId='1' Source='Resources\wshom.ocx'/>
-                <RemoveFile Id='Removewshom.ocx' Name='wshom.ocx' On='uninstall'/>
             </Component>
         </ComponentGroup>
         <ComponentGroup Id="ProductResources" Directory="INSTALLRESOURCES">
