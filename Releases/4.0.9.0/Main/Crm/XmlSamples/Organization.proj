@@ -1,0 +1,26 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+      <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+      <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+      <!-- Create an Organization -->
+      <MSBuild.ExtensionPack.Crm.Organization TaskAction="Create" DeploymentUrl="http://crmwebserver/XRMDeployment/2011/Deployment.svc" Name="organization1" DisplayName="Organization 1" SqlServerInstance="MySqlServer" SsrsUrl="http://reports1/ReportServer" Timeout="20" />
+    </Target>
+    <Target Name="UpdateSettings">
+      <!-- Update an Organization's Settings -->
+      <ItemGroup>
+        <Settings Include="pricingdecimalprecision">
+          <Value>2</Value>
+        </Settings>
+        <Settings Include="localeid">
+          <Value>2057</Value>
+        </Settings>
+        <Settings Include="isauditenabled">
+          <Value>false</Value>
+        </Settings>      
+      </ItemGroup>
+      <MSBuild.ExtensionPack.Crm.Organization TaskAction="UpdateSetting" OrganizationUrl="http://crm/organization1" Settings="@(Settings)" />
+    </Target>
+</Project>

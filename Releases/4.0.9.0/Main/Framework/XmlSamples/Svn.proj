@@ -1,0 +1,46 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Version -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Version" Item="c:\path">
+            <Output TaskParameter="Info" ItemName="VInfo"/>
+        </MSBuild.ExtensionPack.Subversion.Svn>
+        <Message Text="MinRevision: %(VInfo.MinRevision), MaxRevision: %(VInfo.MaxRevision), IsMixed: %(VInfo.IsMixed), IsModified: %(VInfo.IsModified)"/>
+        <Message Text="IsSwitched: %(VInfo.IsSwitched), IsPartial: %(VInfo.IsPartial), IsClean: %(VInfo.IsClean)"/>
+        <!-- Info -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Info" Item="c:\path">
+            <Output TaskParameter="Info" ItemName="IInfo"/>
+        </MSBuild.ExtensionPack.Subversion.Svn>
+        <Message Text="EntryKind: %(IInfo.EntryKind), EntryRevision: %(IInfo.EntryRevision), EntryURL: %(IInfo.EntryURL)"/>
+        <Message Text="RepositoryRoot: %(IInfo.RepositoryRoot), RepositoryUUID: %(IInfo.RepositoryUUID)"/>
+        <Message Text="WorkingCopySchedule: %(IInfo.WorkingCopySchedule), WorkingCopyDepth: %(IInfo.WorkingCopyDepth)"/>
+        <Message Text="CommitAuthor: %(IInfo.CommitAuthor), CommitRevision: %(IInfo.CommitRevision), CommitDate: %(IInfo.CommitDate)"/>
+        <!-- GetProperty -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="GetProperty" Item="c:\path" PropertyName="svn:externals">
+            <Output TaskParameter="PropertyValue" PropertyName="GProp"/>
+        </MSBuild.ExtensionPack.Subversion.Svn>
+        <Message Text="PropertyValue: $(GProp)"/>
+        <!-- SetProperty -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="SetProperty" Item="c:\path" PropertyName="test" PropertyValue="hello"/>
+        <!-- Checkout -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Checkout" Items="http://repository/url" Destination="c:\path"/>
+        <!-- Update -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Update" Items="c:\path1;c:\path2"/>
+        <!-- Add -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Add" Items="c:\path\newfile"/>
+        <!-- Copy -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Copy" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
+        <!-- Delete -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Delete" Items="c:\path\something"/>
+        <!-- Move -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Move" Items="c:\path\file1;c:\path\file2" Destination="c:\path\directory"/>
+        <!-- Commit -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Commit" Items="c:\path\something"/>
+        <!-- Export -->
+        <MSBuild.ExtensionPack.Subversion.Svn TaskAction="Export" Item="c:\path\workingcopy" Destination="c:\path\exported"/>
+    </Target>
+</Project>

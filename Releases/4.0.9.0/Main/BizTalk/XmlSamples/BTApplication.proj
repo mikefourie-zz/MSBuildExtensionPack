@@ -1,0 +1,58 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <ItemGroup>
+            <Apps Include="An Application"/>
+            <NewApps Include="NewExtensionPackApp">
+                <!--<Default>true</Default>-->
+                <Description>New ExtensionPack App</Description>
+            </NewApps>
+            <Reference Include="Another Application"/>
+        </ItemGroup>
+        <!-- Get a list of BizTalk Applications -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Get">
+            <Output TaskParameter="Applications" ItemName="ApplicationList"/>
+        </MSBuild.ExtensionPack.BizTalk.BizTalkApplication>
+        <Message Text="%(ApplicationList.Identity)"/>
+        <!-- Add a Reference -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="AddReference" Application="An Application" References="@(Reference)"/>
+        <!-- Remove a Reference -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="RemoveReference" Application="An Application" References="@(Reference)"/>
+        <!-- Export an Application to an MSI -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="An Application" MsiPath="C:\AnApplication.msi" IncludeGlobalPartyBinding="true"/>
+        <!-- Import an Application from an MSI -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportFromMsi" Application="An Application" MsiPath="C:\AnApplication.msi" Overwrite="true" Environment="DEV" />
+        <!-- Check if the Applications in the Apps collection exist -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="CheckExists" Applications="@(Apps)"/>
+        <!-- Execute a StartAll on the Apps Application collection -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="StartAll" Applications="@(Apps)"/>
+        <!-- Execute a StopAll on the Apps Application collection -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="StopAll" Applications="@(Apps)"/>
+        <!-- Force the creation of the Applications in the NewApps collection -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Create" Applications="@(NewApps)" Force="true"/>
+        <!-- Delete the Applications in the NewApps collection-->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="Delete" Applications="@(NewApps)"/>
+        <!-- Imports the specified bindings file into a BizTalk application -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ImportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
+        <!-- Exports a BizTalk application bindings to the specified file -->
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportBindings" BindingFile="C:\BindingInfo.xml" Application="An Application" />
+    </Target>
+    <!-- Export an Application to a partial/incremental MSI -->
+    <Target Name="ExportToMsi">
+        <MSBuild Projects="@(Compile)" Targets="Build">
+            <Output TaskParameter="TargetOutputs" ItemName="CompiledAssemblies" />
+        </MSBuild>
+        <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="%(CompiledAssemblies.Identity)">
+            <Output TaskParameter="OutputItems" ItemName="NetAssemblies" />
+        </MSBuild.ExtensionPack.Framework.Assembly>
+        <ItemGroup>
+            <Resources Include="@(NetAssemblies->'%(FullName)')" />
+            <Resources Include="Application/$(BtsApplicationName)" Condition=" '$(ExportBindings)'=='True' " />
+        </ItemGroup>
+        <MSBuild.ExtensionPack.BizTalk.BizTalkApplication TaskAction="ExportToMsi" Application="$(BtsApplicationName)" Resources="@(Resources)" MsiPath="$(TargetMsi)" IncludeGlobalPartyBinding="$(ExportBindings)"/>
+    </Target>
+</Project>

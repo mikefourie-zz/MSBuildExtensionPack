@@ -1,0 +1,58 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+    <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+  </PropertyGroup>
+  <Import Project="$(TPath)"/>
+  <Target Name="Default" DependsOnTargets="FxCop;JSLint"/>
+  <Target Name="FxCop">
+    <PropertyGroup Condition="'$(FxCopEnabled)' == 'true'">
+      <!--
+        Regex for matching FxCop errors and warnings:
+          filename(line,column) : warning|error :? CAxxxx : <error message>
+          [Location not stored in Pdb] : warning|error :? CAxxxx : <error message>
+      -->
+      <FxCopErrorRegularExpression>(?imnx-s:^((\[Location\ not\ stored\ in\ Pdb\])|(Project)|((?&lt;File&gt;[^(]+)\((?&lt;Line&gt;\d+),(?&lt;Column&gt;\d+)\)))\s*:\s*\w+\s*:?\s*(?&lt;Message&gt;(?&lt;ErrorCode&gt;CA\d+)\s*:?\s*.*)$)</FxCopErrorRegularExpression>
+      <TargetBinaryRoot Condition="'$(TargetBinaryRoot)' == ''"></TargetBinaryRoot>
+      <TargetFileName Condition="'$(TargetFileName)' == ''"></TargetFileName>
+      <PublicRoot Condition="'$(PublicRoot)' == ''"></PublicRoot>
+      <FxCopVersion Condition="'$(FxCopVersion)' == ''">1.36</FxCopVersion>
+      <!--
+	    Build wide rule exclusions (format: -<Namespace>#<CheckId>, e.g., -Microsoft.Design#CA1020):
+	      None
+	  -->
+      <FxCopRules Condition="'$(FxCopRules)' != ''">&quot;/ruleid:$(FxCopRules)&quot;</FxCopRules>
+    </PropertyGroup>
+    <!-- Use FxCopCmd.exe /? for information on the command-line switches used -->
+    <MSBuild.ExtensionPack.Framework.CommandLine
+      Command="&quot;$(PublicRoot)\FxCop\$(FxCopVersion)\FxCopCmd.exe&quot; /console /searchgac &quot;/file:$(TargetBinaryRoot)\$(TargetFileName)&quot; &quot;/directory:$(TargetBinaryRoot)&quot; $(FxCopRules)"
+      CustomErrorRegularExpression="$(FxCopErrorRegularExpression)"
+      ContinueOnError="true" />
+  </Target>
+  <ItemDefinitionGroup>
+    <JavaScript />
+  </ItemDefinitionGroup>
+  <Target Name="JSLint">
+    <PropertyGroup>
+      <!--
+      Regex for matching JSLint (http://www.jslint.com) errors and warnings:
+      -->
+      <JSLintErrorRegularExpression>(?imnx-s:^cscript\s+\"[^"]+\"\s+\&lt;\"(?&lt;File&gt;[^"]+)\".*\bLint\s+[^\d]+(?&lt;Line&gt;\d+)[^\d]+(?&lt;Column&gt;\d+)\:\s+(?&lt;Message&gt;.*\n.*)$)</JSLintErrorRegularExpression>
+      <PublicRoot Condition="'$(PublicRoot)' == ''"></PublicRoot>
+      <JSLintVersion Condition="'$(JSLintVersion)' == ''">1.0</JSLintVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <!--
+        Include all *.js files under the project folder and sub-folders
+        Exclude all *.js files under the project bin, obj, or objd folders and sub-folders
+        -->
+      <JavaScript Include="**\*.js" Exclude="**\bin\**\*.js;**\obj\**\*.js;**\objd\**\*.js" />
+    </ItemGroup>
+    <!-- Use cscript (Windows Script Host) to execute jslint.js -->
+    <!-- Information on JSLint: http://www.jslint.com/lint.html -->
+    <MSBuild.ExtensionPack.Framework.CommandLine
+      Command="&quot;cscript $(PublicRoot)\JSLint\$(JSLintVersion)\jslint.js&quot; &lt;&quot;%(JavaScript.FullPath)&quot;"
+      CustomErrorRegularExpression="$(JSLintErrorRegularExpression)"
+      ContinueOnError="true" />
+  </Target>
+</Project>

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <AssemblyFile>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll</AssemblyFile>
+        <AssemblyFile Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll')">$(MSBuildProjectDirectory)\..\..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.PowerShell.dll</AssemblyFile>
+    </PropertyGroup>
+    <UsingTask TaskFactory="PowershellTaskFactory" TaskName="Add" AssemblyFile="$(AssemblyFile)">
+        <ParameterGroup>
+            <First Required="true" ParameterType="System.Int32" />
+            <Second Required="true" ParameterType="System.Int32" />
+            <Sum Output="true" />
+        </ParameterGroup>
+        <Task>
+            <![CDATA[
+        $log.LogMessage([Microsoft.Build.Framework.MessageImportance]"High", "Hello from PowerShell!  Now adding {0} and {1}.", $first, $second)
+        if ($first + $second -gt 100) {
+          $log.LogError("Oops!  I can't count that high. :(")
+        }
+        $sum = $first + $second
+      ]]>
+        </Task>
+    </UsingTask>
+    <UsingTask TaskFactory="PowershellTaskFactory" TaskName="Subtract" AssemblyFile="$(AssemblyFile)">
+        <ParameterGroup>
+            <First Required="true" ParameterType="System.Int32" />
+            <Second Required="true" ParameterType="System.Int32" />
+            <Difference Output="true" />
+        </ParameterGroup>
+        <Task>
+            <![CDATA[
+        $difference = $first - $second
+      ]]>
+        </Task>
+    </UsingTask>
+    <PropertyGroup>
+        <!-- Try making the sum go over 100 to see what happens. -->
+        <FirstNumber>5</FirstNumber>
+        <SecondNumber>8</SecondNumber>
+    </PropertyGroup>
+
+    <Target Name="Build">
+        <Add First="$(FirstNumber)" Second="$(SecondNumber)">
+            <Output TaskParameter="Sum" PropertyName="MySum" />
+        </Add>
+        <Message Importance="High" Text="The $(FirstNumber) + $(SecondNumber) = $(MySum)" />
+
+        <Subtract First="$(FirstNumber)" Second="$(SecondNumber)">
+            <Output TaskParameter="Difference" PropertyName="MyDifference" />
+        </Subtract>
+        <Message Importance="High" Text="The $(FirstNumber) - $(SecondNumber) = $(MyDifference)" />
+    </Target>
+</Project>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>Changesets</Word>
+    </Recognized>
+    <Recognized>
+      <Word>Dlr</Word>
+    </Recognized>
+    <Recognized>
+      <Word>svn</Word>
+    </Recognized>
+    <Recognized>
+      <Word>Cygwin</Word>
+    </Recognized>
+    <Recognized>
+      <Word>Git</Word>
+    </Recognized>
+    <Recognized>
+      <Word>ssrs</Word>
+    </Recognized>
+    <Recognized>
+      <Word>NuGet</Word>
+    </Recognized>
+    <!--<Compound>
+      <Term CompoundAlternate="...">...</Term>
+    </Compound>-->
+    <!--<DiscreteExceptions>
+      <Term>...</Term>
+    </DiscreteExceptions>-->
+  </Words>
+  <Acronyms>
+    <CasingExceptions>
+      <Acronym>SHA</Acronym>
+      <Acronym>NUGET</Acronym>
+    </CasingExceptions>
+  </Acronyms>
+</Dictionary>

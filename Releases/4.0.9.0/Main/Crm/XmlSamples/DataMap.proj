@@ -1,0 +1,15 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <TPath>$(MSBuildProjectDirectory)\..\MSBuild.ExtensionPack.tasks</TPath>
+        <TPath Condition="Exists('$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks')">$(MSBuildProjectDirectory)\..\..\Common\MSBuild.ExtensionPack.tasks</TPath>
+    </PropertyGroup>
+    <Import Project="$(TPath)"/>
+    <Target Name="Default">
+        <!-- Import a Data Map -->
+        <MSBuild.ExtensionPack.Crm.DataMap TaskAction="Import" OrganizationUrl="http://crm/organization1" Name="organization1" FilePath="DataImportFile.xml" />
+    </Target>
+    <Target Name="Delete">
+        <!-- Delete a Data Map -->
+        <MSBuild.ExtensionPack.Crm.DataMap TaskAction="Delete" OrganizationUrl="http://crm/organization1" Name="organization1" />
+    </Target>
+</Project>
