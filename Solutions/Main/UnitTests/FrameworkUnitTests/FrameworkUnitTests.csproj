@@ -72,7 +72,14 @@
     <Compile Include="..\MockBuildEngine.cs">
       <Link>MockBuildEngine.cs</Link>
     </Compile>
+    <Compile Include="AssemblyInfoTests.cs" />
     <Compile Include="ConfigMangerTests.cs" />
+    <Content Include="Data\AssemblyInfo_normal_spacing.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\AssemblyInfo_mixed_spacing.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="FileTest.cs" />
     <Compile Include="PathTest.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
