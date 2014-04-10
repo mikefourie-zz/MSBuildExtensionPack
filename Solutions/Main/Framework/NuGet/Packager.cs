@@ -359,7 +359,7 @@ namespace MSBuild.ExtensionPack.NuGet
                 var nugetspecification = this.GenerateSpecification(nugetDirectory);
                 PopulateFolder("lib", nugetDirectory, this.LibraryFiles);
                 PopulateFolder("content", nugetDirectory, this.ContentFiles);
-                PopulateFolder("tools", nugetDirectory, this.LibraryFiles);
+                PopulateFolder("tools", nugetDirectory, this.ToolsFiles);
                 this.PreparePackage(nugetspecification);
             }
             finally
