@@ -23,10 +23,10 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <para><i>Checkout</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
     /// <para><i>Update</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
     /// <para><i>Add</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
-    /// <para><i>Copy</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Copy</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword, CommitMessage)</para>
     /// <para><i>Delete</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
     /// <para><i>Move</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
-    /// <para><i>Commit</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Commit</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword, CommitMessage)</para>
     /// <para><i>Export</i> (<b>Required: </b>Item, Destination <b>Optional:</b> UserName, UserPassword)</para>
     /// </summary>
     /// <remarks>
@@ -733,10 +733,23 @@ namespace MSBuild.ExtensionPack.Subversion
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(this.CommitMessage))
+            {
+                this.CommitMessage = DefaultCommitMessage;
+            }
+
+            if (this.CommitMessage.Contains("\""))
+            {
+                Log.LogError("There appears to be quotes in the commit message. This is not supported yet.");
+                return;
+            }
+
             // execute the tool
             var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("copy");
             cmd.AppendSwitch("--non-interactive");
+            cmd.AppendSwitch("-m");
+            cmd.AppendFixedParameter("\"" + this.CommitMessage + "\"");
             cmd.AppendFileNamesIfNotNull(this.Items, " ");
             cmd.AppendFileNameIfNotNull(this.Destination);
             Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
