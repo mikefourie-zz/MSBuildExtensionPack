@@ -102,7 +102,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             string tmpFilePath = System.IO.Path.GetTempFileName();
             string batFilePath = string.Format(CultureInfo.InvariantCulture, "{0}.bat", tmpFilePath);
-            File.Move(tmpFilePath, batFilePath);
+            File.Copy(tmpFilePath, batFilePath, true);
             File.WriteAllText(batFilePath, command);
             return batFilePath;
         }
