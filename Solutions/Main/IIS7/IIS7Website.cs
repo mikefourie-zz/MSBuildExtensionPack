@@ -43,6 +43,8 @@ namespace MSBuild.ExtensionPack.Web
     ///         <Application Include="/photos">
     ///             <PhysicalPath>C:\photos</PhysicalPath>
     ///             <AppPool>NewAppPool100</AppPool>
+    ///             <WindowsAuthentication>true</WindowsAuthentication>
+    ///             <AnonymousAuthentication>false</AnonymousAuthentication>
     ///         </Application>
     ///         <Application Include="/photos2">
     ///             <PhysicalPath>C:\photos2</PhysicalPath>
@@ -551,6 +553,37 @@ namespace MSBuild.ExtensionPack.Web
                 {
                     this.website.Applications[app.ItemSpec].EnabledProtocols = app.GetMetadata("EnabledProtocols");
                 }
+
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting additional settings for Application: {0}", app.ItemSpec));
+                Configuration config = this.iisServerManager.GetApplicationHostConfiguration();
+
+                if (!string.IsNullOrEmpty(app.GetMetadata("WindowsAuthentication")))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting WindowsAuthentication for Application: {0}", app.ItemSpec));
+                    ConfigurationSection windowsAuthenticationSection = config.GetSection("system.webServer/security/authentication/windowsAuthentication", this.Name + app.ItemSpec);
+                    windowsAuthenticationSection["enabled"] = app.GetMetadata("WindowsAuthentication");
+                }
+
+                if (!string.IsNullOrEmpty(app.GetMetadata("AnonymousAuthentication")))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting AnonymousAuthentication for Application: {0}", app.ItemSpec));
+                    ConfigurationSection anonyAuthentication = config.GetSection("system.webServer/security/authentication/anonymousAuthentication", this.Name + app.ItemSpec);
+                    anonyAuthentication["enabled"] = app.GetMetadata("AnonymousAuthentication");
+                }
+
+                if (!string.IsNullOrEmpty(app.GetMetadata("DigestAuthentication")))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting DigestAuthentication for Application: {0}", app.ItemSpec));
+                    ConfigurationSection digestAuthentication = config.GetSection("system.webServer/security/authentication/digestAuthentication", this.Name + app.ItemSpec);
+                    digestAuthentication["enabled"] = app.GetMetadata("DigestAuthentication");
+                }
+
+                if (!string.IsNullOrEmpty(app.GetMetadata("BasicAuthentication")))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting BasicAuthentication for Application: {0}", app.ItemSpec));
+                    ConfigurationSection basicAuthentication = config.GetSection("system.webServer/security/authentication/basicAuthentication", this.Name + app.ItemSpec);
+                    basicAuthentication["enabled"] = app.GetMetadata("BasicAuthentication");
+                }
             }
         }
 
@@ -577,10 +610,13 @@ namespace MSBuild.ExtensionPack.Web
                             inParams1["CommandLine"] = tex;
 
                             ManagementBaseObject outParams1 = managementClass2.InvokeMethod("Create", inParams1, null);
-                            uint rc = Convert.ToUInt32(outParams1.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
-                            if (rc != 0)
+                            if (outParams1 != null)
                             {
-                                this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
+                                uint rc = Convert.ToUInt32(outParams1.Properties["ReturnValue"].Value, CultureInfo.InvariantCulture);
+                                if (rc != 0)
+                                {
+                                    this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "Non-zero return code attempting to create remote share location: {0}", rc));
+                                }
                             }
                         }
                     }

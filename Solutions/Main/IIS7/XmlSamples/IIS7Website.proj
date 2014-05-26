@@ -8,6 +8,8 @@
         <Application Include="/photos">
             <PhysicalPath>C:\photos</PhysicalPath>
             <AppPool>NewAppPool100</AppPool>
+            <WindowsAuthentication>true</WindowsAuthentication>
+            <AnonymousAuthentication>false</AnonymousAuthentication>
         </Application>
         <Application Include="/photos2">
             <PhysicalPath>C:\photos2</PhysicalPath>
