@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{06FDB13A-E163-49EE-AC60-4EF4085DADC5}"
 	ProjectSection(SolutionItems) = preProject
@@ -42,8 +42,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlrTaskFactory", "TaskFacto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "Loggers\Framework\Framework.csproj", "{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS2010", "TFS2010\TFS2010.csproj", "{62B980E3-4D0C-4148-A371-DC4C967E095A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql2012", "Sql2012\Sql2012.csproj", "{EF7CFB81-6C51-4F8E-A880-6CD1B2C19267}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFS2012", "TFS2012\TFS2012.csproj", "{9217F575-2D71-4449-8686-1BEE8A998D42}"
@@ -61,80 +59,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crm", "Crm\Crm.csproj", "{18C638DB-47F2-4188-A654-4DADCDF17B4D}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 18
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = BizTalk\\BizTalk.csproj
-		SccProjectTopLevelParentUniqueName1 = MainSolution.sln
-		SccProjectName1 = BizTalk
-		SccLocalPath1 = BizTalk
-		SccProjectUniqueName2 = StyleCop\\StyleCop.csproj
-		SccProjectTopLevelParentUniqueName2 = MainSolution.sln
-		SccProjectName2 = StyleCop
-		SccLocalPath2 = StyleCop
-		SccProjectUniqueName3 = Sql2008\\Sql2008.csproj
-		SccProjectTopLevelParentUniqueName3 = MainSolution.sln
-		SccProjectName3 = Sql2008
-		SccLocalPath3 = Sql2008
-		SccProjectUniqueName4 = Framework\\Framework.csproj
-		SccProjectTopLevelParentUniqueName4 = MainSolution.sln
-		SccProjectName4 = Framework
-		SccLocalPath4 = Framework
-		SccProjectUniqueName5 = IIS7\\IIS7.csproj
-		SccProjectTopLevelParentUniqueName5 = MainSolution.sln
-		SccProjectName5 = IIS7
-		SccLocalPath5 = IIS7
-		SccProjectUniqueName6 = TaskFactories\\PowershellTaskFactory\\PowershellTaskFactory.csproj
-		SccProjectTopLevelParentUniqueName6 = MainSolution.sln
-		SccProjectName6 = TaskFactories/PowershellTaskFactory
-		SccLocalPath6 = TaskFactories\\PowershellTaskFactory
-		SccProjectUniqueName7 = TaskFactories\\DlrTaskFactory\\DlrTaskFactory.csproj
-		SccProjectTopLevelParentUniqueName7 = MainSolution.sln
-		SccProjectName7 = TaskFactories/DlrTaskFactory
-		SccLocalPath7 = TaskFactories\\DlrTaskFactory
-		SccProjectUniqueName8 = Loggers\\Framework\\Framework.csproj
-		SccProjectTopLevelParentUniqueName8 = MainSolution.sln
-		SccProjectName8 = Loggers/Framework
-		SccLocalPath8 = Loggers\\Framework
-		SccProjectUniqueName9 = TFS2010\\TFS2010.csproj
-		SccProjectTopLevelParentUniqueName9 = MainSolution.sln
-		SccProjectName9 = TFS2010
-		SccLocalPath9 = TFS2010
-		SccProjectUniqueName10 = Sql2012\\Sql2012.csproj
-		SccProjectTopLevelParentUniqueName10 = MainSolution.sln
-		SccProjectName10 = Sql2012
-		SccLocalPath10 = Sql2012
-		SccProjectUniqueName11 = TFS2012\\TFS2012.csproj
-		SccProjectTopLevelParentUniqueName11 = MainSolution.sln
-		SccProjectName11 = TFS2012
-		SccLocalPath11 = TFS2012
-		SccProjectUniqueName12 = UnitTests\\FrameworkUnitTests\\FrameworkUnitTests.csproj
-		SccProjectTopLevelParentUniqueName12 = MainSolution.sln
-		SccProjectName12 = UnitTests/FrameworkUnitTests
-		SccLocalPath12 = UnitTests\\FrameworkUnitTests
-		SccProjectUniqueName13 = Git\\Git.csproj
-		SccProjectTopLevelParentUniqueName13 = MainSolution.sln
-		SccProjectName13 = Git
-		SccLocalPath13 = Git
-		SccProjectUniqueName14 = UnitTests\\GitUnitTests\\GitUnitTests.csproj
-		SccProjectTopLevelParentUniqueName14 = MainSolution.sln
-		SccProjectName14 = UnitTests/GitUnitTests
-		SccLocalPath14 = UnitTests\\GitUnitTests
-		SccProjectUniqueName15 = Sql2014\\Sql2014.csproj
-		SccProjectTopLevelParentUniqueName15 = MainSolution.sln
-		SccProjectName15 = Sql2014
-		SccLocalPath15 = Sql2014
-		SccProjectUniqueName16 = TFS2013\\TFS2013.csproj
-		SccProjectTopLevelParentUniqueName16 = MainSolution.sln
-		SccProjectName16 = TFS2013
-		SccLocalPath16 = TFS2013
-		SccProjectUniqueName17 = Crm\\Crm.csproj
-		SccProjectTopLevelParentUniqueName17 = MainSolution.sln
-		SccProjectName17 = Crm
-		SccLocalPath17 = Crm
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -268,21 +192,6 @@ Global
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|UnitTest.Build.0 = Release|Any CPU
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|x64.ActiveCfg = Release|Any CPU
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15}.Release|x86.ActiveCfg = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|UnitTest.ActiveCfg = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|UnitTest.ActiveCfg = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|UnitTest.Build.0 = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|x64.ActiveCfg = Release|Any CPU
-		{62B980E3-4D0C-4148-A371-DC4C967E095A}.Release|x86.ActiveCfg = Release|Any CPU
 		{EF7CFB81-6C51-4F8E-A880-6CD1B2C19267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF7CFB81-6C51-4F8E-A880-6CD1B2C19267}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF7CFB81-6C51-4F8E-A880-6CD1B2C19267}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -403,23 +312,22 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{095E4A10-7EA0-4A1F-BB4C-2955FB743BC2} = {5909040A-8319-49A2-858B-BD3A1A9EE7B0}
-		{E0A15095-F4C7-4227-B4B3-0A0740E709F1} = {5909040A-8319-49A2-858B-BD3A1A9EE7B0}
+		{E6255821-7BC4-4617-AC16-A620A51C9962} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{D4DCD3D6-AE24-403E-AF10-07DF01CE436A} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{FB484536-C3A1-4DA1-8464-C2A5E92A6333} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{1C780E39-26D5-4E6F-9533-91D867C1136C} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{A2B689B5-516B-4E6F-87D6-0EE111E0F049} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{E6255821-7BC4-4617-AC16-A620A51C9962} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{62B980E3-4D0C-4148-A371-DC4C967E095A} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{EF7CFB81-6C51-4F8E-A880-6CD1B2C19267} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{9217F575-2D71-4449-8686-1BEE8A998D42} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{AC756407-70FB-4C37-A2FE-9CCC4DE02ACA} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{2749A001-87EF-4757-B5B4-AA3232BB23CD} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{B7B102A3-0B65-49D0-BEC2-69586733F37A} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
-		{18C638DB-47F2-4188-A654-4DADCDF17B4D} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 		{5F67BB68-03E1-4666-971E-821951885E9F} = {147B0947-7CB4-4F4C-BCB3-57CE32115453}
 		{9C416E27-110F-460A-B088-84735F430078} = {147B0947-7CB4-4F4C-BCB3-57CE32115453}
 		{245D5E04-D203-42F9-B6EB-09B7FE0DBF15} = {A3842673-8A5B-4EA7-972F-7A723BF24450}
+		{EF7CFB81-6C51-4F8E-A880-6CD1B2C19267} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
+		{9217F575-2D71-4449-8686-1BEE8A998D42} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
+		{095E4A10-7EA0-4A1F-BB4C-2955FB743BC2} = {5909040A-8319-49A2-858B-BD3A1A9EE7B0}
+		{AC756407-70FB-4C37-A2FE-9CCC4DE02ACA} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
+		{E0A15095-F4C7-4227-B4B3-0A0740E709F1} = {5909040A-8319-49A2-858B-BD3A1A9EE7B0}
+		{2749A001-87EF-4757-B5B4-AA3232BB23CD} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
+		{B7B102A3-0B65-49D0-BEC2-69586733F37A} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
+		{18C638DB-47F2-4188-A654-4DADCDF17B4D} = {7DF43C7D-A243-4289-9C81-00A70119CAB1}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MainSolution.vsmdi
