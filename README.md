@@ -1,5 +1,5 @@
-MSBuildExtensionPack
-====================
+![](https://github.com/mikefourie/MSBuildExtensionPack/raw/master/Images/Logo.png)
+
 The **MSBuild Extension Pack** provides a collection of over 480 MSBuild Tasks, MSBuild Loggers and MSBuild TaskFactories.
 
 A high level summary of what the tasks currently cover includes the following:
