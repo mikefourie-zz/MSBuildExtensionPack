@@ -12,7 +12,7 @@ The *MSBuild Extension Pack* is provided in two versions. The 3.5.* version supp
 
 The *MSBuild Extension Pack* implements a *TaskAction* based design which aims to improve usability and maintenance whilst reducing the code base, e.g. to start or stop a website, typically two task files would be created to perform each task, whereas the *MSBuild Extension Pack* accomplishes this in a single task file using TaskAction=”Stop” and TaskAction=”Start”. 
 
-Each task is documented and provided with an example in the help file, which is also available online at [www.msbuildextensionpack.com](www.msbuildextensionpack.com). Where applicable, tasks are remote enabled, simply specify a MachineName with optional credentials and the task will target the remote machine.
+Each task is documented and provided with an example in the help file, which is also available online at [www.msbuildextensionpack.com](http://www.msbuildextensionpack.com/). Where applicable, tasks are remote enabled, simply specify a MachineName with optional credentials and the task will target the remote machine.
  
 Each task is also provided with an IntelliSense schema file to improve developer productivity in the Visual Studio IDE.
 
