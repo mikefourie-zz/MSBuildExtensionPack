@@ -1,5 +1,7 @@
 ![](https://github.com/mikefourie/MSBuildExtensionPack/raw/master/Images/Logo.png)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/jqebjbmgg9adecyx)](https://ci.appveyor.com/project/mikefourie/msbuildextensionpack)
+
 The **MSBuild Extension Pack** provides a collection of over 480 MSBuild Tasks, MSBuild Loggers and MSBuild TaskFactories.
 
 A high level summary of what the tasks currently cover includes the following:
