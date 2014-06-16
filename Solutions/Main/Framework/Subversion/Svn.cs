@@ -27,7 +27,7 @@ namespace MSBuild.ExtensionPack.Subversion
     /// <para><i>Delete</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword)</para>
     /// <para><i>Move</i> (<b>Required: </b>Items, Destination <b>Optional:</b> UserName, UserPassword)</para>
     /// <para><i>Commit</i> (<b>Required: </b>Items <b>Optional:</b> UserName, UserPassword, CommitMessage)</para>
-    /// <para><i>Export</i> (<b>Required: </b>Item, Destination <b>Optional:</b> UserName, UserPassword)</para>
+    /// <para><i>Export</i> (<b>Required: </b>Item, Destination <b>Optional:</b> UserName, UserPassword, Force)</para>
     /// </summary>
     /// <remarks>
     /// <para>The task needs a command-line SVN client (svn.exe and svnversion.exe) to be available. The following are supported
@@ -149,6 +149,11 @@ namespace MSBuild.ExtensionPack.Subversion
         /// The name of the property that the GetProperty and SetProperty actions use.
         /// </summary>
         public string PropertyName { get; set; }
+
+        /// <summary>
+        /// Set whether to use Force on Export. Default is false.
+        /// </summary>
+        public bool Force { get; set; }
 
         /// <summary>
         /// The value of the property that the GetProperty action returns and the SetProperty action sets.
@@ -833,6 +838,11 @@ namespace MSBuild.ExtensionPack.Subversion
             var cmd = this.CreateCommandLineBuilder();
             cmd.AppendSwitch("export");
             cmd.AppendSwitch("--non-interactive");
+            if (this.Force)
+            {
+                cmd.AppendSwitch("--force");
+            }
+
             cmd.AppendFileNameIfNotNull(this.Item);
             cmd.AppendFileNameIfNotNull(this.Destination);
             Utilities.ExecuteWithLogging(this.Log, Path.Combine(SvnPath, SvnExecutableName), cmd.ToString(), true);
