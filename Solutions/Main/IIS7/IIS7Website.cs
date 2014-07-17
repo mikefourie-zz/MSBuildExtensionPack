@@ -14,7 +14,7 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications <b>Optional: </b>Force)</para>
+    /// <para><i>AddApplication</i> (<b>Required: </b> Name, Applications <b>Optional: AppPool, EnabledProtocols, AnonymousAuthentication, BasicAuthentication, DigestAuthentication, WindowsAuthentication, sslFlags</b>Force)</para>
     /// <para><i>AddMimeType</i> (<b>Required: </b> Name, MimeTypes)</para>
     /// <para><i>AddResponseHeaders</i> (<b>Required: </b> Name, HttpResponseHeaders)</para>
     /// <para><i>AddVirtualDirectory</i> (<b>Required: </b> Name, VirtualDirectories <b>Optional: </b>Force)</para>
@@ -187,7 +187,12 @@ namespace MSBuild.ExtensionPack.Web
         /// Sets the Enabled Protocols for the website
         /// </summary>
         public string EnabledProtocols { get; set; }
-        
+
+        /// <summary>
+        /// Sets the SSl Flag for the website
+        /// </summary>
+        public string SslFlags { get; set; }
+
         /// <summary>
         /// Sets AnonymousAuthentication for the website. Default is true
         /// </summary>
@@ -196,7 +201,7 @@ namespace MSBuild.ExtensionPack.Web
             get { return this.anonymousAuthentication; }
             set { this.anonymousAuthentication = value; }
         }
-         
+
         /// <summary>
         /// Sets DigestAuthentication for the website. Default is false;
         /// </summary>
@@ -555,7 +560,15 @@ namespace MSBuild.ExtensionPack.Web
                 }
 
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting additional settings for Application: {0}", app.ItemSpec));
+
+                // Set the authentification parameters
                 Configuration config = this.iisServerManager.GetApplicationHostConfiguration();
+                if (!string.IsNullOrEmpty(this.SslFlags))
+                {
+                    this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting SslFlags for Application: {0} - {1}", app.ItemSpec, this.SslFlags));
+                    ConfigurationSection accessSection = config.GetSection("system.webServer/security/access", this.Name + app.ItemSpec);
+                    accessSection["sslFlags"] = this.SslFlags;
+                }
 
                 if (!string.IsNullOrEmpty(app.GetMetadata("WindowsAuthentication")))
                 {
