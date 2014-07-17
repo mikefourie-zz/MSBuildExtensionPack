@@ -718,13 +718,13 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <para>To change the
         ///     <a href="http://msdn.microsoft.com/en-us/library/zf8bbayf(v=vs.100).aspx">
         ///     assembly title</a> set this to the specific title you want. For example, for Visual
-        ///     Studio 2005 this is set to "Microsoft� Visual Studio� 2005".</para>
+        ///     Studio 2005 this is set to "Microsoft Visual Studio 2005".</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
         ///     <em>AssemblyTitle</em> property.</para>
         /// </remarks>
         /// <example>
         ///     <code lang="MSBuild" title="[New Example]">
-        /// &lt;AssemblyTitle&gt;Microsoft� Visual Studio� 2005&lt;/AssemblyTitle&gt;
+        /// &lt;AssemblyTitle&gt;Microsoft Visual Studio 2005&lt;/AssemblyTitle&gt;
         ///     </code>
         /// </example>
         public string AssemblyTitle { get; set; }
@@ -783,14 +783,14 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <para>To change the
         ///     <a href="http://msdn.microsoft.com/en-us/library/system.reflection.assemblyproductattribute.aspx">
         ///     assembly company</a> set this to the specific company name you want. For example,
-        ///     for Visual Studio 2005 assemblies this is set to "Microsoft� Visual Studio�
+        ///     for Visual Studio 2005 assemblies this is set to "Microsoft Visual Studio
         ///     2005".</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
         ///     <em>AssemblyProduct</em> property.</para>
         /// </remarks>
         /// <example>
         ///     <code lang="xml">
-        /// &lt;AssemblyProduct&gt;Microsoft� Visual Studio� 2005&lt;/AssemblyProduct&gt;
+        /// &lt;AssemblyProduct&gt;Microsoft Visual Studio 2005&lt;/AssemblyProduct&gt;
         ///     </code>
         /// </example>
         public string AssemblyProduct { get; set; }
@@ -800,14 +800,14 @@ namespace MSBuild.ExtensionPack.Framework
         ///     <para>To change the
         ///     <a href="http://msdn.microsoft.com/en-us/library/system.reflection.assemblycopyrightattribute(v=vs.100).aspx">
         ///     assembly copyright</a> set this to the specific copyright text you want. For
-        ///     example, for Visual Studio 2005 assemblies this is set to "� Microsoft Corporation.
+        ///     example, for Visual Studio 2005 assemblies this is set to " Microsoft Corporation.
         ///     All rights reserved.".</para>
         ///     <para>When using the MSBuild.ExtensionPack.VersionNumber.Targets file set this using the
         ///     <em>AssemblyCopyright</em> property.</para>
         /// </remarks>
         /// <example>
         ///     <code lang="xml">
-        /// &lt;AssemblyCopyright&gt;� Microsoft Corporation. All rights reserved.&lt;/AssemblyCopyright&gt;
+        /// &lt;AssemblyCopyright&gt; Microsoft Corporation. All rights reserved.&lt;/AssemblyCopyright&gt;
         ///     </code>
         /// </example>
         public string AssemblyCopyright { get; set; }
