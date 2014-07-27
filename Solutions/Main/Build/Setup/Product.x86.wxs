@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="MSBuild Extension Pack 4.0.9.0" Language="1033" Version="4.0.9.0" Manufacturer="Mike Fourie" UpgradeCode="CBBB56DB-4CAA-431D-9786-4D3471CCE222">
+    <Product Id="*" Name="MSBuild Extension Pack 4.0.10.0" Language="1033" Version="4.0.10.0" Manufacturer="Mike Fourie" UpgradeCode="CBBB56DB-4CAA-431D-9786-4D3471CCE222">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
@@ -179,14 +179,6 @@
             <Component Id='MSBuild.ExtensionPack.tasks' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.tasks' Name='MSBuild.ExtensionPack.tasks' DiskId='1' Source='..\..\Common\MSBuild.ExtensionPack.tasks'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.tasks' Name='MSBuild.ExtensionPack.tasks' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs2010.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs2010.dll' Name='MSBuild.ExtensionPack.Tfs2010.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2010.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2010.dll' Name='MSBuild.ExtensionPack.Tfs2010.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs2010.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs2010.pdb' Name='MSBuild.ExtensionPack.Tfs2010.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2010.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2010.pdb' Name='MSBuild.ExtensionPack.Tfs2010.pdb' On='uninstall'/>
             </Component>
             <Component Id='MSBuild.ExtensionPack.Tfs2012.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.Tfs2012.dll' Name='MSBuild.ExtensionPack.Tfs2012.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2012.dll'/>
