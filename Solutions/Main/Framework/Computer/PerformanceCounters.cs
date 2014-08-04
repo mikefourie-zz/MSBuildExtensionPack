@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b> CategoryName, CounterList, CategoryHelp <b>Optional: </b> MultiInstance)</para>
+    /// <para><i>Add</i> (<b>Required: </b> CategoryName, CounterList, CategoryHelp <b>Optional: </b> MultiInstance, KeepExistingCounters)</para>
     /// <para><i>CheckCategoryExists</i> (<b>Required: </b> CategoryName <b>Optional: </b> MachineName)</para>
     /// <para><i>CheckCounterExists</i> (<b>Required: </b> CategoryName, CounterName <b>Optional: </b> MachineName)</para>
     /// <para><i>GetValue</i> (<b>Required: </b> CategoryName, CounterName <b>Output: </b> Value, MachineName)</para>
@@ -110,6 +110,11 @@ namespace MSBuild.ExtensionPack.Computer
         public ITaskItem[] CounterList { get; set; }
 
         /// <summary>
+        /// Sets a value whether existing performance counters of the given category should be preserved when adding of new ones.
+        /// </summary>
+        public bool KeepExistingCounters { get; set; }
+
+        /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
@@ -173,6 +178,29 @@ namespace MSBuild.ExtensionPack.Computer
             }
         }
 
+        private void IncludeExistingCounters(ref CounterCreationDataCollection colCounterCreationData)
+        {
+            var category = PerformanceCounterCategory.GetCategories().FirstOrDefault(x => x.CategoryName == this.CategoryName);
+            if (category != null)
+            {
+                foreach (var counter in category.GetCounters())
+                {
+                    CounterCreationData objCreateCounter = new CounterCreationData(counter.CounterName, counter.CounterHelp, counter.CounterType);
+                    colCounterCreationData.Add(objCreateCounter);
+                }
+            }
+        }
+
+        private bool IsCounterAlreadyIncluded(ref CounterCreationDataCollection colCounterCreationData, string counterName)
+        {
+            foreach (CounterCreationData objCreateCounter in colCounterCreationData)
+            {
+                if (objCreateCounter.CounterName == counterName)
+                    return true;
+            }
+            return false;
+        }
+
         private void Add()
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter Category: {0}", this.CategoryName));
@@ -180,6 +208,10 @@ namespace MSBuild.ExtensionPack.Computer
             colCounterCreationData.Clear();
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
+                if (this.KeepExistingCounters)
+                {
+                    IncludeExistingCounters(ref colCounterCreationData);
+                }
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing Performance Counter Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
@@ -191,7 +223,15 @@ namespace MSBuild.ExtensionPack.Computer
                 PerformanceCounterType counterType = (PerformanceCounterType)Enum.Parse(typeof(PerformanceCounterType), counter.GetMetadata("CounterType"));
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter: {0}", counterName));
                 CounterCreationData objCreateCounter = new CounterCreationData(counterName, counterHelp, counterType);
-                colCounterCreationData.Add(objCreateCounter);
+                bool includeCounter = true;
+                if (this.KeepExistingCounters)
+                {
+                    includeCounter = !IsCounterAlreadyIncluded(ref colCounterCreationData, counterName);
+                }
+                if (includeCounter)
+                {
+                    colCounterCreationData.Add(objCreateCounter);
+                }
             }
 
             if (colCounterCreationData.Count > 0)
