@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.Computer
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Add</i> (<b>Required: </b> CategoryName, CounterList, CategoryHelp <b>Optional: </b> MultiInstance)</para>
+    /// <para><i>Add</i> (<b>Required: </b> CategoryName, CounterList, CategoryHelp <b>Optional: </b> MultiInstance, KeepExistingCounters)</para>
     /// <para><i>CheckCategoryExists</i> (<b>Required: </b> CategoryName <b>Optional: </b> MachineName)</para>
     /// <para><i>CheckCounterExists</i> (<b>Required: </b> CategoryName, CounterName <b>Optional: </b> MachineName)</para>
     /// <para><i>GetValue</i> (<b>Required: </b> CategoryName, CounterName <b>Output: </b> Value, MachineName)</para>
@@ -91,7 +91,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the name of the counter.
         /// </summary>
-        public string CounterName { get; set; }       
+        public string CounterName { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether to create a multiple instance performance counter. Default is false
@@ -108,6 +108,11 @@ namespace MSBuild.ExtensionPack.Computer
         /// Sets the TaskItem[] that specifies the counters to create as part of the new category.
         /// </summary>
         public ITaskItem[] CounterList { get; set; }
+
+        /// <summary>
+        /// Sets a value whether existing performance counters of the given category should be preserved when adding new ones.
+        /// </summary>
+        public bool KeepExistingCounters { get; set; }
 
         /// <summary>
         /// Performs the action of this task.
@@ -137,6 +142,11 @@ namespace MSBuild.ExtensionPack.Computer
                     return;
             }
         }
+        
+        private static bool IsCounterAlreadyIncluded(ref CounterCreationDataCollection colCounterCreationData, string counterName)
+        {
+            return colCounterCreationData.Cast<CounterCreationData>().Any(objCreateCounter => objCreateCounter.CounterName == counterName);
+        }
 
         private bool CheckCounterExists()
         {
@@ -165,11 +175,25 @@ namespace MSBuild.ExtensionPack.Computer
                 using (PerformanceCounter pc = new PerformanceCounter(this.CategoryName, this.CounterName, null, this.MachineName))
                 {
                     this.Value = pc.NextValue().ToString(CultureInfo.CurrentCulture);
-                }                
+                }
             }
             else
             {
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Performance Counter Category not found: {0}", this.CategoryName));
+            }
+        }
+
+        private void IncludeExistingCounters(ref CounterCreationDataCollection colCounterCreationData)
+        {
+            var category = PerformanceCounterCategory.GetCategories().FirstOrDefault(x => x.CategoryName == this.CategoryName);
+            if (category == null)
+            {
+                return;
+            }
+
+            foreach (CounterCreationData objCreateCounter in category.GetCounters().Select(counter => new CounterCreationData(counter.CounterName, counter.CounterHelp, counter.CounterType)))
+            {
+                colCounterCreationData.Add(objCreateCounter);
             }
         }
 
@@ -180,10 +204,15 @@ namespace MSBuild.ExtensionPack.Computer
             colCounterCreationData.Clear();
             if (PerformanceCounterCategory.Exists(this.CategoryName))
             {
+                if (this.KeepExistingCounters)
+                {
+                    this.IncludeExistingCounters(ref colCounterCreationData);
+                }
+
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Removing Performance Counter Category: {0}", this.CategoryName));
                 PerformanceCounterCategory.Delete(this.CategoryName);
             }
-            
+
             foreach (ITaskItem counter in this.CounterList)
             {
                 string counterName = counter.GetMetadata("CounterName");
@@ -191,7 +220,16 @@ namespace MSBuild.ExtensionPack.Computer
                 PerformanceCounterType counterType = (PerformanceCounterType)Enum.Parse(typeof(PerformanceCounterType), counter.GetMetadata("CounterType"));
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Adding Performance Counter: {0}", counterName));
                 CounterCreationData objCreateCounter = new CounterCreationData(counterName, counterHelp, counterType);
-                colCounterCreationData.Add(objCreateCounter);
+                bool includeCounter = true;
+                if (this.KeepExistingCounters)
+                {
+                    includeCounter = !IsCounterAlreadyIncluded(ref colCounterCreationData, counterName);
+                }
+
+                if (includeCounter)
+                {
+                    colCounterCreationData.Add(objCreateCounter);
+                }
             }
 
             if (colCounterCreationData.Count > 0)
