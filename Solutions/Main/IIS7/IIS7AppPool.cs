@@ -21,7 +21,7 @@ namespace MSBuild.ExtensionPack.Web
     /// <para><i>Recycle</i> (<b>Required: </b> Name)</para>
     /// <para><i>SetIdentity</i> (<b>Optional: </b>UseDefaultIdentity, IdentityType, PoolIdentity, IdentityPassword)</para>
     /// <para><i>SetPipelineMode</i> (<b>Optional: </b>  PipelineMode)</para>
-    /// <para><i>Start</i> (<b>Required: </b> Name)</para>
+    /// <para><i>Start</i> (<b>Required: </b> Name<b> Optional: </b>RetryCount)</para>
     /// <para><i>Stop</i> (<b>Required: </b> Name)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
@@ -47,8 +47,8 @@ namespace MSBuild.ExtensionPack.Web
     ///         <MSBuild.ExtensionPack.Web.Iis7AppPool TaskAction="SetIdentity" Name="NewAppPool200" IdentityType="LocalService"/>
     ///     </Target>
     /// </Project>
-    /// ]]></code>    
-    /// </example>  
+    /// ]]></code>
+    /// </example>
     public class Iis7AppPool : BaseTask
     {
         private const string CheckExistsTaskAction = "CheckExists";
@@ -67,6 +67,7 @@ namespace MSBuild.ExtensionPack.Web
         private ManagedPipelineMode managedPM = ManagedPipelineMode.Integrated;
         private ProcessModelIdentityType processModelType = ProcessModelIdentityType.LocalService;
         private ApplicationPool pool;
+        private int retryCount = 5;
 
         /// <summary>
         /// Sets the private memory (kb) a process can use before the process is recycled. Default is 0. Set > 0 to use. Set to -1 to restore the Application Pool Default.
@@ -106,7 +107,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the RecycleInterval in minutes for the application pool. Set to -1 to restore the Application Pool Default.
         /// </summary>
-        public int RecycleInterval { get; set; }      
+        public int RecycleInterval { get; set; }
 
         /// <summary>
         /// Set whether the application pool should start automatically. Default is true.
@@ -186,6 +187,15 @@ namespace MSBuild.ExtensionPack.Web
         public bool LoadUserProfile { get; set; }
 
         /// <summary>
+        /// Sets a value indicating how many times to retry starting or stopping an application pool, e.g. if the pool needs time to stop. Default is 5. The retry occurs every 1 seconds.
+        /// </summary>
+        public int RetryCount
+        {
+            get { return this.retryCount; }
+            set { this.retryCount = value; }
+        }
+
+        /// <summary>
         /// Gets the AppPoolInfo Item. Identity = Name, MetaData = ApplicationPoolName, PhysicalPath, Id, State
         /// </summary>
         [Output]
@@ -204,7 +214,7 @@ namespace MSBuild.ExtensionPack.Web
         {
             try
             {
-                this.iisServerManager = System.Environment.MachineName != this.MachineName ? ServerManager.OpenRemote(this.MachineName) : new ServerManager();
+                this.iisServerManager = Environment.MachineName != this.MachineName ? ServerManager.OpenRemote(this.MachineName) : new ServerManager();
 
                 switch (this.TaskAction)
                 {
@@ -378,7 +388,7 @@ namespace MSBuild.ExtensionPack.Web
             }
         }
 
-        private void StartAppPoolWithRetry(int retryCount)
+        private void StartAppPoolWithRetry(int retryCountLocal)
         {
             try
             {
@@ -386,12 +396,12 @@ namespace MSBuild.ExtensionPack.Web
             }
             catch (COMException e)
             {
-                if (retryCount < 3)
+                if (retryCountLocal < this.RetryCount)
                 {
-                    retryCount++;
-                    this.LogTaskMessage(MessageImportance.Low, e.Message);
+                    retryCountLocal++;
+                    this.LogTaskMessage(MessageImportance.Normal, e.Message);
                     Thread.Sleep(1000);
-                    this.StartAppPoolWithRetry(retryCount);
+                    this.StartAppPoolWithRetry(retryCountLocal);
                 }
                 else
                 {
