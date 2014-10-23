@@ -159,5 +159,64 @@ namespace MSBuild.ExtensionPack.VisualStudio.Extended
 
             return false;
         }
+
+        public List<FileInfo> GetFiles()
+        {
+            List<FileInfo> retVal = new List<FileInfo>();
+            FileInfo projectFileInfo = new FileInfo(this.projectFile);
+            foreach (var line in this.lines)
+            {
+                //Module=Module1; Module1.bas
+
+                var splittedLine = line.Split('=');
+                switch (splittedLine[0])
+                {
+                    case "Form":
+                    case "Module":
+                    case "Class":
+                    case "UserControl":
+                        //Module1; Module1.bas
+                        //Form1.frm
+
+
+                        string fileName = splittedLine[1];
+                        if (fileName.Contains(";"))
+                        {
+                            fileName = fileName.Substring(fileName.IndexOf(";") + 1);
+                            fileName = fileName.Trim();
+                        }
+                        fileName = Path.Combine(projectFileInfo.Directory.FullName, fileName);
+                        retVal.Add(new FileInfo(fileName));
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            return retVal;
+        }
+
+        public FileInfo ArtifactFile
+        {
+            get
+            {
+                string artifactFileName = null;
+                if (!this.GetProjectProperty("ExeName32", ref artifactFileName)) throw new ApplicationException("'ExeName32' Property not found");
+                artifactFileName = artifactFileName.Replace("\"", "");
+
+                FileInfo projectFileInfo = new FileInfo(this.ProjectFile);
+
+                string artifactPath = projectFileInfo.Directory.FullName;
+                string path32 = null;
+                if (this.GetProjectProperty("Path32", ref path32))
+                {
+                    path32 = path32.Replace("\"", "");
+                    artifactPath = Path.Combine(artifactPath, path32);
+                }
+
+                artifactFileName = Path.Combine(artifactPath, artifactFileName);
+                return new FileInfo(artifactFileName);
+            }
+        }
     }
 }

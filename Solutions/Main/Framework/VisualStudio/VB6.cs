@@ -55,6 +55,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public bool StopOnError { get; set; }
 
         /// <summary>
+        /// Only build if any referenced source file is newer then the build output
+        /// </summary>
+        public bool IfModificationExists { get; set; }
+
+        /// <summary>
         /// Sets the projects. Use an 'OutDir' metadata item to specify the output directory. The OutDir will be created if it does not exist.
         /// </summary>
         [Required]
@@ -155,6 +160,60 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 }
 
                 // end changing properties
+
+
+                FileInfo artifactFileInfo = null;
+                if (this.IfModificationExists)
+                {
+                    this.LogTaskMessage("START - Checking for modified files");
+                    bool doBuild = false;
+                    VBPProject projectVBP = new VBPProject(project.ItemSpec);
+                    if (projectVBP.Load())
+                    {
+                        FileInfo projectFileInfo = new FileInfo(projectVBP.ProjectFile);
+                        artifactFileInfo = projectVBP.ArtifactFile;
+                        this.LogTaskMessage(string.Format(
+                            "artifactFile '{0}', LastWrite: {1}'", artifactFileInfo.FullName,
+                                                                   artifactFileInfo.LastWriteTime ));
+
+                        if (projectFileInfo.LastWriteTime > artifactFileInfo.LastWriteTime)
+                        {
+                            this.LogTaskMessage(MessageImportance.High, string.Format(
+                                "File '{0}' is newer then '{1}'", projectFileInfo.Name
+                                                                , artifactFileInfo.Name));
+                            doBuild = true;
+                        }
+                        else
+                        {
+                            foreach (var file in projectVBP.GetFiles())
+                            {
+                                this.LogTaskMessage(string.Format(
+                                    "File '{0}', LastWrite: {1}'", file.FullName
+                                                                 , file.LastWriteTime));
+
+
+                                if (file.LastWriteTime > artifactFileInfo.LastWriteTime)
+                                {
+                                    this.LogTaskMessage(MessageImportance.High, string.Format(
+                                        "File '{0}' is newer then '{1}'", file.Name
+                                                                        , artifactFileInfo.Name));
+                                    doBuild = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+
+                    if (!doBuild)
+                    {
+                        this.LogTaskMessage(MessageImportance.High, "Build skipped, because no modifications exists.");
+                        return true;
+                    }
+
+                    this.LogTaskMessage("END - Checking for modified files");
+                }
+
                 proc.StartInfo.FileName = this.VB6Path;
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
@@ -209,6 +268,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     }
 
                     return false;
+                }
+
+
+                if (artifactFileInfo!=null)
+                {
+                    var myNow = DateTime.Now;
+                    artifactFileInfo.LastWriteTime = myNow;
+                    artifactFileInfo.LastAccessTime = myNow;
                 }
 
                 return true;
