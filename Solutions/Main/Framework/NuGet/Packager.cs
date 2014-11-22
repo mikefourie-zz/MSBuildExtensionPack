@@ -396,9 +396,8 @@ namespace MSBuild.ExtensionPack.NuGet
             string executionDirectory = Path.GetDirectoryName(nugetSpecificationFile);
 
             // Default to Resources directory so behavior is consistent with previous versions (when NuGetExeDir is not specified).
-            
-            NuGetExeDir = NuGetExeDir ?? Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\");
-            string nugetFilePath = Path.Combine(NuGetExeDir, "NuGet.exe");
+            this.NuGetExeDir = this.NuGetExeDir != null ? this.NuGetExeDir : Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\");
+            string nugetFilePath = Path.Combine(this.NuGetExeDir, "NuGet.exe");
 
             var processStartInfo = new ProcessStartInfo()
             {

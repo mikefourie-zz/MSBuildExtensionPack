@@ -125,7 +125,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             using (Process proc = new Process())
             {
-                // start changing properties
                 if (!string.IsNullOrEmpty(project.GetMetadata("ChgPropVBP")))
                 {
                     this.LogTaskMessage("START - Changing Properties VBP");
@@ -159,9 +158,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.LogTaskMessage("END - Changing Properties VBP");
                 }
 
-                // end changing properties
-
-
                 FileInfo artifactFileInfo = null;
                 if (this.IfModificationExists)
                 {
@@ -172,37 +168,27 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     {
                         FileInfo projectFileInfo = new FileInfo(projectVBP.ProjectFile);
                         artifactFileInfo = projectVBP.ArtifactFile;
-                        this.LogTaskMessage(string.Format(
-                            "artifactFile '{0}', LastWrite: {1}'", artifactFileInfo.FullName,
-                                                                   artifactFileInfo.LastWriteTime ));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "artifactFile '{0}', LastWrite: {1}'", artifactFileInfo.FullName, artifactFileInfo.LastWriteTime));
 
                         if (projectFileInfo.LastWriteTime > artifactFileInfo.LastWriteTime)
                         {
-                            this.LogTaskMessage(MessageImportance.High, string.Format(
-                                "File '{0}' is newer then '{1}'", projectFileInfo.Name
-                                                                , artifactFileInfo.Name));
+                            this.LogTaskMessage(MessageImportance.High, string.Format("File '{0}' is newer then '{1}'", projectFileInfo.Name, artifactFileInfo.Name));
                             doBuild = true;
                         }
                         else
                         {
                             foreach (var file in projectVBP.GetFiles())
                             {
-                                this.LogTaskMessage(string.Format(
-                                    "File '{0}', LastWrite: {1}'", file.FullName
-                                                                 , file.LastWriteTime));
-
+                                this.LogTaskMessage(string.Format("File '{0}', LastWrite: {1}'", file.FullName, file.LastWriteTime));
 
                                 if (file.LastWriteTime > artifactFileInfo.LastWriteTime)
                                 {
-                                    this.LogTaskMessage(MessageImportance.High, string.Format(
-                                        "File '{0}' is newer then '{1}'", file.Name
-                                                                        , artifactFileInfo.Name));
+                                    this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "File '{0}' is newer then '{1}'", file.Name, artifactFileInfo.Name));
                                     doBuild = true;
                                     break;
                                 }
                             }
                         }
-
                     }
 
                     if (!doBuild)
@@ -270,8 +256,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     return false;
                 }
 
-
-                if (artifactFileInfo!=null)
+                if (artifactFileInfo != null)
                 {
                     var myNow = DateTime.Now;
                     artifactFileInfo.LastWriteTime = myNow;
