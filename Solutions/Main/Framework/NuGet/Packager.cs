@@ -16,7 +16,7 @@ namespace MSBuild.ExtensionPack.NuGet
     
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Pack</i> (<b>Required: </b> Id, Version, Description, LibFiles, LicenseUrl, ProjectUrl, <b>Optional:</b> Title, ContentFiles, ToolsFiles, Authors, Owners, ReleaseNotes, CopyrightsText, IconUrl, RequireLicenseAgreement, Tags, Dependencies, References,  FrameworkAssemblies)</para>
+    /// <para><i>Pack</i> (<b>Required: </b> Id, Version, Authors, Description, LibFiles, <b>Optional:</b> LicenseUrl, ProjectUrl, Title, ContentFiles, ToolsFiles, Owners, ReleaseNotes, CopyrightsText, IconUrl, RequireLicenseAgreement, Tags, Dependencies, References,  FrameworkAssemblies)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -84,7 +84,7 @@ namespace MSBuild.ExtensionPack.NuGet
         public string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the RequireLicense property which determines whether the NuGet package requires explicit licnese permissions or not.
+        /// Gets or sets the RequireLicense property which determines whether the NuGet package requires explicit license permissions or not.
         /// Default is false.
         /// </summary>
         public bool RequiresExplicitLicensing { get; set; }
@@ -92,6 +92,7 @@ namespace MSBuild.ExtensionPack.NuGet
         /// <summary>
         /// Gets or sets a comma-separated list of authors of the package code.
         /// </summary>
+        [Required]
         public string Authors { get; set; }
 
         /// <summary>
@@ -102,7 +103,6 @@ namespace MSBuild.ExtensionPack.NuGet
         /// <summary>
         /// Gets or sets a link to the license that the package is under.
         /// </summary>
-        [Required]
         public string LicenseUrl { get; set; }
 
         /// <summary>
@@ -113,7 +113,6 @@ namespace MSBuild.ExtensionPack.NuGet
         /// <summary>
         /// Gets or sets a URL for the home page of the package.
         /// </summary>
-        [Required]
         public string ProjectUrl { get; set; }
 
         /// <summary>
@@ -124,6 +123,8 @@ namespace MSBuild.ExtensionPack.NuGet
 
         /// <summary>
         /// Gets or sets the Release Notes of the NuGet package.
+        /// This field only shows up when the package is an update to a previously installed package. 
+        /// It is displayed where the Description would normally be displayed.
         /// </summary>
         public string ReleaseNotes { get; set; }
 
@@ -136,6 +137,24 @@ namespace MSBuild.ExtensionPack.NuGet
         /// Gets or sets the tags for the NuGet package. It should be a space-delimited list of tags.
         /// </summary>
         public string Tags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the summary, a short description of the package.
+        /// If specified, this shows up in the middle pane of the Add Package Dialog. 
+        /// If not specified, a truncated version of the description is used instead.
+        /// </summary>
+        public string Summary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the locale ID for the package, such as en-us.
+        /// </summary>
+        public string Language { get; set; }
+
+        /// <summary>
+        /// Gets or sets the directory containing the command line tool, NuGet.exe.
+        /// If none is specified, will default to Resources directory of the currently executing assembly.
+        /// </summary>
+        public string NuGetExeDir { get; set; }
 
         /// <summary>
         /// Gets or sets the NuGet Output file
@@ -375,7 +394,11 @@ namespace MSBuild.ExtensionPack.NuGet
         private void PreparePackage(string nugetSpecificationFile)
         {
             string executionDirectory = Path.GetDirectoryName(nugetSpecificationFile);
-            string nugetFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\Nuget.exe"); // Path.Combine(executionDirectory, "nuget.exe");
+
+            // Default to Resources directory so behavior is consistent with previous versions (when NuGetExeDir is not specified).
+            
+            NuGetExeDir = NuGetExeDir ?? Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\");
+            string nugetFilePath = Path.Combine(NuGetExeDir, "NuGet.exe");
 
             var processStartInfo = new ProcessStartInfo()
             {
@@ -422,12 +445,18 @@ namespace MSBuild.ExtensionPack.NuGet
                     defaultNamespace + "metadata",
                     new XElement(defaultNamespace + "id", this.Id),
                     new XElement(defaultNamespace + "version", this.Version),
+                    new XElement(defaultNamespace + "title", this.Title),
                     new XElement(defaultNamespace + "authors", this.Authors),
                     new XElement(defaultNamespace + "owners", this.Owners),
-                    new XElement(defaultNamespace + "licenseUrl", this.LicenseUrl),
-                    new XElement(defaultNamespace + "projectUrl", this.ProjectUrl),
-                    new XElement(defaultNamespace + "requireLicenseAcceptance", this.RequiresExplicitLicensing.ToString().ToLower(CultureInfo.CurrentCulture)),
                     new XElement(defaultNamespace + "description", this.Description),
+                    new XElement(defaultNamespace + "releaseNotes", this.ReleaseNotes),
+                    new XElement(defaultNamespace + "summary", this.Summary),
+                    new XElement(defaultNamespace + "language", this.Language),
+                    new XElement(defaultNamespace + "projectUrl", this.ProjectUrl),
+                    new XElement(defaultNamespace + "iconUrl", this.IconUrl),
+                    new XElement(defaultNamespace + "licenseUrl", this.LicenseUrl),
+                    new XElement(defaultNamespace + "copyright", this.CopyrightText),
+                    new XElement(defaultNamespace + "requireLicenseAcceptance", this.RequiresExplicitLicensing.ToString().ToLower(CultureInfo.CurrentCulture)),
                     new XElement(defaultNamespace + "tags", this.Tags)));
 
             if (this.Dependencies != null)
