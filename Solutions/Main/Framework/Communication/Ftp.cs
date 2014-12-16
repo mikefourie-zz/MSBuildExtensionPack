@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Communication
 {
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -61,7 +62,7 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         [Required]
         public string Host { get; set; }
-        
+
         /// <summary>
         /// Sets the Remote Path to connect to the FTP Site
         /// </summary>
@@ -78,21 +79,27 @@ namespace MSBuild.ExtensionPack.Communication
         public int Port { get; set; }
 
         /// <summary>
+        /// Sets if the upload action will overwrite existing files
+        /// </summary>
+        public string Overwrite { get; set; }
+
+        /// <summary>
         /// The list of files that needs to be transfered over FTP
         /// </summary>
         public ITaskItem[] FileNames { get; set; }
+
 
         /// <summary>
         /// Performs the action of this task.
         /// </summary>
         protected override void InternalExecute()
-        {   
+        {
             if (string.IsNullOrEmpty(this.Host))
             {
                 this.Log.LogError("The required host attribute has not been set for FTP.");
                 return;
             }
-           
+
             switch (this.TaskAction)
             {
                 case CreateDirectoryTaskAction:
@@ -247,12 +254,33 @@ namespace MSBuild.ExtensionPack.Communication
                     ftpConnection.SetCurrentDirectory(this.RemoteDirectoryName);
                 }
 
+                var overwrite = true;
+                var files = new List<FtpFileInfo>();
+                if (!string.IsNullOrEmpty(this.Overwrite))
+                {
+                    if (!bool.TryParse(this.Overwrite, out overwrite))
+                    {
+                        overwrite = true;
+                    }
+                }
+
+                if (!overwrite)
+                {
+                    files.AddRange(ftpConnection.GetFiles());
+                }
+
                 foreach (string fileName in this.FileNames.Select(item => item.ItemSpec))
                 {
                     try
                     {
                         if (File.Exists(fileName))
                         {
+                            if (!overwrite && files.FirstOrDefault(fi => fi.Name == fileName) != null)
+                            {
+                                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Skipped: {0}", fileName));
+                                continue;
+                            }
+
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Uploading: {0}", fileName));
                             ftpConnection.PutFile(fileName);
                         }
@@ -329,7 +357,7 @@ namespace MSBuild.ExtensionPack.Communication
 
             if (!string.IsNullOrEmpty(this.UserName))
             {
-                return this.Port != 0 ? new FtpConnection(this.Host, this.Port, this.UserName, this.UserPassword) : new FtpConnection(this.Host, this.UserName, this.UserPassword);                
+                return this.Port != 0 ? new FtpConnection(this.Host, this.Port, this.UserName, this.UserPassword) : new FtpConnection(this.Host, this.UserName, this.UserPassword);
             }
 
             return this.Port != 0 ? new FtpConnection(this.Host, this.Port) : new FtpConnection(this.Host);
