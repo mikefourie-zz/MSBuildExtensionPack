@@ -538,7 +538,12 @@ namespace MSBuild.ExtensionPack.Web
                 this.pool.ProcessModel.MaxProcesses = this.iisServerManager.ApplicationPoolDefaults.ProcessModel.MaxProcesses;
             }
 
-            if (!string.IsNullOrEmpty(this.RecycleTimes))
+            if (this.RecycleTimes == "-1")
+            {
+                this.LogTaskMessage(MessageImportance.Low, "Clearing the Recycling.PeriodicRestart.Schedule");
+                this.pool.Recycling.PeriodicRestart.Schedule.Clear();
+            }
+            else if (!string.IsNullOrEmpty(this.RecycleTimes))
             {
                 string[] times = this.RecycleTimes.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string time in times)
@@ -548,11 +553,6 @@ namespace MSBuild.ExtensionPack.Web
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Setting Recycling.PeriodicRestart.Schedule to: {0}:{1}", hours, minutes));
                     this.pool.Recycling.PeriodicRestart.Schedule.Add(TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes)));
                 }
-            }
-            else if (this.RecycleTimes == "-1")
-            {
-                this.LogTaskMessage(MessageImportance.Low, "Clearing the Recycling.PeriodicRestart.Schedule");
-                this.pool.Recycling.PeriodicRestart.Schedule.Clear();
             }
 
             if (this.RecycleRequests >= 0)
