@@ -543,7 +543,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.LogTaskMessage(MessageImportance.Low, "Clearing the Recycling.PeriodicRestart.Schedule");
                 this.pool.Recycling.PeriodicRestart.Schedule.Clear();
             }
-            else (!string.IsNullOrEmpty(this.RecycleTimes))
+            else if (!string.IsNullOrEmpty(this.RecycleTimes))
             {
                 string[] times = this.RecycleTimes.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string time in times)
