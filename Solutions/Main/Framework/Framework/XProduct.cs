@@ -86,6 +86,11 @@ namespace MSBuild.ExtensionPack.Framework
         public string IdentityFormat { get; set; }
 
         /// <summary>
+        /// Copies original Identity metadata to result item as well - suffixed by the group number, i.e. you can use <c>%(ResultList.Identity1)</c>.
+        /// </summary>
+        public bool AddOriginalIdentityUsingGroupNumberSuffix { get; set; }
+
+        /// <summary>
         /// ItemGroup1
         /// </summary>
         public ITaskItem[] Group1 { get; set; }
@@ -137,12 +142,12 @@ namespace MSBuild.ExtensionPack.Framework
 
         public override bool Execute()
         {
-            var groups = this.CreateDataArrays();
+            var groups = this.CreateDataArrays().ToList();
 
             this.Result = new ITaskItem[] { new TaskItem() };
-            foreach (var group in groups)
+            for (var i = 0; i < groups.Count; ++i)
             {
-                this.Result = DoXProduct(this.Result, group).ToArray();
+                this.Result = DoXProduct(this.Result, groups[i], i+1, this.AddOriginalIdentityUsingGroupNumberSuffix).ToArray();
             }
 
             this.Count = this.Result.Length;
@@ -155,7 +160,7 @@ namespace MSBuild.ExtensionPack.Framework
             return !this.Log.HasLoggedErrors;
         }
 
-        private static IEnumerable<ITaskItem> DoXProduct(IEnumerable<ITaskItem> group1, ITaskItem[] group2)
+        private static IEnumerable<ITaskItem> DoXProduct(IEnumerable<ITaskItem> group1, ITaskItem[] group2, int group2Number, bool addOriginalIdentityUsingGroupNumberSuffix)
         {
             foreach (var item1 in group1)
             {
@@ -164,6 +169,10 @@ namespace MSBuild.ExtensionPack.Framework
                     var newItem = new TaskItem(item1.ItemSpec + ";" + item2.ItemSpec);
                     item1.CopyMetadataTo(newItem);
                     item2.CopyMetadataTo(newItem);
+                    if (addOriginalIdentityUsingGroupNumberSuffix)
+                    {
+                        newItem.SetMetadata("Identity" + group2Number, item2.ItemSpec);
+                    }
                     yield return newItem;
                 }
             }
