@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Assembly.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Assembly.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
@@ -47,7 +47,7 @@ namespace MSBuild.ExtensionPack.Framework
     ///             </ArgsF>
     ///         </ItemGroup>
     ///         <!-- Get information on an assembly -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.dll">
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\BuildBinaries\MSBuild.ExtensionPack.dll">
     ///             <Output TaskParameter="OutputItems" ItemName="Info"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="Identity: %(Info.Identity)" />
@@ -59,20 +59,20 @@ namespace MSBuild.ExtensionPack.Framework
     ///         <Message Text="AssemblyVersion: %(Info.AssemblyVersion)" />
     ///         <Message Text="AssemblyInformationalVersion: %(Info.AssemblyInformationalVersion)" />
     ///         <!-- This will cause a default constructor call only -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
     ///         <!--Invoke the assembly with the args collection of arguments -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="AssemblyDemo" NetMethod="AddNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(Args)" NetClass="AssemblyDemo" NetMethod="AddNumbers" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Result" PropertyName="R"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="Result: $(R)"/>
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsM)" NetClass="AssemblyDemo" NetMethod="MultiplyNumbers" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsM)" NetClass="AssemblyDemo" NetMethod="MultiplyNumbers" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Result" PropertyName="R"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="Result: $(R)"/>
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsF)" NetClass="AssemblyDemo" NetMethod="CreateFolder" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetMethod="CreateDefaultFolder" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetArguments="@(ArgsF)" NetClass="AssemblyDemo" NetMethod="CreateFolder" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="Invoke" NetClass="AssemblyDemo" NetMethod="CreateDefaultFolder" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll"/>
     ///         <!-- Extract some information on the assembly interface -->
-    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetMethodInfo" NetAssembly="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+    ///         <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetMethodInfo" NetAssembly="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="OutputItems" ItemName="TypeInfo"/>
     ///         </MSBuild.ExtensionPack.Framework.Assembly>
     ///         <Message Text="%(TypeInfo.Identity) %(TypeInfo.Parameters)" />

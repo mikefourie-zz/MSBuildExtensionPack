@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="DlrTask.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="DlrTask.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 // This task is based on code from (http://github.com/jredville/DlrTaskFactory). It is used here with permission.
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.TaskFactory

@@ -6,7 +6,7 @@
     <Import Project="$(TPath)"/>
     <PropertyGroup>
         <PathToDetokenise>C:\Demo\*</PathToDetokenise>
-        <CPHome>www.codeplex.com/MSBuildExtensionPack</CPHome>
+        <CPHome>http://www.msbuildextensionpack.com</CPHome>
         <Title>A New Title</Title>
         <clv>hello=hello#~#hello1=how#~#hello2=are#~#Configuration=debug</clv>
         <Configuration>debug</Configuration>
@@ -24,7 +24,7 @@
                 <Replacement>ANewTextString</Replacement>
             </TokenValues >
             <TokenValues Include="ProjectHome">
-                <Replacement>www.codeplex.com/MSBuildExtensionPack</Replacement>
+                <Replacement>http://www.msbuildextensionpack.com/</Replacement>
             </TokenValues >
         </ItemGroup>
         <!-- Analyse a collection of files. This can be used to ensure that all tokens are known. -->

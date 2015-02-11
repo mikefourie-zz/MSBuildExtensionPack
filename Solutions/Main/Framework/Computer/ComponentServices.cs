@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ComponentServices.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="ComponentServices.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Computer
 {
@@ -49,21 +49,21 @@ namespace MSBuild.ExtensionPack.Computer
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!--- Add a component -->
-    ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
+    ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
     ///         <!-- Check it exists -->
     ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="CheckApplicationExists" ApplicationName="MyApplication">
     ///             <Output TaskParameter="Exists" PropertyName="DoI"/>
     ///         </MSBuild.ExtensionPack.Computer.ComponentServices>
     ///         <Message Text="Exists: $(DoI)"/>
     ///         <!--- Remove the component -->
-    ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="RemoveComponent" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication"/>
+    ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="RemoveComponent" Path="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication"/>
     ///         <!-- Check it exists again-->
     ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="CheckApplicationExists" ApplicationName="MyApplication">
     ///             <Output TaskParameter="Exists" PropertyName="DoI"/>
     ///         </MSBuild.ExtensionPack.Computer.ComponentServices>
     ///         <Message Text="Exists: $(DoI)"/>
     ///         <!--- Add a component -->
-    ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
+    ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="AddComponent" Path="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\EntServices.dll" ApplicationName="MyApplication" Identity="Interactive User"/>
     ///         <!-- Check it exists -->
     ///         <MSBuild.ExtensionPack.Computer.ComponentServices TaskAction="CheckApplicationExists" ApplicationName="MyApplication">
     ///             <Output TaskParameter="Exists" PropertyName="DoI"/>

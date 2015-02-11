@@ -74,7 +74,7 @@
         <Message Text="WebProjectsCount: $(WebProjectsCount)"/>
         <Message Text="NonWebProjectsCount: $(NonWebProjectsCount)"/>
         <!-- Get the checksum of a file -->
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\GitHub\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
             <Output TaskParameter="Checksum" PropertyName="chksm"/>
         </MSBuild.ExtensionPack.FileSystem.File>
         <Message Text="$(chksm)"/>

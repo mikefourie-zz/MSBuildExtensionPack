@@ -1,6 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="File.cs">(c) http://www.codeplex.com/MSBuildExtensionPack. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-// Parts of this task are based on code from (http://sedodream.codeplex.com). It is used here with permission.
+// <copyright file="File.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
 {
@@ -114,7 +113,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///         <Message Text="WebProjectsCount: $(WebProjectsCount)"/>
     ///         <Message Text="NonWebProjectsCount: $(NonWebProjectsCount)"/>
     ///         <!-- Get the checksum of a file -->
-    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\CodePlex\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
+    ///         <MSBuild.ExtensionPack.FileSystem.File TaskAction="GetChecksum" Path="C:\Projects\MSBuildExtensionPack\Solutions\Main3.5\SampleScratchpad\SampleBuildBinaries\AssemblyDemo.dll">
     ///             <Output TaskParameter="Checksum" PropertyName="chksm"/>
     ///         </MSBuild.ExtensionPack.FileSystem.File>
     ///         <Message Text="$(chksm)"/>
