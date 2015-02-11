@@ -88,7 +88,6 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         public ITaskItem[] FileNames { get; set; }
 
-
         /// <summary>
         /// Performs the action of this task.
         /// </summary>

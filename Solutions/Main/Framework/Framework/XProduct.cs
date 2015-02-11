@@ -147,7 +147,7 @@ namespace MSBuild.ExtensionPack.Framework
             this.Result = new ITaskItem[] { new TaskItem() };
             for (var i = 0; i < groups.Count; ++i)
             {
-                this.Result = DoXProduct(this.Result, groups[i], i+1, this.AddOriginalIdentityUsingGroupNumberSuffix).ToArray();
+                this.Result = DoXProduct(this.Result, groups[i], i + 1, this.AddOriginalIdentityUsingGroupNumberSuffix).ToArray();
             }
 
             this.Count = this.Result.Length;
@@ -173,6 +173,7 @@ namespace MSBuild.ExtensionPack.Framework
                     {
                         newItem.SetMetadata("Identity" + group2Number, item2.ItemSpec);
                     }
+
                     yield return newItem;
                 }
             }
