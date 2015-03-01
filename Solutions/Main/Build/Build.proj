@@ -20,7 +20,6 @@
                                              Compile;
                                              BuildChm;
                                              CleanUp;
-                                             Sign;
                                              Setup;
                                              CopyFiles;
                                              CreateZips">
@@ -60,15 +59,6 @@
         </ItemGroup>
         <Microsoft.Build.Tasks.Delete Files="@(FilesToCleanUp)" />
         <Microsoft.Build.Tasks.Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(BuildOutput)"/>
-    </Target>
-    
-    <Target Name="Sign" Condition="$(RTWRelease) == 'true'">
-        <ItemGroup>
-            <TouchFiles Include="$(BuildOutput)\**\*.*"/>
-            <FileToSign Include="$(BuildOutput)\MSB*.dll;$(BuildOutput)\Inter*.dll"/>
-        </ItemGroup>
-        <Touch Files="@(TouchFiles)" ForceTouch="true" ContinueOnError="true"/>
-        <MSBuild.ExtensionPack.Framework.Signing TaskAction="Sign" ToolPath="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin" KeyFile="ExtensionPack.snk" Assemblies="@(FileToSign)"/>
     </Target>
 
     <Target Name="Setup" Condition="$(RTWRelease) == 'true'">

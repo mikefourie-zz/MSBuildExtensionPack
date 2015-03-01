@@ -40,7 +40,7 @@
     <DocumentationFile>..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.Dlr.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\Common\ExtensionPack.public.snk</AssemblyOriginatorKeyFile>

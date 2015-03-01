@@ -39,7 +39,7 @@
     <DocumentationFile>..\..\BuildBinaries\MSBuild.ExtensionPack.Loggers.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Common\ExtensionPack.public.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
