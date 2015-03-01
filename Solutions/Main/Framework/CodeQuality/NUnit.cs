@@ -189,11 +189,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public string Configuration { get; set; }
 
         /// <summary>
-        /// Gets the Time taken to run the tests
-        /// </summary>
-        public DateTime TimeTaken { get; set; }
-
-        /// <summary>
         /// Process model for tests. Supports Single, Separate, Multiple. Single is the Default
         /// </summary>
         public string Process { get; set; }
