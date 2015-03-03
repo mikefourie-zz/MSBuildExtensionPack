@@ -278,6 +278,7 @@ namespace MSBuild.ExtensionPack.Loggers
             this.SetAttribute("line", line);
             this.SetAttribute("column", column);
             this.SetAttribute("subcategory", subcategory);
+            this.SetAttribute("started", DateTime.UtcNow);
             this.WriteMessage(message, code != "Properties");
             this.xmlWriter.WriteEndElement();
         }
@@ -296,6 +297,7 @@ namespace MSBuild.ExtensionPack.Loggers
 
             this.xmlWriter.WriteStartElement(messageType);
             this.SetAttribute("importance", importance);
+            this.SetAttribute("started", DateTime.UtcNow);
             this.WriteMessage(message, false);
             this.xmlWriter.WriteEndElement();
         }
