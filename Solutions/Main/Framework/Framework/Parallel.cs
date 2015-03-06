@@ -272,7 +272,7 @@ namespace MSBuild.ExtensionPack.Framework
                     append = "append=true;";
                 }
 
-                logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile={2}", append, this.MultiLogVerbosity, logfileName);
+                logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile=&quot;{2}&quot;", append, this.MultiLogVerbosity, logfileName);
             }
 
             var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.ItemSpec + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
