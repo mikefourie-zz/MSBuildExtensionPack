@@ -10,7 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{06FDB1
 		Common\MSBuild.ExtensionPack.tasks = Common\MSBuild.ExtensionPack.tasks
 		SetEnv.cmd = SetEnv.cmd
 		Settings.StyleCop = Settings.StyleCop
-		SkipDelaySignVerification.cmd = SkipDelaySignVerification.cmd
 		Common\StringExtension.cs = Common\StringExtension.cs
 	EndProjectSection
 EndProject
