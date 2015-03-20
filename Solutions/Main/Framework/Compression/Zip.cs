@@ -13,7 +13,7 @@ namespace MSBuild.ExtensionPack.Compression
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving) Existing files will be updated</para>
-    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving)</para>
+    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving, PreserveAttributes)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// <para/>
@@ -80,6 +80,7 @@ namespace MSBuild.ExtensionPack.Compression
         private const string AddFilesTaskAction = "AddFiles";
         private Ionic.Zlib.CompressionLevel compressLevel = Ionic.Zlib.CompressionLevel.Default;
         private Zip64Option useZip64WhenSaving = Zip64Option.Default;
+        private bool preserveAttributes = true;
 
         /// <summary>
         /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
@@ -127,15 +128,25 @@ namespace MSBuild.ExtensionPack.Compression
         /// For more details see the DotNetZip documentation.
         /// </summary>
         public int MaxOutputSegmentSize { get; set; }
-        
+
         /// <summary>
         /// Sets the UseZip64WhenSaving output of the DotNetZip library.
         /// For more details see the DotNetZip documentation.
         /// </summary>
-        public string UseZip64WhenSaving 
+        public string UseZip64WhenSaving
         {
             get { return this.useZip64WhenSaving.ToString(); }
             set { this.useZip64WhenSaving = (Zip64Option)Enum.Parse(typeof(Zip64Option), value, true); }
+        }
+
+        /// <summary>
+        /// This is only applicable when the <b>TaskAction</b> is <i>Create</i> or <i>AddFiles</i>. Specifies whether file (folder) attributes like <i>Hidden</i> or <i>Read-only</i>
+        /// should be left intact during adding to the archive. The default is <c>true</c>.
+        /// </summary>
+        public bool PreserveAttributes
+        {
+            get { return this.preserveAttributes; }
+            set { this.preserveAttributes = value; }
         }
 
         /// <summary>
@@ -182,14 +193,20 @@ namespace MSBuild.ExtensionPack.Compression
 
                     foreach (ITaskItem f in this.CompressFiles)
                     {
+                        ZipEntry updatedEntry;
                         if (this.RemoveRoot != null)
                         {
                             string location = (f.GetMetadata("RootDir") + f.GetMetadata("Directory")).Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
-                            zip.UpdateFile(f.GetMetadata("FullPath"), location);
+                            updatedEntry = zip.UpdateFile(f.GetMetadata("FullPath"), location);
                         }
                         else
                         {
-                            zip.UpdateFile(f.GetMetadata("FullPath"));
+                            updatedEntry = zip.UpdateFile(f.GetMetadata("FullPath"));
+                        }
+
+                        if (!this.preserveAttributes)
+                        {
+                            updatedEntry.Attributes = FileAttributes.Normal;
                         }
                     }
 
@@ -214,15 +231,21 @@ namespace MSBuild.ExtensionPack.Compression
                         zip.Password = this.Password;
                     }
 
+                    ZipEntry archiveEntry;
                     if (this.RemoveRoot != null)
                     {
                         DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
                         string location = d.FullName.Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
-                        zip.AddDirectory(this.CompressPath.ItemSpec, location);
+                        archiveEntry = zip.AddDirectory(this.CompressPath.ItemSpec, location);
                     }
                     else
                     {
-                        zip.UpdateDirectory(this.CompressPath.ItemSpec);
+                        archiveEntry = zip.UpdateDirectory(this.CompressPath.ItemSpec);
+                    }
+
+                    if (!this.preserveAttributes)
+                    {
+                        archiveEntry.Attributes = FileAttributes.Normal;
                     }
 
                     if (this.MaxOutputSegmentSize > 0)
@@ -257,14 +280,20 @@ namespace MSBuild.ExtensionPack.Compression
 
                     foreach (ITaskItem f in this.CompressFiles)
                     {
+                        ZipEntry addedEntry;
                         if (this.RemoveRoot != null)
                         {
                             string location = (f.GetMetadata("RootDir") + f.GetMetadata("Directory")).Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
-                            zip.AddFile(f.GetMetadata("FullPath"), location);
+                            addedEntry = zip.AddFile(f.GetMetadata("FullPath"), location);
                         }
                         else
                         {
-                            zip.AddFile(f.GetMetadata("FullPath"));
+                            addedEntry = zip.AddFile(f.GetMetadata("FullPath"));
+                        }
+
+                        if (!this.preserveAttributes)
+                        {
+                            addedEntry.Attributes = FileAttributes.Normal;
                         }
                     }
 
@@ -289,16 +318,22 @@ namespace MSBuild.ExtensionPack.Compression
                         zip.Password = this.Password;
                     }
 
+                    ZipEntry addedDirectory;
                     if (this.RemoveRoot != null)
                     {
                         DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
                         string location = d.FullName.Replace(this.RemoveRoot.GetMetadata("FullPath"), string.Empty);
-                        zip.AddDirectory(this.CompressPath.ItemSpec, location);
+                        addedDirectory = zip.AddDirectory(this.CompressPath.ItemSpec, location);
                     }
                     else
                     {
                         DirectoryInfo d = new DirectoryInfo(this.CompressPath.ItemSpec);
-                        zip.AddDirectory(this.CompressPath.ItemSpec, d.Name);
+                        addedDirectory = zip.AddDirectory(this.CompressPath.ItemSpec, d.Name);
+                    }
+
+                    if (!this.preserveAttributes)
+                    {
+                        addedDirectory.Attributes = FileAttributes.Normal;
                     }
 
                     if (this.MaxOutputSegmentSize > 0)
