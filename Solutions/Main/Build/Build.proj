@@ -2,7 +2,7 @@
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
         <BuildDrive>C:</BuildDrive>
-        <ReleaseVersion>4.0.10.0</ReleaseVersion>
+        <ReleaseVersion>4.0.11.0</ReleaseVersion>
         <ProductName>MSBuild Extension Pack</ProductName>
         <DropFolder>$(BuildDrive)\$(ProductName)\$(ReleaseVersion)</DropFolder>
         <RootFolder>$(MSBuildProjectDirectory)..\..</RootFolder>
@@ -53,6 +53,7 @@
                                      $(BuildOutput)\MainSolution.Release Any CPU.txt;
                                      $(BuildOutput)\MSBuild.ExtensionPack.FrameworkTests.*"
                             Exclude="$(BuildOutput)\MSBuild.ExtensionPack*.dll;
+                                     $(BuildOutput)\Ionic.Zip.dll;
                                      $(BuildOutput)\Inter*.dll;
                                      $(BuildOutput)\MSBuild Extension Pack Help.chm"/>
             <ResourceFiles Include="Resources\*.*"/>
