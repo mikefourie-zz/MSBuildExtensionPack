@@ -8,11 +8,12 @@ namespace MSBuild.ExtensionPack.BizTalk
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
     using OM = Microsoft.BizTalk.ExplorerOM;
+    using System;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
     /// <para><i>CheckExists</i> (<b>Required: </b>AdaptorName <b>Optional: </b>MachineName, DatabaseServer, Database <b>Output: </b>Exists, Comment)</para>
-    /// <para><i>Create</i> (<b>Required: </b>AdaptorName, MgmtCLSID<b>Optional: </b>MachineName, DatabaseServer, Database, Comment)</para>
+    /// <para><i>Create</i> (<b>Required: </b>AdaptorName, MgmtCLSID<b>Optional: </b>MachineName, DatabaseServer, Database, Comment, Constraints)</para>
     /// <para><i>Delete</i> (<b>Required: </b>AdaptorName <b>Optional: </b>MachineName, DatabaseServer, Database)</para>
     /// <para><b>Remote Execution Support:</b> Yes</para>
     /// </summary>
@@ -38,7 +39,7 @@ namespace MSBuild.ExtensionPack.BizTalk
     ///         </MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor>
     ///         <Message Text="WCF-SQL Exists: $(AdaptorExists)"/>
     ///         <!-- Create an Adaptor -->
-    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="Create" AdaptorName="WCF-SQL" MgmtCLSID="{59b35d03-6a06-4734-a249-ef561254ecf7}" Comment="WCF-SQL adapter"/>
+    ///         <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="Create" AdaptorName="WCF-SQL" MgmtCLSID="{59b35d03-6a06-4734-a249-ef561254ecf7}" Comment="WCF-SQL adapter" Constraints="15369"/>
     ///         <!-- Check an Adaptor Exists -->
     ///         <MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor TaskAction="CheckExists" AdaptorName="WCF-SQL">
     ///             <Output TaskParameter="Exists" PropertyName="AdaptorExists" />
@@ -90,6 +91,11 @@ namespace MSBuild.ExtensionPack.BizTalk
         /// Sets the MgmtCLSID guid
         /// </summary>
         public string MgmtCLSID { get; set; }
+
+        /// <summary>
+        /// Sets the Constraints
+        /// </summary>
+        public int Constraints { get; set; }
 
         /// <summary>
         /// Gets whether the Adaptor exists
@@ -169,6 +175,12 @@ namespace MSBuild.ExtensionPack.BizTalk
                 btsHostSetting["Name"] = this.AdaptorName;
                 btsHostSetting["Comment"] = this.Comment ?? string.Empty;
                 btsHostSetting["MgmtCLSID"] = this.MgmtCLSID;
+
+                if (this.Constraints > 0)
+                {
+                    btsHostSetting["Constraints"] = Convert.ToUInt32(this.Constraints);
+                }
+
                 btsHostSetting.Put(options);
                 this.explorer.SaveChanges();
             }
