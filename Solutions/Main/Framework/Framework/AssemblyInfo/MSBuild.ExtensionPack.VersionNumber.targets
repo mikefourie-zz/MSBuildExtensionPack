@@ -50,6 +50,9 @@
         <AssemblyDescription></AssemblyDescription>
         <AssemblyProduct></AssemblyProduct>
         <AssemblyTitle></AssemblyTitle>
+        <AssemblyTrademark></AssemblyTrademark>
+        <UpdateAssemblyInformationalVersion>false</UpdateAssemblyInformationalVersion>
+        <AssemblyInformationalVersion></AssemblyInformationalVersion>
     </PropertyGroup>
 
     <!-- Properties for controlling key signing through assemblyinfo files -->
@@ -74,6 +77,11 @@
             $(CoreCompileDependsOn);
             UpdateAssemblyInfoFiles
         </CoreCompileDependsOn>
+    </PropertyGroup>
+
+	<!-- Flag to disable updating of assemblyinfo files -->
+    <PropertyGroup>
+        <SkipVersioning>false</SkipVersioning>
     </PropertyGroup>
 
     <!-- The target that actually does all the work. The inputs are the same as the CoreCompileDependsOn target
@@ -120,10 +128,14 @@
                       AssemblyDescription="$(AssemblyDescription)"
                       AssemblyProduct="$(AssemblyProduct)"
                       AssemblyTitle="$(AssemblyTitle)"
+                      AssemblyTrademark="$(AssemblyTrademark)"
+                      UpdateAssemblyInformationalVersion="$(UpdateAssemblyInformationalVersion)"
+                      AssemblyInformationalVersion="$(AssemblyInformationalVersion)"
                       AssemblyIncludeSigningInformation="$(AssemblyIncludeSigningInformation)"
                       AssemblyDelaySign="$(AssemblyDelaySign)"
                       AssemblyKeyFile="$(AssemblyKeyFile)"
-                      AssemblyKeyName="$(AssemblyKeyName)">
+                      AssemblyKeyName="$(AssemblyKeyName)"
+                      SkipVersioning="$(SkipVersioning)">
             <Output TaskParameter="MaxAssemblyVersion" PropertyName="MaxAssemblyVersion"/>
             <Output TaskParameter="MaxAssemblyFileVersion" PropertyName="MaxAssemblyFileVersion"/>
         </AssemblyInfo>
