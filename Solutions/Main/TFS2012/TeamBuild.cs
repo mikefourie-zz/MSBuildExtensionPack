@@ -248,21 +248,28 @@ namespace MSBuild.ExtensionPack.Tfs2012
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Queueing Build: {0}", this.BuildDefinitionName));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Attempt to queue Build {0} of project {1}", this.BuildDefinitionName, this.TeamProject));
             IBuildDefinition definition = this.buildServer.GetBuildDefinition(this.TeamProject, this.BuildDefinitionName);
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Identified as Build definition Id={0}", definition.Id));
             IBuildRequest request = definition.CreateBuildRequest();
+            if (request == null)
+            {
+                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Unable to create build request on {0}", this.TeamFoundationServerUrl));
+                return;
+            }
 
             if (this.DropLocation != null)
             {
                 request.DropLocation = this.DropLocation;
             }
-            
+
             // queue the build
             var queuedBuild = this.buildServer.QueueBuild(request, QueueOptions.None);
-            
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "The build is now in state {0}", queuedBuild.Status));
+
             // After adding the new prams, the Uri started throwing Null exceptions.
             // Added check to handle it
-            if (queuedBuild.Build.Uri != null)
+            if (queuedBuild.Build != null && queuedBuild.Build.Uri != null)
             {
                 this.BuildUri = queuedBuild.Build.Uri.ToString();
             }
