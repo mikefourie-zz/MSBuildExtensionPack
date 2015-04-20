@@ -581,7 +581,11 @@ namespace MSBuild.ExtensionPack.Subversion
 
                 if (entry.commit != null)
                 {
-                    this.Info.SetMetadata("CommitAuthor", entry.commit.author);
+                    if (entry.commit.author != null)
+                    {
+                        this.Info.SetMetadata("CommitAuthor", entry.commit.author);
+                    }
+
                     this.Info.SetMetadata("CommitRevision", entry.commit.revision.ToString(CultureInfo.InvariantCulture));
                     this.Info.SetMetadata("CommitDate", entry.commit.date.ToString("o", CultureInfo.InvariantCulture));
                 }
