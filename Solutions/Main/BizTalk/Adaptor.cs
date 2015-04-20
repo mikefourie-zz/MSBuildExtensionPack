@@ -3,12 +3,12 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.BizTalk
 {
+    using System;
     using System.Globalization;
     using System.Management;
     using Microsoft.BizTalk.ExplorerOM;
     using Microsoft.Build.Framework;
     using OM = Microsoft.BizTalk.ExplorerOM;
-    using System;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
