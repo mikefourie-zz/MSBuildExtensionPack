@@ -14,8 +14,8 @@ namespace MSBuild.ExtensionPack.Web
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>ContentType, Timeout, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication <b>Output:</b> Response, Status)</para>
-    /// <para><i>Post</i> (<b>Required: </b> Url <b>Optional: </b>ContentType, Timeout, RequestContent, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication <b>Output:</b> Response, Status)</para>
+    /// <para><i>GetResponse</i> (<b>Required: </b> Url <b>Optional: </b>ContentType, Timeout, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication, UserName, UserPassword <b>Output:</b> Response, Status)</para>
+    /// <para><i>Post</i> (<b>Required: </b> Url <b>Optional: </b>ContentType, Timeout, RequestContent, SkipSslCertificateValidation, Retries, RetryInterval, UseIntegratedAuthentication, UserName, UserPassword <b>Output:</b> Response, Status)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
     /// </summary>
     /// <example>
@@ -162,6 +162,10 @@ namespace MSBuild.ExtensionPack.Web
             if (this.UseIntegratedAuthentication)
             {
                 request.Credentials = CredentialCache.DefaultCredentials;
+            }
+            else if (!string.IsNullOrEmpty(this.UserName))
+            {
+                request.Credentials = new System.Net.NetworkCredential(this.UserName, this.UserPassword);
             }
 
             request.Timeout = this.Timeout;
