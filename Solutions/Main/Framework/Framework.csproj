@@ -170,6 +170,7 @@
     <Compile Include="..\Common\StringExtension.cs">
       <Link>StringExtension.cs</Link>
     </Compile>
+    <Compile Include="CodeQuality\NUnit3.cs" />
     <Compile Include="CodeQuality\NUnit.cs" />
     <Compile Include="Communication\Ftp.cs" />
     <Compile Include="Communication\FTP\Extensions.cs" />
