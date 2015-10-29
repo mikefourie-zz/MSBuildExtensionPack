@@ -2,7 +2,7 @@
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
         <BuildDrive>C:</BuildDrive>
-        <ReleaseVersion>4.0.11.0</ReleaseVersion>
+        <ReleaseVersion>4.0.12.0</ReleaseVersion>
         <ProductName>MSBuild Extension Pack</ProductName>
         <DropFolder>$(BuildDrive)\$(ProductName)\$(ReleaseVersion)</DropFolder>
         <RootFolder>$(MSBuildProjectDirectory)..\..</RootFolder>

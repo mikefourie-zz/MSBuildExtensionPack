@@ -42,7 +42,7 @@
     </BuildLogFile>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
     <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
-    <HelpTitle>MSBuild Extension Pack Help 4.0.11.0</HelpTitle>
+    <HelpTitle>MSBuild Extension Pack Help 4.0.12.0</HelpTitle>
     <CopyrightHref>http://www.MSBuildExtensionPack.com</CopyrightHref>
     <CopyrightText>Copyright &amp;#169%3b 2015 http://www.MSBuildExtensionPack.com. All rights reserved.</CopyrightText>
     <FeedbackEMailAddress>feedback%40MSBuildExtensionPack.com</FeedbackEMailAddress>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="MSBuild Extension Pack 4.0.11.0" Language="1033" Version="4.0.11.0" Manufacturer="Mike Fourie" UpgradeCode="CBBB56DB-4CAA-431D-9786-4D3471CCE222">
+    <Product Id="*" Name="MSBuild Extension Pack 4.0.12.0" Language="1033" Version="4.0.12.0" Manufacturer="Mike Fourie" UpgradeCode="CBBB56DB-4CAA-431D-9786-4D3471CCE222">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
