@@ -213,7 +213,7 @@
 <NamespaceSummaryItem name="System.Reflection" isDocumented="False" />
 <NamespaceSummaryItem name="StyleCop.Spelling" isDocumented="False" />
 <NamespaceSummaryItem name="MSBuild.ExtensionPack.Crm" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
-                This namespace hosts tasks that can be used to work Microsoft Dymanics CRM</NamespaceSummaryItem>
+                This namespace hosts tasks that can be used to work Microsoft Dynamics CRM</NamespaceSummaryItem>
 <NamespaceSummaryItem name="MSBuild.ExtensionPack.Crm.Entities" isDocumented="False" />
 <NamespaceSummaryItem name="MSBuild.ExtensionPack.Git" isDocumented="True">&lt;h4&gt;Overview&lt;/h4&gt;
                 This namespace hosts tasks that can be used to work with the popular Distributed Version Control System, Git</NamespaceSummaryItem></NamespaceSummaries>
