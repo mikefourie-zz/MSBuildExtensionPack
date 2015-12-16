@@ -11,7 +11,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     using Microsoft.Build.Utilities;
 
     /// <summary>
-    /// Executes Test Cases using NUnit (Tested using v3.0.5610.33199)
+    /// Executes Test Cases using NUnit (Tested using v3.0.1)
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -29,7 +29,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///       <Assemblies Include="d:\a\*.dll"/>
     ///     </ItemGroup>
     ///     <!-- Run an NUnit Project -->
-    ///     <MSBuild.ExtensionPack.CodeQuality.NUnit Assemblies="d:\a\Project1.nunit" ToolPath="$(ToolPath)">
+    ///     <MSBuild.ExtensionPack.CodeQuality.NUnit3 Assemblies="d:\a\Project1.nunit" ToolPath="$(ToolPath)">
     ///       <Output TaskParameter="Total" PropertyName="ResultTotal"/>
     ///       <Output TaskParameter="NotRun" PropertyName="ResultNotRun"/>
     ///       <Output TaskParameter="Failures" PropertyName="ResultFailures"/>
@@ -38,7 +38,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///       <Output TaskParameter="Ignored" PropertyName="ResultIgnored"/>
     ///       <Output TaskParameter="Skipped" PropertyName="ResultSkipped"/>
     ///       <Output TaskParameter="Invalid" PropertyName="ResultInvalid"/>
-    ///     </MSBuild.ExtensionPack.CodeQuality.NUnit>
+    ///     </MSBuild.ExtensionPack.CodeQuality.NUnit3>
     ///     <Message Text="ResultTotal: $(ResultTotal)"/>
     ///     <Message Text="ResultNotRun: $(ResultNotRun)"/>
     ///     <Message Text="ResultFailures: $(ResultFailures)"/>
@@ -48,7 +48,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///     <Message Text="ResultSkipped: $(ResultSkipped)"/>
     ///     <Message Text="ResultInvalid: $(ResultInvalid)"/>
     ///     <!--- Run NUnit over a collection of assemblies -->
-    ///     <MSBuild.ExtensionPack.CodeQuality.NUnit Assemblies="@(Assemblies)" ToolPath="$(ToolPath)" OutputXmlFile="D:\a\NunitResults2.xml">
+    ///     <MSBuild.ExtensionPack.CodeQuality.NUnit3 Assemblies="@(Assemblies)" ToolPath="$(ToolPath)" OutputXmlFile="D:\a\NunitResults2.xml">
     ///       <Output TaskParameter="Total" PropertyName="ResultTotal"/>
     ///       <Output TaskParameter="NotRun" PropertyName="ResultNotRun"/>
     ///       <Output TaskParameter="Failures" PropertyName="ResultFailures"/>
@@ -57,7 +57,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
     ///       <Output TaskParameter="Ignored" PropertyName="ResultIgnored"/>
     ///       <Output TaskParameter="Skipped" PropertyName="ResultSkipped"/>
     ///       <Output TaskParameter="Invalid" PropertyName="ResultInvalid"/>
-    ///     </MSBuild.ExtensionPack.CodeQuality.NUnit>
+    ///     </MSBuild.ExtensionPack.CodeQuality.NUnit3>
     ///     <Message Text="ResultTotal: $(ResultTotal)"/>
     ///     <Message Text="ResultNotRun: $(ResultNotRun)"/>
     ///     <Message Text="ResultFailures: $(ResultFailures)"/>
@@ -72,17 +72,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </example>
     public class NUnit3 : ToolTask
     {
-        private string version = "3.0.5610";
-
-        /// <summary>
-        /// The version of NUnit to run. Default is 3.0.5610
-        /// </summary>
-        public string Version
-        {
-            get { return this.version; }
-            set { this.version = value; }
-        }
-
         /// <summary>
         /// Gets or sets the assemblies.
         /// </summary>
@@ -101,14 +90,20 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public bool FailOnFailures { get; set; }
 
         /// <summary>
-        /// Comma separated list of categories to include.
+        /// Test selection indicating what tests will be run. See documentation.
         /// </summary>
-        public string IncludeCategory { get; set; }
+        public string Where { get; set; }
 
         /// <summary>
-        /// Comma separated list of categories to exclude.
+        /// Dispose each test runner after it has finished running its tests. Default is false.
         /// </summary>
-        public string ExcludeCategory { get; set; }
+        public bool DisposeRunners { get; set; }
+
+        /// <summary>
+        /// Specify the maximum number of test assembly agents to run at one time. If not specified,
+        /// there is no limit.
+        /// </summary>
+        public int Agents { get; set; }
 
         /// <summary>
         /// Sets the OutputXmlFile name
@@ -127,8 +122,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         /// <summary>
         /// Number of worker threads to be used in running tests. If not specified, defaults to
-        /// 2 or the number of processors, whichever is
-        /// greater.
+        /// 2 or the number of processors, whichever is greater.
         /// </summary>
         public int WorkerThreads { get; set; }
 
@@ -230,14 +224,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         protected override string ToolName
         {
-            get { return "nunit-console.exe"; }
+            get { return "nunit3-console.exe"; }
         }
 
         protected override string GenerateFullPathToTool()
         {
             if (string.IsNullOrEmpty(this.ToolPath))
             {
-                this.ToolPath = string.Format(CultureInfo.InvariantCulture, System.Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Nunit {0}\bin"), this.Version);
+                this.ToolPath = Environment.ExpandEnvironmentVariables(@"%programfiles(x86)%\NUnit.org\nunit-console");
             }
 
             return string.IsNullOrEmpty(this.ToolPath) ? this.ToolName : Path.Combine(this.ToolPath, this.ToolName);
@@ -259,6 +253,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 builder.AppendSwitch("--shadowcopy");
             }
+            if (this.DisposeRunners)
+            {
+                builder.AppendSwitch("--dispose-runners");
+            }
             if (this.WorkerThreads > 0)
             {
                 builder.AppendSwitch("--workers=" + this.WorkerThreads);
@@ -267,18 +265,21 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 builder.AppendSwitch("--timeout=" + this.TestTimeout);
             }
-            builder.AppendSwitchIfNotNull("--labels=", this.Labels);            
+            if (this.Agents > 0)
+            {
+                builder.AppendSwitch("--agents=" + this.Agents);
+            }
+            builder.AppendSwitchIfNotNull("--labels=", this.Labels);
             builder.AppendSwitchIfNotNull("--test=", this.Test);
             builder.AppendSwitchIfNotNull("--config=", this.Configuration);
-            builder.AppendSwitchIfNotNull("--include=", this.IncludeCategory);
-            builder.AppendSwitchIfNotNull("--exclude=", this.ExcludeCategory);
+            builder.AppendSwitchIfNotNull("--where=", this.Where);
             builder.AppendSwitchIfNotNull("--process=", this.Process);
             builder.AppendSwitchIfNotNull("--domain=", this.Domain);
             builder.AppendSwitchIfNotNull("--framework=", this.Framework);
             if (this.OutputXmlFile != null)
             {
                 builder.AppendSwitch("--result=" + this.OutputXmlFile + ";format=nunit2");
-            } 
+            }
             else
             {
                 builder.AppendSwitch("--result=TestResult.xml;format=nunit2");
@@ -299,7 +300,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             return 0;
         }
-        
+
         protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
         {
             this.Log.LogMessage(MessageImportance.Normal, singleLine);
