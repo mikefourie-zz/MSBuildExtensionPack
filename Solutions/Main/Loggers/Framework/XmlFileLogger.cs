@@ -309,6 +309,10 @@ namespace MSBuild.ExtensionPack.Loggers
                 return;
             }
 
+			// Avoid CDATA in CDATA
+			message = message.Replace("<![CDATA[", "");
+			message = message.Replace("]]>", "");
+			
             message = message.Replace("&", "&amp;");
             if (escape)
             {
