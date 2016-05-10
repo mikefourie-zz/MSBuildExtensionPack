@@ -369,7 +369,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string user = "*";
             if (!string.IsNullOrEmpty(this.User))
             {
-                user = string.Format("/user:\"{0}\"", this.User);
+                user = string.Format(CultureInfo.CurrentCulture, "/user:\"{0}\"", this.User);
             }
 
             this.ExecuteCommand("status", string.Format(CultureInfo.CurrentCulture, "{0}", user), "/Format:detailed /recursive");
