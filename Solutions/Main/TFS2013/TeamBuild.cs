@@ -3,13 +3,13 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Tfs2013
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Client;
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -262,7 +262,7 @@ namespace MSBuild.ExtensionPack.Tfs2013
             {
                 request.DropLocation = this.DropLocation;
             }
-            
+
             // queue the build
             var queuedBuild = this.buildServer.QueueBuild(request, QueueOptions.None);
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "The build is now in state {0}", queuedBuild.Status));
@@ -283,16 +283,16 @@ namespace MSBuild.ExtensionPack.Tfs2013
             {
                 buildDetailSpec.DefinitionSpec.Name = this.BuildDefinitionName;
             }
-            
+
             // Only get latest
-            buildDetailSpec.MaxBuildsPerDefinition = 1; 
-            buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending; 
+            buildDetailSpec.MaxBuildsPerDefinition = 1;
+            buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
             if (!string.IsNullOrEmpty(this.Status))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Filtering on Status: {0}", this.Status));
                 buildDetailSpec.Status = (BuildStatus)System.Enum.Parse(typeof(BuildStatus), this.buildStatus);
             }
-            
+
             // do the search and extract the details from the singleton expected result
             IBuildQueryResult results = this.buildServer.QueryBuilds(buildDetailSpec);
 
@@ -307,18 +307,18 @@ namespace MSBuild.ExtensionPack.Tfs2013
                 ibuildDef.SetMetadata("CompilationStatus", this.buildDetails.CompilationStatus.ToString());
                 ibuildDef.SetMetadata("CompilationSuccess", this.buildDetails.CompilationStatus == BuildPhaseStatus.Succeeded ? "true" : "false");
                 ibuildDef.SetMetadata("DropLocation", this.buildDetails.DropLocation ?? string.Empty);
-                ibuildDef.SetMetadata("FinishTime", this.buildDetails.FinishTime.ToString());
+                ibuildDef.SetMetadata("FinishTime", this.buildDetails.FinishTime.ToString(CultureInfo.CurrentCulture));
                 ibuildDef.SetMetadata("KeepForever", this.buildDetails.KeepForever.ToString());
                 ibuildDef.SetMetadata("LabelName", this.buildDetails.LabelName ?? string.Empty);
                 ibuildDef.SetMetadata("LastChangedBy", this.buildDetails.LastChangedBy ?? string.Empty);
-                ibuildDef.SetMetadata("LastChangedOn", this.buildDetails.LastChangedOn.ToString());
+                ibuildDef.SetMetadata("LastChangedOn", this.buildDetails.LastChangedOn.ToString(CultureInfo.CurrentCulture));
                 ibuildDef.SetMetadata("LogLocation", this.buildDetails.LogLocation ?? string.Empty);
                 ibuildDef.SetMetadata("Quality", this.buildDetails.Quality ?? string.Empty);
                 ibuildDef.SetMetadata("Reason", this.buildDetails.Reason.ToString());
                 ibuildDef.SetMetadata("RequestedBy", this.buildDetails.RequestedBy ?? string.Empty);
                 ibuildDef.SetMetadata("RequestedFor", this.buildDetails.RequestedFor ?? string.Empty);
                 ibuildDef.SetMetadata("SourceGetVersion", this.buildDetails.SourceGetVersion ?? string.Empty);
-                ibuildDef.SetMetadata("StartTime", this.buildDetails.StartTime.ToString() ?? string.Empty);
+                ibuildDef.SetMetadata("StartTime", this.buildDetails.StartTime.ToString(CultureInfo.CurrentCulture) ?? string.Empty);
                 ibuildDef.SetMetadata("Status", this.buildDetails.Status.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("TestStatus", this.buildDetails.TestStatus.ToString() ?? string.Empty);
                 ibuildDef.SetMetadata("TestSuccess", this.buildDetails.TestStatus == BuildPhaseStatus.Succeeded ? "true" : "false");

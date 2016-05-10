@@ -3,6 +3,9 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Security
 {
+    using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
+    using MSBuild.ExtensionPack.Security.Extended;
     using System;
     using System.Globalization;
     using System.IO;
@@ -12,9 +15,6 @@ namespace MSBuild.ExtensionPack.Security
     using System.Security.Cryptography;
     using System.Security.Cryptography.X509Certificates;
     using System.Security.Principal;
-    using Microsoft.Build.Framework;
-    using Microsoft.Build.Utilities;
-    using MSBuild.ExtensionPack.Security.Extended;
 
     internal enum CryptGetProvParamType
     {
@@ -517,14 +517,14 @@ namespace MSBuild.ExtensionPack.Security
                 this.CertInfo.SetMetadata("SubjectNameOidValue", cert.SubjectName.Oid.Value ?? string.Empty);
                 this.CertInfo.SetMetadata("SerialNumber", cert.SerialNumber ?? string.Empty);
                 this.CertInfo.SetMetadata("Archived", cert.Archived.ToString());
-                this.CertInfo.SetMetadata("NotBefore", cert.NotBefore.ToString());
+                this.CertInfo.SetMetadata("NotBefore", cert.NotBefore.ToString(CultureInfo.CurrentCulture));
                 this.CertInfo.SetMetadata("FriendlyName", cert.FriendlyName);
                 this.CertInfo.SetMetadata("HasPrivateKey", cert.HasPrivateKey.ToString());
                 this.CertInfo.SetMetadata("Thumbprint", cert.Thumbprint ?? string.Empty);
                 this.CertInfo.SetMetadata("Version", cert.Version.ToString());
                 this.CertInfo.SetMetadata("SignatureAlgorithm", cert.SignatureAlgorithm.FriendlyName);
                 this.CertInfo.SetMetadata("IssuerName", cert.IssuerName.Name);
-                this.CertInfo.SetMetadata("NotAfter", cert.NotAfter.ToString());
+                this.CertInfo.SetMetadata("NotAfter", cert.NotAfter.ToString(CultureInfo.CurrentCulture));
 
                 var privateKeyFileName = GetKeyFileName(cert);
                 if (!string.IsNullOrEmpty(privateKeyFileName))

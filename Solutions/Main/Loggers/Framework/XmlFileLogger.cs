@@ -3,6 +3,8 @@
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Loggers
 {
+    using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -12,8 +14,6 @@ namespace MSBuild.ExtensionPack.Loggers
     using System.Security;
     using System.Text;
     using System.Xml;
-    using Microsoft.Build.Framework;
-    using Microsoft.Build.Utilities;
 
     /// <summary>
     /// <para>This logger can be used to log in xml format</para>
@@ -135,7 +135,7 @@ namespace MSBuild.ExtensionPack.Loggers
                 this.xmlWriter = new XmlTextWriter(this.logFileName, this.encoding) { Formatting = Formatting.Indented };
                 this.xmlWriter.WriteStartDocument();
                 this.xmlWriter.WriteStartElement("build");
-                this.xmlWriter.Flush();                
+                this.xmlWriter.Flush();
             }
             catch (Exception exception)
             {
@@ -163,10 +163,10 @@ namespace MSBuild.ExtensionPack.Loggers
             this.xmlWriter.WriteValue(this.errors);
             this.xmlWriter.WriteEndElement();
             this.xmlWriter.WriteStartElement("starttime");
-            this.xmlWriter.WriteValue(this.startTime.ToString());
+            this.xmlWriter.WriteValue(this.startTime.ToString(CultureInfo.CurrentCulture));
             this.xmlWriter.WriteEndElement();
             this.xmlWriter.WriteStartElement("endtime");
-            this.xmlWriter.WriteValue(DateTime.UtcNow.ToString());
+            this.xmlWriter.WriteValue(DateTime.UtcNow.ToString(CultureInfo.CurrentCulture));
             this.xmlWriter.WriteEndElement();
             this.xmlWriter.WriteStartElement("timeelapsed");
             TimeSpan s = DateTime.UtcNow - this.startTime;
@@ -309,10 +309,10 @@ namespace MSBuild.ExtensionPack.Loggers
                 return;
             }
 
-			// Avoid CDATA in CDATA
-			message = message.Replace("<![CDATA[", "");
-			message = message.Replace("]]>", "");
-			
+            // Avoid CDATA in CDATA
+            message = message.Replace("<![CDATA[", "");
+            message = message.Replace("]]>", "");
+
             message = message.Replace("&", "&amp;");
             if (escape)
             {
