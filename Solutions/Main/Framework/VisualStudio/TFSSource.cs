@@ -369,10 +369,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string user = "*";
             if (!string.IsNullOrEmpty(this.User))
             {
-                user = string.Format(CultureInfo.CurrentCulture, "/user:\"{0}\"", this.User);
+                user = this.User;
             }
 
-            this.ExecuteCommand("status", string.Format(CultureInfo.CurrentCulture, "{0}", user), "/Format:detailed /recursive");
+            this.ExecuteCommand("status", string.Format(CultureInfo.CurrentCulture, "/user:\"{0}\"", user), "/Format:detailed /recursive");
             this.PendingChanges = this.returnOutput;
             this.PendingChangesExistItem = new TaskItem[1];
             ITaskItem t = new TaskItem(this.ItemPath);
