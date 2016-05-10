@@ -9,7 +9,7 @@
     </ItemGroup>
     <Target Name="Default">
         <!-- Check for pending changes -->
-        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/APath" WorkingDirectory="C:\Projects\SpeedCMMI">
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/APath" WorkingDirectory="C:\Projects\SpeedCMMI" User="$(USERNAME)">
             <Output TaskParameter="PendingChanges" PropertyName="PendingChangesText" />
             <Output TaskParameter="PendingChangesExist" PropertyName="DoChangesExist" />
         </MSBuild.ExtensionPack.VisualStudio.TfsSource>
