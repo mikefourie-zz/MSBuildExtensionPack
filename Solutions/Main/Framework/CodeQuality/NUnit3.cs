@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="NUnit.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="NUnit3.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.CodeQuality
 {
@@ -222,10 +222,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         public bool TeamCity { get; set; }
 
-        protected override string ToolName
-        {
-            get { return "nunit3-console.exe"; }
-        }
+        protected override string ToolName => "nunit3-console.exe";
 
         protected override string GenerateFullPathToTool()
         {
@@ -245,30 +242,37 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 builder.AppendSwitch("--x86");
             }
+
             if (this.TeamCity)
             {
                 builder.AppendSwitch("--teamcity");
             }
+
             if (!this.NoShadow)
             {
                 builder.AppendSwitch("--shadowcopy");
             }
+
             if (this.DisposeRunners)
             {
                 builder.AppendSwitch("--dispose-runners");
             }
+
             if (this.WorkerThreads > 0)
             {
                 builder.AppendSwitch("--workers=" + this.WorkerThreads);
             }
+
             if (this.TestTimeout > 0)
             {
                 builder.AppendSwitch("--timeout=" + this.TestTimeout);
             }
+
             if (this.Agents > 0)
             {
                 builder.AppendSwitch("--agents=" + this.Agents);
             }
+
             builder.AppendSwitchIfNotNull("--labels=", this.Labels);
             builder.AppendSwitchIfNotNull("--test=", this.Test);
             builder.AppendSwitchIfNotNull("--config=", this.Configuration);
@@ -276,6 +280,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
             builder.AppendSwitchIfNotNull("--process=", this.Process);
             builder.AppendSwitchIfNotNull("--domain=", this.Domain);
             builder.AppendSwitchIfNotNull("--framework=", this.Framework);
+
             if (this.OutputXmlFile != null)
             {
                 builder.AppendSwitch("--result=" + this.OutputXmlFile + ";format=nunit2");
@@ -284,6 +289,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
             {
                 builder.AppendSwitch("--result=TestResult.xml;format=nunit2");
             }
+
             builder.AppendSwitchIfNotNull("--err=", this.ErrorOutputFile);
             builder.AppendSwitchIfNotNull("--out=", this.OutputFile);
             return builder.ToString();

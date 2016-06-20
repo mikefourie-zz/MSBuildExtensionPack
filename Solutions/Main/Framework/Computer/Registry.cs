@@ -322,7 +322,7 @@ namespace MSBuild.ExtensionPack.Computer
             if (changed)
             {
                 // Broadcast config change
-                if (0 == NativeMethods.SendMessageTimeout(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SETTINGCHANGE, 0, "Environment", NativeMethods.SMTO_ABORTIFHUNG, NativeMethods.SENDMESSAGE_TIMEOUT, 0))
+                if (NativeMethods.SendMessageTimeout(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SETTINGCHANGE, 0, "Environment", NativeMethods.SMTO_ABORTIFHUNG, NativeMethods.SENDMESSAGE_TIMEOUT, 0) == 0)
                 {
                     this.LogTaskWarning("NativeMethods.SendMessageTimeout returned 0");
                 }
@@ -383,13 +383,10 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
-            if (subKey != null)
+            var val = subKey?.GetValue(this.Value);
+            if (val != null)
             {
-                var val = subKey.GetValue(this.Value);
-                if (val != null)
-                {
-                    subKey.DeleteValue(this.Value);
-                }
+                subKey.DeleteValue(this.Value);
             }
         }
 
@@ -397,7 +394,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Value: {0} for Key {1} exists in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
-            this.Exists = !((subKey == null) || (subKey.GetValue(this.Value) == null));
+            this.Exists = subKey?.GetValue(this.Value) != null;
         }
     }
 }

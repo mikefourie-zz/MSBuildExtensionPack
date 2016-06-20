@@ -1201,4 +1201,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "MSBuild.ExtensionPack.Subversion.Svn.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "MSBuild.ExtensionPack.VisualStudio.TfsSource.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "MSBuild.ExtensionPack.Xml.XmlFile.#InternalExecute()")]
-

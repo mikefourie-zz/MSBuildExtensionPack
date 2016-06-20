@@ -25,4 +25,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "MSBuild.ExtensionPack.Loggers.XmlFileLogger.#InitializeFileLogger()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "MSBuild.ExtensionPack.Loggers.SecureFileLogger.#InitializeFileLogger()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "MSBuild.ExtensionPack.Loggers.SqlLogger.#ApplyFileLoggerParameter(System.String,System.String)")]
-

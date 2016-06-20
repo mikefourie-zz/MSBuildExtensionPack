@@ -1023,7 +1023,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
 
             var serviceDependencies = new List<string>();
-            if (null != this.ServiceDependencies)
+            if (this.ServiceDependencies != null)
             {
                 serviceDependencies.AddRange(this.ServiceDependencies.Select(dep => dep.ItemSpec));
             }

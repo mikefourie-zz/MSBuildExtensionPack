@@ -32,4 +32,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "OutputFilePath", Scope = "member", Target = "MSBuild.ExtensionPack.Sql2014.Database.#ScriptData()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "DatabaseItem", Scope = "member", Target = "MSBuild.ExtensionPack.Sql2014.Database.#Attach()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "MSBuild.ExtensionPack.Sql2014.Database.#InternalExecute()")]
-
