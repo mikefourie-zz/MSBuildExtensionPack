@@ -222,7 +222,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         public bool TeamCity { get; set; }
 
-        protected override string ToolName => "nunit3-console.exe";
+        protected override string ToolName
+        {
+            get { return "nunit3-console.exe"; }
+        }
 
         protected override string GenerateFullPathToTool()
         {
