@@ -130,7 +130,7 @@ namespace MSBuild.ExtensionPack.Loggers
                 this.xmlWriter = new XmlTextWriter(this.logFileName, this.encoding) { Formatting = Formatting.Indented };
                 this.xmlWriter.WriteStartDocument();
                 this.xmlWriter.WriteStartElement("build");
-                this.xmlWriter.Flush();                
+                this.xmlWriter.Flush();
             }
             catch (Exception exception)
             {

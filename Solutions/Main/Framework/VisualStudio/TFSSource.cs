@@ -19,27 +19,27 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// AcceptMerge
         /// </summary>
         AcceptMerge,
-        
+
         /// <summary>
         /// AcceptTheirs
         /// </summary>
         AcceptTheirs,
-        
+
         /// <summary>
         /// AcceptYours
         /// </summary>
         AcceptYours,
-        
+
         /// <summary>
         /// OverwriteLocal
         /// </summary>
         OverwriteLocal,
-        
+
         /// <summary>
         /// DeleteConflict
         /// </summary>
         DeleteConflict,
-        
+
         /// <summary>
         /// AcceptYoursRenameTheirs
         /// </summary>
@@ -59,7 +59,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// <para><i>GetWorkingChangeset</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, WorkingDirectory, Recursive <b>Output:</b> ExitCode, Changeset)</para>
     /// <para><i>Merge</i> (<b>Required: </b>ItemPath, Destination <b>Optional: </b>Login, Server, Recursive, VersionSpec, Version, Baseless, Force <b>Output:</b> ExitCode)</para>
     /// <para><i>Resolve</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Recursive, Version, Auto, NewName)</para>
-    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, Recursive, Version <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode, PendingChangesExistItem)</para>
+    /// <para><i>GetPendingChanges</i> (<b>Required: </b>ItemPath <b>Optional: </b>Login, Server, Recursive, Version, User <b>Output: </b>PendingChanges, PendingChangesExist <b>Output:</b> ExitCode, PendingChangesExistItem)</para>
     /// <para><i>UndoCheckout</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><i>Undelete</i> (<b>Required: </b>ItemPath or ItemCol <b>Optional: </b>Login, Server, Version, WorkingDirectory, Recursive <b>Output:</b> ExitCode)</para>
     /// <para><b>Remote Execution Support:</b> NA</para>
@@ -77,7 +77,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     ///     </ItemGroup>
     ///     <Target Name="Default">
     ///         <!-- Check for pending changes -->
-    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/APath" WorkingDirectory="C:\Projects\SpeedCMMI">
+    ///         <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="GetPendingChanges" ItemPath="$/AProject/APath" WorkingDirectory="C:\Projects\SpeedCMMI" User="$USERNAME">
     ///             <Output TaskParameter="PendingChanges" PropertyName="PendingChangesText" />
     ///             <Output TaskParameter="PendingChangesExist" PropertyName="DoChangesExist" />
     ///         </MSBuild.ExtensionPack.VisualStudio.TfsSource>
@@ -230,6 +230,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         public string Login { get; set; }
 
         /// <summary>
+        /// Set the user
+        /// </summary>
+        public string User { get; set; }
+
+        /// <summary>
         /// Sets whether the Tfs operation should be recursive. Default is true.
         /// </summary>
         public bool Recursive
@@ -361,7 +366,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         private void GetPendingChanges()
         {
-            this.ExecuteCommand("status", string.Empty, "/Format:detailed /user:* /recursive");
+            string user = "*";
+            if (!string.IsNullOrEmpty(this.User))
+            {
+                user = this.User;
+            }
+
+            this.ExecuteCommand("status", string.Format(CultureInfo.CurrentCulture, "/user:\"{0}\"", user), "/Format:detailed /recursive");
             this.PendingChanges = this.returnOutput;
             this.PendingChangesExistItem = new TaskItem[1];
             ITaskItem t = new TaskItem(this.ItemPath);
@@ -400,7 +411,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (!string.IsNullOrEmpty(this.Comments))
             {
-                 args += string.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\"", this.Comments);
+                args += string.Format(CultureInfo.CurrentCulture, "/comment:\"{0}\"", this.Comments);
             }
 
             this.ExecuteCommand("label " + this.LabelName, args, "/noprompt /recursive");

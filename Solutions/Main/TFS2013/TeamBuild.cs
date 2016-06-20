@@ -262,7 +262,7 @@ namespace MSBuild.ExtensionPack.Tfs2013
             {
                 request.DropLocation = this.DropLocation;
             }
-            
+
             // queue the build
             var queuedBuild = this.buildServer.QueueBuild(request, QueueOptions.None);
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "The build is now in state {0}", queuedBuild.Status));
@@ -283,16 +283,16 @@ namespace MSBuild.ExtensionPack.Tfs2013
             {
                 buildDetailSpec.DefinitionSpec.Name = this.BuildDefinitionName;
             }
-            
+
             // Only get latest
-            buildDetailSpec.MaxBuildsPerDefinition = 1; 
-            buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending; 
+            buildDetailSpec.MaxBuildsPerDefinition = 1;
+            buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
             if (!string.IsNullOrEmpty(this.Status))
             {
                 this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Filtering on Status: {0}", this.Status));
                 buildDetailSpec.Status = (BuildStatus)System.Enum.Parse(typeof(BuildStatus), this.buildStatus);
             }
-            
+
             // do the search and extract the details from the singleton expected result
             IBuildQueryResult results = this.buildServer.QueryBuilds(buildDetailSpec);
 
