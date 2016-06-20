@@ -78,7 +78,10 @@ namespace MSBuild.ExtensionPack.Loggers
         /// </summary>
         public override void Shutdown()
         {
-            this.xmlWriter?.Close();
+            if (this.xmlWriter != null)
+            {
+                this.xmlWriter.Close();
+            }
         }
 
         private static bool NotExpectedException(Exception e)
@@ -140,7 +143,10 @@ namespace MSBuild.ExtensionPack.Loggers
                 }
 
                 string message = string.Format(CultureInfo.InvariantCulture, "Invalid File Logger File {0}. {1}", this.logFileName, exception.Message);
-                this.xmlWriter?.Close();
+                if (this.xmlWriter != null)
+                {
+                    this.xmlWriter.Close();
+                }
 
                 throw new LoggerException(message, exception.InnerException);
             }
