@@ -383,10 +383,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Registry value: {0} from Key: {1} in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, true);
-            var val = subKey?.GetValue(this.Value);
-            if (val != null)
+            if (subKey != null)
             {
-                subKey.DeleteValue(this.Value);
+                var val = subKey.GetValue(this.Value);
+                if (val != null)
+                {
+                    subKey.DeleteValue(this.Value);
+                }
             }
         }
 
@@ -394,7 +397,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Checking if Registry Value: {0} for Key {1} exists in Hive: {2} on: {3}", this.Value, this.Key, this.RegistryHive, this.MachineName));
             RegistryKey subKey = this.registryKey.OpenSubKey(this.Key, false);
-            this.Exists = subKey?.GetValue(this.Value) != null;
+            this.Exists = !((subKey == null) || (subKey.GetValue(this.Value) == null));
         }
     }
 }
