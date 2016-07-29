@@ -240,6 +240,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         protected override string GenerateCommandLineCommands()
         {
             CommandLineBuilder builder = new CommandLineBuilder();
+            builder.AppendSwitch("--noheader");
             builder.AppendFileNamesIfNotNull(this.Assemblies, " ");
             if (this.Use32Bit)
             {
