@@ -1,7 +1,7 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="XProduct.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="XProduct.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 // The code was contributed by Matthias Koch
-//-----------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework
 {
     using System.Collections.Generic;

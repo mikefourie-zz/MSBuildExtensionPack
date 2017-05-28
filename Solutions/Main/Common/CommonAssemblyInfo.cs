@@ -1,15 +1,15 @@
-//-----------------------------------------------------------------------
-// <copyright file="CommonAssemblyInfo.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-//-----------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="CommonAssemblyInfo.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.13.0")]
+[assembly: AssemblyFileVersion("4.0.14.0")]
 [assembly: AssemblyInformationalVersion("4.0.0.0")]
 [assembly: AssemblyCompany("http://www.MSBuildExtensionPack.com")]
-[assembly: AssemblyCopyright("Copyright © 2008 - 2016 http://www.MSBuildExtensionPack.com")]
+[assembly: AssemblyCopyright("Copyright © 2008 - 2017 Mike Fourie and Contributors under MIT License. See https://opensource.org/licenses/MIT")]
 [assembly: AssemblyTrademark("Mike Fourie")]
 [assembly: NeutralResourcesLanguage("")]
 [assembly: AssemblyCulture("")]

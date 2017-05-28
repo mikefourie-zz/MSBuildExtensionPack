@@ -1,6 +1,6 @@
-//-----------------------------------------------------------------------
-// <copyright file="GlobalSuppressions.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-//-----------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="GlobalSuppressions.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames", Justification = "Delay Signed")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Detokenise", Scope = "type", Target = "MSBuild.ExtensionPack.FileSystem.Detokenise", Justification = "The spelling is fine")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Detokenised", Scope = "member", Target = "MSBuild.ExtensionPack.FileSystem.Detokenise.#FilesDetokenised", Justification = "The spelling is fine")]

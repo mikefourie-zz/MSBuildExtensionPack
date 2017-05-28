@@ -1,6 +1,6 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="Iis6AppPool.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-//-----------------------------------------------------------------------
+﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="Iis6AppPool.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Web
 {
     using System;

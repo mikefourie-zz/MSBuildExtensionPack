@@ -1,7 +1,7 @@
-//-----------------------------------------------------------------------
-// <copyright file="Detokenise.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="Detokenise.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 // This task is a derivative of the task posted here: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!244.entry
-//-----------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
 {
     using System;

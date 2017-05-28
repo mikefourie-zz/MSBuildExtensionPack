@@ -1,6 +1,6 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="ConfigMangerTests.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-//-----------------------------------------------------------------------
+﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConfigMangerTests.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //// TODO: on a rainy day.......
 //////using System;
 //////using System.Configuration;

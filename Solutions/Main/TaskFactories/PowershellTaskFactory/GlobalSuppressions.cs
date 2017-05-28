@@ -1,6 +1,6 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="GlobalSuppressions.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-//-----------------------------------------------------------------------
+﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="GlobalSuppressions.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Scope = "member", Target = "MSBuild.ExtensionPack.TaskFactory.PowerShell.PowerShellTask.#SetPropertyValue(Microsoft.Build.Framework.TaskPropertyInfo,System.Object)", Justification = "TODO: Review")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Scope = "member", Target = "MSBuild.ExtensionPack.TaskFactory.PowerShell.PowerShellTask.#GetPropertyValue(Microsoft.Build.Framework.TaskPropertyInfo)", Justification = "TODO: Review")]

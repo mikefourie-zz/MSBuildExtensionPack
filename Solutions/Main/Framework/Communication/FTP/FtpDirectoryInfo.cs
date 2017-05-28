@@ -1,6 +1,6 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="FtpDirectoryInfo.cs">(c) http://www.msbuildextensionpack.com. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
-//-----------------------------------------------------------------------
+﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// <copyright file="FtpDirectoryInfo.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Communication.Extended
 {
     using System;
