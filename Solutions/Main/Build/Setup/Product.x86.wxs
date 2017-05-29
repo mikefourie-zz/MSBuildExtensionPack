@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="MSBuild Extension Pack 4.0.14.0" Language="1033" Version="4.0.14.0" Manufacturer="Mike Fourie" UpgradeCode="CBBB56DB-4CAA-431D-9786-4D3471CCE222">
+    <Product Id="*" Name="MSBuild Extension Pack 5" Language="1033" Version="5.0.0.0" Manufacturer="Mike Fourie" UpgradeCode="6C4CDEDF-6CB5-4666-AEDA-0226288AE374">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
@@ -28,7 +28,7 @@
             <Directory Id="ProgramFiles64Folder">
                 <?endif?>
                 <Directory Id="MSBuildExtensionPack" Name="MSBuildExtensionPack">
-                      <Directory Id="INSTALLFOLDER" Name="4.0">
+                      <Directory Id="INSTALLFOLDER" Name="5.0">
                         <Directory Id="INSTALLRESOURCES" Name="Resources"/>
                       </Directory>
                 </Directory>
@@ -74,22 +74,6 @@
                 <File Id='Help.chm' Name='MSBuild Extension Pack Help.chm' DiskId='1' Source='..\..\Build\Documentation\MSBuild Extension Pack Help.chm'/>
                 <RemoveFile Id='Help.chm' Name='MSBuild Extension Pack Help.chm' On='uninstall'/>
             </Component>
-            <Component Id='MSBuild.ExtensionPack.BizTalk.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.BizTalk.dll' Name='MSBuild.ExtensionPack.BizTalk.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.BizTalk.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.BizTalk.dll' Name='MSBuild.ExtensionPack.BizTalk.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.BizTalk.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.BizTalk.pdb' Name='MSBuild.ExtensionPack.BizTalk.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.BizTalk.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.BizTalk.pdb' Name='MSBuild.ExtensionPack.BizTalk.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Crm.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Crm.dll' Name='MSBuild.ExtensionPack.Crm.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Crm.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Crm.dll' Name='MSBuild.ExtensionPack.Crm.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Crm.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Crm.pdb' Name='MSBuild.ExtensionPack.Crm.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Crm.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Crm.pdb' Name='MSBuild.ExtensionPack.Crm.pdb' On='uninstall'/>
-            </Component>
             <Component Id='MSBuild.ExtensionPack.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.dll' Name='MSBuild.ExtensionPack.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.dll' Name='MSBuild.ExtensionPack.dll' On='uninstall'/>
@@ -102,22 +86,6 @@
                 <File Id='fileMSBuild.ExtensionPack.dll.config' Name='MSBuild.ExtensionPack.dll.config' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.dll.config'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.dll.config' Name='MSBuild.ExtensionPack.dll.config' On='uninstall'/>
             </Component>
-            <Component Id='MSBuild.ExtensionPack.Git.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Git.dll' Name='MSBuild.ExtensionPack.Git.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Git.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Git.dll' Name='MSBuild.ExtensionPack.Git.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Git.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Git.pdb' Name='MSBuild.ExtensionPack.Git.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Git.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Git.pdb' Name='MSBuild.ExtensionPack.Git.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Iis7.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Iis7.dll' Name='MSBuild.ExtensionPack.Iis7.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Iis7.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Iis7.dll' Name='MSBuild.ExtensionPack.Iis7.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Iis7.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Iis7.pdb' Name='MSBuild.ExtensionPack.Iis7.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Iis7.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Iis7.pdb' Name='MSBuild.ExtensionPack.Iis7.pdb' On='uninstall'/>
-            </Component>
             <Component Id='MSBuild.ExtensionPack.Loggers.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.Loggers.dll' Name='MSBuild.ExtensionPack.Loggers.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Loggers.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.Loggers.dll' Name='MSBuild.ExtensionPack.Loggers.dll' On='uninstall'/>
@@ -125,38 +93,6 @@
             <Component Id='MSBuild.ExtensionPack.Loggers.pdb' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.Loggers.pdb' Name='MSBuild.ExtensionPack.Loggers.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Loggers.pdb'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.Loggers.pdb' Name='MSBuild.ExtensionPack.Loggers.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2008.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2008.dll' Name='MSBuild.ExtensionPack.Sql2008.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2008.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2008.dll' Name='MSBuild.ExtensionPack.Sql2008.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2008.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2008.pdb' Name='MSBuild.ExtensionPack.Sql2008.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2008.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2008.pdb' Name='MSBuild.ExtensionPack.Sql2008.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2012.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2012.dll' Name='MSBuild.ExtensionPack.Sql2012.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2012.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2012.dll' Name='MSBuild.ExtensionPack.Sql2012.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2012.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2012.pdb' Name='MSBuild.ExtensionPack.Sql2012.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2012.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2012.pdb' Name='MSBuild.ExtensionPack.Sql2012.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2014.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2014.dll' Name='MSBuild.ExtensionPack.Sql2014.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2014.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2014.dll' Name='MSBuild.ExtensionPack.Sql2014.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Sql2014.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Sql2014.pdb' Name='MSBuild.ExtensionPack.Sql2014.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Sql2014.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Sql2014.pdb' Name='MSBuild.ExtensionPack.Sql2014.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.StyleCop.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.StyleCop.dll' Name='MSBuild.ExtensionPack.StyleCop.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.StyleCop.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.StyleCop.dll' Name='MSBuild.ExtensionPack.StyleCop.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.StyleCop.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.StyleCop.pdb' Name='MSBuild.ExtensionPack.StyleCop.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.StyleCop.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.StyleCop.pdb' Name='MSBuild.ExtensionPack.StyleCop.pdb' On='uninstall'/>
             </Component>
             <Component Id='MSBuild.ExtensionPack.TaskFactory.Dlr.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.TaskFactory.Dlr.dll' Name='MSBuild.ExtensionPack.TaskFactory.Dlr.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.TaskFactory.Dlr.dll'/>
@@ -177,22 +113,6 @@
             <Component Id='MSBuild.ExtensionPack.tasks' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.tasks' Name='MSBuild.ExtensionPack.tasks' DiskId='1' Source='..\..\Common\MSBuild.ExtensionPack.tasks'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.tasks' Name='MSBuild.ExtensionPack.tasks' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs2012.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs2012.dll' Name='MSBuild.ExtensionPack.Tfs2012.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2012.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2012.dll' Name='MSBuild.ExtensionPack.Tfs2012.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs2012.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs2012.pdb' Name='MSBuild.ExtensionPack.Tfs2012.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2012.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2012.pdb' Name='MSBuild.ExtensionPack.Tfs2012.pdb' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs2013.dll' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs2013.dll' Name='MSBuild.ExtensionPack.Tfs2013.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2013.dll'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2013.dll' Name='MSBuild.ExtensionPack.Tfs2013.dll' On='uninstall'/>
-            </Component>
-            <Component Id='MSBuild.ExtensionPack.Tfs2013.pdb' Guid='*'>
-                <File Id='fileMSBuild.ExtensionPack.Tfs2013.pdb' Name='MSBuild.ExtensionPack.Tfs2013.pdb' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.Tfs2013.pdb'/>
-                <RemoveFile Id='RemoveMSBuild.ExtensionPack.Tfs2013.pdb' Name='MSBuild.ExtensionPack.Tfs2013.pdb' On='uninstall'/>
             </Component>
             <Component Id='MSBuild.ExtensionPack.VersionNumber.targets' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' DiskId='1' Source='..\..\Framework\Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets'/>

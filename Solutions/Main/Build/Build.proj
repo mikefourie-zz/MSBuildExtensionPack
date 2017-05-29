@@ -3,7 +3,7 @@
 
     <PropertyGroup>
         <BuildDrive>C:</BuildDrive>
-        <ReleaseVersion>4.0.14.0</ReleaseVersion>
+        <ReleaseVersion>5.0.0.0</ReleaseVersion>
         <ProductName>MSBuild Extension Pack</ProductName>
         <DropFolder>$(BuildDrive)\$(ProductName)\$(ReleaseVersion)</DropFolder>
         <RootFolder>$(MSBuildProjectDirectory)..\..</RootFolder>
@@ -74,8 +74,8 @@
         <Microsoft.Build.Tasks.Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(DropFolder)\Binaries"/>
         <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\x86"/>
         <Microsoft.Build.Tasks.Copy SourceFiles="$(RootFolder)\Common\64\MSBuild.ExtensionPack.tasks" DestinationFolder="$(DropFolder)\x64"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack 4 (x86).msi" DestinationFolder="$(DropFolder)\x86" Condition="$(RTWRelease) == 'true'"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack 4 (x64).msi" DestinationFolder="$(DropFolder)\x64" Condition="$(RTWRelease) == 'true'"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack 5 (x86).msi" DestinationFolder="$(DropFolder)\x86" Condition="$(RTWRelease) == 'true'"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="$(BuildOutput)\MSBuild Extension Pack 5 (x64).msi" DestinationFolder="$(DropFolder)\x64" Condition="$(RTWRelease) == 'true'"/>
     </Target>
 
     <Target Name="CreateZips" Condition="$(RTWRelease) == 'true'">

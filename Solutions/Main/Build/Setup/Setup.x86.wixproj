@@ -4,9 +4,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>3.8</ProductVersion>
-    <ProjectGuid>2eef2b8f-aa26-42c8-ae42-da2fd624f393</ProjectGuid>
+    <ProjectGuid>{44154858-25a9-4b7b-816b-4a0c61e07db8}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>MSBuild Extension Pack 4 %28x86%29</OutputName>
+    <OutputName>MSBuild Extension Pack 5 %28x86%29</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
