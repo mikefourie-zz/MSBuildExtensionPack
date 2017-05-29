@@ -6,14 +6,6 @@
         <ExtensionTasksPath Condition="'$(ExtensionTasksPath)' == ''">$(ProgramFiles)\MSBuildExtensionPack\4.0\</ExtensionTasksPath>
     </PropertyGroup>
 
-    <!-- ============== Crm ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.Data"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.DataMap"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.Organization"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Crm.dll" TaskName="MSBuild.ExtensionPack.Crm.Solution"/>
-
-
-    <!-- ============== Framework ============== -->
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.FxCop"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.NUnit"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.NUnit3"/>
@@ -73,9 +65,10 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.SqlServer.SqlCmd"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.SqlServer.SqlExecute"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.SqlServer.SqlVersion"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Subversion.Svn"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.UI.Console"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.UI.Dialog"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VersionControl.Git"/>
+    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VersionControl.Svn"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.SourceSafe"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.TfsSource"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.VisualStudio.TfsSourceAdmin"/>
@@ -91,62 +84,4 @@
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Web.WebClient"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Xml.XmlFile"/>
     <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.Xml.XmlTask"/>
-  
-  
-    <!-- ============== BizTalk ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkAdaptor"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkApplication"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkAssembly"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkHost"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkHostInstance"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkOrchestration"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkSendHandler"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkSendPort"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkReceiveHandler"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.BizTalk.dll" TaskName="MSBuild.ExtensionPack.BizTalk.BizTalkReceivePort"/>
-
-    
-    <!-- ============== Git ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Git.dll" TaskName="MSBuild.ExtensionPack.Git.Clone"/>
-
-    
-    <!-- ============== HyperV ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.HyperV.dll" TaskName="MSBuild.ExtensionPack.Virtualisation.HyperV"/>
-
-
-    <!-- ============== Iis7 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Application"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7AppPool"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Binding"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)MSBuild.ExtensionPack.Iis7.dll" TaskName="MSBuild.ExtensionPack.Web.Iis7Website"/>
-
-
-    <!-- ============== StyleCop ============== -->
-    <UsingTask AssemblyFile="$(MSBuildProgramFiles32)\StyleCop 4.7\MSBuild.ExtensionPack.StyleCop.dll" TaskName="MSBuild.ExtensionPack.CodeQuality.StyleCop"/>
-
-
-    <!-- ============== Sql2008 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.AnalysisServices"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.Database"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2008.dll" TaskName="MSBuild.ExtensionPack.Sql2008.Server"/>
-
-
-    <!-- ============== Sql2012 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2012.dll" TaskName="MSBuild.ExtensionPack.Sql2012.AnalysisServices"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2012.dll" TaskName="MSBuild.ExtensionPack.Sql2012.Database"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2012.dll" TaskName="MSBuild.ExtensionPack.Sql2012.Server"/>
-
-
-    <!-- ============== Sql2014 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2014.dll" TaskName="MSBuild.ExtensionPack.Sql2014.AnalysisServices"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2014.dll" TaskName="MSBuild.ExtensionPack.Sql2014.Database"/>
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Sql2014.dll" TaskName="MSBuild.ExtensionPack.Sql2014.Server"/>
-
-
-    <!-- ============== Tfs2012 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2012.dll" TaskName="MSBuild.ExtensionPack.Tfs2012.TeamBuild"/>
-
-
-    <!-- ============== Tfs2013 ============== -->
-    <UsingTask AssemblyFile="$(ExtensionTasksPath)\MSBuild.ExtensionPack.Tfs2013.dll" TaskName="MSBuild.ExtensionPack.Tfs2013.TeamBuild"/>
 </Project>
