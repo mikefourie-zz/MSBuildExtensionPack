@@ -16,9 +16,9 @@ namespace MSBuild.ExtensionPack.Framework
     using Microsoft.CSharp;
 
     // Possible future extensions:
-    //   Advanced conversions (supporting more user-defined types via IFormattable, constructors, ToString, TypeConverter/TypeDescriptor, or Reflection/AssignableFrom)
-    //   Languages other than C# (not too hard if we convert to CodeDOM)
-    //   Remote execution support
+    // Advanced conversions (supporting more user-defined types via IFormattable, constructors, ToString, TypeConverter/TypeDescriptor, or Reflection/AssignableFrom)
+    // Languages other than C# (not too hard if we convert to CodeDOM)
+    // Remote execution support
 
     /// <summary>
     /// <b>Valid TaskActions are:</b>
@@ -1351,18 +1351,12 @@ namespace MSBuild.ExtensionPack.Framework
             /// <summary>
             /// Returns the actual compiled method.
             /// </summary>
-            public MethodInfo CompiledMethod
-            {
-                get { return this.compiledMethod; }
-            }
+            public MethodInfo CompiledMethod => this.compiledMethod;
 
             /// <summary>
             /// Returns the total number of parameters required to invoke the method (including default, explicit, and return values).
             /// </summary>
-            public int NumberOfParameters
-            {
-                get { return this.numberOfDefaultParameters + this.inputs.Length + this.outputs.Length; }
-            }
+            public int NumberOfParameters => this.numberOfDefaultParameters + this.inputs.Length + this.outputs.Length;
 
             /// <summary>
             /// Returns the argument index for the given default parameter, or -1 if it is not defined.

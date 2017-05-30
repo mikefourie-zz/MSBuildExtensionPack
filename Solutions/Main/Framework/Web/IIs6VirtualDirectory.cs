@@ -50,11 +50,6 @@ namespace MSBuild.ExtensionPack.Web
 
         private DirectoryEntry websiteEntry;
         private string properties;
-        private string directoryType = "IIsWebVirtualDir";
-        private bool requireApplication = true;
-        private string appPool = "DefaultAppPool";
-        private string name = "ROOT";
-        private string parent = "/ROOT";
 
         /// <summary>
         /// Gets whether the Virtual Directory exists
@@ -65,38 +60,22 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Sets the Parent. Defaults to /ROOT
         /// </summary>
-        public string Parent
-        {
-            get { return this.parent; }
-            set { this.parent = value; }
-        }
+        public string Parent { get; set; } = "/ROOT";
 
         /// <summary>
         /// Sets whether an Application is required. Defaults to true.
         /// </summary>
-        public bool RequireApplication
-        {
-            get { return this.requireApplication; }
-            set { this.requireApplication = value; }
-        }
+        public bool RequireApplication { get; set; } = true;
 
         /// <summary>
         /// Sets the DirectoryType. Supports IIsWebDirectory and IIsWebVirtualDir. Default is IIsWebVirtualDir.
         /// </summary>
-        public string DirectoryType
-        {
-            get { return this.directoryType; }
-            set { this.directoryType = value; }
-        }
+        public string DirectoryType { get; set; } = "IIsWebVirtualDir";
 
         /// <summary>
         /// Sets the AppPool to run in. Default is 'DefaultAppPool'
         /// </summary>
-        public string AppPool
-        {
-            get { return this.appPool; }
-            set { this.appPool = value; }
-        }
+        public string AppPool { get; set; } = "DefaultAppPool";
 
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a>
@@ -104,18 +83,14 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         public string Properties
         {
-            get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
-            set { this.properties = value; }
+            get => System.Web.HttpUtility.HtmlDecode(this.properties);
+            set => this.properties = value;
         }
 
         /// <summary>
         /// Sets the name of the Virtual Directory. Defaults to 'ROOT'
         /// </summary>
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; }
-        }
+        public string Name { get; set; } = "ROOT";
 
         /// <summary>
         /// Sets the name of the Website to add the Virtual Directory to.
@@ -123,15 +98,9 @@ namespace MSBuild.ExtensionPack.Web
         [Required]
         public string Website { get; set; }
 
-        internal string IisPath
-        {
-            get { return "IIS://" + this.MachineName + "/W3SVC"; }
-        }
+        internal string IisPath => "IIS://" + this.MachineName + "/W3SVC";
 
-        internal string AppPoolsPath
-        {
-            get { return "IIS://" + this.MachineName + "/W3SVC/AppPools"; }
-        }
+        internal string AppPoolsPath => "IIS://" + this.MachineName + "/W3SVC/AppPools";
 
         public void Dispose()
         {
@@ -252,10 +221,7 @@ namespace MSBuild.ExtensionPack.Web
             }
             finally
             {
-                if (webService != null)
-                {
-                    webService.Dispose();
-                }
+                webService?.Dispose();
             }
         }
 
@@ -286,10 +252,7 @@ namespace MSBuild.ExtensionPack.Web
             }
             finally
             {
-                if (webService != null)
-                {
-                    webService.Dispose();
-                }
+                webService?.Dispose();
             }
         }
 
@@ -334,7 +297,7 @@ namespace MSBuild.ExtensionPack.Web
                 this.websiteEntry = new DirectoryEntry(parentPath);
             }
 
-            this.websiteEntry.Invoke("Delete", new[] { "IIsWebVirtualDir", this.Name });
+            this.websiteEntry.Invoke("Delete", "IIsWebVirtualDir", this.Name);
         }
 
         private void Create()
@@ -401,7 +364,7 @@ namespace MSBuild.ExtensionPack.Web
                     string[] propList = this.Properties.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string s in propList)
                     {
-                        string[] propPair = s.Split(new[] { '=' });
+                        string[] propPair = s.Split('=');
                         string propName = propPair[0];
                         string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
 
@@ -440,15 +403,8 @@ namespace MSBuild.ExtensionPack.Web
             }
             finally
             {
-                if (this.websiteEntry != null)
-                {
-                    this.websiteEntry.Dispose();
-                }
-
-                if (vdirEntry != null)
-                {
-                    vdirEntry.Dispose();
-                }
+                this.websiteEntry?.Dispose();
+                vdirEntry?.Dispose();
             }
         }
     }

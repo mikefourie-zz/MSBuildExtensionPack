@@ -81,15 +81,10 @@ namespace MSBuild.ExtensionPack.Communication.Extended
         #endregion
 
         #region Properties
-        public int Port
-        {
-            get { return this.ftpPort; }
-        }
+        public int Port => this.ftpPort;
 
-        public string FtpHost
-        {
-            get { return this.ftpHost; }
-        }
+        public string FtpHost => this.ftpHost;
+
         #endregion
 
         /// <summary>

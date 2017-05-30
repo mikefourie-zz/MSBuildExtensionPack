@@ -296,18 +296,21 @@ namespace MSBuild.ExtensionPack.Framework
                 using (Process process = Process.Start(startInfo))
                 {
                     this.Log.LogMessage("Collect Standard Output Stream");
-                    while (!process.StandardOutput.EndOfStream || !process.HasExited)
+                    while (process != null && (!process.StandardOutput.EndOfStream || !process.HasExited))
                     {
                         this.CollectOutputLine(process.StandardOutput.ReadLine());
                     }
 
                     this.Log.LogMessage("Collect Standard Error Stream");
-                    while (!process.StandardError.EndOfStream)
+                    while (process != null && !process.StandardError.EndOfStream)
                     {
                         this.CollectOutputLine(process.StandardError.ReadLine());
                     }
 
-                    this.ExitCode = process.ExitCode;
+                    if (process != null)
+                    {
+                        this.ExitCode = process.ExitCode;
+                    }
                 }
             }
 

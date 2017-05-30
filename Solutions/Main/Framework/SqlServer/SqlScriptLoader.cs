@@ -29,7 +29,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             this.strip = stripMultiLineComments;

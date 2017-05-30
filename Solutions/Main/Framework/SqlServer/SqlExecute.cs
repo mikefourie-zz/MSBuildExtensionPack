@@ -76,9 +76,8 @@ namespace MSBuild.ExtensionPack.SqlServer
         private const string ExecuteReaderTaskAction = "ExecuteReader";
         private const string ExecuteRawReaderTaskAction = "ExecuteRawReader";
         private static readonly Regex Splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-        private int commandTimeout = 30;
+
         private DateTime timer;
-        private bool stripMultiLineComments = true;
 
         internal delegate void ScriptExecutionEventHandler(object sender, ExecuteEventArgs e);
 
@@ -92,11 +91,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <summary>
         /// Sets the timeout in seconds. Default is 30
         /// </summary>
-        public int CommandTimeout
-        {
-            get { return this.commandTimeout; }
-            set { this.commandTimeout = value; }
-        }
+        public int CommandTimeout { get; set; } = 30;
 
         /// <summary>
         /// Allows setting encoding code page to be used. Default is System.Text.Encoding.Default
@@ -127,11 +122,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// <summary>
         /// Specifies whether to parse out multi-line comments before executing. This can be handy if your comments contain GO statements. Please note that if your sql contains code with /* in it, then you should set this to false. Default is true.
         /// </summary>
-        public bool StripMultiLineComments
-        {
-            get { return this.stripMultiLineComments; }
-            set { this.stripMultiLineComments = value; }
-        }
+        public bool StripMultiLineComments { get; set; } = true;
 
         /// <summary>
         /// Set to true to run the sql within a transaction
@@ -292,18 +283,11 @@ namespace MSBuild.ExtensionPack.SqlServer
                                     }
                                 }
 
-                                if (sqlTransaction != null)
-                                {
-                                    sqlTransaction.Commit();
-                                }
+                                sqlTransaction?.Commit();
                             }
                             catch
                             {
-                                if (sqlTransaction != null)
-                                {
-                                    sqlTransaction.Rollback();
-                                }
-
+                                sqlTransaction?.Rollback();
                                 throw;
                             }
 
@@ -425,10 +409,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                             break;
                     }
 
-                    if (sqlTransaction != null)
-                    {
-                        sqlTransaction.Commit();
-                    }
+                    sqlTransaction?.Commit();
 
                     TimeSpan s = DateTime.Now - this.timer;
                     this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, "Execution Time: {0} seconds", s.TotalSeconds));
@@ -436,11 +417,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                 }
                 catch
                 {
-                    if (sqlTransaction != null)
-                    {
-                        sqlTransaction.Rollback();
-                    }
-
+                    sqlTransaction?.Rollback();
                     throw;
                 }
             }
@@ -459,10 +436,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             }
             finally
             {
-                if (connection != null)
-                {
-                    connection.Close();
-                }
+                connection?.Close();
             }
 
             return returnedConnection;
@@ -479,9 +453,9 @@ namespace MSBuild.ExtensionPack.SqlServer
 
         private void OnScriptFileExecuted(ExecuteEventArgs scriptFileExecuted)
         {
-            if (scriptFileExecuted != null && this.ScriptFileExecuted != null)
+            if (scriptFileExecuted != null)
             {
-                this.ScriptFileExecuted(null, scriptFileExecuted);
+                this.ScriptFileExecuted?.Invoke(null, scriptFileExecuted);
             }
         }
 

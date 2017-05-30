@@ -121,7 +121,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (parameters == null)
             {
-                throw new ArgumentNullException("parameters");
+                throw new ArgumentNullException(nameof(parameters));
             }
 
             IDictionary<string, string> paramaterBag = new Dictionary<string, string>();
@@ -148,17 +148,17 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (parametersBag == null)
             {
-                throw new ArgumentNullException("parametersBag");
+                throw new ArgumentNullException(nameof(parametersBag));
             }
 
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (parametersBag.ContainsKey(name))

@@ -99,7 +99,6 @@ namespace MSBuild.ExtensionPack.Xml
         private const string TransformTaskAction = "Transform";
         private const string ValidateTaskAction = "Validate";
 
-        private string targetNamespace = string.Empty;
         private XDocument xmlDoc;
         private Encoding fileEncoding = Encoding.UTF8;
         private ConformanceLevel conformanceLevel;
@@ -132,11 +131,7 @@ namespace MSBuild.ExtensionPack.Xml
         /// <summary>
         /// Sets the TargetNamespace for Validate. Default is ""
         /// </summary>
-        public string TargetNamespace
-        {
-            get { return this.targetNamespace; }
-            set { this.targetNamespace = value; }
-        }
+        public string TargetNamespace { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets the Schema Files collection
@@ -158,8 +153,8 @@ namespace MSBuild.ExtensionPack.Xml
         /// </summary>
         public string TextEncoding
         {
-            get { return this.fileEncoding.ToString(); }
-            set { this.fileEncoding = System.Text.Encoding.GetEncoding(value); }
+            get => this.fileEncoding.ToString();
+            set => this.fileEncoding = System.Text.Encoding.GetEncoding(value);
         }
 
         /// <summary>
@@ -167,8 +162,8 @@ namespace MSBuild.ExtensionPack.Xml
         /// </summary>
         public string Conformance
         {
-            get { return this.conformanceLevel.ToString(); }
-            set { this.conformanceLevel = (ConformanceLevel)Enum.Parse(typeof(ConformanceLevel), value); }
+            get => this.conformanceLevel.ToString();
+            set => this.conformanceLevel = (ConformanceLevel)Enum.Parse(typeof(ConformanceLevel), value);
         }
 
         /// <summary>
@@ -301,10 +296,7 @@ namespace MSBuild.ExtensionPack.Xml
                         }
                         finally
                         {
-                            if (streamWriter != null)
-                            {
-                                streamWriter.Close();
-                            }
+                            streamWriter?.Close();
                         }
                     }
                 }
@@ -347,7 +339,7 @@ namespace MSBuild.ExtensionPack.Xml
                     errorEncountered = true;
                 });
 
-            this.IsValid = errorEncountered ? false : true;
+            this.IsValid = !errorEncountered;
         }
     }
 }

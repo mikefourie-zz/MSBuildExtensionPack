@@ -310,8 +310,8 @@ namespace MSBuild.ExtensionPack.Security
         /// </summary>
         public string StoreName
         {
-            get { return this.storeName.ToString(); }
-            set { this.storeName = (StoreName)Enum.Parse(typeof(StoreName), value); }
+            get => this.storeName.ToString();
+            set => this.storeName = (StoreName)Enum.Parse(typeof(StoreName), value);
         }
 
         /// <summary>

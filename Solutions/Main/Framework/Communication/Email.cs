@@ -37,7 +37,6 @@ namespace MSBuild.ExtensionPack.Communication
     /// </example>
     public class Email : BaseTask
     {
-        private bool useDefaultCredentials = true;
         private string format = "HTML";
         private System.Net.Mail.MailPriority priority = System.Net.Mail.MailPriority.Normal;
 
@@ -80,8 +79,8 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         public string Priority
         {
-            get { return this.priority.ToString(); }
-            set { this.priority = (System.Net.Mail.MailPriority)Enum.Parse(typeof(System.Net.Mail.MailPriority), value); }
+            get => this.priority.ToString();
+            set => this.priority = (System.Net.Mail.MailPriority)Enum.Parse(typeof(System.Net.Mail.MailPriority), value);
         }
 
         /// <summary>
@@ -94,8 +93,8 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         public string Format
         {
-            get { return this.format; }
-            set { this.format = value; }
+            get => this.format;
+            set => this.format = value;
         }
 
         /// <summary>
@@ -103,11 +102,7 @@ namespace MSBuild.ExtensionPack.Communication
         /// <para>If UserName and UserPassword is supplied, this is set to false. If UserName and UserPassword are not supplied and this is set to false then mail is sent to the server anonymously.</para>
         /// <para><b>If you provide credentials for basic authentication, they are sent to the server in clear text. This can present a security issue because your credentials can be seen, and then used by others.</b></para>
         /// </summary>
-        public bool UseDefaultCredentials
-        {
-            get { return this.useDefaultCredentials; }
-            set { this.useDefaultCredentials = value; }
-        }
+        public bool UseDefaultCredentials { get; set; } = true;
 
         /// <summary>
         /// An Item Collection of full paths of files to attach to the email.

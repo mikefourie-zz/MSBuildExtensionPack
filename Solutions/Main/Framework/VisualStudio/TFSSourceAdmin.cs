@@ -36,7 +36,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     public class TfsSourceAdmin : BaseTask
     {
         private string teamFoundationExe;
-        private string version = "2013";
+
         private ShellWrapper shellWrapper;
 
         /// <summary>
@@ -62,11 +62,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the version of Tfs. Default is 2013
         /// </summary>
-        public string Version
-        {
-            get { return this.version; }
-            set { this.version = value; }
-        }
+        public string Version { get; set; } = "2013";
 
         /// <summary>
         /// Gets the ExitCode

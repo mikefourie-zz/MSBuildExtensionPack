@@ -52,10 +52,7 @@ namespace MSBuild.ExtensionPack.VisualStudio.Extended
 
         public string ProjectFile
         {
-            get
-            {
-                return this.projectFile;
-            }
+            get => this.projectFile;
 
             set
             {
@@ -90,10 +87,7 @@ namespace MSBuild.ExtensionPack.VisualStudio.Extended
             }
             finally
             {
-                if (lineStream != null)
-                {
-                    lineStream.Close();
-                }
+                lineStream?.Close();
             }
 
             return true;
@@ -128,10 +122,7 @@ namespace MSBuild.ExtensionPack.VisualStudio.Extended
             }
             finally
             {
-                if (lineStream != null)
-                {
-                    lineStream.Close();
-                }
+                lineStream?.Close();
 
                 if (readOnly)
                 {

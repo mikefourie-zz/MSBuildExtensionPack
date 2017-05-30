@@ -50,8 +50,6 @@ namespace MSBuild.ExtensionPack.Compression
     /// </example>
     public class Cab : BaseTask
     {
-        private string extractFile = "/E";
-
         /// <summary>
         /// Sets the path to extract to
         /// </summary>
@@ -91,11 +89,7 @@ namespace MSBuild.ExtensionPack.Compression
         /// <summary>
         /// Sets the files to extract. Default is /E, which is all.
         /// </summary>
-        public string ExtractFile
-        {
-            get { return this.extractFile; }
-            set { this.extractFile = value; }
-        }
+        public string ExtractFile { get; set; } = "/E";
 
         /// <summary>
         /// Sets a value indicating whether [preserve paths]
@@ -176,7 +170,7 @@ namespace MSBuild.ExtensionPack.Compression
             }
             else
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to create temp folder: {0}", dirInfo.FullName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to create temp folder: {0}", dirInfo.FullName));
                 return;
             }
 
@@ -360,7 +354,7 @@ namespace MSBuild.ExtensionPack.Compression
                 string files = string.Empty;
                 if ((this.FilesToCab == null || this.FilesToCab.Length == 0) && this.PathToCab == null)
                 {
-                    Log.LogError("FilesToCab or PathToCab must be supplied");
+                    this.Log.LogError("FilesToCab or PathToCab must be supplied");
                     return;
                 }
 

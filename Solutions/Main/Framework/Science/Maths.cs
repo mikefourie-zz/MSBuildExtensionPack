@@ -171,7 +171,7 @@ namespace MSBuild.ExtensionPack.Science
         /// </summary>
         public string[] Numbers
         {
-            set { this.numbers = ToFloatArray(value); }
+            set => this.numbers = ToFloatArray(value);
         }
 
         /// <summary>

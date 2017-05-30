@@ -82,18 +82,12 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <summary>
         /// Get the Factory Name
         /// </summary>
-        public string FactoryName
-        {
-            get { return GetType().Name; }
-        }
+        public string FactoryName => this.GetType().Name;
 
         /// <summary>
         /// The type of Task
         /// </summary>
-        public Type TaskType
-        {
-            get { return typeof(PowerShellTask); }
-        }
+        public Type TaskType => typeof(PowerShellTask);
 
         /// <summary>
         /// Initialize the Task Factory
@@ -128,10 +122,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
         public void CleanupTask(ITask task)
         {
             IDisposable disposableTask = task as IDisposable;
-            if (disposableTask != null)
-            {
-                disposableTask.Dispose();
-            }
+            disposableTask?.Dispose();
         }
 
         /// <summary>

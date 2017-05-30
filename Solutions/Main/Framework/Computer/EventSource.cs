@@ -58,8 +58,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string LogType
         {
-            get { return this.logType.ToString(); }
-            set { this.logType = (System.Diagnostics.EventLogEntryType)Enum.Parse(typeof(System.Diagnostics.EventLogEntryType), value); }
+            get => this.logType.ToString();
+            set => this.logType = (System.Diagnostics.EventLogEntryType)Enum.Parse(typeof(System.Diagnostics.EventLogEntryType), value);
         }
 
         /// <summary>

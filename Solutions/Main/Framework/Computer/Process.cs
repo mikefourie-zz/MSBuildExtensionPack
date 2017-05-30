@@ -60,26 +60,16 @@ namespace MSBuild.ExtensionPack.Computer
         private const string CreateTaskAction = "Create";
         private const string TerminateTaskAction = "Terminate";
         private const string CheckRunningTaskAction = "CheckRunning";
-        private string processName = ".*";
-        private string user = ".*";
 
         /// <summary>
         /// Sets the regular expression to use for filtering processes. Default is .*
         /// </summary>
-        public string ProcessName
-        {
-            get { return this.processName; }
-            set { this.processName = value; }
-        }
+        public string ProcessName { get; set; } = ".*";
 
         /// <summary>
         /// Sets the regular expression to use for filtering processes. Default is .*
         /// </summary>
-        public string User
-        {
-            get { return this.user; }
-            set { this.user = value; }
-        }
+        public string User { get; set; } = ".*";
 
         /// <summary>
         /// Gets the ReturnValue for Create
@@ -136,7 +126,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.CheckRunning();
                     break;
                 default:
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }

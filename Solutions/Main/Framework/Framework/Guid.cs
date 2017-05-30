@@ -48,19 +48,13 @@ namespace MSBuild.ExtensionPack.Framework
         /// 32 digits separated by hyphens: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         /// </summary>
         [Output]
-        public string[] FormattedGuidString
-        {
-            get { return new[] { this.internalGuid.ToString("D", CultureInfo.CurrentCulture) }; }
-        }
+        public string[] FormattedGuidString => new[] { this.internalGuid.ToString("D", CultureInfo.CurrentCulture) };
 
         /// <summary>
         /// 32 digits: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         /// </summary>
         [Output]
-        public string[] GuidString
-        {
-            get { return new[] { this.internalGuid.ToString("N", CultureInfo.CurrentCulture) }; }
-        }
+        public string[] GuidString => new[] { this.internalGuid.ToString("N", CultureInfo.CurrentCulture) };
 
         /// <summary>
         /// Performs the action of this task.

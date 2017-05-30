@@ -95,16 +95,11 @@ namespace MSBuild.ExtensionPack.SqlServer
         private int fieldToIncrement;
         private bool trustedConnection;
         private SqlVersionDataClass databaseLinq;
-        private string delimiter = ".";
 
         /// <summary>
         /// Sets the Delimiter to use in the version number. Default is .
         /// </summary>
-        public string Delimiter
-        {
-            get { return this.delimiter; }
-            set { this.delimiter = value; }
-        }
+        public string Delimiter { get; set; } = ".";
 
         /// <summary>
         /// Sets the number of padding digits to use, e.g. 4
@@ -135,8 +130,8 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         public int FieldToIncrement
         {
-            get { return this.fieldToIncrement; }
-            set { this.fieldToIncrement = value; }
+            get => this.fieldToIncrement;
+            set => this.fieldToIncrement = value;
         }
 
         /// <summary>

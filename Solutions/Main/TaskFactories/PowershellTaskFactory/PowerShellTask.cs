@@ -5,7 +5,6 @@
 namespace MSBuild.ExtensionPack.TaskFactory
 {
     using System;
-    using System.Diagnostics.Contracts;
     using System.Management.Automation.Runspaces;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -41,7 +40,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
         public override bool Execute()
         {
             this.pipeline.Invoke();
-            return !Log.HasLoggedErrors;
+            return !this.Log.HasLoggedErrors;
         }
 
         public void Dispose()

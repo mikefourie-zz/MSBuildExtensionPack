@@ -142,8 +142,8 @@ namespace MSBuild.ExtensionPack.Communication
         /// </summary>
         public string Privacy
         {
-            get { return this.privacy.ToString(); }
-            set { this.privacy = (System.Messaging.EncryptionRequired)Enum.Parse(typeof(System.Messaging.EncryptionRequired), value); }
+            get => this.privacy.ToString();
+            set => this.privacy = (System.Messaging.EncryptionRequired)Enum.Parse(typeof(System.Messaging.EncryptionRequired), value);
         }
 
         /// <summary>

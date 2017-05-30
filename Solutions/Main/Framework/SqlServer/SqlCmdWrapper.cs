@@ -8,7 +8,6 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
 
     internal sealed class SqlCmdWrapper
     {
-        private readonly NameValueCollection environmentVars = new NameValueCollection();
         private readonly System.Text.StringBuilder stdOut = new System.Text.StringBuilder();
         private readonly System.Text.StringBuilder stdError = new System.Text.StringBuilder();
 
@@ -22,18 +21,12 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         /// <summary>
         /// Gets the standard output.
         /// </summary>
-        internal string StandardOutput
-        {
-            get { return this.stdOut.ToString(); }
-        }
-        
+        internal string StandardOutput => this.stdOut.ToString();
+
         /// <summary>
         /// Gets the standard error.
         /// </summary>
-        internal string StandardError 
-        {
-            get { return this.stdError.ToString(); } 
-        }
+        internal string StandardError => this.stdError.ToString();
 
         /// <summary>
         /// Gets the exit code.
@@ -55,10 +48,7 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
         /// </summary>
         internal string Arguments { get; set; }
 
-        internal NameValueCollection EnvironmentVariables
-        {
-            get { return this.environmentVars; }
-        }
+        internal NameValueCollection EnvironmentVariables { get; } = new NameValueCollection();
 
         /// <summary>
         /// Executes this instance.

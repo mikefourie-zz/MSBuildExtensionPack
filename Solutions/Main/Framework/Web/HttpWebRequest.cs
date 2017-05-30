@@ -47,16 +47,11 @@ namespace MSBuild.ExtensionPack.Web
     {
         private const string GetResponseTaskAction = "GetResponse";
         private const string PostTaskAction = "Post";
-        private int timeout = 100000;
 
         /// <summary>
         /// Sets the number of milliseconds to wait before the request times out. The default value is 100,000 milliseconds (100 seconds).
         /// </summary>
-        public int Timeout
-        {
-            get { return this.timeout; }
-            set { this.timeout = value; }
-        }
+        public int Timeout { get; set; } = 100000;
 
         /// <summary>
         /// Sets the name of the AppPool. Required.

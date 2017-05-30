@@ -6,7 +6,6 @@ namespace MSBuild.ExtensionPack.TaskFactory
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Xml.Linq;
     using Microsoft.Build.Framework;
@@ -69,19 +68,13 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// Gets the name of the factory.
         /// </summary>
         /// <value>The name of the factory.</value>
-        public string FactoryName
-        {
-            get { return GetType().Name; }
-        }
+        public string FactoryName => this.GetType().Name;
 
         /// <summary>
         /// Gets the type of the task.
         /// </summary>
         /// <value>The type of the task.</value>
-        public Type TaskType
-        {
-            get { return typeof(DlrTask); }
-        }
+        public Type TaskType => typeof(DlrTask);
 
         /// <summary>
         /// Initialize
@@ -115,10 +108,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
         public void CleanupTask(ITask task)
         {
             IDisposable disposableTask = task as IDisposable;
-            if (disposableTask != null)
-            {
-                disposableTask.Dispose();
-            }
+            disposableTask?.Dispose();
         }
 
         /// <summary>

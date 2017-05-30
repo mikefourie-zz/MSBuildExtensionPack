@@ -8,6 +8,8 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
+
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -88,17 +90,17 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 string programFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
                 if (string.IsNullOrEmpty(programFilePath))
                 {
-                    Log.LogError("Failed to find the special folder 'ProgramFiles'");
+                    this.Log.LogError("Failed to find the special folder 'ProgramFiles'");
                     return;
                 }
 
-                if (File.Exists(programFilePath + VC6.DefaultMSDEVPath))
+                if (File.Exists(programFilePath + DefaultMSDEVPath))
                 {
-                    this.MSDEVPath = programFilePath + VC6.DefaultMSDEVPath;
+                    this.MSDEVPath = programFilePath + DefaultMSDEVPath;
                 }
                 else
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "MSDEV.exe was not found in the default location. Use MSDEVPath to specify it. Searched at: {0}", programFilePath + VC6.DefaultMSDEVPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "MSDEV.exe was not found in the default location. Use MSDEVPath to specify it. Searched at: {0}", programFilePath + DefaultMSDEVPath));
                     return;
                 }
             }
@@ -120,7 +122,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             if (this.Projects == null)
             {
-                Log.LogError("The collection passed to Projects is empty");
+                this.Log.LogError("The collection passed to Projects is empty");
                 return;
             }
 
@@ -139,34 +141,34 @@ namespace MSBuild.ExtensionPack.VisualStudio
             string projectNames = project.GetMetadata(ProjectsMetadataName);
             if (string.IsNullOrEmpty(projectNames))
             {
-                Log.LogMessage(MessageImportance.Low, "No project names specified. Using 'ALL'.");
+                this.Log.LogMessage(MessageImportance.Low, "No project names specified. Using 'ALL'.");
                 projectNames = "ALL";
             }
             else
             {
-                Log.LogMessage(MessageImportance.Low, "Project names '{0}'", projectNames);
+                this.Log.LogMessage(MessageImportance.Low, "Project names '{0}'", projectNames);
             }
 
             string platformName = project.GetMetadata(PlatformMetadataName);
             if (string.IsNullOrEmpty(platformName))
             {
-                Log.LogMessage(MessageImportance.Low, "No platform name specified. Using 'Win32'.");
+                this.Log.LogMessage(MessageImportance.Low, "No platform name specified. Using 'Win32'.");
                 platformName = "Win32";
             }
             else
             {
-                Log.LogMessage(MessageImportance.Low, "Platform name '{0}'", platformName);
+                this.Log.LogMessage(MessageImportance.Low, "Platform name '{0}'", platformName);
             }
 
             string configurationName = project.GetMetadata(ConfigurationMetadataName);
             if (string.IsNullOrEmpty(configurationName))
             {
-                Log.LogMessage(MessageImportance.Low, "No configuration name specified. Using 'Debug'.");
+                this.Log.LogMessage(MessageImportance.Low, "No configuration name specified. Using 'Debug'.");
                 configurationName = "Debug";
             }
             else
             {
-                Log.LogMessage(MessageImportance.Low, "Configuration names '{0}'", configurationName);
+                this.Log.LogMessage(MessageImportance.Low, "Configuration names '{0}'", configurationName);
             }
 
             bool allBuildsSucceeded = true;
@@ -179,7 +181,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     proc.StartInfo.RedirectStandardOutput = true;
                     proc.StartInfo.RedirectStandardError = true;
 
-                    System.Text.StringBuilder argumentsBuilder = new System.Text.StringBuilder();
+                    StringBuilder argumentsBuilder = new System.Text.StringBuilder();
                     argumentsBuilder.AppendFormat("\"{0}\" /OUT \"{0}.log\" /MAKE ", project.ItemSpec);
                     argumentsBuilder.AppendFormat("\"{0} - {1} {2}\"", projectName, platformName, configurationName);
 
@@ -209,7 +211,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     string errorStream = proc.StandardError.ReadToEnd();
                     if (errorStream.Length > 0)
                     {
-                        Log.LogError(errorStream);
+                        this.Log.LogError(errorStream);
                     }
 
                     proc.WaitForExit();
@@ -223,7 +225,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     {
                         using (FileStream myStreamFile = new FileStream(project.ItemSpec + ".log", FileMode.Open))
                         {
-                            System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile);
+                            StreamReader myStream = new System.IO.StreamReader(myStreamFile);
                             string myBuffer = myStream.ReadToEnd();
                             this.Log.LogError(myBuffer);
                         }

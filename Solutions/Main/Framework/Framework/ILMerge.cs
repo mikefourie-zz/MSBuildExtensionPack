@@ -34,9 +34,6 @@ namespace MSBuild.ExtensionPack.Framework
     /// </example>
     public class ILMerge : ToolTask
     {
-        private int fileAlignment = 512;
-        private bool publicKeyTokens = true;
-
         /// <summary>
         /// AllowDuplicateResources
         /// </summary>
@@ -150,11 +147,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para/>Command line option: /align:n
         /// <para/>Default: 512
         /// </summary>
-        public int FileAlignment
-        {
-            get { return this.fileAlignment; }
-            set { this.fileAlignment = value; }
-        }
+        public int FileAlignment { get; set; } = 512;
 
         /// <summary>
         /// When this is set before calling Merge, it specifies the path and filename to a .snk file. The target assembly will be signed with its contents and will 
@@ -193,11 +186,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <para/>Command line option: /out:filename
         /// <para/>Default: true
         /// </summary>
-        public bool PublicKeyTokens
-        {
-            get { return this.publicKeyTokens; }
-            set { this.publicKeyTokens = value; }
-        }
+        public bool PublicKeyTokens { get; set; } = true;
 
         /// <summary>
         /// This method sets the .NET Framework for the target assembly to be the one specified by platform. Valid strings for the first argument are "v1", "v1.1", "v2", and "v4". 
@@ -262,10 +251,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         public ITaskItem[] SearchDirectories { get; set; }
 
-        protected override string ToolName
-        {
-            get { return "ILMerge.exe"; }
-        }
+        protected override string ToolName => "ILMerge.exe";
 
         protected override string GenerateFullPathToTool()
         {
@@ -385,7 +371,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
         {
-            Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
+            this.Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             int retVal = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
 
             if (this.DeleteInputAssemblies)

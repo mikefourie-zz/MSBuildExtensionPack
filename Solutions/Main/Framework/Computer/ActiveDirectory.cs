@@ -278,8 +278,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public bool PasswordExpired
         {
-            get { return this.passwordExpired == 1; }
-            set { this.passwordExpired = value ? 1 : 0; }
+            get => this.passwordExpired == 1;
+            set => this.passwordExpired = value ? 1 : 0;
         }
 
         /// <summary>
@@ -292,8 +292,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string Domain
         {
-            get { return this.domain; }
-            set { this.domain = value; }
+            get => this.domain;
+            set => this.domain = value;
         }
 
         /// <summary>
@@ -301,8 +301,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string GroupType
         {
-            get { return this.groupType.ToString(); }
-            set { this.groupType = (ADGroupType)Enum.Parse(typeof(ADGroupType), value); }
+            get => this.groupType.ToString();
+            set => this.groupType = (ADGroupType)Enum.Parse(typeof(ADGroupType), value);
         }
 
         /// <summary>
@@ -310,8 +310,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string ContextTypeStore
         {
-            get { return this.contextType.ToString(); }
-            set { this.contextType = (ContextType)Enum.Parse(typeof(ContextType), value); }
+            get => this.contextType.ToString();
+            set => this.contextType = (ContextType)Enum.Parse(typeof(ContextType), value);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public ITaskItem[] BindingContextOptions
         {
-            set { this.bindingContextOptions = SetBindingOptions(value); }
+            set => this.bindingContextOptions = SetBindingOptions(value);
         }
 
         /// <summary>
@@ -332,8 +332,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string Privilege
         {
-            get { return this.privilege.ToString(); }
-            set { this.privilege = (PrivilegeType)Enum.Parse(typeof(PrivilegeType), value); }
+            get => this.privilege.ToString();
+            set => this.privilege = (PrivilegeType)Enum.Parse(typeof(PrivilegeType), value);
         }
 
         /// <summary>
@@ -487,7 +487,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             try
             {
-                dirE.Invoke("Put", new object[] { obj, value });
+                dirE.Invoke("Put", obj, value);
             }
             catch
             {
@@ -499,7 +499,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             try
             {
-                dirE.Invoke("Put", new object[] { obj, value });
+                dirE.Invoke("Put", obj, value);
             }
             catch
             {
@@ -516,13 +516,13 @@ namespace MSBuild.ExtensionPack.Computer
           string fullyQualifiedDomainName = string.Empty;
           using (DirectoryEntry rootDSE = new DirectoryEntry("LDAP://RootDSE"))
           {
-            string domainContext = rootDSE.Properties["defaultNamingContext"] != null ? rootDSE.Properties["defaultNamingContext"].Value.ToString() : string.Empty;
+            string domainContext = rootDSE.Properties["defaultNamingContext"]?.Value.ToString() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(domainContext))
             {
               return string.Empty;
             }
 
-            var domainParts = domainContext.Split(new[] { ',' });
+            var domainParts = domainContext.Split(',');
             foreach (var domainPart in domainParts)
             {
               if (domainPart.Contains("DC="))
@@ -546,13 +546,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.Group == null)
             {
-                Log.LogError("Group is required");
+                this.Log.LogError("Group is required");
                 return;
             }
 
             if (this.ParentGroup == null)
             {
-                Log.LogError("ParentGroup is required");
+                this.Log.LogError("ParentGroup is required");
                 return;
             }
 
@@ -572,7 +572,7 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 catch
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
                     return;
                 }
 
@@ -583,11 +583,11 @@ namespace MSBuild.ExtensionPack.Computer
                     {
                         case AddGroupToGroupTaskAction:
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding {0} to {1}", g.ItemSpec, this.ParentGroup));
-                            parent.Invoke("Add", new object[] { child.Path });
+                            parent.Invoke("Add", child.Path);
                             break;
                         case RemoveGroupFromGroupTaskAction:
                             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing {0} from {1}", g.ItemSpec, this.ParentGroup));
-                            parent.Invoke("Remove", new object[] { child.Path });
+                            parent.Invoke("Remove", child.Path);
                             break;
                     }
                 }
@@ -602,7 +602,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.Group == null)
             {
-                Log.LogError("Group is required");
+                this.Log.LogError("Group is required");
                 return;
             }
 
@@ -616,7 +616,7 @@ namespace MSBuild.ExtensionPack.Computer
                 }
                 catch
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
                     return;
                 }
 
@@ -638,13 +638,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.User == null)
             {
-                Log.LogError("User is required");
+                this.Log.LogError("User is required");
                 return;
             }
 
             if (this.Privilege == null)
             {
-                Log.LogError("Privilege is required");
+                this.Log.LogError("Privilege is required");
                 return;
             }
 
@@ -715,13 +715,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.User == null)
             {
-                Log.LogError("User is required");
+                this.Log.LogError("User is required");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.Password))
             {
-                Log.LogError("Password is required");
+                this.Log.LogError("Password is required");
                 return;
             }
 
@@ -770,10 +770,7 @@ namespace MSBuild.ExtensionPack.Computer
           }
           finally
           {
-            if (principalContext != null)
-            {
-              principalContext.Dispose();
-            }
+              principalContext?.Dispose();
           }
         }
 
@@ -781,13 +778,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.User == null)
             {
-                Log.LogError("User is required");
+                this.Log.LogError("User is required");
                 return;
             }
 
             if (this.Group == null)
             {
-                Log.LogError("Group is required");
+                this.Log.LogError("Group is required");
                 return;
             }
 
@@ -802,7 +799,7 @@ namespace MSBuild.ExtensionPack.Computer
                     }
                     catch
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "User not found: {0}", u.ItemSpec));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "User not found: {0}", u.ItemSpec));
                         return;
                     }
 
@@ -815,12 +812,12 @@ namespace MSBuild.ExtensionPack.Computer
                         }
                         catch
                         {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
                             return;
                         }
 
                         this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing User: {0} from {1}", u.ItemSpec, g.ItemSpec));
-                        grp.Invoke("Remove", new object[] { user.Path });
+                        grp.Invoke("Remove", user.Path);
                     }
                 }
             }
@@ -830,13 +827,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.User == null)
             {
-                Log.LogError("User is required");
+                this.Log.LogError("User is required");
                 return;
             }
 
             if (this.Group == null)
             {
-                Log.LogError("Group is required");
+                this.Log.LogError("Group is required");
                 return;
             }
 
@@ -877,7 +874,7 @@ namespace MSBuild.ExtensionPack.Computer
                         }
                         catch (Exception)
                         {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "User not found: {0} in: {1}", u.ItemSpec, userAdEntry.Path));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "User not found: {0} in: {1}", u.ItemSpec, userAdEntry.Path));
                             return;
                         }
                     }
@@ -894,7 +891,7 @@ namespace MSBuild.ExtensionPack.Computer
                             }
                             catch
                             {
-                                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
                                 return;
                             }
                         }
@@ -907,7 +904,7 @@ namespace MSBuild.ExtensionPack.Computer
                         }
                         catch
                         {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Group not found: {0}", g.ItemSpec));
                             return;
                         }
                     }
@@ -915,7 +912,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Adding User: {0} to {1}", u.ItemSpec, g.ItemSpec));
                     try
                     {
-                        grp.Invoke("Add", new object[] { user.Path });
+                        grp.Invoke("Add", user.Path);
                     }
                     catch
                     {
@@ -948,7 +945,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.Group == null)
             {
-                Log.LogError("Group is required");
+                this.Log.LogError("Group is required");
                 return;
             }
 
@@ -975,7 +972,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (this.User == null)
             {
-                Log.LogError("User is required");
+                this.Log.LogError("User is required");
                 return;
             }
 
@@ -1044,15 +1041,8 @@ namespace MSBuild.ExtensionPack.Computer
             }
             finally
             {
-              if (userPrincipal != null)
-              {
-                userPrincipal.Dispose();
-              }
-              
-              if (principalContext != null)
-              {
-                principalContext.Dispose();
-              }
+                userPrincipal?.Dispose();
+                principalContext?.Dispose();
             }
         }
     }

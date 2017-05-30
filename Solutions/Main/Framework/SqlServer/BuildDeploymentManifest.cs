@@ -56,8 +56,8 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         public bool AllowConfigurationChanges
         {
-            get { return this.allowConfigurationChanges; }
-            set { this.allowConfigurationChanges = value; }
+            get => this.allowConfigurationChanges;
+            set => this.allowConfigurationChanges = value;
         }
 
         // TODO: Need to reduce the cyclomatic complexity of this.

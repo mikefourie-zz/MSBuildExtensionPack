@@ -43,7 +43,7 @@
             // buttonCancel
             // 
             this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonCancel.Location = new System.Drawing.Point(210, 60);
+            this.buttonCancel.Location = new System.Drawing.Point(280, 98);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -54,7 +54,7 @@
             // buttonOk
             // 
             this.buttonOk.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonOk.Location = new System.Drawing.Point(291, 60);
+            this.buttonOk.Location = new System.Drawing.Point(361, 98);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
@@ -65,9 +65,9 @@
             // textBoxPassword
             // 
             this.textBoxPassword.BackColor = System.Drawing.Color.White;
-            this.textBoxPassword.Location = new System.Drawing.Point(79, 25);
+            this.textBoxPassword.Location = new System.Drawing.Point(81, 38);
             this.textBoxPassword.Name = "textBoxPassword";
-            this.textBoxPassword.Size = new System.Drawing.Size(287, 20);
+            this.textBoxPassword.Size = new System.Drawing.Size(355, 20);
             this.textBoxPassword.TabIndex = 0;
             this.textBoxPassword.UseSystemPasswordChar = true;
             this.textBoxPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBoxPassword_KeyUp);
@@ -78,7 +78,7 @@
             this.labelPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelPassword.Location = new System.Drawing.Point(76, 9);
             this.labelPassword.Name = "labelPassword";
-            this.labelPassword.Size = new System.Drawing.Size(61, 13);
+            this.labelPassword.Size = new System.Drawing.Size(116, 26);
             this.labelPassword.TabIndex = 5;
             this.labelPassword.Text = "Password";
             // 
@@ -87,9 +87,9 @@
             this.checkBoxMask.AutoSize = true;
             this.checkBoxMask.Checked = true;
             this.checkBoxMask.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMask.Location = new System.Drawing.Point(314, 9);
+            this.checkBoxMask.Location = new System.Drawing.Point(371, 8);
             this.checkBoxMask.Name = "checkBoxMask";
-            this.checkBoxMask.Size = new System.Drawing.Size(52, 17);
+            this.checkBoxMask.Size = new System.Drawing.Size(65, 27);
             this.checkBoxMask.TabIndex = 3;
             this.checkBoxMask.Text = "Mask";
             this.checkBoxMask.UseVisualStyleBackColor = true;
@@ -121,7 +121,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(378, 95);
+            this.ClientSize = new System.Drawing.Size(448, 133);
             this.Controls.Add(this.pictureBoxLock);
             this.Controls.Add(this.pictureBoxOpenLock);
             this.Controls.Add(this.textBoxPassword);

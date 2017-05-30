@@ -96,13 +96,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string AnalyseTaskAction = "Analyse";
         private const string DetokeniseTaskAction = "Detokenise";
         private const string ReportTaskAction = "Report";
-        private string tokenExtractionPattern = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
-        private string tokenPattern = @"\$\([0-9a-zA-Z-._]+\)";
+
         private Project project;
         private Encoding fileEncoding = Encoding.UTF8;
         private Regex parseRegex;
-        private bool analyseOnly, report;
-        private string separator = "#~#";
+        private bool analyseOnly;
+
+        private bool report;
+
         private Dictionary<string, string> commandLineDictionary;
         private SortedDictionary<string, string> tokenDictionary;
         private SortedDictionary<string, string> unusedTokens;
@@ -125,20 +126,12 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Specifies the regular expression format of the token to look for. The default pattern is \$\([0-9a-zA-Z-._]+\) which equates to $(token)
         /// </summary>
-        public string TokenPattern
-        {
-            get { return this.tokenPattern; }
-            set { this.tokenPattern = value; }
-        }
+        public string TokenPattern { get; set; } = @"\$\([0-9a-zA-Z-._]+\)";
 
         /// <summary>
         /// Specifies the regular expression to use to extract the token name from the TokenPattern provided. The default pattern is (?&lt;=\$\()[0-9a-zA-Z-._]+(?=\)), i.e it will extract token from $(token)
         /// </summary>
-        public string TokenExtractionPattern
-        {
-            get { return this.tokenExtractionPattern; }
-            set { this.tokenExtractionPattern = value; }
-        }
+        public string TokenExtractionPattern { get; set; } = @"(?<=\$\()[0-9a-zA-Z-._]+(?=\))";
 
         /// <summary>
         /// Sets the replacement values.
@@ -153,11 +146,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Sets the separator to use to split the CommandLineValues. The default is #~#
         /// </summary>
-        public string Separator
-        {
-            get { return this.separator; }
-            set { this.separator = value; }
-        }
+        public string Separator { get; set; } = "#~#";
 
         /// <summary>
         /// Sets the MSBuild file to load for token matching. Defaults to BuildEngine.ProjectFileOfTaskNode
@@ -386,7 +375,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                     catch (ArgumentException)
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
                         return;
                     }
                 }
@@ -425,7 +414,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 DirectoryInfo dir = new DirectoryInfo(rootPath);
                 if (!dir.Exists)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
                     throw new ArgumentException("Review error log");
                 }
 
@@ -438,7 +427,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 DirectoryInfo dir = new DirectoryInfo(originalPath);
                 if (!dir.Exists)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "The directory does not exist: {0}", rootPath));
                     throw new ArgumentException("Review error log");
                 }
 
@@ -479,7 +468,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.TargetFiles == null)
             {
-                Log.LogError("The collection passed to TargetFiles is empty");
+                this.Log.LogError("The collection passed to TargetFiles is empty");
                 throw new ArgumentException("Review error log");
             }
 
@@ -506,7 +495,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             // See if the file exists
             if (checkExists && System.IO.File.Exists(file) == false)
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "File not found: {0}", file));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "File not found: {0}", file));
                 throw new ArgumentException("Review error log");
             }
 
@@ -589,7 +578,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
                     if (!this.report && !this.SearchAllStores && !this.IgnoreUnknownTokens)
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                         throw new ArgumentException("Review error log");
                     }
                 }
@@ -614,7 +603,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     {
                         if (!this.report && !this.SearchAllStores && !this.IgnoreUnknownTokens)
                         {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                             throw new ArgumentException("Review error log");
                         }
                     }
@@ -622,11 +611,11 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             // we need to look in the calling project's properties collection
-            if (this.project == null || this.project.GetProperty(extractedProperty) == null)
+            if (this.project?.GetProperty(extractedProperty) == null)
             {
                 if (!this.report && !this.IgnoreUnknownTokens)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Property not found: {0}", extractedProperty));
                     throw new ArgumentException("Review error log");
                 }
 

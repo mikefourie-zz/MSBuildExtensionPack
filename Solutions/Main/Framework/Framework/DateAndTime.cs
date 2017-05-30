@@ -319,7 +319,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
-                Log.LogError("Start must be specified");
+                this.Log.LogError("Start must be specified");
                 return;
             }
 
@@ -339,13 +339,13 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
-                Log.LogError("Start must be specified");
+                this.Log.LogError("Start must be specified");
                 return;
             }
 
             if (this.End == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
-                Log.LogError("End must be specified");
+                this.Log.LogError("End must be specified");
                 return;
             }
 
@@ -365,7 +365,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             if (this.Start == Convert.ToDateTime("01/01/0001 00:00:00", CultureInfo.CurrentCulture))
             {
-                Log.LogError("Start must be specified");
+                this.Log.LogError("Start must be specified");
                 return;
             }
 
@@ -398,7 +398,7 @@ namespace MSBuild.ExtensionPack.Framework
                     this.Result = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}", t.Days.ToString("00", CultureInfo.CurrentCulture), t.Hours.ToString("00", CultureInfo.CurrentCulture), t.Minutes.ToString("00", CultureInfo.CurrentCulture), t.Seconds.ToString("00", CultureInfo.CurrentCulture));
                     break;
                 default:
-                    Log.LogError("Format must be specified");
+                    this.Log.LogError("Format must be specified");
                     return;
             }
         }

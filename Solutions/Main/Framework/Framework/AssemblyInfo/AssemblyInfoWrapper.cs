@@ -30,7 +30,6 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 int lineNumber = 0;
                 string input;
-                MatchCollection matches;
                 bool skipLine = false;
 
                 while ((input = reader.ReadLine()) != null)
@@ -70,7 +69,7 @@ namespace MSBuild.ExtensionPack.Framework
                     // Check to see if the current line is an attribute on the assembly info.
                     // If so we need to keep the line number in our dictionary so we can go
                     // back later and get it when this class is accessed through its indexer.
-                    matches = this.attributeNamePattern.Matches(input);
+                    var matches = this.attributeNamePattern.Matches(input);
                     if (matches.Count > 0)
                     {
                         if (this.attributeIndex.ContainsKey(matches[0].Groups["attributeName"].Value) == false)
@@ -116,7 +115,7 @@ namespace MSBuild.ExtensionPack.Framework
                 // value in the string using a regex to the value that was passed in.
                 if (!this.attributeIndex.ContainsKey(attribute))
                 {
-                    throw new ArgumentOutOfRangeException("attribute", string.Format(CultureInfo.CurrentUICulture, "{0} is not an attribute in the specified AssemblyInfo.cs file", attribute));
+                    throw new ArgumentOutOfRangeException(nameof(attribute), string.Format(CultureInfo.CurrentUICulture, "{0} is not an attribute in the specified AssemblyInfo.cs file", attribute));
                 }
 
                 // Try setting it as a string property first

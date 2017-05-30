@@ -69,8 +69,8 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         public string Properties
         {
-            get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
-            set { this.properties = value; }
+            get => System.Web.HttpUtility.HtmlDecode(this.properties);
+            set => this.properties = value;
         }
 
         /// <summary>
@@ -96,15 +96,9 @@ namespace MSBuild.ExtensionPack.Web
         [Output]
         public bool Exists { get; set; }
 
-        internal string IisPath
-        {
-            get { return "IIS://" + this.MachineName + "/W3SVC"; }
-        }
+        internal string IisPath => "IIS://" + this.MachineName + "/W3SVC";
 
-        internal string AppPoolsPath
-        {
-            get { return "IIS://" + this.MachineName + "/W3SVC/AppPools"; }
-        }
+        internal string AppPoolsPath => "IIS://" + this.MachineName + "/W3SVC/AppPools";
 
         /// <summary>
         /// When overridden in a derived class, executes the task.

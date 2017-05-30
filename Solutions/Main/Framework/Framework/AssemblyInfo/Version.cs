@@ -38,8 +38,8 @@ namespace MSBuild.ExtensionPack.Framework
 
         public string VersionString
         {
-            get { return this.versionString; }
-            set { this.ParseVersion(value); }
+            get => this.versionString;
+            set => this.ParseVersion(value);
         }
 
         public string MajorVersion { get; set; }
@@ -67,7 +67,7 @@ namespace MSBuild.ExtensionPack.Framework
             MatchCollection matches = versionPattern.Matches(version);
             if (matches.Count != 1)
             {
-                throw new ArgumentException("The specified string \"" + version + "\" is not a valid AssemblyVersion number", "version");
+                throw new ArgumentException($"The specified string \"{version}\" is not a valid AssemblyVersion number", nameof(version));
             }
 
             this.MajorVersion = matches[0].Groups["majorVersion"].Value;
@@ -84,7 +84,7 @@ namespace MSBuild.ExtensionPack.Framework
             MatchCollection matches = versionPattern.Matches(version);
             if (matches.Count != 1)
             {
-                throw new ArgumentException("The specified string \"" + version + "\" is not a valid version number", "version");
+                throw new ArgumentException($"The specified string \"{version}\" is not a valid version number", nameof(version));
             }
 
             this.MajorVersion = matches[0].Groups["majorVersion"].Value;

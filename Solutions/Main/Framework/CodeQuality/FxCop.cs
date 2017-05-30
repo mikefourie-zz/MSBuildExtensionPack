@@ -55,8 +55,6 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </example>
     public class FxCop : BaseTask
     {
-        private bool logToConsole = true;
-        private bool showSummary = true;
         private CompareMode assemblyCompareMode = CompareMode.StrongName;
 
         private enum CompareMode
@@ -82,8 +80,8 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         public string AssemblyCompareMode
         {
-            get { return this.assemblyCompareMode.ToString(); }
-            set { this.assemblyCompareMode = (CompareMode)Enum.Parse(typeof(CompareMode), value, true); }
+            get => this.assemblyCompareMode.ToString();
+            set => this.assemblyCompareMode = (CompareMode)Enum.Parse(typeof(CompareMode), value, true);
         }
         
         /// <summary>
@@ -114,11 +112,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Set to true to display a summary (/summary option). Default is true
         /// </summary>
-        public bool ShowSummary
-        {
-            get { return this.showSummary; }
-            set { this.showSummary = value; }
-        }
+        public bool ShowSummary { get; set; } = true;
 
         /// <summary>
         /// Set to true to search the GAC for missing assembly references (/gac option). Default is false
@@ -183,11 +177,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// <summary>
         /// Set to true to direct analysis output to the console (/console option). Default is true
         /// </summary>
-        public bool LogToConsole
-        {
-            get { return this.logToConsole; }
-            set { this.logToConsole = value; }
-        }
+        public bool LogToConsole { get; set; } = true;
 
         /// <summary>
         /// Specifies the types to analyze
@@ -267,7 +257,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 string programFilePath = Environment.GetEnvironmentVariable("ProgramFiles");
                 if (string.IsNullOrEmpty(programFilePath))
                 {
-                    Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
+                    this.Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
                     return;
                 }
 
@@ -281,7 +271,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 }
                 else
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "FxCopCmd.exe was not found in the default location. Use FxCopPath to specify it. Searched at: {0}", programFilePath + @"\Microsoft FxCop 1.36 and \Microsoft FxCop 10.0"));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "FxCopCmd.exe was not found in the default location. Use FxCopPath to specify it. Searched at: {0}", programFilePath + @"\Microsoft FxCop 1.36 and \Microsoft FxCop 10.0"));
                     return;
                 }
             }
@@ -432,7 +422,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
             if (string.IsNullOrEmpty(this.Project) && this.Files == null)
             {
-                Log.LogError("A Project and / or Files collection must be passed.");
+                this.Log.LogError("A Project and / or Files collection must be passed.");
                 return;
             }
 
@@ -480,14 +470,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
                 string errorStream = proc.StandardError.ReadToEnd();
                 if (errorStream.Length > 0)
                 {
-                    Log.LogError(errorStream);
+                    this.Log.LogError(errorStream);
                 }
 
                 proc.WaitForExit();
                 if (proc.ExitCode != 0)
                 {
                     this.ExitCode = proc.ExitCode;
-                    Log.LogError(proc.ExitCode.ToString(CultureInfo.CurrentCulture));
+                    this.Log.LogError(proc.ExitCode.ToString(CultureInfo.CurrentCulture));
                     this.AnalysisFailed = true;
                     return;
                 }

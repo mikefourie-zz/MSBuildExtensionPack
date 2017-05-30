@@ -79,15 +79,14 @@ namespace MSBuild.ExtensionPack.Framework
 
         private DotNetConfigurationFile configurationFileType = DotNetConfigurationFile.MachineConfig;
         private ConfigurationSaveMode saveMode = ConfigurationSaveMode.Minimal;
-        private string protectionProvider = "RSAProtectedConfigurationProvider";
 
         /// <summary>
         /// Which .NET framework configuration file to update. Supports WebConfig and MachineConfig. Default is MachineConfig
         /// </summary>
         public string ConfigurationFileType
         {
-            get { return this.configurationFileType.ToString(); }
-            set { this.configurationFileType = (DotNetConfigurationFile)Enum.Parse(typeof(DotNetConfigurationFile), value); }
+            get => this.configurationFileType.ToString();
+            set => this.configurationFileType = (DotNetConfigurationFile)Enum.Parse(typeof(DotNetConfigurationFile), value);
         }
 
         /// <summary>
@@ -106,8 +105,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         public string SaveMode
         {
-            get { return this.saveMode.ToString(); }
-            set { this.saveMode = (ConfigurationSaveMode)Enum.Parse(typeof(ConfigurationSaveMode), value); }
+            get => this.saveMode.ToString();
+            set => this.saveMode = (ConfigurationSaveMode)Enum.Parse(typeof(ConfigurationSaveMode), value);
         }
 
         /// <summary>
@@ -123,11 +122,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// The encryption provider. Supports RSAProtectedConfigurationProvider and DataProtectionConfigurationProvider. Default is RSAProtectedConfigurationProvider
         /// </summary>
-        public string ProtectionProvider
-        {
-            get { return this.protectionProvider; }
-            set { this.protectionProvider = value; }
-        }
+        public string ProtectionProvider { get; set; } = "RSAProtectedConfigurationProvider";
 
         /// <summary>
         /// The setting's value.
@@ -136,15 +131,9 @@ namespace MSBuild.ExtensionPack.Framework
 
         private Configuration Config { get; set; }
 
-        private KeyValueConfigurationCollection AppSettings
-        {
-            get { return this.Config.AppSettings.Settings; }
-        }
+        private KeyValueConfigurationCollection AppSettings => this.Config.AppSettings.Settings;
 
-        private ConnectionStringSettingsCollection ConnectionStrings
-        {
-            get { return this.Config.ConnectionStrings.ConnectionStrings; }
-        }
+        private ConnectionStringSettingsCollection ConnectionStrings => this.Config.ConnectionStrings.ConnectionStrings;
 
         protected override void InternalExecute()
         {

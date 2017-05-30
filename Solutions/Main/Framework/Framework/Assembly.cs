@@ -115,8 +115,8 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public ITaskItem[] OutputItems
         {
-            get { return this.outputItems.ToArray(); }
-            set { this.outputItems = new List<ITaskItem>(value); }
+            get => this.outputItems.ToArray();
+            set => this.outputItems = new List<ITaskItem>(value);
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace MSBuild.ExtensionPack.Framework
 
             if (!typeFound)
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Type not Found: {0}", this.NetClass));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Type not Found: {0}", this.NetClass));
             }
         }
 
@@ -285,7 +285,7 @@ namespace MSBuild.ExtensionPack.Framework
                 case "DATETIME":
                     return Convert.ToDateTime(it.ItemSpec, CultureInfo.CurrentCulture);
                 default:
-                    Log.LogError("Invalid Type supplied");
+                    this.Log.LogError("Invalid Type supplied");
                     break;
             }
 

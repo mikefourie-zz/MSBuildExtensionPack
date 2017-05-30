@@ -48,7 +48,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string IncrementTaskAction = "Increment";
         private const string ResetTaskAction = "Reset";
         private FileInfo versionFile;
-        private int increment = 1;
+
         private bool changedAttribute;
         private Encoding fileEncoding = Encoding.UTF8;
 
@@ -60,11 +60,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// Value to increment by. Default is 1.
         /// </summary>
-        public int Increment
-        {
-            get { return this.increment; }
-            set { this.increment = value; }
-        }
+        public int Increment { get; set; } = 1;
 
         /// <summary>
         /// Gets value returned from the file, or used to reset the value in the file. Default is 0.

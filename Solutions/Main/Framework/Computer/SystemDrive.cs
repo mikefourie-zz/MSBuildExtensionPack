@@ -79,8 +79,8 @@ namespace MSBuild.ExtensionPack.Computer
         [Output]
         public ITaskItem[] Drives
         {
-            get { return this.drives.ToArray(); }
-            set { this.drives = new List<ITaskItem>(value); }
+            get => this.drives.ToArray();
+            set => this.drives = new List<ITaskItem>(value);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public ITaskItem[] SkipDrives
         {
-            get { return this.skipDrives.ToArray(); }
-            set { this.skipDrives = new List<ITaskItem>(value); }
+            get => this.skipDrives.ToArray();
+            set => this.skipDrives = new List<ITaskItem>(value);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace MSBuild.ExtensionPack.Computer
                     {
                         if (mo == null)
                         {
-                            Log.LogError("WMI Failed to get drives from: {0}", this.MachineName);
+                            this.Log.LogError("WMI Failed to get drives from: {0}", this.MachineName);
                             return;
                         }
 
@@ -274,7 +274,7 @@ namespace MSBuild.ExtensionPack.Computer
                     {
                         if (mo == null)
                         {
-                            Log.LogError("WMI Failed to get drives from: {0}", this.MachineName);
+                            this.Log.LogError("WMI Failed to get drives from: {0}", this.MachineName);
                             return;
                         }
 

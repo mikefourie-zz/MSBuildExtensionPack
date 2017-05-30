@@ -60,18 +60,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string FindFilesTaskAction = "FindFiles";
         private const string FindDirectoriesTaskAction = "FindDirectories";
         private const string FindFilesAndDirectoriesTaskAction = "FindFilesAndDirectories";
-        private string searchPattern = "*";
-        private bool recursive = true;
+
         private List<ITaskItem> items = new List<ITaskItem>();
 
         /// <summary>
         /// Sets whether the File search is recursive. Default is true
         /// </summary>
-        public bool Recursive
-        {
-            get { return this.recursive; }
-            set { this.recursive = value; }
-        }
+        public bool Recursive { get; set; } = true;
 
         /// <summary>
         /// Set this value to only return files or folders modified after the given value
@@ -103,11 +98,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// This value is passed to either the System.IO.DirectoryInfo.GetDirectories method and/or the
         /// System.IO.FileInfo.GetFiles method. See that documentation for usage guidlines.
         /// </summary>
-        public string SearchPattern
-        {
-            get { return this.searchPattern; }
-            set { this.searchPattern = value; }
-        }
+        public string SearchPattern { get; set; } = "*";
 
         /// <summary>
         /// Gets or sets a value indicating if files should be included in the result.<br/>
@@ -150,7 +141,7 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (!this.FindFiles && !this.FindDirectories)
             {
-                Log.LogError("Either FindFiles or FindDirectories must be true");
+                this.Log.LogError("Either FindFiles or FindDirectories must be true");
                 return;
             }
 
@@ -158,7 +149,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
             if (string.IsNullOrEmpty(fullPath) || !Directory.Exists(fullPath))
             {
-                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Path specified {0} doesn't exist", fullPath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Path specified {0} doesn't exist", fullPath));
                 return;
             }
 

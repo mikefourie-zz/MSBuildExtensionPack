@@ -59,21 +59,15 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string VBAppendAssemblyVersionFormat = "\n<assembly: System.Reflection.AssemblyVersion(\"{0}\")>";
         private const string AppendAssemblyFileVersionFormat = "\n[assembly: System.Reflection.AssemblyFileVersion(\"{0}\")]";
         private const string VBAppendAssemblyFileVersionFormat = "\n<assembly: System.Reflection.AssemblyFileVersion(\"{0}\")>";
-        private bool setAssemblyFileVersion = true;
+
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
-        private string delimiter = ".";
-        private string buildnumberRegex = @"\d+\.\d+\.\d+\.\d+";
 
         /// <summary>
         /// Sets the BuildNumberRegex to determine the verison number from the BuildNumber when using in Synced mode. Default is \d+\.\d+\.\d+\.\d+
         /// </summary>
-        public string BuildNumberRegex
-        {
-            get { return this.buildnumberRegex; }
-            set { this.buildnumberRegex = value; }
-        }
+        public string BuildNumberRegex { get; set; } = @"\d+\.\d+\.\d+\.\d+";
 
         /// <summary>
         /// Set to True to set the AssemblyVersion when calling SetVersion. Default is false.
@@ -88,11 +82,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Set to True to set the AssemblyFileVersion when calling SetVersion. Default is true.
         /// </summary>
-        public bool SetAssemblyFileVersion
-        {
-            get { return this.setAssemblyFileVersion; }
-            set { this.setAssemblyFileVersion = value; }
-        }
+        public bool SetAssemblyFileVersion { get; set; } = true;
 
         /// <summary>
         /// Set to true to force SetVersion action to update files that do not have AssemblyVersion | AssemblyFileVersion
@@ -188,11 +178,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the Delimiter to use in the version number. Default is .
         /// </summary>
-        public string Delimiter
-        {
-            get { return this.delimiter; }
-            set { this.delimiter = value; }
-        }
+        public string Delimiter { get; set; } = ".";
 
         /// <summary>
         /// Specify the format of the build number. A format for each part must be specified or left blank, e.g. "00.000.00.000", "..0000.0"
@@ -224,13 +210,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             if (string.IsNullOrEmpty(this.TfsBuildNumber))
             {
-                Log.LogError("TfsBuildNumber is required");
+                this.Log.LogError("TfsBuildNumber is required");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.VersionFormat))
             {
-                Log.LogError("VersionFormat is required");
+                this.Log.LogError("VersionFormat is required");
                 return;
             }
 
@@ -245,7 +231,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
             {
                 if (string.IsNullOrEmpty(this.BuildName))
                 {
-                    Log.LogError("BuildName is required");
+                    this.Log.LogError("BuildName is required");
                     return;
                 }
 
@@ -289,7 +275,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                             this.Build = elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
                         }
 
-                        this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
+                        this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.Delimiter);
                         break;
                     case "DATETIME":
                         if (string.IsNullOrEmpty(this.Build))
@@ -297,10 +283,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
                             this.Build = t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit);
                         }
 
-                        this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.delimiter);
+                        this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.Major, this.Minor, this.Build, this.Revision, this.Delimiter);
                         break;
                     default:
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid VersionFormat provided: {0}. Valid Formats are Elapsed, DateTime", this.VersionFormat));
                         return;
                 }
             }
@@ -309,10 +295,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
             if (!string.IsNullOrEmpty(this.VersionTemplateFormat))
             {
                 // get the current version number parts
-                int[] buildparts = this.Version.Split(char.Parse(this.delimiter)).Select(s => int.Parse(s, CultureInfo.InvariantCulture)).ToArray();
+                int[] buildparts = this.Version.Split(char.Parse(this.Delimiter)).Select(s => int.Parse(s, CultureInfo.InvariantCulture)).ToArray();
 
                 // get the format parts
-                string[] formatparts = this.VersionTemplateFormat.Split(char.Parse(this.delimiter));
+                string[] formatparts = this.VersionTemplateFormat.Split(char.Parse(this.Delimiter));
 
                 // format each part
                 string[] newparts = new string[4];
@@ -327,7 +313,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 this.Revision = newparts[3];
 
                 // reset the version to the required format
-                this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", newparts[0], newparts[1], newparts[2], newparts[3], this.delimiter);
+                this.Version = string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", newparts[0], newparts[1], newparts[2], newparts[3], this.Delimiter);
             }
         }
 
@@ -341,13 +327,13 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
             if (string.IsNullOrEmpty(this.Version))
             {
-                Log.LogError("Version is required");
+                this.Log.LogError("Version is required");
                 return;
             }
 
             if (this.Files == null)
             {
-                Log.LogError("No Files specified. Pass an Item Collection of files to the Files property.");
+                this.Log.LogError("No Files specified. Pass an Item Collection of files to the Files property.");
                 return;
             }
 
@@ -464,7 +450,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     this.fileEncoding = System.Text.Encoding.UTF32;
                     break;
                 default:
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Encoding not supported: {0}", this.TextEncoding));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Encoding not supported: {0}", this.TextEncoding));
                     return false;
             }
 

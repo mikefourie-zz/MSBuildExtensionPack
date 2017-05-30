@@ -72,16 +72,10 @@ namespace MSBuild.ExtensionPack.CodeQuality
     /// </example>
     public class NUnit : ToolTask
     {
-        private string version = "2.6.2";
-
         /// <summary>
         /// The version of NUnit to run. Default is 2.6.2
         /// </summary>
-        public string Version
-        {
-            get { return this.version; }
-            set { this.version = value; }
-        }
+        public string Version { get; set; } = "2.6.2";
 
         /// <summary>
         /// Gets or sets the assemblies.
@@ -218,10 +212,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         public string Run { get; set; }
 
-        protected override string ToolName
-        {
-            get { return this.Use32Bit ? "nunit-console-x86.exe" : "nunit-console.exe"; }
-        }
+        protected override string ToolName => this.Use32Bit ? "nunit-console-x86.exe" : "nunit-console.exe";
 
         protected override string GenerateFullPathToTool()
         {
@@ -290,7 +281,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         private static int GetAttributeInt32Value(string name, XmlNode node)
         {
-            if (node.Attributes[name] != null)
+            if (node.Attributes?[name] != null)
             {
                 return Convert.ToInt32(node.Attributes[name].Value, CultureInfo.InvariantCulture);
             }

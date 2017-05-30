@@ -123,8 +123,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         private const string UndoCheckoutTaskAction = "UndoCheckout";
         private const string UndeleteTaskAction = "Undelete";
         private string teamFoundationExe;
-        private string version = "2013";
-        private bool recursive = true;
+
         private ShellWrapper shellWrapper;
         private string itemSpec = string.Empty;
         private string returnOutput;
@@ -193,11 +192,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the version of Tfs. Default is 2013
         /// </summary>
-        public string Version
-        {
-            get { return this.version; }
-            set { this.version = value; }
-        }
+        public string Version { get; set; } = "2013";
 
         /// <summary>
         /// Sets the comments.
@@ -237,11 +232,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets whether the Tfs operation should be recursive. Default is true.
         /// </summary>
-        public bool Recursive
-        {
-            get { return this.recursive; }
-            set { this.recursive = value; }
-        }
+        public bool Recursive { get; set; } = true;
 
         /// <summary>
         /// Gets the pending changes in the format '/Format:detailed'

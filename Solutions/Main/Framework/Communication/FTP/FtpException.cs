@@ -36,10 +36,7 @@ namespace MSBuild.ExtensionPack.Communication.Extended
         {         
         }
 
-        public int ErrorCode
-        {
-            get { return this.ftpError; }
-        }
+        public int ErrorCode => this.ftpError;
 
         /// <summary>
         /// No specific impelementation is needed of the GetObjectData to serialize this object

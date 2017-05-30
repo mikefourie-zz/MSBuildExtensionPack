@@ -82,10 +82,7 @@ namespace MSBuild.ExtensionPack.Framework
         [Required]
         public ITaskItem Executable { get; set; }
 
-        protected override string ToolName
-        {
-            get { return this.Executable.ItemSpec; }
-        }
+        protected override string ToolName => this.Executable.ItemSpec;
 
         protected override string GenerateFullPathToTool()
         {
@@ -108,7 +105,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
         {
-            Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
+            this.Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             this.RealExitCode = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
             
             if (this.WarningExitCodes != null)

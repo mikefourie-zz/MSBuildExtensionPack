@@ -32,8 +32,6 @@ namespace MSBuild.ExtensionPack.VisualStudio
     /// </example>
     public class VSDevEnv : ToolTask
     {
-        private string version = "9.0";
-
         /// <summary>
         /// The Path to the solution or Project to build
         /// </summary>
@@ -49,11 +47,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// The version of Visual Studio to run, e.g. 8.0, 9.0, 10.0. Default is 9.0
         /// </summary>
-        public string Version
-        {
-            get { return this.version; }
-            set { this.version = value; }
-        }
+        public string Version { get; set; } = "9.0";
 
         /// <summary>
         /// Specifies whether Clean and then build the solution or project with the specified configuration. Default is false
@@ -70,24 +64,18 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         public ITaskItem OutputFolder { get; set; }
 
-        protected override string ToolName
-        {
-            get { return "devenv.exe"; }
-        }
+        protected override string ToolName => "devenv.exe";
 
         protected override string GenerateFullPathToTool()
         {
             using (RegistryKey sw = Utilities.SoftwareRegistry32Bit)
             {
-                if (sw != null)
+                RegistryKey key = sw?.OpenSubKey(@"Microsoft\VisualStudio\" + this.Version);
+                if (key != null)
                 {
-                    RegistryKey key = sw.OpenSubKey(@"Microsoft\VisualStudio\" + this.Version);
-                    if (key != null)
-                    {
-                        string path = Convert.ToString(key.GetValue("InstallDir"), CultureInfo.InvariantCulture);
-                        key.Close();
-                        return System.IO.Path.Combine(path, this.ToolName);
-                    }
+                    string path = Convert.ToString(key.GetValue("InstallDir"), CultureInfo.InvariantCulture);
+                    key.Close();
+                    return System.IO.Path.Combine(path, this.ToolName);
                 }
             }
 
@@ -131,7 +119,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
         protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
         {
-            Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
+            this.Log.LogMessage("Running " + pathToTool + " " + commandLineCommands);
             return base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
         }
 

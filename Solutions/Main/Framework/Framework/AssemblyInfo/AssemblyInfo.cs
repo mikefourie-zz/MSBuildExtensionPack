@@ -154,7 +154,6 @@ namespace MSBuild.ExtensionPack.Framework
         private string maxAssemblyFileVersion;
         private string maxAssemblyVersion;
         private Encoding fileEncoding = Encoding.UTF8;
-        private string firstDayOfWeek = "Monday";
 
         /// <summary>
         /// The major version of the assembly.
@@ -173,8 +172,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// </example>
         public string AssemblyMajorVersion
         {
-            get { return this.assemblyVersionSettings.MajorVersion; }
-            set { this.assemblyVersionSettings.MajorVersion = value; }
+            get => this.assemblyVersionSettings.MajorVersion;
+            set => this.assemblyVersionSettings.MajorVersion = value;
         }
 
         /// <summary>
@@ -194,8 +193,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// </example>
         public string AssemblyMinorVersion
         {
-            get { return this.assemblyVersionSettings.MinorVersion; }
-            set { this.assemblyVersionSettings.MinorVersion = value; }
+            get => this.assemblyVersionSettings.MinorVersion;
+            set => this.assemblyVersionSettings.MinorVersion = value;
         }
 
         /// <summary>
@@ -226,8 +225,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyBuildNumberFormat"/>
         public string AssemblyBuildNumber
         {
-            get { return this.assemblyVersionSettings.BuildNumber; }
-            set { this.assemblyVersionSettings.BuildNumber = value; }
+            get => this.assemblyVersionSettings.BuildNumber;
+            set => this.assemblyVersionSettings.BuildNumber = value;
         }
 
         /// <summary>
@@ -258,8 +257,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyRevisionFormat"/>
         public string AssemblyRevision
         {
-            get { return this.assemblyVersionSettings.Revision; }
-            set { this.assemblyVersionSettings.Revision = value; }
+            get => this.assemblyVersionSettings.Revision;
+            set => this.assemblyVersionSettings.Revision = value;
         }
 
         /// <summary>
@@ -295,8 +294,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="MaxAssemblyVersion"/>
         public string AssemblyVersion
         {
-            get { return this.assemblyVersionSettings.Version; }
-            set { this.assemblyVersionSettings.Version = value; }
+            get => this.assemblyVersionSettings.Version;
+            set => this.assemblyVersionSettings.Version = value;
         }
 
         /// <summary>
@@ -409,8 +408,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyBuildNumberType"/>
         public string AssemblyBuildNumberFormat
         {
-            get { return this.assemblyVersionSettings.BuildNumberFormat; }
-            set { this.assemblyVersionSettings.BuildNumberFormat = value; }
+            get => this.assemblyVersionSettings.BuildNumberFormat;
+            set => this.assemblyVersionSettings.BuildNumberFormat = value;
         }
 
         /// <summary>
@@ -434,8 +433,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyBuildNumberType"/>
         public string AssemblyRevisionFormat
         {
-            get { return this.assemblyVersionSettings.RevisionFormat; }
-            set { this.assemblyVersionSettings.RevisionFormat = value; }
+            get => this.assemblyVersionSettings.RevisionFormat;
+            set => this.assemblyVersionSettings.RevisionFormat = value;
         }
 
         /// <summary>Returns the largest assembly version set by the task.</summary>
@@ -451,8 +450,8 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public string MaxAssemblyVersion
         {
-            get { return this.maxAssemblyVersion; }
-            set { this.maxAssemblyVersion = value; }
+            get => this.maxAssemblyVersion;
+            set => this.maxAssemblyVersion = value;
         }
 
         /// <summary>
@@ -472,8 +471,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// </example>
         public string AssemblyFileMajorVersion
         {
-            get { return this.assemblyFileVersionSettings.MajorVersion; }
-            set { this.assemblyFileVersionSettings.MajorVersion = value; }
+            get => this.assemblyFileVersionSettings.MajorVersion;
+            set => this.assemblyFileVersionSettings.MajorVersion = value;
         }
 
         /// <summary>
@@ -493,8 +492,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// </example>
         public string AssemblyFileMinorVersion
         {
-            get { return this.assemblyFileVersionSettings.MinorVersion; }
-            set { this.assemblyFileVersionSettings.MinorVersion = value; }
+            get => this.assemblyFileVersionSettings.MinorVersion;
+            set => this.assemblyFileVersionSettings.MinorVersion = value;
         }
 
         /// <summary>
@@ -525,8 +524,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyFileBuildNumberFormat"/>
         public string AssemblyFileBuildNumber
         {
-            get { return this.assemblyFileVersionSettings.BuildNumber; }
-            set { this.assemblyFileVersionSettings.BuildNumber = value; }
+            get => this.assemblyFileVersionSettings.BuildNumber;
+            set => this.assemblyFileVersionSettings.BuildNumber = value;
         }
 
         /// <summary>
@@ -557,8 +556,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyRevisionFormat"/>
         public string AssemblyFileRevision
         {
-            get { return this.assemblyFileVersionSettings.Revision; }
-            set { this.assemblyFileVersionSettings.Revision = value; }
+            get => this.assemblyFileVersionSettings.Revision;
+            set => this.assemblyFileVersionSettings.Revision = value;
         }
 
         /// <summary>
@@ -594,8 +593,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="MaxAssemblyFileVersion"/>
         public string AssemblyFileVersion
         {
-            get { return this.assemblyFileVersionSettings.Version; }
-            set { this.assemblyFileVersionSettings.Version = value; }
+            get => this.assemblyFileVersionSettings.Version;
+            set => this.assemblyFileVersionSettings.Version = value;
         }
 
         /// <summary>
@@ -667,8 +666,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyFileBuildNumberType"/>
         public string AssemblyFileBuildNumberFormat
         {
-            get { return this.assemblyFileVersionSettings.BuildNumberFormat; }
-            set { this.assemblyFileVersionSettings.BuildNumberFormat = value; }
+            get => this.assemblyFileVersionSettings.BuildNumberFormat;
+            set => this.assemblyFileVersionSettings.BuildNumberFormat = value;
         }
 
         /// <summary>
@@ -692,8 +691,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// <seealso cref="AssemblyBuildNumberType"/>
         public string AssemblyFileRevisionFormat
         {
-            get { return this.assemblyFileVersionSettings.RevisionFormat; }
-            set { this.assemblyFileVersionSettings.RevisionFormat = value; }
+            get => this.assemblyFileVersionSettings.RevisionFormat;
+            set => this.assemblyFileVersionSettings.RevisionFormat = value;
         }
 
         /// <summary>Returns the largest assembly file version set by the task.</summary>
@@ -709,8 +708,8 @@ namespace MSBuild.ExtensionPack.Framework
         [Output]
         public string MaxAssemblyFileVersion
         {
-            get { return this.maxAssemblyFileVersion; }
-            set { this.maxAssemblyFileVersion = value; }
+            get => this.maxAssemblyFileVersion;
+            set => this.maxAssemblyFileVersion = value;
         }
 
         /// <summary>The title of the assembly.</summary>
@@ -981,11 +980,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Set the first day of the week for IncrementMethod.YearWeekDay. Defaults to Monday
         /// </summary>
-        public string FirstDayOfWeek
-        {
-            get { return this.firstDayOfWeek; }
-            set { this.firstDayOfWeek = value; }
-        }
+        public string FirstDayOfWeek { get; set; } = "Monday";
 
         /// <summary>
         /// Sets the number of padding digits to use, e.g. 4
@@ -1037,7 +1032,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 if (!File.Exists(item.ItemSpec))
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentUICulture, "File not found: {0}", item.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "File not found: {0}", item.ItemSpec));
                     return false;
                 }
 
@@ -1059,7 +1054,7 @@ namespace MSBuild.ExtensionPack.Framework
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to read current AssemblyVersion from file {0}: {1}", item.ItemSpec, ex.Message));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to read current AssemblyVersion from file {0}: {1}", item.ItemSpec, ex.Message));
                         return false;
                     }
 
@@ -1090,7 +1085,7 @@ namespace MSBuild.ExtensionPack.Framework
                     }
                     catch (ArgumentException)
                     {
-                        Log.LogWarning(string.Format(CultureInfo.CurrentUICulture, "File {0} contains a verbatim AssemblyFileVersion - skipping", item.ItemSpec));
+                        this.Log.LogWarning(string.Format(CultureInfo.CurrentUICulture, "File {0} contains a verbatim AssemblyFileVersion - skipping", item.ItemSpec));
                     }
                 }
 
@@ -1124,7 +1119,7 @@ namespace MSBuild.ExtensionPack.Framework
                         }
                         catch (ArgumentException)
                         {
-                            Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
+                            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Error, {0} is not a supported encoding name.", this.TextEncoding));
                             return false;
                         }
                     }
@@ -1142,7 +1137,7 @@ namespace MSBuild.ExtensionPack.Framework
                     // If readonly attribute is set, reset it.
                     if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                     {
-                        Log.LogMessage(MessageImportance.Low, "Making file writable");
+                        this.Log.LogMessage(MessageImportance.Low, "Making file writable");
                         File.SetAttributes(item.ItemSpec, fileAttributes ^ FileAttributes.ReadOnly);
                         changedAttribute = true;
                     }
@@ -1151,16 +1146,13 @@ namespace MSBuild.ExtensionPack.Framework
 
                     if (changedAttribute)
                     {
-                        Log.LogMessage(MessageImportance.Low, "Making file readonly");
+                        this.Log.LogMessage(MessageImportance.Low, "Making file readonly");
                         File.SetAttributes(item.ItemSpec, FileAttributes.ReadOnly);
                     }
                 }
                 finally
                 {
-                    if (writerInfo != null)
-                    {
-                        writerInfo.Delete();
-                    }
+                    writerInfo?.Delete();
                 }
             }
 
@@ -1264,12 +1256,15 @@ namespace MSBuild.ExtensionPack.Framework
         private void UpdateProperty(AssemblyInfoWrapper assemblyInfo, string propertyName)
         {
             PropertyInfo propInfo = this.GetType().GetProperty(propertyName);
-            string value = (string)propInfo.GetValue(this, null);
-
-            if (value != null)
+            if (propInfo != null)
             {
-                assemblyInfo[propertyName] = value;
-                this.Log.LogMessage(MessageImportance.Low, "\tUpdating {0} to \"{1}\"", propertyName, value);
+                string value = (string)propInfo.GetValue(this, null);
+
+                if (value != null)
+                {
+                    assemblyInfo[propertyName] = value;
+                    this.Log.LogMessage(MessageImportance.Low, "\tUpdating {0} to \"{1}\"", propertyName, value);
+                }
             }
         }
 
@@ -1310,7 +1305,7 @@ namespace MSBuild.ExtensionPack.Framework
                     string newVersionNumber3 = now.ToString("yy", CultureInfo.InvariantCulture);
                     newVersionNumber3 += CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstDay, (DayOfWeek)Enum.Parse(typeof(DayOfWeek), this.FirstDayOfWeek)).ToString("D2", CultureInfo.InvariantCulture);
                     newVersionNumber3 += ((int)now.DayOfWeek).ToString(CultureInfo.InvariantCulture);
-                    Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber3);
+                    this.Log.LogMessage(MessageImportance.Low, logMessage, newVersionNumber3);
                     return newVersionNumber3;
                 case IncrementMethod.ElapsedDays:
                     DateTime now2 = this.UseUtc ? DateTime.UtcNow : DateTime.Now;

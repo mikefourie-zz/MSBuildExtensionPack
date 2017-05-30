@@ -7,6 +7,8 @@ namespace MSBuild.ExtensionPack.Framework
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
+
     using Microsoft.Build.Framework;
 
     /// <summary>
@@ -67,11 +69,10 @@ namespace MSBuild.ExtensionPack.Framework
     {
         private const string BuildTargetsInParallelTaskAction = "BuildTargetsInParallel";
         private const string BuildTargetSetsInParallelTaskAction = "BuildTargetSetsInParallel";
-        private bool waitAll = true;
-        private bool multiLogAppend;
+
         private LoggerVerbosity multiLogVerbosity = LoggerVerbosity.Diagnostic;
         private LoggerVerbosity multiLogResponseVerbosity = LoggerVerbosity.Minimal;
-        private bool nodereuse;
+
         private string multiprocparameter = string.Empty;
 
         /// <summary>
@@ -87,20 +88,12 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Enable or disable the re-use of MSBuild nodes when using MultiProc. Default is false
         /// </summary>
-        public bool NodeReuse
-        {
-            get { return this.nodereuse; }
-            set { this.nodereuse = value; }
-        }
+        public bool NodeReuse { get; set; }
 
         /// <summary>
         /// Specifies whether to wait for all Targets to complete execution before returning to MSBuild or whether to wait for all to complete. Default is true.
         /// </summary>
-        public bool WaitAll
-        {
-            get { return this.waitAll; }
-            set { this.waitAll = value; }
-        }
+        public bool WaitAll { get; set; } = true;
 
         /// <summary>
         /// Specifies the working directory. Default is null and MSBuild is resolved to the Path environment variable.
@@ -123,19 +116,15 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Specifies whether to append to existing log files. Default is false
         /// </summary>
-        public bool MultiLogAppend
-        {
-            get { return this.multiLogAppend; }
-            set { this.multiLogAppend = value; }
-        }
+        public bool MultiLogAppend { get; set; }
 
         /// <summary>
         /// Specifies the verbosity to log to the individual files with. Default is Diagnostic. Note this is case sensitive.
         /// </summary>
         public string MultiLogVerbosity
         {
-            get { return this.multiLogVerbosity.ToString(); }
-            set { this.multiLogVerbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), value); }
+            get => this.multiLogVerbosity.ToString();
+            set => this.multiLogVerbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), value);
         }
 
         /// <summary>
@@ -143,8 +132,8 @@ namespace MSBuild.ExtensionPack.Framework
         /// </summary>
         public string MultiLogResponseVerbosity
         {
-            get { return this.multiLogResponseVerbosity.ToString(); }
-            set { this.multiLogResponseVerbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), value); }
+            get => this.multiLogResponseVerbosity.ToString();
+            set => this.multiLogResponseVerbosity = (LoggerVerbosity)Enum.Parse(typeof(LoggerVerbosity), value);
         }
 
         /// <summary>
@@ -206,7 +195,7 @@ namespace MSBuild.ExtensionPack.Framework
                 string targets = this.Targets.Aggregate(string.Empty, (current, t) => current + (t.ItemSpec + ";"));
                 this.LogTaskMessage(MessageImportance.High, string.Format(CultureInfo.CurrentCulture, "Building Targets: {0}", targets.Remove(targets.Length - 1, 1)));
 
-                System.Threading.Tasks.Task[] tasks = new System.Threading.Tasks.Task[this.Targets.Length];
+                Task[] tasks = new Task[this.Targets.Length];
                 for (int i = 0; i < this.Targets.Length; i++)
                 {
                     int i1 = i;
@@ -267,7 +256,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 // note there is a bug in MSBuild loggers whereby the logger will append whenever it sees append in the arguments, so you can's say append=false.
                 string append = string.Empty;
-                if (this.multiLogAppend)
+                if (this.MultiLogAppend)
                 {
                     append = "append=true;";
                 }
@@ -275,7 +264,7 @@ namespace MSBuild.ExtensionPack.Framework
                 logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile=\"{2}\"", append, this.MultiLogVerbosity, logfileName);
             }
             
-            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.ItemSpec + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
+            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + item.ItemSpec + properties + this.multiprocparameter + " /nr:" + this.NodeReuse + " " + logginginfo);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 exec.WorkingDirectory = this.WorkingDirectory;
@@ -294,18 +283,20 @@ namespace MSBuild.ExtensionPack.Framework
 
             exec.OutputDataReceived += (sender, e) =>
                 {
-                    if (e.Data != null)
+                    if (e.Data == null)
                     {
-                        if (this.Log != null)
+                        return;
+                    }
+
+                    if (this.Log != null)
+                    {
+                        try
                         {
-                            try
-                            {
-                                this.Log.LogMessage(MessageImportance.Normal, e.Data);
-                            }
-                            catch
-                            {
-                                // do nothing. We have a race condition here with the MSBuild host being killed and the logging still trying to occur.
-                            }
+                            this.Log.LogMessage(MessageImportance.Normal, e.Data);
+                        }
+                        catch
+                        {
+                            // do nothing. We have a race condition here with the MSBuild host being killed and the logging still trying to occur.
                         }
                     }
                 };
@@ -335,7 +326,7 @@ namespace MSBuild.ExtensionPack.Framework
         {
             try
             {
-                System.Threading.Tasks.Task[] tasks = new System.Threading.Tasks.Task[this.Targets.Length];
+                Task[] tasks = new Task[this.Targets.Length];
                 for (int i = 0; i < this.Targets.Length; i++)
                 {
                     int i1 = i;
@@ -408,7 +399,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 // note there is a bug in MSBuild loggers whereby the logger will append whenever it sees append in the arguments, so you can's say append=false.
                 string append = string.Empty;
-                if (this.multiLogAppend)
+                if (this.MultiLogAppend)
                 {
                     append = "append=true;";
                 }
@@ -416,7 +407,7 @@ namespace MSBuild.ExtensionPack.Framework
                 logginginfo = string.Format(CultureInfo.CurrentCulture, "/l:FileLogger,Microsoft.Build.Engine;{0}verbosity={1};logfile=\"{2}\"", append, this.MultiLogVerbosity, logfileName);
             }
 
-            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + resolvedtargets + properties + this.multiprocparameter + " /nr:" + this.nodereuse + " " + logginginfo);
+            var exec = new ShellWrapper("msbuild.exe", "\"" + projectFile + "\" /v:" + this.MultiLogResponseVerbosity + " /t:" + resolvedtargets + properties + this.multiprocparameter + " /nr:" + this.NodeReuse + " " + logginginfo);
             if (string.IsNullOrEmpty(this.WorkingDirectory) == false)
             {
                 exec.WorkingDirectory = this.WorkingDirectory;

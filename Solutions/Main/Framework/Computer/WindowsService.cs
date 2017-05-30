@@ -386,16 +386,11 @@ namespace MSBuild.ExtensionPack.Computer
         private const string StartupTypeDisabled = "Disabled";
         private const string StartupTypeManual  = "Manual";
         private const bool RemoteExecutionAvailable = true;
-        private int retryAttempts = 60;
 
         /// <summary>
         /// Sets the number of times to attempt Starting / Stopping a service. Default is 60.
         /// </summary>
-        public int RetryAttempts
-        {
-            get { return this.retryAttempts; }
-            set { this.retryAttempts = value; }
-        }
+        public int RetryAttempts { get; set; } = 60;
 
         /// <summary>
         /// Gets whether the service exists

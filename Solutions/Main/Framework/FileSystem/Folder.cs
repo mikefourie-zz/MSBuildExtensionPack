@@ -99,7 +99,6 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string RemoveSecurityTaskAction = "RemoveSecurity";
         private List<string> foldersFound;
         private AccessControlType accessType = AccessControlType.Allow;
-        private int retryCount = 5;
 
         /// <summary>
         /// Sets the path to remove content from, or the base path for Delete
@@ -140,18 +139,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         public string AccessType
         {
-            get { return this.accessType.ToString(); }
-            set { this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value); }
+            get => this.accessType.ToString();
+            set => this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value);
         }
 
         /// <summary>
         /// Sets a value indicating how many times to retry removing the content, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
         /// </summary>
-        public int RetryCount
-        {
-            get { return this.retryCount; }
-            set { this.retryCount = value; }
-        }
+        public int RetryCount { get; set; } = 5;
 
         /// <summary>
         /// Set to true to perform a recursive scan. Default is false.
@@ -305,7 +300,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (string.IsNullOrEmpty(this.Path.GetMetadata("FullPath")))
             {
-                Log.LogError("Path must be specified.");
+                this.Log.LogError("Path must be specified.");
                 return;
             }
 
@@ -395,7 +390,7 @@ namespace MSBuild.ExtensionPack.FileSystem
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Removing all Folders from: {0} that match: {1}", this.Path, this.Match));
             if (string.IsNullOrEmpty(this.Match))
             {
-                Log.LogError("Match must be specified.");
+                this.Log.LogError("Match must be specified.");
                 return;
             }
 
@@ -628,7 +623,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (string.IsNullOrEmpty(this.TargetPath.GetMetadata("FullPath")))
             {
-                Log.LogError("TargetPath must be specified.");
+                this.Log.LogError("TargetPath must be specified.");
                 return;
             }
 

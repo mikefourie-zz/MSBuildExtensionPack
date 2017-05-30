@@ -104,8 +104,8 @@ namespace MSBuild.ExtensionPack.Management
         [Output]
         public ITaskItem[] Info
         {
-            get { return this.info.ToArray(); }
-            set { this.info = new List<ITaskItem>(value); }
+            get => this.info.ToArray();
+            set => this.info = new List<ITaskItem>(value);
         }
 
         /// <summary>
@@ -140,8 +140,8 @@ namespace MSBuild.ExtensionPack.Management
         /// </summary>
         public ITaskItem[] Properties
         {
-            get { return this.properties.ToArray(); }
-            set { this.properties = new List<ITaskItem>(value); }
+            get => this.properties.ToArray();
+            set => this.properties = new List<ITaskItem>(value);
         }
 
         /// <summary>

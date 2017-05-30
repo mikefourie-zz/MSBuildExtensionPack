@@ -163,7 +163,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         private const string WriteLinesTaskAction = "WriteLines";
 
         private Encoding fileEncoding = Encoding.UTF8;
-        private string replacement = string.Empty;
+
         private RegexOptions regexOptions = RegexOptions.Compiled;
         private Regex parseRegex;
         private string[] commentIdentifiers;
@@ -186,8 +186,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         public string AccessType
         {
-            get { return this.accessType.ToString(); }
-            set { this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value); }
+            get => this.accessType.ToString();
+            set => this.accessType = (AccessControlType)Enum.Parse(typeof(AccessControlType), value);
         }
 
         /// <summary>
@@ -222,21 +222,14 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// <summary>
         /// The replacement text to use. Default is string.Empty
         /// </summary>
-        public string Replacement
-        {
-            get { return this.replacement; }
-            set { this.replacement = value; }
-        }
+        public string Replacement { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets the Regular Expression options, e.g. None|IgnoreCase|Multiline|ExplicitCapture|Compiled|Singleline|IgnorePatternWhitespace|RightToLeft|RightToLeft|ECMAScript|CultureInvariant  Default is RegexOptions.Compiled
         /// </summary>
         public string RegexOptionList
         {
-            get
-            {
-                return null;
-            }
+            get => null;
 
             set
             {
@@ -311,7 +304,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         /// </summary>
         public string CommentIdentifiers
         { 
-            set { this.commentIdentifiers = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); }
+            set => this.commentIdentifiers = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -405,8 +398,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         [Output]
         public ITaskItem[] ExcludedFiles
         {
-            get { return this.excludedFiles == null ? null : this.excludedFiles.ToArray(); }
-            set { this.excludedFiles = new List<ITaskItem>(value); }
+            get => this.excludedFiles?.ToArray();
+            set => this.excludedFiles = new List<ITaskItem>(value);
         }
 
         /// <summary>
@@ -415,8 +408,8 @@ namespace MSBuild.ExtensionPack.FileSystem
         [Output]
         public ITaskItem[] IncludedFiles
         {
-            get { return this.includedFiles == null ? null : this.includedFiles.ToArray(); }
-            set { this.includedFiles = new List<ITaskItem>(value); }
+            get => this.includedFiles?.ToArray();
+            set => this.includedFiles = new List<ITaskItem>(value);
         }
 
         /// <summary>
@@ -525,13 +518,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.RegexPattern))
             {
-                Log.LogError("RegexPattern is required.");
+                this.Log.LogError("RegexPattern is required.");
                 return;
             }
 
@@ -568,13 +561,13 @@ namespace MSBuild.ExtensionPack.FileSystem
 
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
             if (this.TargetPath == null)
             {
-                Log.LogError("TargetPath is required");
+                this.Log.LogError("TargetPath is required");
                 return;
             }
 
@@ -598,7 +591,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
@@ -613,13 +606,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
             if (this.Lines == null)
             {
-                Log.LogError("Lines is required");
+                this.Log.LogError("Lines is required");
                 return;
             }
 
@@ -631,7 +624,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }
@@ -702,13 +695,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
             if (this.Lines == null)
             {
-                Log.LogError("Lines is required");
+                this.Log.LogError("Lines is required");
                 return;
             }
 
@@ -720,7 +713,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }
@@ -885,13 +878,13 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.RegexPattern))
             {
-                Log.LogError("RegexPattern is required.");
+                this.Log.LogError("RegexPattern is required.");
                 return;
             }
 
@@ -933,7 +926,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
@@ -1016,7 +1009,7 @@ namespace MSBuild.ExtensionPack.FileSystem
         {
             if (this.Files == null)
             {
-                Log.LogError("Files is required");
+                this.Log.LogError("Files is required");
                 return;
             }
 
@@ -1093,14 +1086,14 @@ namespace MSBuild.ExtensionPack.FileSystem
                 }
                 catch (ArgumentException)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
                     return;
                 }
             }
 
             if (string.IsNullOrEmpty(this.RegexPattern))
             {
-                Log.LogError("RegexPattern is required.");
+                this.Log.LogError("RegexPattern is required.");
                 return;
             }
 
@@ -1259,7 +1252,7 @@ namespace MSBuild.ExtensionPack.FileSystem
                     }
                     catch (ArgumentException)
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "{0} is not a supported encoding name.", this.TextEncoding));
                         return;
                     }
                 }

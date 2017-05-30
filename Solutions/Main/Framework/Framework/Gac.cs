@@ -128,7 +128,7 @@ namespace MSBuild.ExtensionPack.Framework
             // If the result is not zero throw an exception
             if (result != 0)
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Failed to install assembly into the global assembly cache. Result Code: {0}", result));
             }
         }
 
@@ -261,7 +261,7 @@ namespace MSBuild.ExtensionPack.Framework
                         }
                         else
                         {
-                            Log.LogError("Remote Create returned null");
+                            this.Log.LogError("Remote Create returned null");
                         }
                     }
                 }

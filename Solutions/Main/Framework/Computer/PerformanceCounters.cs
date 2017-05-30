@@ -152,7 +152,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (string.IsNullOrEmpty(this.CounterName))
             {
-                Log.LogError("CounterName is required");
+                this.Log.LogError("CounterName is required");
                 return false;
             }
 

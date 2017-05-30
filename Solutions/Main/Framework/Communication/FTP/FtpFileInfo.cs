@@ -37,55 +37,37 @@ namespace MSBuild.ExtensionPack.Communication.Extended
         {         
         }
 
-        public FtpConnection FtpConnection
-        {
-            get { return this.ftpConnection; }
-        }
+        public FtpConnection FtpConnection => this.ftpConnection;
 
         public new DateTime? LastAccessTime
         {
             get { return this.lastAccessTime.HasValue ? (DateTime?)this.lastAccessTime.Value : null; }
-            internal set { this.lastAccessTime = value; }
+            internal set => this.lastAccessTime = value;
         }
 
         public new DateTime? CreationTime
         {
-            get { return this.creationTime.HasValue ? (DateTime?)this.creationTime.Value : null; }
-            internal set { this.creationTime = value; }
+            get => this.creationTime.HasValue ? (DateTime?)this.creationTime.Value : null;
+            internal set => this.creationTime = value;
         }
 
         public new DateTime? LastWriteTime
         {
-            get { return this.lastWriteTime.HasValue ? (DateTime?)this.lastWriteTime.Value : null; }
-            internal set { this.lastWriteTime = value; }
+            get => this.lastWriteTime.HasValue ? (DateTime?)this.lastWriteTime.Value : null;
+            internal set => this.lastWriteTime = value;
         }
 
-        public new DateTime? LastAccessTimeUtc
-        {
-            get { return this.lastAccessTime.HasValue ? (DateTime?)this.lastAccessTime.Value.ToUniversalTime() : null; }
-        }
+        public new DateTime? LastAccessTimeUtc => this.lastAccessTime?.ToUniversalTime();
 
-        public new DateTime? CreationTimeUtc
-        {
-            get { return this.creationTime.HasValue ? (DateTime?)this.creationTime.Value.ToUniversalTime() : null; }
-        }
+        public new DateTime? CreationTimeUtc => this.creationTime?.ToUniversalTime();
 
-        public new DateTime? LastWriteTimeUtc
-        {
-            get { return this.lastWriteTime.HasValue ? (DateTime?)this.lastWriteTime.Value.ToUniversalTime() : null; }
-        }
+        public new DateTime? LastWriteTimeUtc => this.lastWriteTime?.ToUniversalTime();
 
         public new FileAttributes Attributes { get; internal set; }
 
-        public override string Name
-        {
-            get { return this.fileName; }
-        }
+        public override string Name => this.fileName;
 
-        public override bool Exists
-        {
-            get { return this.FtpConnection.FileExists(this.FullName); }
-        }
+        public override bool Exists => this.FtpConnection.FileExists(this.FullName);
 
         public override void Delete()
         {

@@ -32,33 +32,12 @@ namespace MSBuild.ExtensionPack.SqlServer.Extended
             this.executionException = reasonForFailure;
         }
 
-        public SqlErrorCollection SqlInfo
-        {
-            get { return this.sqlInfo; }
-        }
+        public SqlErrorCollection SqlInfo => this.sqlInfo;
 
-        public System.IO.FileInfo ScriptFileInfo
-        {
-            get
-            {
-                return this.scriptFileInfo;
-            }
-        }
+        public System.IO.FileInfo ScriptFileInfo => this.scriptFileInfo;
 
-        public bool Succeeded
-        {
-            get
-            {
-                return this.succeeded;
-            }
-        }
+        public bool Succeeded => this.succeeded;
 
-        public Exception ExecutionException
-        {
-            get
-            {
-                return this.executionException;
-            }
-        }
+        public Exception ExecutionException => this.executionException;
     }
 }

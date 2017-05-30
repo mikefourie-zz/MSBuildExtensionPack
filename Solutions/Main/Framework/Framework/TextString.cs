@@ -137,8 +137,7 @@ namespace MSBuild.ExtensionPack.Framework
         private const string ToUpperTaskAction = "ToUpper";
         private const string TrimTaskAction = "Trim";
         private const string SubstringTaskAction = "Substring";
-        
-        private bool ignoreCase = true;
+
         private StringComparison stringCom = StringComparison.OrdinalIgnoreCase;
 
         /// <summary>
@@ -175,11 +174,7 @@ namespace MSBuild.ExtensionPack.Framework
         /// <summary>
         /// Sets a value indicating whether [ignore case]. Default is true.
         /// </summary>
-        public bool IgnoreCase
-        {
-            get { return this.ignoreCase; }
-            set { this.ignoreCase = value; }
-        }
+        public bool IgnoreCase { get; set; } = true;
 
         /// <summary>
         /// Sets the old string.

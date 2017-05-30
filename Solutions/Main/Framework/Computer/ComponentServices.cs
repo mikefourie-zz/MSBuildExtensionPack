@@ -87,7 +87,6 @@ namespace MSBuild.ExtensionPack.Computer
         private CSActivation activation = CSActivation.Local;
         private string pathToFramework;
         private TransactionOption compTransaction = TransactionOption.NotSupported;
-        private bool enforceAccessChecks = true;
 
         /// <summary>
         /// Gets whether the application exists.
@@ -105,8 +104,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string Transaction
         {
-            get { return this.compTransaction.ToString(); }
-            set { this.compTransaction = (TransactionOption)Enum.Parse(typeof(TransactionOption), value); }
+            get => this.compTransaction.ToString();
+            set => this.compTransaction = (TransactionOption)Enum.Parse(typeof(TransactionOption), value);
         }
 
         /// <summary>
@@ -134,8 +133,8 @@ namespace MSBuild.ExtensionPack.Computer
         /// </summary>
         public string Framework
         {
-            get { return this.framework; }
-            set { this.framework = value; }
+            get => this.framework;
+            set => this.framework = value;
         }
 
         /// <summary>
@@ -146,11 +145,7 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets whether or not component services enforces access checks for this application. Defaults to "True". Supports: True (Enforce access checks), False 
         /// </summary>
-        public bool EnforceAccessChecks
-        {
-            get { return this.enforceAccessChecks; }
-            set { this.enforceAccessChecks = value; }
-        }
+        public bool EnforceAccessChecks { get; set; } = true;
 
         /// <summary>
         /// Sets whether or not component services allows access to Intrinsic IIS properties, used for Windows 2003
@@ -228,7 +223,7 @@ namespace MSBuild.ExtensionPack.Computer
             }
             catch (BadImageFormatException)
             {
-                Log.LogError("The Assembly is not a valid .Net assembly");
+                this.Log.LogError("The Assembly is not a valid .Net assembly");
                 return false;
             }
         }

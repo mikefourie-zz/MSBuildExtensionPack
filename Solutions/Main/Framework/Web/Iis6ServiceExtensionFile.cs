@@ -80,8 +80,8 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         public string Permission
         { 
-            get { return this.permission.ToString(); }
-            set { this.permission = (ExtensionPermission)Enum.Parse(typeof(ExtensionPermission), value); }
+            get => this.permission.ToString();
+            set => this.permission = (ExtensionPermission)Enum.Parse(typeof(ExtensionPermission), value);
         }
 
             /// <summary>

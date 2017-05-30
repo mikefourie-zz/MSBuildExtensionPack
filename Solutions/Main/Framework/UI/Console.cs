@@ -41,46 +41,25 @@ namespace MSBuild.ExtensionPack.UI
     /// </example>
     public class Console : BaseTask
     {
-        private int duration = 333;
-        private int frequency = 600;
-        private int repeat = 1;
-        private int interval = 10;
-
         /// <summary>
         /// Sets the interval between beebs. Default is 10ms. Value must be between 10 and 5000
         /// </summary>
-        public int Interval
-        {
-            get { return this.interval; }
-            set { this.interval = value; }
-        }
+        public int Interval { get; set; } = 10;
 
         /// <summary>
         /// Sets the duration. Default is 333ms. Value must be between 1 and 10000
         /// </summary>
-        public int Duration
-        {
-            get { return this.duration; }
-            set { this.duration = value; }
-        }
+        public int Duration { get; set; } = 333;
 
         /// <summary>
         /// Sets the repeat. Default is 1. Value must be between 1 and 20
         /// </summary>
-        public int Repeat
-        {
-            get { return this.repeat; }
-            set { this.repeat = value; }
-        }
+        public int Repeat { get; set; } = 1;
 
         /// <summary>
         /// Sets the frequency. Default is 600hz. Value must be between 37 and 32767
         /// </summary>
-        public int Frequency
-        {
-            get { return this.frequency; }
-            set { this.frequency = value; }
-        }
+        public int Frequency { get; set; } = 600;
 
         /// <summary>
         /// Set the title of the console

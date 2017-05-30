@@ -121,8 +121,8 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         public string Server
         {
-            get { return this.server; }
-            set { this.server = value; }
+            get => this.server;
+            set => this.server = value;
         }
 
         /// <summary>
@@ -149,10 +149,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         public int LoginTimeout
         {
-            get
-            {
-                return this.loginTimeout;
-            }
+            get => this.loginTimeout;
 
             set
             {
@@ -254,10 +251,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         /// </summary>
         public int QueryTimeout
         {
-            get
-            {
-                return this.queryTimeout;
-            }
+            get => this.queryTimeout;
 
             set
             {
@@ -488,7 +482,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             // Write out any errors
             this.SwitchReturnValue(returnValue, sqlCmdWrapper.StandardError.Trim());
 
-            string[] stdOutLines = sqlCmdWrapper.StandardOutput == null ? new string[0] : sqlCmdWrapper.StandardOutput.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] stdOutLines = sqlCmdWrapper.StandardOutput?.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
             var regex = new Regex(@"^(Msg|HResult) (?<ErrorCode>(0x[0-9A-F]+)|\d+), Level (?<Level>\d+), State (?<StateID>\d+)(, Server [^,]+(, (?<ObjectName>[^,]+))?, Line (?<LineNumber>\d+))?$");
             bool foundError = false;
             string errorCode = string.Empty;
@@ -581,7 +575,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         private sealed class InputFileArgumentCollection : IEnumerator<string>, IEnumerable<string>
         {
             private readonly BaseTask task;
-            private readonly int maxArgLength = CommandLineMaxLength;
+            private readonly int maxArgLength;
             private readonly ITaskItem[] inputFiles;
             private int currentIndex;
             private StringBuilder currentArgList;
@@ -594,15 +588,9 @@ namespace MSBuild.ExtensionPack.SqlServer
                 this.Reset();
             }
 
-            public string Current
-            {
-                get { return this.currentArgList.ToString(); }
-            }
+            public string Current => this.currentArgList.ToString();
 
-            object IEnumerator.Current
-            {
-                get { return this.Current; }
-            }
+            object IEnumerator.Current => this.Current;
 
             public void Dispose()
             {

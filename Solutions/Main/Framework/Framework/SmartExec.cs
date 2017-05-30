@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Framework
                 string str;
                 while ((str = this.process.StandardError.ReadLine()) != null)
                 {
-                    Log.LogError(str);
+                    this.Log.LogError(str);
                 }
             }
             catch (IOException)

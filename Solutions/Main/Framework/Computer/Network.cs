@@ -68,9 +68,6 @@ namespace MSBuild.ExtensionPack.Computer
         private const string GetInternalIPTaskAction = "GetInternalIP";
         private const string GetRemoteIPTaskAction = "GetRemoteIP";
         private const string PingTaskAction = "Ping";
-        
-        private int pingCount = 5;
-        private int timeout = 3000;
 
         /// <summary>
         /// Sets the HostName / IP address
@@ -86,20 +83,12 @@ namespace MSBuild.ExtensionPack.Computer
         /// <summary>
         /// Sets the number of pings to attempt. Default is 5.
         /// </summary>
-        public int PingCount
-        {
-            get { return this.pingCount; }
-            set { this.pingCount = value; }
-        }
+        public int PingCount { get; set; } = 5;
 
         /// <summary>
         /// Sets the timeout in ms for a Ping. Default is 3000
         /// </summary>
-        public int Timeout
-        {
-            get { return this.timeout; }
-            set { this.timeout = value; }
-        }
+        public int Timeout { get; set; } = 3000;
 
         /// <summary>
         /// Gets the IP's
@@ -147,7 +136,7 @@ namespace MSBuild.ExtensionPack.Computer
                     this.GetDnsHostName();
                     break;
                 default:
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Invalid TaskAction passed: {0}", this.TaskAction));
                     return;
             }
         }
@@ -172,7 +161,7 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (string.IsNullOrEmpty(this.HostName))
             {
-                Log.LogError("HostName is required");
+                this.Log.LogError("HostName is required");
                 return;
             }
 

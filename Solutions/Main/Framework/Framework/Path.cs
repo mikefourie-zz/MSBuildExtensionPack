@@ -179,7 +179,7 @@ namespace MSBuild.ExtensionPack.Framework
 
         protected virtual void LogError(string format, params object[] args)
         {
-            Log.LogError(string.Format(CultureInfo.CurrentCulture, format, args));
+            this.Log.LogError(string.Format(CultureInfo.CurrentCulture, format, args));
         }
     }
 }

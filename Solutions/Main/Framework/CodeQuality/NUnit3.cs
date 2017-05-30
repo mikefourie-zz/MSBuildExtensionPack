@@ -222,10 +222,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
         /// </summary>
         public bool TeamCity { get; set; }
 
-        protected override string ToolName
-        {
-            get { return "nunit3-console.exe"; }
-        }
+        protected override string ToolName => "nunit3-console.exe";
 
         protected override string GenerateFullPathToTool()
         {
@@ -318,7 +315,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         private static int GetAttributeInt32Value(string name, XmlNode node)
         {
-            if (node.Attributes[name] != null)
+            if (node.Attributes?[name] != null)
             {
                 return Convert.ToInt32(node.Attributes[name].Value, CultureInfo.InvariantCulture);
             }

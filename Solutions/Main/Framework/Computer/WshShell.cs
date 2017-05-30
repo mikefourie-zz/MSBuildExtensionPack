@@ -98,13 +98,13 @@ namespace MSBuild.ExtensionPack.Computer
         {
             if (string.IsNullOrEmpty(this.FilePath))
             {
-                Log.LogError("FilePath is requried.");
+                this.Log.LogError("FilePath is requried.");
                 return;
             }
 
             if (string.IsNullOrEmpty(this.Name))
             {
-                Log.LogError("Name is requried.");
+                this.Log.LogError("Name is requried.");
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace MSBuild.ExtensionPack.Computer
                 {
                     if (!System.IO.File.Exists(this.IconLocation))
                     {
-                        Log.LogError(string.Format(CultureInfo.InvariantCulture, "IconLocation: {0} does not exist.", this.IconLocation));
+                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "IconLocation: {0} does not exist.", this.IconLocation));
                         return;
                     }
 
@@ -146,7 +146,7 @@ namespace MSBuild.ExtensionPack.Computer
                 {
                     if (!System.IO.Directory.Exists(this.WorkingDirectory))
                     {
-                        Log.LogError(string.Format(CultureInfo.InvariantCulture, "WorkingDirectory: {0} does not exist.", this.WorkingDirectory));
+                        this.Log.LogError(string.Format(CultureInfo.InvariantCulture, "WorkingDirectory: {0} does not exist.", this.WorkingDirectory));
                         return;
                     }
 

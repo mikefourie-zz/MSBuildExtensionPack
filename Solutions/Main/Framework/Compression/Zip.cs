@@ -118,8 +118,8 @@ namespace MSBuild.ExtensionPack.Compression
         /// </summary>
         public string CompressionLevel
         {
-            get { return this.compressLevel.ToString(); }
-            set { this.compressLevel = (Ionic.Zlib.CompressionLevel)Enum.Parse(typeof(Ionic.Zlib.CompressionLevel), value); }
+            get => this.compressLevel.ToString();
+            set => this.compressLevel = (Ionic.Zlib.CompressionLevel)Enum.Parse(typeof(Ionic.Zlib.CompressionLevel), value);
         }
 
         /// <summary>
@@ -135,8 +135,8 @@ namespace MSBuild.ExtensionPack.Compression
         /// </summary>
         public string UseZip64WhenSaving
         {
-            get { return this.useZip64WhenSaving.ToString(); }
-            set { this.useZip64WhenSaving = (Zip64Option)Enum.Parse(typeof(Zip64Option), value, true); }
+            get => this.useZip64WhenSaving.ToString();
+            set => this.useZip64WhenSaving = (Zip64Option)Enum.Parse(typeof(Zip64Option), value, true);
         }
 
         /// <summary>
@@ -145,8 +145,8 @@ namespace MSBuild.ExtensionPack.Compression
         /// </summary>
         public bool PreserveAttributes
         {
-            get { return this.preserveAttributes; }
-            set { this.preserveAttributes = value; }
+            get => this.preserveAttributes;
+            set => this.preserveAttributes = value;
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace MSBuild.ExtensionPack.Compression
             }
             else
             {
-                Log.LogError("CompressFiles or CompressPath must be specified");
+                this.Log.LogError("CompressFiles or CompressPath must be specified");
             }
         }
 
@@ -347,7 +347,7 @@ namespace MSBuild.ExtensionPack.Compression
             }
             else
             {
-                Log.LogError("CompressFiles or CompressPath must be specified");
+                this.Log.LogError("CompressFiles or CompressPath must be specified");
             }
         }
 
@@ -355,13 +355,13 @@ namespace MSBuild.ExtensionPack.Compression
         {
             if (!File.Exists(this.ZipFileName.GetMetadata("FullPath")))
             {
-                Log.LogError(string.Format(CultureInfo.CurrentCulture, "ZipFileName not found: {0}", this.ZipFileName));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "ZipFileName not found: {0}", this.ZipFileName));
                 return;
             }
 
             if (string.IsNullOrEmpty(this.ExtractPath.GetMetadata("FullPath")))
             {
-                Log.LogError("ExtractPath is required");
+                this.Log.LogError("ExtractPath is required");
                 return;
             }
 

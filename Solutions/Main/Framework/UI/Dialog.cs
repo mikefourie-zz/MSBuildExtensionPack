@@ -64,40 +64,20 @@ namespace MSBuild.ExtensionPack.UI
         private const string PromptTaskAction = "Prompt";
         private const string ConfirmTaskAction = "Confirm";
 
-        private string title = "Message";
-        private int height = 180;
-        private int width = 400;
-        private string button1Text = "OK";
-        private string errorTitle = "Error";
-        private string errorText = "The supplied values do not match";
-        private string confirmText = "Confirm";
-
         /// <summary>
         /// Sets the height of the form. Default is 180
         /// </summary>
-        public int Height
-        {
-            get { return this.height; }
-            set { this.height = value; }
-        }
+        public int Height { get; set; } = 180;
 
         /// <summary>
         /// Sets the width of the form. Default is 400
         /// </summary>
-        public int Width
-        {
-            get { return this.width; }
-            set { this.width = value; }
-        }
+        public int Width { get; set; } = 400;
 
         /// <summary>
         /// Sets the text for Button1. Default is 'Ok'
         /// </summary>
-        public string Button1Text
-        {
-            get { return this.button1Text; }
-            set { this.button1Text = value; }
-        }
+        public string Button1Text { get; set; } = "OK";
 
         /// <summary>
         /// Sets the text for Button2. If no text is set the button will not be displayed
@@ -118,38 +98,22 @@ namespace MSBuild.ExtensionPack.UI
         /// <summary>
         /// Sets the title for the error messagebox if Confirm fails. Default is 'Error'
         /// </summary>
-        public string ErrorTitle
-        {
-            get { return this.errorTitle; }
-            set { this.errorTitle = value; }
-        }
+        public string ErrorTitle { get; set; } = "Error";
 
         /// <summary>
         /// Sets the text for the error messagebox if Confirm fails. Default is 'The supplied values do not match'
         /// </summary>
-        public string ErrorText
-        {
-            get { return this.errorText; }
-            set { this.errorText = value; }
-        }
+        public string ErrorText { get; set; } = "The supplied values do not match";
 
         /// <summary>
         /// Sets the confirmation text for the message that is displayed. Default is 'Confirm' 
         /// </summary>
-        public string ConfirmText
-        {
-            get { return this.confirmText; }
-            set { this.confirmText = value; }
-        }
-        
+        public string ConfirmText { get; set; } = "Confirm";
+
         /// <summary>
         /// Sets the Title of the Dialog. Default is 'Message' for Show and Prompt, 'Confirm' for Confirm TaskAction
         /// </summary>
-        public string Title
-        {
-            get { return this.title; }
-            set { this.title = value; }
-        }
+        public string Title { get; set; } = "Message";
 
         /// <summary>
         /// Sets the message text colour. Default is ControlText (usually black).

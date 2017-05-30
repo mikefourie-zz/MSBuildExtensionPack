@@ -40,26 +40,15 @@ namespace MSBuild.ExtensionPack.Multimedia
     /// </example>  
     public class Sound : BaseTask
     {
-        private int repeat = 1;
-        private int interval = 10;
-
         /// <summary>
         /// Sets the interval between beebs. Default is 10ms. Value must be between 10 and 5000
         /// </summary>
-        public int Interval
-        {
-            get { return this.interval; }
-            set { this.interval = value; }
-        }
+        public int Interval { get; set; } = 10;
 
         /// <summary>
         /// Sets the number of times to play the sound. Default is 1. Value must be between 1 and 20
         /// </summary>
-        public int Repeat
-        {
-            get { return this.repeat; }
-            set { this.repeat = value; }
-        }
+        public int Repeat { get; set; } = 1;
 
         /// <summary>
         /// Sets the sound file to play

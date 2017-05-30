@@ -52,7 +52,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     public class SourceSafe : BaseTask
     {
         private ShellWrapper shellWrapper;
-        private string sourceSafeVersion = "2005";
+
         private string fileName = "ss.exe";
 
         /// <summary>
@@ -74,11 +74,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// <summary>
         /// Sets the SourceSafe version. Supports 2005 and 6d. Default is 2005
         /// </summary>
-        public string SSVersion
-        {
-            get { return this.sourceSafeVersion; }
-            set { this.sourceSafeVersion = value; }
-        }
+        public string SSVersion { get; set; } = "2005";
 
         /// <summary>
         /// Sets the database.

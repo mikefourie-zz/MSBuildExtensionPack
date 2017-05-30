@@ -161,7 +161,6 @@ namespace MSBuild.ExtensionPack.Xml
         private XmlDocument xmlFileDoc;
         private XmlNamespaceManager namespaceManager;
         private XmlNodeList elements;
-        private int retryCount = 5;
 
         /// <summary>
         /// Sets the element. For AddElement, if the element exists, it's InnerText / InnerXml will be updated
@@ -234,11 +233,7 @@ namespace MSBuild.ExtensionPack.Xml
         /// <summary>
         /// Sets a value indicating how many times to retry saving the file, e.g. if files are temporarily locked. Default is 5. The retry occurs every 5 seconds.
         /// </summary>
-        public int RetryCount
-        {
-            get { return this.retryCount; }
-            set { this.retryCount = value; }
-        }
+        public int RetryCount { get; set; } = 5;
 
         /// <summary>
         /// When using ReadElements, specifies whether the first level child elements should be added as metadata. Child elements will override any read attributes of the same name. Default is false.
@@ -482,7 +477,7 @@ namespace MSBuild.ExtensionPack.Xml
                 XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element, this.namespaceManager);
                 if (elementNode == null)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
                     return;
                 }
 
@@ -519,7 +514,7 @@ namespace MSBuild.ExtensionPack.Xml
                 XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element, this.namespaceManager);
                 if (elementNode == null)
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
                     return;
                 }
 
@@ -556,7 +551,7 @@ namespace MSBuild.ExtensionPack.Xml
                 string prefixNamespace = this.namespaceManager.LookupNamespace(this.Prefix);
                 if (string.IsNullOrEmpty(prefixNamespace))
                 {
-                    Log.LogError("Prefix not defined in Namespaces in parameters: " + this.Prefix);
+                    this.Log.LogError("Prefix not defined in Namespaces in parameters: " + this.Prefix);
                     return null;
                 }
 
@@ -593,7 +588,7 @@ namespace MSBuild.ExtensionPack.Xml
                 XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement, this.namespaceManager);
                 if (parentNode == null)
                 {
-                    Log.LogError("ParentElement not found: " + this.ParentElement);
+                    this.Log.LogError("ParentElement not found: " + this.ParentElement);
                     return;
                 }
 
@@ -679,7 +674,7 @@ namespace MSBuild.ExtensionPack.Xml
                 string prefixNamespace = this.namespaceManager.LookupNamespace(this.Prefix);
                 if (string.IsNullOrEmpty(prefixNamespace))
                 {
-                    Log.LogError("Prefix not defined in Namespaces in parameters: " + this.Prefix);
+                    this.Log.LogError("Prefix not defined in Namespaces in parameters: " + this.Prefix);
                     return null;
                 }
 
@@ -706,7 +701,7 @@ namespace MSBuild.ExtensionPack.Xml
                 XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement, this.namespaceManager);
                 if (parentNode == null)
                 {
-                    Log.LogError("ParentElement not found: " + this.ParentElement);
+                    this.Log.LogError("ParentElement not found: " + this.ParentElement);
                     return;
                 }
 

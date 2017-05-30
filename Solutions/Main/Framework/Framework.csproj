@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props')" />
   <PropertyGroup>
     <CodeAnalysisOverrideRuleVisibilities>true</CodeAnalysisOverrideRuleVisibilities>
     <ProjectType>Local</ProjectType>
@@ -37,7 +38,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <DelaySign>true</DelaySign>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -54,6 +55,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\BuildBinaries\</OutputPath>
@@ -77,6 +80,7 @@
     <CodeAnalysisRules>
     </CodeAnalysisRules>
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\BuildBinaries\</OutputPath>
@@ -101,6 +105,7 @@
     <CodeAnalysisRules>
     </CodeAnalysisRules>
     <CodeAnalysisRuleSet>..\Common\MSBuild.ExtensionPack.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.COMAdmin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=10d297e8e737fe34, processorArchitecture=MSIL" />
@@ -109,10 +114,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>AssemblyReferences\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibGit2Sharp.0.24.0-pre20170124092542\lib\net40\LibGit2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AnalysisServices.11.0.2100.60\lib\net40\Microsoft.AnalysisServices.DLL</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo">
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc">
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo">
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.Smo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.SmoExtended">
+      <HintPath>AssemblyReferences\Microsoft.SqlServer.SmoExtended.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -209,6 +232,10 @@
     <Compile Include="Framework\Path.cs" />
     <Compile Include="Framework\SmartExec.cs" />
     <Compile Include="Framework\XProduct.cs" />
+    <Compile Include="SqlServer\AnalysisServices.cs" />
+    <Compile Include="SqlServer\Database.cs" />
+    <Compile Include="SqlServer\Server.cs" />
+    <Compile Include="VersionControl\Git.cs" />
     <Compile Include="NuGet\Packager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -224,10 +251,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlServer\SqlScriptLoader.cs" />
-    <Compile Include="Subversion\Schema.cs">
+    <Compile Include="VersionControl\Schema.cs">
       <DependentUpon>Schema.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Subversion\Svn.cs" />
+    <Compile Include="VersionControl\Svn.cs" />
     <Compile Include="UI\ConfirmForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -377,15 +404,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="SqlServer\SqlVersionDataClass.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>SqlVersionDataClass.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Subversion\Schema.xsd">
+    <None Include="VersionControl\Schema.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="VisualStudio\MSBuild.ExtensionPack.VC6.targets" />
+    <None Include="XmlSamples\AnalysisServices2016.proj" />
     <None Include="XmlSamples\AsyncExec.proj" />
     <None Include="XmlSamples\ConfigManager.proj" />
     <None Include="XmlSamples\Console.proj" />
@@ -395,6 +424,8 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlSamples\BuildDeploymentManifest.proj" />
+    <None Include="XmlSamples\Database2016.proj" />
+    <None Include="XmlSamples\Server2016.proj" />
     <None Include="XmlSamples\Svn.proj" />
     <None Include="XmlSamples\XProduct.proj" />
     <None Include="XmlSamples\Parallel.proj">
@@ -524,6 +555,7 @@
     <Content Include="XmlSamples\MotorData\Trucks\BigTruck.txt" />
     <Content Include="XmlSamples\MotorData\Trucks\SmallTruck.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -531,4 +563,10 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.165\build\LibGit2Sharp.NativeBinaries.props'))" />
+  </Target>
 </Project>

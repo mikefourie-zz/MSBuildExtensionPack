@@ -132,7 +132,7 @@ namespace MSBuild.ExtensionPack.Computer
         
         private static string PadIPAddress(string ipAddress)
         {
-            int ipLength = (ipAddress == null) ? 0 : ipAddress.Length;
+            int ipLength = ipAddress?.Length ?? 0;
             int numSpaces = 15 - ipLength;
             return ipAddress + Pads[numSpaces];
         }
@@ -146,11 +146,11 @@ namespace MSBuild.ExtensionPack.Computer
                 this.Tail = tail;
             }
 
-            public string HostName { get; private set; }
+            public string HostName { get; }
 
-            public int LineNumber { get; private set; }
+            public int LineNumber { get; }
 
-            public string Tail { get; private set; }
+            public string Tail { get; }
         }
     }
 }

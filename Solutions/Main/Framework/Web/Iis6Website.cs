@@ -61,7 +61,6 @@ namespace MSBuild.ExtensionPack.Web
     {
         private DirectoryEntry websiteEntry;
         private string properties;
-        private int sleep = 250;
 
         /// <summary>
         /// Sets the Properties. Use a semi-colon delimiter. See <a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/cde669f1-5714-4159-af95-f334251c8cbd.mspx?mfr=true">Metabase Property Reference (IIS 6.0)</a><para/>
@@ -70,8 +69,8 @@ namespace MSBuild.ExtensionPack.Web
         /// </summary>
         public string Properties
         {
-            get { return System.Web.HttpUtility.HtmlDecode(this.properties); }
-            set { this.properties = value; }
+            get => System.Web.HttpUtility.HtmlDecode(this.properties);
+            set => this.properties = value;
         }
 
         /// <summary>
@@ -99,11 +98,7 @@ namespace MSBuild.ExtensionPack.Web
         /// <summary>
         /// Set the sleep time in ms for when calling Start, Stop, Pause or Continue. Default is 250ms.
         /// </summary>
-        public int Sleep
-        {
-            get { return this.sleep; }
-            set { this.sleep = value; }
-        }
+        public int Sleep { get; set; } = 250;
 
         /// <summary>
         /// Gets or sets the Identifier for the website. If specified for Create and the Identifier already exists, an error is logged.
@@ -121,10 +116,7 @@ namespace MSBuild.ExtensionPack.Web
         /// Gets the IIS path.
         /// </summary>
         /// <value>The IIS path.</value>
-        internal string IisPath
-        {
-            get { return "IIS://" + this.MachineName + "/W3SVC"; }
-        }
+        internal string IisPath => "IIS://" + this.MachineName + "/W3SVC";
 
         /// <summary>
         /// When overridden in a derived class, executes the task.
@@ -222,7 +214,7 @@ namespace MSBuild.ExtensionPack.Web
             }
             else
             {
-                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Name));
+                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Name));
             }
         }
         
@@ -280,7 +272,7 @@ namespace MSBuild.ExtensionPack.Web
                     }
                     else
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "The Website already exists: {0}", this.Name));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "The Website already exists: {0}", this.Name));
                         return;
                     }
                 }
@@ -295,7 +287,7 @@ namespace MSBuild.ExtensionPack.Web
                     }
                     catch
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "WebsiteIdentifier {0} already exists. Aborting: {1}", this.Identifier, this.Name));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "WebsiteIdentifier {0} already exists. Aborting: {1}", this.Identifier, this.Name));
                         return;
                     }
                 }
@@ -316,7 +308,7 @@ namespace MSBuild.ExtensionPack.Web
                         {
                             if (this.Identifier > 1000)
                             {
-                                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "websiteIdentifier > 1000. Aborting: {0}", this.Name));
+                                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "websiteIdentifier > 1000. Aborting: {0}", this.Name));
                                 return;
                             }
 
@@ -340,7 +332,7 @@ namespace MSBuild.ExtensionPack.Web
 
                         foreach (string s in propList)
                         {
-                            string[] propPair = s.Split(new[] { '=' });
+                            string[] propPair = s.Split('=');
                             string propName = propPair[0];
                             string propValue = propPair.Length > 1 ? propPair[1] : string.Empty;
 
@@ -383,7 +375,7 @@ namespace MSBuild.ExtensionPack.Web
             }
             else
             {
-                Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Name));
+                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Website not found: {0}", this.Name));
             }
         }
     }
