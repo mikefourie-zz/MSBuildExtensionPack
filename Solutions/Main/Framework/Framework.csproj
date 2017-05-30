@@ -538,10 +538,6 @@
     <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
       <Link>CodeAnalysis.Dictionary.xml</Link>
     </CodeAnalysisDictionary>
-    <None Include="..\.nuget\NuGet.exe">
-      <Link>Resources\NuGet.exe</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Include="AssemblyReferences\Interop.COMAdmin.dll" />
     <Content Include="AssemblyReferences\Interop.IWshRuntimeLibrary.dll" />
     <Content Include="AssemblyReferences\Ionic.Zip.dll" />

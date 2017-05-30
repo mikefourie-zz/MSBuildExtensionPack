@@ -8,7 +8,6 @@
 
         <Feature Id="ProductFeature" Title="Setup" Level="1">
             <ComponentGroupRef Id="ProductComponents"/>
-            <ComponentGroupRef Id="ProductResources"/>
         </Feature>
         <Icon Id="icon.ico" SourceFile="Resources\favicon.ico"/>
         <Property Id="ARPPRODUCTICON" Value="icon.ico" />
@@ -118,12 +117,6 @@
                 <File Id='fileMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' DiskId='1' Source='..\..\Framework\Framework\AssemblyInfo\MSBuild.ExtensionPack.VersionNumber.targets'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.VersionNumber.targets' Name='MSBuild.ExtensionPack.VersionNumber.targets' On='uninstall'/>
             </Component>
-        </ComponentGroup>
-        <ComponentGroup Id="ProductResources" Directory="INSTALLRESOURCES">
-          <Component Id='NuGet.exe' Guid='*'>
-            <File Id='NuGet.exe' Name='NuGet.exe' DiskId='1' Source='..\..\BuildBinaries\Resources\NuGet.exe'/>
-            <RemoveFile Id='NuGet.exe' Name='NuGet.exe' On='uninstall'/>
-          </Component>
         </ComponentGroup>
     </Fragment>
 </Wix>
