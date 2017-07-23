@@ -18,6 +18,8 @@ The *MSBuild Extension Pack* implements a *TaskAction* based design which aims t
 Each task is documented and provided with an example in the help file, which is also available online at [www.msbuildextensionpack.com](http://www.msbuildextensionpack.com/). Where applicable, tasks are remote enabled, simply specify a MachineName with optional credentials and the task will target the remote machine.
 
 ## Feedback
+
+[![Join the chat at https://gitter.im/mikefourie/MSBuildExtensionPack](https://badges.gitter.im/mikefourie/MSBuildExtensionPack.svg)](https://gitter.im/mikefourie/MSBuildExtensionPack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Direct feedback may be emailed to [feedback@msbuildextensionpack.com](mailto:feedback@msbuildextensionpack.com)
 
 You may also wish to follow on [Twitter](http://www.twitter.com/msbep)
