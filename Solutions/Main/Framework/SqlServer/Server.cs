@@ -1,7 +1,7 @@
 ﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // <copyright file="Server.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-namespace MSBuild.ExtensionPack.SqlSmo
+namespace MSBuild.ExtensionPack.SqlServer
 {
     using System.Globalization;
     using Microsoft.Build.Framework;
@@ -26,15 +26,15 @@ namespace MSBuild.ExtensionPack.SqlSmo
     ///     <Import Project="$(TPath)"/>
     ///     <Target Name="Default">
     ///         <!-- Get information for a server, not that this defaults to the default instance on the local server -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Server TaskAction="GetInfo">
+    ///         <MSBuild.ExtensionPack.SqlServer.Server TaskAction="GetInfo">
     ///             <Output TaskParameter="Information" ItemName="AllInfo"/>
-    ///         </MSBuild.ExtensionPack.Sql2016.Server>
+    ///         </MSBuild.ExtensionPack.SqlServer.Server>
     ///         <!-- All the server information properties are available as metadata on the Infomation item -->
     ///         <Message Text="PhysicalMemory: %(AllInfo.PhysicalMemory)"/>
     ///         <!-- Get all the active connections to the server -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Server TaskAction="GetConnectionCount">
+    ///         <MSBuild.ExtensionPack.SqlServer.Server TaskAction="GetConnectionCount">
     ///             <Output TaskParameter="ConnectionCount" PropertyName="Count"/>
-    ///         </MSBuild.ExtensionPack.Sql2016.Server>
+    ///         </MSBuild.ExtensionPack.SqlServer.Server>
     ///         <Message Text="Server ConnectionCount: $(Count)"/>
     ///     </Target>
     /// </Project>

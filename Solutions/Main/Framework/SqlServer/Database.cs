@@ -1,7 +1,7 @@
 ﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // <copyright file="Database.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-namespace MSBuild.ExtensionPack.SqlSmo
+namespace MSBuild.ExtensionPack.SqlServer
 {
     using System;
     using System.Collections.Specialized;
@@ -59,63 +59,63 @@ namespace MSBuild.ExtensionPack.SqlSmo
     ///             </Database3>
     ///         </ItemGroup>
     ///         <!-- Create Database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Delete" DatabaseItem="@(Database3)" ContinueOnError="true"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Delete" DatabaseItem="@(Database3)" ContinueOnError="true"/>
     ///         <!-- Create Database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Create" DatabaseItem="@(Database3)"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Create" DatabaseItem="@(Database3)"/>
     ///         <!-- Detach Database-->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Detach" DatabaseItem="@(Database3)"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Detach" DatabaseItem="@(Database3)"/>
     ///         <!-- Attach Database-->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Attach" DatabaseItem="@(Database3)"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Attach" DatabaseItem="@(Database3)"/>
     ///         <!-- Get information on a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="GetInfo" DatabaseItem="ADatabase">
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="GetInfo" DatabaseItem="ADatabase">
     ///             <Output TaskParameter="Information" ItemName="AllInfo"/>
-    ///         </MSBuild.ExtensionPack.Sql2016.Database>
+    ///         </MSBuild.ExtensionPack.SqlServer.Database>
     ///         <!-- All the database information properties are available as metadata on the Infomation item -->
     ///         <Message Text="SpaceAvailable: %(AllInfo.SpaceAvailable)"/>
     ///         <!-- ScriptData for tables matching Acc* name -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="ScriptData" RegexPattern="Acc*" DatabaseItem="ADatabase" OutputFilePath="c:\ADatabase.sql"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="ScriptData" RegexPattern="Acc*" DatabaseItem="ADatabase" OutputFilePath="c:\ADatabase.sql"/>
     ///         <!-- Backup a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Backup" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Backup" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
     ///         <!-- Verify a database backup -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="VerifyBackup" DataFilePath="c:\a\ADatabase.bak"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="VerifyBackup" DataFilePath="c:\a\ADatabase.bak"/>
     ///         <!-- Restore a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak"/>
     ///         <!-- Restore a database to a different location-->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database MachineName="Desktop\Sql2016" TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak" NewDataFilePath="c:\k\ADatabase2.mdf" LogFilePath="c:\a\ADatabase2_log.LDF"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database MachineName="Desktop\SqlServer" TaskAction="Restore" DatabaseItem="ADatabase" DataFilePath="c:\a\ADatabase.bak" NewDataFilePath="c:\k\ADatabase2.mdf" LogFilePath="c:\a\ADatabase2_log.LDF"/>
     ///         <!-- Create a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Create" DatabaseItem="ADatabase2"/>
     ///         <!-- Create the database again, using Force to delete the existing database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Create" DatabaseItem="ADatabase2" Collation="Latin1_General_CI_AI" Force="true"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Create" DatabaseItem="ADatabase2" Collation="Latin1_General_CI_AI" Force="true"/>
     ///         <!-- Check whether a database exists -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///         </MSBuild.ExtensionPack.Sql2016.Database>
+    ///         </MSBuild.ExtensionPack.SqlServer.Database>
     ///         <Message Text="Database Exists: $(DoesExist)"/>
     ///         <!-- Delete a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Delete" DatabaseItem="ADatabase2"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Delete" DatabaseItem="ADatabase2"/>
     ///         <!-- Check whether a database exists -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="CheckExists" DatabaseItem="ADatabase2">
     ///             <Output TaskParameter="Exists" PropertyName="DoesExist"/>
-    ///         </MSBuild.ExtensionPack.Sql2016.Database>
+    ///         </MSBuild.ExtensionPack.SqlServer.Database>
     ///         <Message Text="Database Exists: $(DoesExist)"/>
     ///         <!-- Get the number of active connections to a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="GetConnectionCount" DatabaseItem="ADatabase">
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="GetConnectionCount" DatabaseItem="ADatabase">
     ///             <Output TaskParameter="ConnectionCount" PropertyName="Count"/>
-    ///         </MSBuild.ExtensionPack.Sql2016.Database>
+    ///         </MSBuild.ExtensionPack.SqlServer.Database>
     ///         <Message Text="Database ConnectionCount: $(Count)"/>
     ///         <!-- Delete the backup history for a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="DeleteBackupHistory" DatabaseItem="ADatabase"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="DeleteBackupHistory" DatabaseItem="ADatabase"/>
     ///         <!-- Set a database offline -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="SetOffline" DatabaseItem="ADatabase"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="SetOffline" DatabaseItem="ADatabase"/>
     ///         <!-- Set a database online -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="SetOnline" DatabaseItem="ADatabase"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="SetOnline" DatabaseItem="ADatabase"/>
     ///         <!-- Rename a database -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Rename" DatabaseItem="@(Database)"/>
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Rename" DatabaseItem="@(Database2)"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Rename" DatabaseItem="@(Database)"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Rename" DatabaseItem="@(Database2)"/>
     ///         <!-- Script a database to file -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Script" DatabaseItem="ReportServer" OutputFilePath="c:\ADatabaseScript.sql"/>
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Script" DatabaseItem="ReportServer" OutputFilePath="c:\ADatabaseScript.sql"/>
     ///         <!-- Restore a database to a new Name -->
-    ///         <MSBuild.ExtensionPack.Sql2016.Database TaskAction="Restore" MachineName="$(SqlServerName)" DatabaseItem="$(DatabaseName)" DataFilePath="$(DbDataFilePath)" PrimaryDataFileName="SomeDatabase" LogName="SomeDatabase_log" SecondaryDataFileName="SomeDatabase_CDC" NewDataFilePath="$(OSFilePath)$(DatabaseName).mdf" SecondaryDataFilePath="$(OSFilePath)$(DatabaseName)_CDC.ndf" LogFilePath="$(OSFilePath)\$(DatabaseName)_log.ldf" ReplaceDatabase="True" />
+    ///         <MSBuild.ExtensionPack.SqlServer.Database TaskAction="Restore" MachineName="$(SqlServerName)" DatabaseItem="$(DatabaseName)" DataFilePath="$(DbDataFilePath)" PrimaryDataFileName="SomeDatabase" LogName="SomeDatabase_log" SecondaryDataFileName="SomeDatabase_CDC" NewDataFilePath="$(OSFilePath)$(DatabaseName).mdf" SecondaryDataFilePath="$(OSFilePath)$(DatabaseName)_CDC.ndf" LogFilePath="$(OSFilePath)\$(DatabaseName)_log.ldf" ReplaceDatabase="True" />
     ///     </Target>
     /// </Project>
     /// ]]></code>    
