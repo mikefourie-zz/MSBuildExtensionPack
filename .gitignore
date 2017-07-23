@@ -6,7 +6,11 @@ obj/
 bin/
 _[rR]e[sS]harper.*/
 Solutions/Main/BuildBinaries/
+Solutions/Main/BuildBinaries2/
 packages/
+Solutions/Main/Build/log.txt
+Solutions/Main/BuildBinaries/
+*FakesAssemblies*
 
 # Ignore the following files
 *.suo

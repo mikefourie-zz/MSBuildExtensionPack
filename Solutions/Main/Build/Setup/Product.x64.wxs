@@ -69,10 +69,6 @@
                 <File Id='fileLicense.rtf' Name='License.rtf' DiskId='1' Source='Resources\License.rtf'/>
                 <RemoveFile Id='RemoveLicense.rtf' Name='License.rtf' On='uninstall'/>
             </Component>
-            <Component Id='Help.chm' Guid='*'>
-                <File Id='Help.chm' Name='MSBuild Extension Pack Help.chm' DiskId='1' Source='..\..\Build\Documentation\MSBuild Extension Pack Help.chm'/>
-                <RemoveFile Id='Help.chm' Name='MSBuild Extension Pack Help.chm' On='uninstall'/>
-            </Component>
             <Component Id='MSBuild.ExtensionPack.dll' Guid='*'>
                 <File Id='fileMSBuild.ExtensionPack.dll' Name='MSBuild.ExtensionPack.dll' DiskId='1' Source='..\..\BuildBinaries\MSBuild.ExtensionPack.dll'/>
                 <RemoveFile Id='RemoveMSBuild.ExtensionPack.dll' Name='MSBuild.ExtensionPack.dll' On='uninstall'/>
