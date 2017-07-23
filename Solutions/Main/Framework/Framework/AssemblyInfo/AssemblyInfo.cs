@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// <copyright file="AssemblyInfo.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+// <copyright file="AssemblyInfo.cs">(c) 2017 Mike Fourie and Contributors (https://github.com/mikefourie/MSBuildExtensionPack) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 // This task is based on the AssemblyInfo task written by Neil Enns (http://code.msdn.microsoft.com/AssemblyInfoTaskvers). It is used here with permission.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework

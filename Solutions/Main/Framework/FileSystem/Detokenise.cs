@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// <copyright file="Detokenise.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+// <copyright file="Detokenise.cs">(c) 2017 Mike Fourie and Contributors (https://github.com/mikefourie/MSBuildExtensionPack) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 // This task is a derivative of the task posted here: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!244.entry
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
