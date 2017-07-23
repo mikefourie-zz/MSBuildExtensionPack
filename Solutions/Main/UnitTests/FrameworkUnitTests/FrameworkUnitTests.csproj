@@ -44,14 +44,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes" />
-    <Reference Include="mscorlib.4.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\mscorlib.4.0.0.0.Fakes.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.4.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\System.4.0.0.0.Fakes.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -87,12 +80,6 @@
     <Compile Include="PathTest.cs" />
     <Compile Include="Properties\ExtraAssemblyInfo.cs" />
     <Compile Include="TextStringTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Fakes Include="Fakes\System.fakes" />
-  </ItemGroup>
-  <ItemGroup>
-    <Fakes Include="Fakes\mscorlib.fakes" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Framework.csproj">

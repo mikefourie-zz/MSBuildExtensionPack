@@ -3,7 +3,6 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Framework.Tests
 {
-    using Microsoft.QualityTools.Testing.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -198,25 +197,6 @@ namespace MSBuild.ExtensionPack.Framework.Tests
 
             // assert
             Assert.IsTrue(target.Value == System.IO.Path.GetTempPath());
-        }
-
-        [TestMethod]
-        public void Path_GetRandomFileName()
-        {
-            // arrange
-            MSBuild.ExtensionPack.Framework.Path target = new MSBuild.ExtensionPack.Framework.Path();
-            target.BuildEngine = new MockBuildEngine();
-            target.TaskAction = "GetRandomFileName";
-            using (ShimsContext.Create())
-            {
-                System.IO.Fakes.ShimPath.GetRandomFileName = () => "abc.sds";
-
-                // act
-                target.Execute();
-
-                // assert
-                Assert.AreEqual(target.Value, "abc.sds");
-            }
         }
 
         [TestMethod]

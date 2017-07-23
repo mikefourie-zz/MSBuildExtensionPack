@@ -1218,4 +1218,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Scope = "type", Target = "MSBuild.ExtensionPack.SqlServer.AnalysisServices")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "MSBuild.ExtensionPack.SqlServer.Database.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Scope = "member", Target = "MSBuild.ExtensionPack.SqlServer.AnalysisServices.#Script(System.Action`4<Microsoft.AnalysisServices.Scripter,Microsoft.AnalysisServices.MajorObject[],System.Xml.XmlWriter,System.Boolean>)")]
-
