@@ -1,5 +1,5 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(ProgramFiles)\MSBuildExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
+    <Import Project="C:\Program Files\MSBuild\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
 
     <PropertyGroup>
         <BuildDrive>C:</BuildDrive>
@@ -58,12 +58,6 @@
     <Target Name="Setup" Condition="$(RTWRelease) == 'true'">
         <Microsoft.Build.Tasks.MSBuild Projects="$(RootFolder)\Build\Setup\Setup.x86.wixproj" BuildInParallel="true" Properties="Configuration=Release;Platform=x86" Targets="Clean;Build"/>
         <Microsoft.Build.Tasks.MSBuild Projects="$(RootFolder)\Build\Setup\Setup.x64.wixproj" BuildInParallel="true" Properties="Configuration=Release;Platform=x64" Targets="Clean;Build"/>
-
-        <!-- Use the VSDevEnv task rather than MSBuild so that the solution variables are resolved for Wix compilation 
-        <MSBuild.ExtensionPack.VisualStudio.VSDevEnv Version="11.0" FilePath="$(RootFolder)\Build\Setup\Setup.x64.wixproj" Configuration="Release|x64" OutputFolder="$(BuildOutput)" Rebuild="true">
-            <Output TaskParameter="ExitCode" PropertyName="Exit" />
-        </MSBuild.ExtensionPack.VisualStudio.VSDevEnv>
-        <Error Condition="$(Exit) != 0"/>-->
     </Target>
     
     <Target Name="CopyFiles">
