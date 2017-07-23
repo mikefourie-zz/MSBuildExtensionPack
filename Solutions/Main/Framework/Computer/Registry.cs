@@ -270,7 +270,7 @@ namespace MSBuild.ExtensionPack.Computer
                 {
                     if (string.IsNullOrEmpty(this.DataType))
                     {
-                        subKey.SetValue(this.Value, this.Data);
+                        subKey.SetValue(this.Value, this.Data ?? string.Empty);
                     }
                     else
                     {
@@ -295,6 +295,7 @@ namespace MSBuild.ExtensionPack.Computer
                                 registryValue = uint.Parse(this.Data, CultureInfo.CurrentCulture);
                                 break;
                             case RegistryValueKind.MultiString:
+
                                 string[] parts1 = this.Data.Split(separator);
                                 registryValue = parts1;
                                 break;
