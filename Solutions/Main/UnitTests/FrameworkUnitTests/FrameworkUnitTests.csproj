@@ -41,14 +41,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes" />
-    <Reference Include="mscorlib.4.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\mscorlib.4.0.0.0.Fakes.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.4.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\System.4.0.0.0.Fakes.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -91,12 +84,6 @@
       <Project>{1c780e39-26d5-4e6f-9533-91d867c1136c}</Project>
       <Name>Framework %28Tasks\Framework%29</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Fakes Include="Fakes\System.fakes" />
-  </ItemGroup>
-  <ItemGroup>
-    <Fakes Include="Fakes\mscorlib.fakes" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
