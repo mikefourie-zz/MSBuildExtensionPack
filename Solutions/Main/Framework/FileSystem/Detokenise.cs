@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// <copyright file="Detokenise.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+// <copyright file="Detokenise.cs">(c) 2017 Mike Fourie and Contributors (https://github.com/mikefourie/MSBuildExtensionPack) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 // This task is a derivative of the task posted here: http://freetodev.spaces.live.com/blog/cns!EC3C8F2028D842D5!244.entry
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.FileSystem
@@ -32,7 +32,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///     <Import Project="$(TPath)"/>
     ///     <PropertyGroup>
     ///         <PathToDetokenise>C:\Demo\*</PathToDetokenise>
-    ///         <CPHome>http://www.msbuildextensionpack.com</CPHome>
+    ///         <CPHome>https://github.com/mikefourie/MSBuildExtensionPack</CPHome>
     ///         <Title>A New Title</Title>
     ///         <clv>hello=hello#~#hello1=how#~#hello2=are#~#Configuration=debug</clv>
     ///         <Configuration>debug</Configuration>
@@ -50,7 +50,7 @@ namespace MSBuild.ExtensionPack.FileSystem
     ///                 <Replacement>ANewTextString</Replacement>
     ///             </TokenValues >
     ///             <TokenValues Include="ProjectHome">
-    ///                 <Replacement>http://www.msbuildextensionpack.com</Replacement>
+    ///                 <Replacement>https://github.com/mikefourie/MSBuildExtensionPack</Replacement>
     ///             </TokenValues >
     ///         </ItemGroup>
     ///         <!-- Analyse a collection of files. This can be used to ensure that all tokens are known. -->

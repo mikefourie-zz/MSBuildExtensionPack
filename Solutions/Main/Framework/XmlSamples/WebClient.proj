@@ -8,7 +8,7 @@
         <!-- Download a File-->
         <MSBuild.ExtensionPack.Web.WebClient TaskAction="DownloadFile" Url="http://hlstiw.bay.livefilestore.com/y1p7GhsJWeF4ig_Yb-8QXeA1bL0nY_MdOGaRQ3opRZS0YVvfshMfoZYe_cb1wSzPhx4nL_yidkG8Ji9msjRcTt0ew/Team%20Build%202008%20DeskSheet%202.0.pdf?download" FileName="C:\TFS Build 2008 DeskSheet.pdf"/>
         <!-- Get the contents of a Url-->
-        <MSBuild.ExtensionPack.Web.WebClient TaskAction="OpenRead" Url="http://www.msbuildextensionpack.com">
+        <MSBuild.ExtensionPack.Web.WebClient TaskAction="OpenRead" Url="https://github.com/mikefourie/MSBuildExtensionPack">
             <Output TaskParameter="Data" PropertyName="Out"/>
         </MSBuild.ExtensionPack.Web.WebClient>
         <Message Text="$(Out)"/>

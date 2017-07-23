@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// <copyright file="WebClient.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+// <copyright file="WebClient.cs">(c) 2017 Mike Fourie and Contributors (https://github.com/mikefourie/MSBuildExtensionPack) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.Web
 {
@@ -27,7 +27,7 @@ namespace MSBuild.ExtensionPack.Web
     ///         <!-- Download a File using a proxy to connect to the remote server -->
     ///         <MSBuild.ExtensionPack.Web.WebClient TaskAction="DownloadFile" Url="http://download.sysinternals.com/Files/SysinternalsSuite.zip" FileName="MySysinternalsCopy.zip" Proxy="myproxy.fabrikam.com:8080"/>
     ///         <!-- Get the contents of a Url-->
-    ///         <MSBuild.ExtensionPack.Web.WebClient TaskAction="OpenRead" Url="http://www.msbuildextensionpack.com">
+    ///         <MSBuild.ExtensionPack.Web.WebClient TaskAction="OpenRead" Url="https://github.com/mikefourie/MSBuildExtensionPack">
     ///             <Output TaskParameter="Data" PropertyName="Out"/>
     ///         </MSBuild.ExtensionPack.Web.WebClient>
     ///         <Message Text="$(Out)"/>

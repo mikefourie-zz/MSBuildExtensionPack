@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// <copyright file="DlrTask.cs">(c) 2017 Mike Fourie and Contributors (http://www.MSBuildExtensionPack.com) under MIT License. See https://opensource.org/licenses/MIT </copyright>
+// <copyright file="DlrTask.cs">(c) 2017 Mike Fourie and Contributors (https://github.com/mikefourie/MSBuildExtensionPack) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 // This task is based on code from (http://github.com/jredville/DlrTaskFactory). It is used here with permission.
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace MSBuild.ExtensionPack.TaskFactory
