@@ -1,5 +1,5 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="C:\Program Files\MSBuild\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
+    <Import Project="C:\Program Files\MSBuildExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
 
     <PropertyGroup>
         <BuildDrive>C:</BuildDrive>
