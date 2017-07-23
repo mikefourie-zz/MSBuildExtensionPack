@@ -429,7 +429,7 @@ namespace MSBuild.ExtensionPack.Framework
 
                             if (itemToModify.MetadataNames.Cast<object>().Any(x => s == x))
                             {
-                                this.LogTaskMessage(string.Format(CultureInfo.InstalledUICulture, "Updating {0}.{1} to {2}", this.OutputItems[sourceIndex], s, itemToModify.GetMetadata(s.ToString())));
+                                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Updating {0}.{1} to {2}", this.OutputItems[sourceIndex], s, itemToModify.GetMetadata(s.ToString())));
                                 this.OutputItems[sourceIndex].SetMetadata(s.ToString(), itemToModify.GetMetadata(s.ToString()));
                             }
                         }
@@ -651,7 +651,7 @@ namespace MSBuild.ExtensionPack.Framework
             StringBuilder stringToReturn = new StringBuilder();
             foreach (ITaskItem t in this.inputItems1)
             {
-                stringToReturn.AppendFormat("{0}{1}", t.ItemSpec, this.Separator);
+                stringToReturn.AppendFormat(CultureInfo.CurrentCulture, "{0}{1}", t.ItemSpec, this.Separator);
             }
 
             this.OutString = stringToReturn.ToString().Substring(0, stringToReturn.Length - this.Separator.Length);

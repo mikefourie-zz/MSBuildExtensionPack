@@ -115,7 +115,7 @@ namespace MSBuild.ExtensionPack.Framework
                 // value in the string using a regex to the value that was passed in.
                 if (!this.attributeIndex.ContainsKey(attribute))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(attribute), string.Format(CultureInfo.CurrentUICulture, "{0} is not an attribute in the specified AssemblyInfo.cs file", attribute));
+                    throw new ArgumentOutOfRangeException(nameof(attribute), string.Format(CultureInfo.CurrentCulture, "{0} is not an attribute in the specified AssemblyInfo.cs file", attribute));
                 }
 
                 // Try setting it as a string property first

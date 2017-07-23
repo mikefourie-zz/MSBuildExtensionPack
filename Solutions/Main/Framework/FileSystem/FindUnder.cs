@@ -146,10 +146,10 @@ namespace MSBuild.ExtensionPack.FileSystem
             }
 
             string fullPath = this.Path.GetMetadata("Fullpath");
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Searching under path [{0}]", fullPath), null);
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Searching under path [{0}]", fullPath), null);
             if (string.IsNullOrEmpty(fullPath) || !Directory.Exists(fullPath))
             {
-                this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Path specified {0} doesn't exist", fullPath));
+                this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Path specified {0} doesn't exist", fullPath));
                 return;
             }
 

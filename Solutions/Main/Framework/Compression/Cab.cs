@@ -200,7 +200,7 @@ namespace MSBuild.ExtensionPack.Compression
 
                 StringBuilder options = new StringBuilder();
                 options.Append("-r -p");
-                options.AppendFormat(" -P \"{0}\"\\", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1).Replace(@"C:\", string.Empty));
+                options.AppendFormat(CultureInfo.CurrentCulture, " -P \"{0}\"\\", dirInfo.FullName.Remove(dirInfo.FullName.Length - 1).Replace(@"C:\", string.Empty));
                 cabProcess.StartInfo.Arguments = string.Format(CultureInfo.CurrentCulture, @"{0} N ""{1}"" ""{2}""", options, this.CabFile.GetMetadata("FullPath"), "\"" + dirInfo.FullName + "*.*\"" + " ");
                 this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Calling {0} with {1}", this.CabExePath.GetMetadata("FullPath"), cabProcess.StartInfo.Arguments));
                 
@@ -347,7 +347,7 @@ namespace MSBuild.ExtensionPack.Compression
                     string[] prefixes = this.StripPrefixes.Split(';');
                     foreach (string prefix in prefixes)
                     {
-                        options.AppendFormat(" -P {0}", prefix);
+                        options.AppendFormat(CultureInfo.CurrentCulture, " -P {0}", prefix);
                     }
                 }
 

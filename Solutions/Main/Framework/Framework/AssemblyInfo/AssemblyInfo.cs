@@ -1032,7 +1032,7 @@ namespace MSBuild.ExtensionPack.Framework
             {
                 if (!File.Exists(item.ItemSpec))
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "File not found: {0}", item.ItemSpec));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "File not found: {0}", item.ItemSpec));
                     return false;
                 }
 
@@ -1054,7 +1054,7 @@ namespace MSBuild.ExtensionPack.Framework
                     }
                     catch (Exception ex)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to read current AssemblyVersion from file {0}: {1}", item.ItemSpec, ex.Message));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Unable to read current AssemblyVersion from file {0}: {1}", item.ItemSpec, ex.Message));
                         return false;
                     }
 
@@ -1085,7 +1085,7 @@ namespace MSBuild.ExtensionPack.Framework
                     }
                     catch (ArgumentException)
                     {
-                        this.Log.LogWarning(string.Format(CultureInfo.CurrentUICulture, "File {0} contains a verbatim AssemblyFileVersion - skipping", item.ItemSpec));
+                        this.Log.LogWarning(string.Format(CultureInfo.CurrentCulture, "File {0} contains a verbatim AssemblyFileVersion - skipping", item.ItemSpec));
                     }
                 }
 

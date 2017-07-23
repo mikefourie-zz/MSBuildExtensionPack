@@ -297,7 +297,7 @@ namespace MSBuild.ExtensionPack.SqlServer
                         {
                             fileInfo.SetMetadata("ErrorMessage", ex.Message);
                             failedScripts.Add(fileInfo);
-                            lastException = new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "{0}. {1}", fileInfo.ItemSpec, ex.Message), ex);
+                            lastException = new ApplicationException(string.Format(CultureInfo.CurrentCulture, "{0}. {1}", fileInfo.ItemSpec, ex.Message), ex);
                             if (!this.Retry && !this.IgnoreScriptErrors)
                             {
                                 throw lastException;

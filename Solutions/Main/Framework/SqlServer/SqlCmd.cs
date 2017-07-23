@@ -415,7 +415,7 @@ namespace MSBuild.ExtensionPack.SqlServer
             {
                 foreach (ITaskItem query in this.CommandLineQuery)
                 {
-                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentUICulture, QueryMessage, query.ItemSpec));
+                    this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, QueryMessage, query.ItemSpec));
                     sb.Append(" -Q ");
                     sb.Append("\"");
                     sb.Append(query.ItemSpec);
@@ -468,7 +468,7 @@ namespace MSBuild.ExtensionPack.SqlServer
         {
             var sqlCmdWrapper = new SqlCmdWrapper(this.SqlCmdPath, arguments, string.Empty);
 
-            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentUICulture, ExecutionMessage, sqlCmdWrapper.Executable, arguments));
+            this.LogTaskMessage(MessageImportance.Low, string.Format(CultureInfo.CurrentCulture, ExecutionMessage, sqlCmdWrapper.Executable, arguments));
 
             // Get the return value
             int returnValue = sqlCmdWrapper.Execute();

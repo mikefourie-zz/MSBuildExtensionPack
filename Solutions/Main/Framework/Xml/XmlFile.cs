@@ -289,7 +289,7 @@ namespace MSBuild.ExtensionPack.Xml
                 this.elements = this.xmlFileDoc.SelectNodes(this.XPath, this.namespaceManager);
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "XmlFile: {0}", this.File.ItemSpec));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "XmlFile: {0}", this.File.ItemSpec));
             switch (this.TaskAction)
             {
                 case AddElementTaskAction:
@@ -334,7 +334,7 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Read Elements: {0}", this.XPath));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Read Elements: {0}", this.XPath));
             XmlNodeList nodelist = this.xmlFileDoc.SelectNodes(this.XPath, this.namespaceManager);
             if (nodelist != null)
             {
@@ -373,7 +373,7 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Read Element: {0}", this.XPath));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Read Element: {0}", this.XPath));
             XmlNode node = this.xmlFileDoc.SelectSingleNode(this.XPath, this.namespaceManager);
             if (node != null && (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Document))
             {
@@ -389,7 +389,7 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Read Attribute: {0}", this.XPath));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Read Attribute: {0}", this.XPath));
             XmlNode node = this.xmlFileDoc.SelectSingleNode(this.XPath, this.namespaceManager);
             if (node != null && node.NodeType == XmlNodeType.Attribute)
             {
@@ -407,7 +407,7 @@ namespace MSBuild.ExtensionPack.Xml
 
             if (string.IsNullOrEmpty(this.InnerXml))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerText: {1}", this.XPath, this.InnerText));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Update Element: {0}. InnerText: {1}", this.XPath, this.InnerText));
                 if (this.elements != null && this.elements.Count > 0)
                 {
                     foreach (XmlNode element in this.elements)
@@ -421,7 +421,7 @@ namespace MSBuild.ExtensionPack.Xml
                 return;
             }
 
-            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Element: {0}. InnerXml: {1}", this.XPath, this.InnerXml));
+            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Update Element: {0}. InnerXml: {1}", this.XPath, this.InnerXml));
             if (this.elements != null && this.elements.Count > 0)
             {
                 foreach (XmlNode element in this.elements)
@@ -443,7 +443,7 @@ namespace MSBuild.ExtensionPack.Xml
 
             if (string.IsNullOrEmpty(this.Key))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Attribute: {0}. Value: {1}", this.XPath, this.Value));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Update Attribute: {0}. Value: {1}", this.XPath, this.Value));
                 XmlNode node = this.xmlFileDoc.SelectSingleNode(this.XPath, this.namespaceManager);
                 if (node != null && node.NodeType == XmlNodeType.Attribute)
                 {
@@ -452,7 +452,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Update Attribute: {0} @ {1}. Value: {2}", this.Key, this.XPath, this.Value));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Update Attribute: {0} @ {1}. Value: {2}", this.Key, this.XPath, this.Value));
                 if (this.elements != null && this.elements.Count > 0)
                 {
                     foreach (XmlNode element in this.elements)
@@ -473,11 +473,11 @@ namespace MSBuild.ExtensionPack.Xml
         {
             if (string.IsNullOrEmpty(this.XPath))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Attribute: {0}", this.Key));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Remove Attribute: {0}", this.Key));
                 XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element, this.namespaceManager);
                 if (elementNode == null)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Element not found: {0}", this.Element));
                     return;
                 }
 
@@ -490,7 +490,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Attribute: {0}", this.Key));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Remove Attribute: {0}", this.Key));
                 if (this.elements != null && this.elements.Count > 0)
                 {
                     foreach (XmlNode element in this.elements)
@@ -510,11 +510,11 @@ namespace MSBuild.ExtensionPack.Xml
         {
             if (string.IsNullOrEmpty(this.XPath))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Set Attribute: {0}={1}", this.Key, this.Value));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Set Attribute: {0}={1}", this.Key, this.Value));
                 XmlNode elementNode = this.xmlFileDoc.SelectSingleNode(this.Element, this.namespaceManager);
                 if (elementNode == null)
                 {
-                    this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Element not found: {0}", this.Element));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Element not found: {0}", this.Element));
                     return;
                 }
 
@@ -525,7 +525,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Set Attribute: {0}={1}", this.Key, this.Value));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Set Attribute: {0}={1}", this.Key, this.Value));
                 if (this.elements != null && this.elements.Count > 0)
                 {
                     foreach (XmlNode element in this.elements)
@@ -584,7 +584,7 @@ namespace MSBuild.ExtensionPack.Xml
         {
             if (string.IsNullOrEmpty(this.XPath))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Element: {0}", this.Element));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Add Element: {0}", this.Element));
                 XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement, this.namespaceManager);
                 if (parentNode == null)
                 {
@@ -600,7 +600,7 @@ namespace MSBuild.ExtensionPack.Xml
 
                     if (!string.IsNullOrEmpty(this.Key))
                     {
-                        this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Attribute: {0} to: {1}", this.Key, this.Element));
+                        this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Add Attribute: {0} to: {1}", this.Key, this.Element));
 
                         XmlAttribute attNode = this.xmlFileDoc.CreateAttribute(this.Key);
                         attNode.Value = this.Value;
@@ -638,7 +638,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Element: {0}", this.XPath));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Add Element: {0}", this.XPath));
                 if (this.elements != null && this.elements.Count > 0)
                 {
                     foreach (XmlNode element in this.elements)
@@ -647,7 +647,7 @@ namespace MSBuild.ExtensionPack.Xml
 
                         if (!string.IsNullOrEmpty(this.Key))
                         {
-                            this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Add Attribute: {0} to: {1}", this.Key, this.Element));
+                            this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Add Attribute: {0} to: {1}", this.Key, this.Element));
 
                             XmlAttribute attNode = this.xmlFileDoc.CreateAttribute(this.Key);
                             attNode.Value = this.Value;
@@ -697,7 +697,7 @@ namespace MSBuild.ExtensionPack.Xml
         {
             if (string.IsNullOrEmpty(this.XPath))
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Element: {0}", this.Element));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Remove Element: {0}", this.Element));
                 XmlNode parentNode = this.xmlFileDoc.SelectSingleNode(this.ParentElement, this.namespaceManager);
                 if (parentNode == null)
                 {
@@ -714,7 +714,7 @@ namespace MSBuild.ExtensionPack.Xml
             }
             else
             {
-                this.LogTaskMessage(string.Format(CultureInfo.CurrentUICulture, "Remove Element: {0}", this.XPath));
+                this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Remove Element: {0}", this.XPath));
                 if (this.elements != null && this.elements.Count > 0)
                 {
                     foreach (XmlNode element in this.elements)

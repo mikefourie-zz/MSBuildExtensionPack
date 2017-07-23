@@ -75,12 +75,12 @@ namespace MSBuild.ExtensionPack.SqlSmo
             }
             else
             {
-                con.AppendFormat("UserName={0}", this.UserName);
+                con.AppendFormat(CultureInfo.CurrentCulture, "UserName={0}", this.UserName);
             }
 
             if (!string.IsNullOrEmpty(this.UserPassword))
             {
-                con.AppendFormat("Password={0}", this.UserPassword);
+                con.AppendFormat(CultureInfo.CurrentCulture, "Password={0}", this.UserPassword);
             }
 
             this.LogTaskMessage(string.Format(CultureInfo.CurrentCulture, "Connect to server: {0}", this.MachineName));

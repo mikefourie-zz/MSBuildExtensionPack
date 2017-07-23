@@ -148,6 +148,8 @@ namespace MSBuild.ExtensionPack.Web
 
         private System.Net.HttpWebRequest CreateRequest()
         {
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+
             var request = WebRequest.Create(new Uri(this.Url)) as System.Net.HttpWebRequest;
             if (request == null)
             {

@@ -250,7 +250,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     }
                     catch (Exception ex)
                     {
-                        this.Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to open log file: '{0}'. Exception: {1}", project.ItemSpec + ".log", ex.Message));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Unable to open log file: '{0}'. Exception: {1}", project.ItemSpec + ".log", ex.Message));
                     }
 
                     return false;

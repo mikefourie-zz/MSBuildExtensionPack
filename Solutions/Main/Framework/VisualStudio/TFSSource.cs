@@ -525,7 +525,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     return;
                 }
 
-                args.AppendFormat(" /auto:{0}", auto);
+                args.AppendFormat(CultureInfo.CurrentCulture, " /auto:{0}", auto);
                 if ((auto == AutoArg.AcceptMerge) || (auto == AutoArg.AcceptYoursRenameTheirs))
                 {
                     if (string.IsNullOrEmpty(this.NewName))
@@ -534,7 +534,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                         return;
                     }
 
-                    args.AppendFormat(" /newname:\"{0}\"", this.NewName);
+                    args.AppendFormat(CultureInfo.CurrentCulture, " /newname:\"{0}\"", this.NewName);
                 }
             }
 
