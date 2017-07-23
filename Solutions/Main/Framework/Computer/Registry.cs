@@ -295,7 +295,6 @@ namespace MSBuild.ExtensionPack.Computer
                                 registryValue = uint.Parse(this.Data, CultureInfo.CurrentCulture);
                                 break;
                             case RegistryValueKind.MultiString:
-
                                 string[] parts1 = this.Data.Split(separator);
                                 registryValue = parts1;
                                 break;
