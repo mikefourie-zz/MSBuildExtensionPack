@@ -148,12 +148,11 @@ namespace MSBuild.ExtensionPack.Web
 
         private System.Net.HttpWebRequest CreateRequest()
         {
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
-
+            System.Net.ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             var request = WebRequest.Create(new Uri(this.Url)) as System.Net.HttpWebRequest;
             if (request == null)
             {
-                return request;
+                return null;
             }
 
             if (this.UseIntegratedAuthentication)

@@ -5,7 +5,7 @@
     </PropertyGroup>
     <Import Project="$(TPath)"/>
     <Target Name="Default">
-        <MSBuild.ExtensionPack.Web.HttpWebRequest TaskAction="GetResponse" Url="http://www.freetodev.com">
+        <MSBuild.ExtensionPack.Web.HttpWebRequest TaskAction="GetResponse" Url="https://www.google.com/">
             <Output TaskParameter="Response" ItemName="ResponseDetail"/>
             <Output TaskParameter="Status" PropertyName="ResponseStatus"/>
         </MSBuild.ExtensionPack.Web.HttpWebRequest>
