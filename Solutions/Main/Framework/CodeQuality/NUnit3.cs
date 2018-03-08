@@ -288,13 +288,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
             builder.AppendSwitchIfNotNull("--domain=", this.Domain);
             builder.AppendSwitchIfNotNull("--framework=", this.Framework);
 
+            var resultSwitchFormatFlag = ";format=nunit" + UseNUnitV2ResultWriter ? "2" : "3";
             if (this.OutputXmlFile != null)
             {
-                builder.AppendSwitch("--result=" + this.OutputXmlFile + ";format=nunit2");
+                builder.AppendSwitch("--result=" + this.OutputXmlFile + resultSwitchFormatFlag);
             }
             else
             {
-                builder.AppendSwitch("--result=TestResult.xml;format=nunit2");
+                builder.AppendSwitch($"--result=TestResult.xml{resultSwitchFormatFlag}");
             }
 
             builder.AppendSwitchIfNotNull("--err=", this.ErrorOutputFile);
