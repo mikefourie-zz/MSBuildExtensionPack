@@ -107,7 +107,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
 
         /// <summary>
         /// Specify if the legacy output writer from NUnit V2 should be used. If true, it will add
-        /// the flag "format=nunit2" to the --result switch.
+        /// the flag "format=nunit2" to the --result switch, otherwise "format=nunit3".
         /// </summary>
         public bool UseNUnitV2ResultWriter { get; set; }
 
