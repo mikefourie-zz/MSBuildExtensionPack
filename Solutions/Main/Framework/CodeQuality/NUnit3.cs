@@ -288,7 +288,7 @@ namespace MSBuild.ExtensionPack.CodeQuality
             builder.AppendSwitchIfNotNull("--domain=", this.Domain);
             builder.AppendSwitchIfNotNull("--framework=", this.Framework);
 
-            var resultSwitchFormatFlag = ";format=nunit" + UseNUnitV2ResultWriter ? "3" : "2";
+            var resultSwitchFormatFlag = ";format=nunit" + UseNUnitV3ResultWriter ? "3" : "2";
             if (this.OutputXmlFile != null)
             {
                 builder.AppendSwitch("--result=" + this.OutputXmlFile + resultSwitchFormatFlag);
