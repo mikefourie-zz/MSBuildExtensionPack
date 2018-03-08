@@ -106,6 +106,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public int Agents { get; set; }
 
         /// <summary>
+        /// Specify if the legacy output writer from NUnit V2 should be used. If true, it will add
+        /// the flag "format=nunit2" to the --result switch.
+        /// </summary>
+        public bool UseNUnitV2ResultWriter { get; set; }
+
+        /// <summary>
         /// Sets the OutputXmlFile name
         /// </summary>
         public ITaskItem OutputXmlFile { get; set; }
