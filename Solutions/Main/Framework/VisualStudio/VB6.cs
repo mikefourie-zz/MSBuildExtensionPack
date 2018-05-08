@@ -1,6 +1,9 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // <copyright file="VB6.cs">(c) 2017 Mike Fourie and Contributors (https://github.com/mikefourie/MSBuildExtensionPack) under MIT License. See https://opensource.org/licenses/MIT </copyright>
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+using System.Text;
+
 namespace MSBuild.ExtensionPack.VisualStudio
 {
     using System;
@@ -64,6 +67,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         [Required]
         public ITaskItem[] Projects { get; set; }
+
+        /// <summary>
+        /// Defines conditional compilation constants. Format is const=value{[:constN=valueN]}
+        /// </summary>
+        public string ConditionalCompilationConstants { get; set; }
 
         protected override void InternalExecute()
         {
@@ -204,19 +212,22 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
-                if (string.IsNullOrEmpty(project.GetMetadata("OutDir")))
-                {
-                    proc.StartInfo.Arguments = @"/MAKE /OUT " + @"""" + project.ItemSpec + ".log" + @""" " + @"""" + project.ItemSpec + @"""";
-                }
-                else
+                var arguments = new StringBuilder(string.Format(CultureInfo.InvariantCulture, @"/MAKE ""{0}"" /OUT ""{0}.log""", project.ItemSpec));
+                if (!string.IsNullOrEmpty(project.GetMetadata("OutDir")))
                 {
                     if (!Directory.Exists(project.GetMetadata("OutDir")))
                     {
                         Directory.CreateDirectory(project.GetMetadata("OutDir"));
                     }
 
-                    proc.StartInfo.Arguments = @"/MAKE /OUT " + @"""" + project.ItemSpec + ".log" + @""" " + @"""" + project.ItemSpec + @"""" + " /outdir " + @"""" + project.GetMetadata("OutDir") + @"""";
+                    arguments.AppendFormat(CultureInfo.InvariantCulture, @" /OUTDIR ""{0}""", project.GetMetadata("OutDir"));
                 }
+                if (!string.IsNullOrEmpty(this.ConditionalCompilationConstants))
+                {
+                    arguments.AppendFormat(CultureInfo.InvariantCulture, @" /D {0}", this.ConditionalCompilationConstants.Replace(" ", string.Empty));
+                }
+
+                proc.StartInfo.Arguments = arguments.ToString();
 
                 // start the process
                 this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
