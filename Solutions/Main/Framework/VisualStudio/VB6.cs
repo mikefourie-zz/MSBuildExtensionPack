@@ -73,6 +73,11 @@ namespace MSBuild.ExtensionPack.VisualStudio
         /// </summary>
         public string ConditionalCompilationConstants { get; set; }
 
+        /// <summary>
+        /// Make command line parameters
+        /// </summary>
+        public string MakeCommandLine { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -227,6 +232,10 @@ namespace MSBuild.ExtensionPack.VisualStudio
                     arguments.AppendFormat(CultureInfo.InvariantCulture, @" /D {0}", this.ConditionalCompilationConstants.Replace(" ", string.Empty));
                 }
 
+                if (!string.IsNullOrEmpty(this.MakeCommandLine))
+                {
+                    arguments.AppendFormat(CultureInfo.InvariantCulture, @" /C {0}", this.MakeCommandLine);
+                }
                 proc.StartInfo.Arguments = arguments.ToString();
 
                 // start the process
