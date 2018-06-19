@@ -17,3 +17,5 @@ Solutions/Main/BuildBinaries/
 *.user
 *.*~
 StyleCop.Cache
+/Releases/4.0.9.0/Main/MainSolution.BuildAssistant.config
+/Releases/4.0.9.0/Main/BuildBinaries
