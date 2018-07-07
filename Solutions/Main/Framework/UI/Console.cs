@@ -77,9 +77,14 @@ namespace MSBuild.ExtensionPack.UI
         public bool ToLower { get; set; }
 
         /// <summary>
-        /// Sets the UserResponse to uppper text
+        /// Sets the UserResponse to upper text
         /// </summary>
         public bool ToUpper { get; set; }
+
+        /// <summary>
+        /// Set to true to hide the user input
+        /// </summary>
+        public bool HideInput { get; set; }
 
         /// <summary>
         /// Gets the response that the user typed
@@ -124,7 +129,23 @@ namespace MSBuild.ExtensionPack.UI
             }
 
             this.LogTaskMessage(MessageImportance.High, this.UserPrompt);
-            this.UserResponse = System.Console.ReadLine();
+            if (this.HideInput)
+            {
+                string input = string.Empty;
+                System.ConsoleKeyInfo cki;
+                do
+                {
+                    cki = System.Console.ReadKey(true);
+                    input += cki.KeyChar.ToString();
+
+                } while (cki.Key != System.ConsoleKey.Enter);
+
+                this.UserResponse = input;
+            }
+            else
+            {
+                this.UserResponse = System.Console.ReadLine();
+            }
 
             if (this.UserResponse != null)
             {
