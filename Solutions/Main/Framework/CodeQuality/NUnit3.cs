@@ -106,6 +106,12 @@ namespace MSBuild.ExtensionPack.CodeQuality
         public int Agents { get; set; }
 
         /// <summary>
+        /// Specify if the output writer from NUnit V3 should be used. If true, it will add
+        /// the flag "format=nunit3" to the --result switch, otherwise "format=nunit2".
+        /// </summary>
+        public bool UseNUnitV3ResultWriter { get; set; }
+
+        /// <summary>
         /// Sets the OutputXmlFile name
         /// </summary>
         public ITaskItem OutputXmlFile { get; set; }
@@ -282,13 +288,14 @@ namespace MSBuild.ExtensionPack.CodeQuality
             builder.AppendSwitchIfNotNull("--domain=", this.Domain);
             builder.AppendSwitchIfNotNull("--framework=", this.Framework);
 
+            var resultSwitchFormatFlag = ";format=nunit" + (this.UseNUnitV3ResultWriter ? "3" : "2");
             if (this.OutputXmlFile != null)
             {
-                builder.AppendSwitch("--result=" + this.OutputXmlFile + ";format=nunit2");
+                builder.AppendSwitch("--result=" + this.OutputXmlFile + resultSwitchFormatFlag);
             }
             else
             {
-                builder.AppendSwitch("--result=TestResult.xml;format=nunit2");
+                builder.AppendSwitch($"--result=TestResult.xml{resultSwitchFormatFlag}");
             }
 
             builder.AppendSwitchIfNotNull("--err=", this.ErrorOutputFile);
