@@ -8,6 +8,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using Microsoft.Build.Framework;
     using MSBuild.ExtensionPack.VisualStudio.Extended;
 
@@ -65,6 +66,16 @@ namespace MSBuild.ExtensionPack.VisualStudio
         [Required]
         public ITaskItem[] Projects { get; set; }
 
+        /// <summary>
+        /// Defines conditional compilation constants. Format is const=value{[:constN=valueN]}
+        /// </summary>
+        public string ConditionalCompilationConstants { get; set; }
+
+        /// <summary>
+        /// Make command line parameters
+        /// </summary>
+        public string MakeCommandLine { get; set; }
+
         protected override void InternalExecute()
         {
             if (!this.TargetingLocalMachine())
@@ -77,7 +88,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 string programFilePath = Environment.GetEnvironmentVariable("ProgramFiles");
                 if (string.IsNullOrEmpty(programFilePath))
                 {
-                    Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
+                    this.Log.LogError("Failed to read a value from the ProgramFiles Environment Variable");
                     return;
                 }
 
@@ -87,7 +98,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 }
                 else
                 {
-                    Log.LogError(string.Format(CultureInfo.CurrentCulture, "VB6.exe was not found in the default location. Use VB6Path to specify it. Searched at: {0}", programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"));
+                    this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "VB6.exe was not found in the default location. Use VB6Path to specify it. Searched at: {0}", programFilePath + @"\Microsoft Visual Studio\VB98\VB6.exe"));
                     return;
                 }
             }
@@ -107,7 +118,7 @@ namespace MSBuild.ExtensionPack.VisualStudio
         {
             if (this.Projects == null)
             {
-                Log.LogError("The collection passed to Projects is empty");
+                this.Log.LogError("The collection passed to Projects is empty");
                 return;
             }
 
@@ -172,14 +183,14 @@ namespace MSBuild.ExtensionPack.VisualStudio
 
                         if (projectFileInfo.LastWriteTime > artifactFileInfo.LastWriteTime)
                         {
-                            this.LogTaskMessage(MessageImportance.High, string.Format("File '{0}' is newer then '{1}'", projectFileInfo.Name, artifactFileInfo.Name));
+                            this.LogTaskMessage(MessageImportance.High, $"File '{projectFileInfo.Name}' is newer then '{artifactFileInfo.Name}'");
                             doBuild = true;
                         }
                         else
                         {
                             foreach (var file in projectVBP.GetFiles())
                             {
-                                this.LogTaskMessage(string.Format("File '{0}', LastWrite: {1}'", file.FullName, file.LastWriteTime));
+                                this.LogTaskMessage($"File '{file.FullName}', LastWrite: {file.LastWriteTime}'");
 
                                 if (file.LastWriteTime > artifactFileInfo.LastWriteTime)
                                 {
@@ -204,19 +215,28 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
-                if (string.IsNullOrEmpty(project.GetMetadata("OutDir")))
-                {
-                    proc.StartInfo.Arguments = @"/MAKE /OUT " + @"""" + project.ItemSpec + ".log" + @""" " + @"""" + project.ItemSpec + @"""";
-                }
-                else
+                var arguments = new StringBuilder(string.Format(CultureInfo.InvariantCulture, @"/MAKE ""{0}"" /OUT ""{0}.log""", project.ItemSpec));
+                if (!string.IsNullOrEmpty(project.GetMetadata("OutDir")))
                 {
                     if (!Directory.Exists(project.GetMetadata("OutDir")))
                     {
                         Directory.CreateDirectory(project.GetMetadata("OutDir"));
                     }
 
-                    proc.StartInfo.Arguments = @"/MAKE /OUT " + @"""" + project.ItemSpec + ".log" + @""" " + @"""" + project.ItemSpec + @"""" + " /outdir " + @"""" + project.GetMetadata("OutDir") + @"""";
+                    arguments.AppendFormat(CultureInfo.InvariantCulture, @" /OUTDIR ""{0}""", project.GetMetadata("OutDir"));
                 }
+
+                if (!string.IsNullOrEmpty(this.ConditionalCompilationConstants))
+                {
+                    arguments.AppendFormat(CultureInfo.InvariantCulture, @" /D {0}", this.ConditionalCompilationConstants.Replace(" ", string.Empty));
+                }
+
+                if (!string.IsNullOrEmpty(this.MakeCommandLine))
+                {
+                    arguments.AppendFormat(CultureInfo.InvariantCulture, @" /C {0}", this.MakeCommandLine);
+                }
+
+                proc.StartInfo.Arguments = arguments.ToString();
 
                 // start the process
                 this.LogTaskMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
@@ -232,25 +252,25 @@ namespace MSBuild.ExtensionPack.VisualStudio
                 string errorStream = proc.StandardError.ReadToEnd();
                 if (errorStream.Length > 0)
                 {
-                    Log.LogError(errorStream);
+                    this.Log.LogError(errorStream);
                 }
 
                 proc.WaitForExit();
                 if (proc.ExitCode != 0)
                 {
-                    Log.LogError("Non-zero exit code from VB6.exe: " + proc.ExitCode);
+                    this.Log.LogError("Non-zero exit code from VB6.exe: " + proc.ExitCode);
                     try
                     {
                         using (FileStream myStreamFile = new FileStream(project.ItemSpec + ".log", FileMode.Open))
                         {
-                            System.IO.StreamReader myStream = new System.IO.StreamReader(myStreamFile);
+                            StreamReader myStream = new System.IO.StreamReader(myStreamFile);
                             string myBuffer = myStream.ReadToEnd();
-                            Log.LogError(myBuffer);
+                            this.Log.LogError(myBuffer);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError(string.Format(CultureInfo.CurrentUICulture, "Unable to open log file: '{0}'. Exception: {1}", project.ItemSpec + ".log", ex.Message));
+                        this.Log.LogError(string.Format(CultureInfo.CurrentCulture, "Unable to open log file: '{0}'. Exception: {1}", project.ItemSpec + ".log", ex.Message));
                     }
 
                     return false;
