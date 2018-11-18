@@ -1,0 +1,8 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+environment:
+  EnableNuGetPackageRestore: true
+
+build:
+  project: Solutions\Main\MainSolution.sln
+  verbosity: minimal
