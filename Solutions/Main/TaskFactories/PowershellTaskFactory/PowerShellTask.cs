@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
 {
     using System;
     using System.Diagnostics.Contracts;
+    using System.Management.Automation;
     using System.Management.Automation.Runspaces;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -22,6 +23,13 @@ namespace MSBuild.ExtensionPack.TaskFactory
 
         internal PowerShellTask(string script)
         {
+            // ExecutionPolicy Bypass
+            InitialSessionState initial = InitialSessionState.CreateDefault();
+
+            // Replace PSAuthorizationManager with a null manager
+            // which ignores execution policy
+            initial.AuthorizationManager = new AuthorizationManager("Microsoft.PowerShell");
+
             this.pipeline = RunspaceFactory.CreateRunspace().CreatePipeline();
             this.pipeline.Commands.AddScript(script);
             this.pipeline.Runspace.Open();
