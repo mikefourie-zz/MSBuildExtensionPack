@@ -34,6 +34,32 @@ namespace MSBuild.ExtensionPack.TaskFactory
             this.pipeline.Commands.AddScript(script);
             this.pipeline.Runspace.Open();
             this.pipeline.Runspace.SessionStateProxy.SetVariable("log", this.Log);
+            this.pipeline.Output.DataReady += Output_DataReady;
+            this.pipeline.Error.DataReady += Error_DataReady;
+        }
+
+        private void Error_DataReady(object sender, EventArgs e)
+        {
+	        var error = sender as PipelineReader<object>;
+	        if (error != null)
+            {
+                while (error.Count > 0)
+                {
+                    Log.LogError(error.Read().ToString());
+                }
+            }
+        }
+
+        private void Output_DataReady(object sender, EventArgs e)
+        {
+	        var output = sender as PipelineReader<PSObject>;
+	        if (output != null)
+            {
+                while (output.Count > 0)
+                {
+                    Log.LogMessage(output.Read().ToString());
+                }
+            }
         }
 
         public object GetPropertyValue(TaskPropertyInfo property)
