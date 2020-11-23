@@ -6,6 +6,7 @@ namespace MSBuild.ExtensionPack.TaskFactory
 {
     using System;
     using System.Diagnostics.Contracts;
+    using System.Management.Automation;
     using System.Management.Automation.Runspaces;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -18,29 +19,66 @@ namespace MSBuild.ExtensionPack.TaskFactory
         /// <summary>
         /// The context that the Windows PowerShell script will run under.
         /// </summary>
-        private Pipeline pipeline;
+        private PowerShell powerShell;
 
         internal PowerShellTask(string script)
         {
-            this.pipeline = RunspaceFactory.CreateRunspace().CreatePipeline();
-            this.pipeline.Commands.AddScript(script);
-            this.pipeline.Runspace.Open();
-            this.pipeline.Runspace.SessionStateProxy.SetVariable("log", this.Log);
+            // ExecutionPolicy Bypass
+            InitialSessionState initial = InitialSessionState.CreateDefault();
+
+            // Replace PSAuthorizationManager with a null manager
+            // which ignores execution policy
+            initial.AuthorizationManager = new AuthorizationManager("Microsoft.PowerShell");
+
+            var runspace = RunspaceFactory.CreateRunspace(initial);
+            runspace.Open();
+            runspace.SessionStateProxy.SetVariable("log", this.Log);
+
+            powerShell = PowerShell.Create();
+            powerShell.Runspace = runspace;
+            powerShell.Streams.Information.DataAdded += StreamOnDataAdded;
+            powerShell.Streams.Verbose.DataAdded += StreamOnDataAdded;
+            powerShell.Streams.Debug.DataAdded += StreamOnDataAdded;
+            powerShell.Streams.Warning.DataAdded += StreamOnDataAdded;
+            powerShell.Streams.Error.DataAdded += StreamOnDataAdded;
+            powerShell.AddScript(script);
+        }
+
+        private void StreamOnDataAdded(object sender, DataAddedEventArgs e) 
+        {
+            switch (sender)
+            {
+                case PSDataCollection<WarningRecord> c:
+                    this.Log.LogWarning(c[e.Index].Message);
+                    break;
+                case PSDataCollection<DebugRecord> c:
+                    this.Log.LogMessage(MessageImportance.Low, c[e.Index].Message);
+                    break;
+                case PSDataCollection<VerboseRecord> c:
+                    this.Log.LogMessage(MessageImportance.Normal, c[e.Index].Message);
+                    break;
+                case PSDataCollection<InformationRecord> c:
+                    this.Log.LogMessage(MessageImportance.High, c[e.Index].MessageData.ToString());
+                    break;
+                case PSDataCollection<ErrorRecord> c:
+                    this.Log.LogError(c[e.Index].ErrorDetails?.Message ?? c[e.Index].Exception.Message, c[e.Index].Exception);
+                    break;
+            }
         }
 
         public object GetPropertyValue(TaskPropertyInfo property)
         {
-            return this.pipeline.Runspace.SessionStateProxy.GetVariable(property.Name);
+            return this.powerShell.Runspace.SessionStateProxy.GetVariable(property.Name);
         }
 
         public void SetPropertyValue(TaskPropertyInfo property, object value)
         {
-            this.pipeline.Runspace.SessionStateProxy.SetVariable(property.Name, value);
+            this.powerShell.Runspace.SessionStateProxy.SetVariable(property.Name, value);
         }
 
         public override bool Execute()
         {
-            this.pipeline.Invoke();
+            this.powerShell.Invoke();
             return !Log.HasLoggedErrors;
         }
 
@@ -54,10 +92,10 @@ namespace MSBuild.ExtensionPack.TaskFactory
         {
             if (disposing)
             {
-                if (this.pipeline.Runspace != null)
+                if (this.powerShell.Runspace != null)
                 {
-                    this.pipeline.Runspace.Dispose();
-                    this.pipeline = null;
+                    this.powerShell.Runspace.Dispose();
+                    this.powerShell = null;
                 }
             }
         }
